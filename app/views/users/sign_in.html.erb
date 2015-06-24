@@ -1,0 +1,105 @@
+<div class="container content">   
+  <div class="row">
+    <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 shadow-wrapper">
+      <div class="box-shadow shadow-effect-2">
+        <%= form_for(User.new, url: login_users_path, method: :post, html: { class: "sky-form reg-page", id: "sign_in_form" }) do |u| %>
+        <div class="reg-header">            
+          <h2>用户登录</h2>
+        </div>
+        
+        <div class="margin-bottom-20">
+          <label class="input">
+            <i class="icon-prepend fa fa-user"></i>
+            <%= u.text_field :login, placeholder: "登录名" %>
+          </label>
+        </div>
+
+        <div class="margin-bottom-20">
+          <label class="input">
+            <i class="icon-prepend fa fa-lock"></i>
+            <%= u.password_field :password, placeholder: "密码" %>
+          </label>
+        </div>
+
+        <div id="captcha_div" class="row" style="display: none;">
+          <div class="col-md-6">
+            <label class="input">
+              <i class="icon-prepend fa fa-lock"></i>
+              <input id='user_captcha' name='user[captcha]' type='text' placeholder="验证码">
+            </label>
+          </div>
+          <div class="col-md-6">
+            <%= captcha_tag %>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label class="checkbox">
+              <input id='user_remember_me' name='user[remember_me]' type='checkbox' value='1'>
+              <i></i> 自动登录?
+            </label>                        
+          </div>
+          <div class="col-md-6">
+            <button class="btn-u pull-right" type="submit"> 登 录 </button>                        
+          </div>
+        </div>
+
+        <hr>
+        
+        <div class="row">
+          <div class="col-lg-6">
+            <%= link_to "忘记密码?", forgot_password_users_path %>
+          </div>
+          <div class="col-lg-6 text-right">
+            <%= link_to "免费注册", sign_up_users_path %>
+          </div>
+        </div>
+        <% end %>
+      </div>    
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  var sign_in_rules = {
+    "user[login]": { required: true, maxlength: 20, minlength: 6 },
+    "user[password]": { required: true, maxlength: 20, minlength: 6, remote: { url: '/users/valid_user', type: 'post', data: { user_name: function(){ return $("#user_login").val(); } }, async: false } },
+    "user[captcha]": { required: true, minlength: 6, remote: { url: '/users/valid_captcha', type: 'post', async: false } }
+  };
+  var sign_in_msg = {
+    "user[password]": { remote: "用户名或者密码错误" },
+    "user[captcha]": { remote: "验证码输入错误" }
+  };
+  validate_form_rules('#sign_in_form', sign_in_rules, sign_in_msg);
+
+  // 验证码看不清 点击刷新
+  $("img[alt='captcha']").each(function(index, item){
+    item.title = '看不清？点击刷新';
+    $(this).css("cursor", "pointer"); 
+  });
+  $("img[alt='captcha']").on("click", function(){
+    captcha_refresh();
+  });
+
+  // 绑定form的input 1.如果用户名密码输入错误显示验证码 2.如果验证码输入错误自动刷新验证码
+  $('body').on("focus blur","#sign_in_form input",function(){
+    if($(this).hasClass("invalid")) {
+      switch (this.id){
+        case 'user_password': $("#captcha_div").css("display", "block");captcha_refresh();break;
+        case 'user_captcha': captcha_refresh();break;
+        default: break;
+      }
+    }
+  });
+});
+
+// 验证码自动刷新
+function captcha_refresh () {
+  var img = $("img[alt='captcha']")[0];
+  img.src = img.src + '?';
+  $("#user_captcha").val("");
+}
+
+</script>

@@ -1,0 +1,73 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> 意见反馈列表</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row margin-bottom-10">
+            <div class="col-md-8 pull-left">
+                <%= form_tag(batch_opt_kobe_suggestions_path, method: 'post', id: "list_form") do %>
+                    <button class="btn btn-sm btn-danger rounded" value="delete" name="batch_opt">
+                        <i class="fa fa-trash-o"></i>
+                        删除
+                    </button>
+                    <button class="btn btn-sm btn-info rounded" value="read" name="batch_opt">
+                        <i class="fa fa-check-square-o"></i>
+                        标记为已读
+                    </button>
+                    <button class="btn btn-sm btn-warning rounded" value="unread" name="batch_opt">
+                        <i class="fa fa-minus-square-o"></i>
+                        标记为未读
+                    </button>
+                    <button class="btn btn-sm btn-danger rounded" value="clean" name="batch_opt">
+                        <i class="fa fa-trash-o"></i>
+                        彻底删除
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-4 pull-right">
+                <div class="input-group">
+                    <input type="text" class="form-control input-sm" placeholder="请输入关键字...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-success btn-sm" type="button">搜索</button>
+                    </span>
+                  </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="select_all">
+                        <label class="checkbox">
+                            <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
+                        </label>
+                    </th>
+                    <th class="index">序号</th>
+                    <th>Email</th>
+                    <th class="hidden-sm">意见</th>
+                    <th class="status_bar"><%= status_filter(Suggestion) %></th>
+                    <th class="date"><%= date_filter %></th>
+                    <th class="cando">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @suggestions.each_with_index do |s,index| %>
+                <tr>
+                    <td>
+                        <label class="checkbox">
+                            <input type="checkbox" name="check[]" value="<%= s.id %>" onclick="setSelectAll();"><i></i>
+                        </label>
+                    </td>
+                    <td><%= show_index(index) %></td>
+                    <td><%= s.email %></td>
+                    <td><%= s.content %></td>
+                    <td><%= s.status_bar %></td>
+                    <td><%= show_date(s.created_at) %></td>
+                    <td><%= btn_group(s.cando_list) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @suggestions %> 
+        <% end %>
+    </div>                     
+</div>

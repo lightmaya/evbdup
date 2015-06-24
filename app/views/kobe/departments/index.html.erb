@@ -1,0 +1,9 @@
+  <%= render :partial => '/shared/ztree/ztree_show',:locals => { :act => "index", :get_path => ztree_kobe_departments_path, :post_path => move_kobe_departments_path, :current_node_id => @dep.nil? ? current_user.department.id : @dep.id, :ajax_show_node => !params[:u_id].blank? } %>
+
+<% unless params[:u_id].blank? %>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			show_content('<%= edit_kobe_user_path(params[:u_id]) %>','#show_ztree_content #ztree_content')
+		});
+	</script>
+<% end %>

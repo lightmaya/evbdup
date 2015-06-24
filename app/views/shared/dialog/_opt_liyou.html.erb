@@ -1,0 +1,24 @@
+<% 
+	input_name ||= 'opt_liyou'
+	form_id ||= "opt_liyou_form"
+	method ||= 'post'
+%>
+<%= form_tag(action, method: method, class: 'sky-form', id: form_id) do %>
+<section>
+	<label class="label">操作理由 <span class="color-red">*</span></label>
+	<label class="input">
+		<i class="icon-append fa fa-pencil"></i>
+		<input type="text" name="<%= input_name %>" id="<%= input_name %>" placeholder="操作理由" />
+	</label>
+</section>
+<footer>
+	<button class="btn-u" type="submit"><i class="fa fa-floppy-o"></i> 保 存 </button>
+	<button class="btn-u btn-u-default" type="reset"><i class="fa fa-repeat"></i> 重 置 </button>
+</footer>
+<% end %>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		validate_form_rules("#<%= form_id %>", {"opt_liyou": {required: true, minlength: 6}});
+	});
+</script>

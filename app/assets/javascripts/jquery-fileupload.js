@@ -1,0 +1,9 @@
+//= require plugins/jquery-fileupload/locale
+//= require plugins/jquery-fileupload/jquery.ui.widget
+//= require plugins/jquery-fileupload/load-image
+//= require plugins/jquery-fileupload/canvas-to-blob
+//= require plugins/jquery-fileupload/tmpl
+//= require plugins/jquery-fileupload/jquery.iframe-transport
+//= require plugins/jquery-fileupload/jquery.fileupload
+//= require plugins/jquery-fileupload/jquery.fileupload-fp
+//= require plugins/jquery-fileupload/jquery.fileupload-ui

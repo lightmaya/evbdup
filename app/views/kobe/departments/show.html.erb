@@ -1,0 +1,3 @@
+<%= show_tips(@dep.get_tips.blank? ? 'tips' : 'error', @dep.get_tips.blank? ? '恭喜您！' : '很抱歉！', @dep.get_tips.blank? ? "账户信息已填写完整，请点击[提交]，提交并等待审核。" : @dep.get_tips) if Department.get_status_attributes(@dep.status,1)[0] == '未提交' %>
+
+<%=show_tabs(@arr.unshift({ title: "详细信息", icon: "fa-info", content: render(partial: 'show_info') }), "dep_tab")%>

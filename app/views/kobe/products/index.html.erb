@@ -1,0 +1,57 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> 产品列表</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row margin-bottom-10">
+            <div class="col-md-8 pull-left">
+            	<%= more_actions(Product.more_actions_list, 2) %>
+                <%= modal_dialog("more_actions_dialog", render(partial: '/shared/dialog/opt_liyou', locals: { form_id: 'more_actions_form', action: '' })) %>
+            </div>
+            <div class="col-md-4 pull-right">
+                <div class="input-group">
+                    <input type="text" class="form-control input-sm" placeholder="请输入关键字...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-success btn-sm" type="button">搜索</button>
+                      <button type="button" class="btn btn-success btn-sm" style="margin-left:6px;"><i class="fa fa-filter"></i> 高级搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-hover list_table">
+            <thead>
+                <tr>
+                    <th class="select_all">
+                        <label class="checkbox">
+                            <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
+                        </label>
+                    </th>
+                    <th class="index">序号</th>
+                    <th class="hidden-sm">品牌</th>
+                    <th class="hidden-sm">型号</th>
+                    <th class="status_bar"><%= status_filter(Product) %></th>
+                    <th class="date"><%= date_filter %></th>
+                    <th class="cando">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @products.each_with_index do |product,index| %>
+                <tr>
+                    <td>
+                        <label class="checkbox">
+                            <input type="checkbox" name="check[]" value="<%= product.id %>" onclick="setSelectAll();"><i></i>
+                        </label>
+                    </td>
+                    <td><%= show_index(index) %></td>
+                    <td><%= product.brand %></td>
+                    <td><%= product.model %></td>
+                    <td><%= product.status_bar %></td>
+                    <td><%= show_date(product.created_at) %></td>
+                    <td><%= btn_group(product.cando_list) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @products %> 
+    </div>                     
+</div>

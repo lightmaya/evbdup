@@ -1,0 +1,74 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> 采购项目</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row margin-bottom-10">
+            <div class="col-md-8 pull-left">
+            	<%= form_tag(batch_opt_kobe_suggestions_path, method: 'post', id: "list_form") do %>
+                <button class="btn btn-sm btn-danger rounded" value="delete" name="batch_opt">
+                    <i class="fa fa-trash-o"></i>
+                    删除
+                </button>
+                <button class="btn btn-sm btn-info rounded" value="read" name="batch_opt">
+                    <i class="fa fa-check-square-o"></i>
+                    标记为已读
+                </button>
+                <button class="btn btn-sm btn-warning rounded" value="unread" name="batch_opt">
+                    <i class="fa fa-minus-square-o"></i>
+                    标记为未读
+                </button>
+                <button class="btn btn-sm btn-danger rounded" value="clean" name="batch_opt">
+                    <i class="fa fa-trash-o"></i>
+                    彻底删除
+                </button>
+              </form>
+            </div>
+            <div class="col-md-4 pull-right">
+                <div class="input-group">
+                    <input type="text" class="form-control input-sm" placeholder="请输入关键字...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-success btn-sm" type="button">搜索</button>
+                      <button type="button" class="btn btn-success btn-sm" style="margin-left:6px;"><i class="fa fa-filter"></i> 高级搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="select_all">
+                        <label class="checkbox">
+                            <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
+                        </label>
+                    </th>
+                    <th class="index">序号</th>
+                    <th>编号</th>
+                    <th class="hidden-sm">名称</th>
+                    <th class="status_bar"><%= status_filter(Order) %></th>
+                    <th class="date"><%= date_filter %></th>
+                    <th class="cando">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @objs.each_with_index do |obj,index| %>
+                <tr>
+                    <td>
+                        <label class="checkbox">
+                            <input type="checkbox" name="check[]" value="<%= obj.id %>" onclick="setSelectAll();"><i></i>
+                        </label>
+                    </td>
+                    <td><%= show_index(index) %></td>
+                    <td><%= obj.sn %></td>
+                    <td><%= obj.name %></td>
+                    <td><%= obj.status_bar %></td>
+                    <td><%= show_date(obj.created_at) %></td>
+                    <td><%= btn_group(obj.cando_list) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @objs %> 
+        <% end %>
+    </div>                     
+</div>

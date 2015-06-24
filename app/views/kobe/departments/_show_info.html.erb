@@ -1,0 +1,44 @@
+<%= show_obj_info(@dep,@dep.class.xml) %>
+<div class="panel panel-grey margin-top-40">
+	<div class="panel-heading">
+		<h3 class="panel-title"><i class="fa fa-user"></i> 用户列表</h3>
+	</div>
+	<div class="panel-body">
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="select_all">
+						<label class="checkbox">
+							<input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
+						</label>
+					</th>
+					<th class="index">序号</th>
+					<th>用户名</th>
+					<th class="hidden-sm">姓名</th>
+					<th class="hidden-sm">联系电话</th>
+					<th class="hidden-sm">手机</th>
+					<th>状态</th>
+					<th class="cando">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% @dep.user.each_with_index do |user,index| %>
+				<tr>
+					<td>
+						<label class="checkbox">
+							<input type="checkbox" name="check[]" value="<%= user.id %>" onclick="setSelectAll();"><i></i>
+						</label>
+					</td>
+					<td><%= show_index(index) %></td>
+					<td><%= user.login %></td>
+					<td><%= user.name %></td>
+					<td><%= user.tel %></td>
+					<td><%= user.mobile %></td>
+					<td><%= user.status_badge %></td>
+					<td><%= btn_group(user.cando_list) %></td>
+				</tr>
+				<% end %>
+			</tbody>
+		</table>
+	</div>                     
+</div>

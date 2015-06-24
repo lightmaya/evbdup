@@ -1,0 +1,14 @@
+/*Import custom_jquery-jvectormap.css*/
+/*
+ *= require plugins/vector-map/jquery-jvectormap
+*/
+
+.jvectormap-zoomin, .jvectormap-zoomout {
+    width: 20px;
+    height: 20px;
+    line-height: 15px;
+}
+
+.jvectormap-zoomout {
+    top: 40px;
+}

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->  
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+<head>
+    <title><%= Dictionary.web_site_name %></title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="zcl">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <!-- CSS Global Compulsory -->
+    <%= stylesheet_link_tag "james" %>
+    <%= javascript_include_tag "application" %>
+
+</head> 
+
+<body>
+<!--=== Style Switcher ===-->    
+<i class="style-switcher-btn fa fa-cogs hidden-xs"></i>
+<div class="style-switcher animated fadeInRight">
+    <div class="theme-close"><i class="icon-close"></i></div>
+    <div class="theme-heading">Theme Colors</div>
+    <ul class="list-unstyled">
+        <li class="theme-default theme-active" data-style="default" data-header="light"></li>
+        <li class="theme-blue" data-style="blue" data-header="light"></li>
+        <li class="theme-orange" data-style="orange" data-header="light"></li>
+        <li class="theme-red" data-style="red" data-header="light"></li>
+        <li class="theme-light last" data-style="light" data-header="light"></li>
+
+        <li class="theme-purple" data-style="purple" data-header="light"></li>
+        <li class="theme-aqua" data-style="aqua" data-header="light"></li>
+        <li class="theme-brown" data-style="brown" data-header="light"></li>
+        <li class="theme-dark-blue" data-style="dark-blue" data-header="light"></li>
+        <li class="theme-light-green last" data-style="light-green" data-header="light"></li>
+    </ul>
+    <div style="margin-bottom:18px;"></div>
+    <div class="theme-heading">Layouts</div>
+    <div class="text-center">
+        <a href="javascript:void(0);" class="btn-u btn-u-green btn-block active-switcher-btn wide-layout-btn">Wide</a>
+        <a href="javascript:void(0);" class="btn-u btn-u-green btn-block boxed-layout-btn">Boxed</a>
+    </div>
+</div><!--/style-switcher-->
+<!--=== End Style Switcher ===-->    
+
+<div class="wrapper">
+    <!--=== Header ===-->    
+    <div class="header">
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="container">
+                <!-- Topbar Navigation -->
+                <ul class="loginbar pull-right">
+                    <li>您好，<%#= current_user.name %></li>  
+                    <li class="topbar-devider"></li> 
+                    <li>
+                        <a href="#">
+                        <i class="fa fa-shopping-cart"></i> 购物车
+                        </a>
+                        <span class="badge badge-red rounded-x">4</span>
+                    </li> 
+                    <li class="topbar-devider"></li> 
+                    <li>
+                        <a href="#">
+                        <i class="fa fa-bolt"></i> 待办事项
+                        </a>
+                        <span class="badge badge-yellow rounded-x">2</span>
+                    </li> 
+                    <li class="topbar-devider"></li> 
+                    <li>
+                        <a href="#">
+                        <i class="fa fa-envelope"></i> 站内消息
+                        </a>
+                        <span class="badge badge-orange rounded-x">5</span>
+                    </li> 
+                    <li class="topbar-devider"></li>   
+                    <li><a href="page_faq.html">内部论坛</a></li> 
+                    <li class="topbar-devider"></li>   
+                    <li><a href="page_faq.html">帮助</a></li>  
+                    <li class="topbar-devider"></li>   
+                    <li><a href="page_login.html">退出</a></li>   
+                </ul>
+                <!-- End Topbar Navigation -->
+            </div>
+        </div>
+        <!-- End Topbar -->
+    
+        <!-- Navbar -->
+        <div class="navbar navbar-default" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="fa fa-bars"></span>
+                    </button>
+                    <a class="navbar-brand" href="index-2.html">
+                        <img id="logo-header" src="/plugins/images/logo1-default.png" alt="Logo">
+                    </a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse navbar-responsive-collapse">
+                    <ul class="nav navbar-nav">
+                        <!-- Home -->
+                        <li class="dropdown">
+                            <a href="/"><i class="fa fa-home"></i> 首页</a>
+                        </li>
+                        <!-- End Home -->
+
+                        <!-- Features -->
+                        <li class="dropdown active">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-tags"></i> 业务管理
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- Thumbnails -->
+                                <li><a href="feature_thumbails.html"><i class="fa fa-map-marker"></i>招标项目管理</a></li>
+                                <li><a href="feature_thumbails.html"><i class="fa fa-map-marker"></i>产品参数设置</a></li>
+                                <!-- End Thumbnails -->
+
+                                <!-- Typography -->
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:void(0);"><i class="fa fa-map-marker"></i>协议供货</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="feature_typo_general.html"><i class="fa fa-users"></i> 厂商管理</a></li>
+                                        <li><a href="feature_typo_headings.html"><i class="fa fa-cubes"></i> 产品管理</a></li>
+                                        <li><a href="feature_typo_dividers.html"><i class="fa fa-database"></i> 项目管理</a></li>
+                                    </ul>                                
+                                </li>
+                                <!-- End Typography -->
+
+                                <!-- Sub Level Menu -->
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:void(0);">非采购系统</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="index-3.html">闲置物品处置</a></li>
+                                        <li class="dropdown-submenu">
+                                            <a href="javascript:void(0);">车辆费用登记</a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="index-3.html">车辆维护</a></li>
+                                                <li><a href="index-3.html">项目管理</a></li>
+                                                <li><a href="index-3.html">费用统计</a></li>
+                                            </ul>                                
+                                        </li>
+                                        <li><a href="index-3.html">设备维修与保养</a></li>
+                                        <li class="dropdown-submenu">
+                                            <a href="javascript:void(0);">进销账登记</a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="index-3.html">品类管理</a></li>
+                                                <li><a href="index-3.html">项目登记</a></li>
+                                                <li><a href="index-3.html">流水记录</a></li>
+                                                <li><a href="index-3.html">数据统计</a></li>
+                                            </ul>                                
+                                        </li>
+                                    </ul>                                
+                                </li>                            
+                                <!-- End Sub Level Menu -->
+                            </ul>
+                        </li>
+                        <!-- End Features -->
+
+                        <!-- Portfolio -->
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-users"></i> 单位及人员管理
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="portfolio_text_blocks.html">单位信息维护</a></li>
+                                <li><a href="portfolio_2_column.html">供应商管理</a></li>
+                                <li><a href="portfolio_3_column.html">采购人管理</a></li>
+                                <li><a href="portfolio_4_column.html">监管机构管理</a></li>
+                                <li><a href="portfolio_item.html">人员管理</a></li>
+                            </ul>
+                        </li>
+                        <!-- Ens Portfolio -->
+
+                        <!-- Blog -->
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-file-word-o"></i> 公告管理
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="blog_page.html">分类设置</a></li>
+                                <li><a href="blog_large.html">公告管理</a></li>
+                                <li><a href="blog_medium.html">系统公告</a></li>
+                            </ul>
+                        </li>
+                        <!-- End Blog -->
+
+                        <!-- Contacts -->
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-bar-chart-o"></i> 数据统计
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="page_contact1.html">整体情况统计</a></li>
+                                <li><a href="page_contact2.html">产品类别统计</a></li>
+                                <li><a href="page_contact3.html">供应商销量统计</a></li>
+                                <li><a href="page_contact3.html">采购单位统计</a></li>
+                                <li><a href="page_contact3.html">采购方式统计</a></li>
+                                <li><a href="page_contact3.html">集中采购覆盖率统计</a></li>
+                                <li><a href="page_contact3.html">综合报表</a></li>
+                                <li><a href="page_contact3.html">审核工作量统计</a></li>
+                            </ul>
+                        </li>                    
+                        <!-- End Contacts -->
+
+                        <!-- Search Block -->
+                        <li>
+                            <i class="search fa fa-search search-btn"></i>
+                            <div class="search-open">
+                                <div class="input-group animated fadeInDown">
+                                    <input type="text" class="form-control" placeholder="请输入订单号">
+                                    <span class="input-group-btn">
+                                        <button class="btn-u" type="button">Go</button>
+                                    </span>
+                                </div>
+                            </div>    
+                        </li>
+                        <!-- End Search Block -->
+                    </ul>
+                </div><!--/navbar-collapse-->
+            </div>    
+        </div>            
+        <!-- End Navbar -->
+    </div>
+    <!--=== End Header ===-->     
+
+    <!--=== Breadcrumbs ===-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <h1 class="pull-left"> Carousel</h1>
+            <ul class="pull-right breadcrumb">
+                <li><a href="index-2.html">Home</a></li>
+                <li><a href="#">Features</a></li>
+                <li class="active">Carousel</li>
+            </ul>
+        </div>
+    </div><!--/breadcrumbs-->
+    <!--=== End Breadcrumbs ===-->
+
+    <!--=== Content Part ===-->
+    <div class="container content">
+        <div class="row">
+            <!-- Begin Content -->
+            <div class="col-md-12" style="min-height:400px;">
+                <%= yield %>
+            </div>
+            <!-- End Content -->
+        </div>          
+    </div><!--/container-->     
+    <!--=== End Content Part ===-->
+
+    <!--=== Copyright ===-->
+    <div class="copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">                     
+                    <p>
+                        2014 &copy; Unify. ALL Rights Reserved. 
+                        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+                    </p>
+                </div>
+                <div class="col-md-6">  
+                    <a href="index-2.html">
+                        <img class="pull-right" id="logo-footer" src="/plugins/images/logo2-default.png" alt="">
+                    </a>
+                </div>
+            </div>
+        </div> 
+    </div><!--/copyright--> 
+    <!--=== End Copyright ===-->
+</div><!--/End Wrapepr-->
+
+<!--[if lt IE 9]>
+    <%= javascript_include_tag "ie_9" %>
+<![endif]-->
+<%= javascript_include_tag "james" %>
+<%= render :partial => '/shared/myform/fileupload_layout' %>
+<%= render partial: '/shared/dialog/art_dialog' %>
+</body>
+</html>

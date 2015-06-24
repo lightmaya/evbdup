@@ -1,0 +1,137 @@
+<%= form_tag("#", method: "post", id: "form_flow_setting") %>
+
+<!-- Links in Alerts -->
+<ol class="rectangle-list">
+  <li>
+    <a>
+    List sub item
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </a>
+  </li>
+  <li>
+    <a>
+    List sub item
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </a>
+  </li>
+  <li>
+    <a>
+    List sub item
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </a>
+  </li>
+  <li>
+    <a>
+    List sub item
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </a>
+  </li>
+</ol>
+
+<hr/>
+
+<ol class="rounded-list" id="flow-step">
+  <li>
+    <a>
+    <span class="name">三级子企业（中心库）审批</span>
+    <span id="step_0" class="btn-u btn-u-xs btn-u-brown rounded-2x flow_setting_tbn"><i class="fa fa-cog"></i> 设置</span>
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </a>
+    
+  </li>
+  <li>
+    <a>
+    <span class="name">分（子）公司审批</span>
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </a>
+    <div class="no-display">
+      <span class="roles">1</span>
+      <span class="inflow">2</span>
+      <span class="outflow">3</span>
+    </div>
+  </li>
+  <li>
+    <a>
+    <span class="name">总公司审批</span>
+    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+    </a>
+    <div class="no-display">
+      <span class="roles">1</span>
+      <span class="inflow">2</span>
+      <span class="outflow">3</span>
+    </div>
+  </li>
+</ol>
+
+<!-- Links in Alerts -->
+
+
+</form>
+<div id="eeeeee">
+<%= form_tag("#", method: "post", id: "dialog_flow_setting", class: "no-display no-border sky-form") %>
+  <div class="row">
+    <section class="col col-12">
+      <label class="label">岗位/角色</label>
+      <label class="input">
+        <i class="icon-append fa fa-chevron-down"></i>
+        <input type="text" json_url="/json/areas" class="tree_radio required" partner="roles_ids[0]" name="roles_names[0]" value="">
+      </label>
+    </section>
+  </div>
+  <div class="row">
+    <section class="col col-12">
+      <label class="label">流入条件<span class="text-red">*</span></label>
+      <label class="textarea textarea-resizable">
+        <textarea name="inflow[0]" rows="2">
+        </textarea>
+      </label>
+    </section>
+  </div>
+  <div class="row">
+    <section class="col col-12">
+      <label class="label">跳出条件<span class="text-red">*</span></label>
+      <label class="textarea textarea-resizable">
+        <textarea name="outflow[0]" rows="2">
+        </textarea>
+      </label>
+    </section>
+  </div>
+  <div>
+    <button id='dialog_submit' class='btn-u' type='submit'><i class='fa fa-floppy-o'></i> 保 存 </button>
+    <button id='dialog_reset' class='btn-u btn-u-default' type='reset'><i class='fa fa-repeat'></i> 重 置 </button>
+  </div>
+</form>
+</div>
+<script type="text/javascript">
+	$("ol").dragsort({dragEnd: saveOrder});
+	
+	function saveOrder() {
+		// var data = $("#list1 li").map(function() { return $(this).children().html(); }).get();
+		// $("input[name=list1SortOrder]").val(data.join("|"));
+	};
+
+  // 流程设置
+  $(function() {
+    var dialog_content_elem = $("#eeeeee");
+    $('body').on("click",".flow_setting_tbn",function(){
+      var diaog_id = "dialog_" + $(this).attr("id");
+      var d = dialog.get(diaog_id);
+      if (!d){
+        var d = dialog({
+          id: diaog_id,
+          align: 'right',
+          content: dialog_content_elem,
+          quickClose: true
+        });
+      }
+      else{
+        d.show(this);
+      }
+      
+    });
+
+
+  // 校验form
+  $("form.sky-form").validate();
+  });
+</script>

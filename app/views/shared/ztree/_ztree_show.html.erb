@@ -1,0 +1,65 @@
+<div class="col-md-3 md-margin-bottom-40">
+	<div class='tag-box tag-box-v3'>
+		<ul id="ztree_show" class="ztree"></ul>
+	</div>
+
+	<div class='btn-group-vertical' id="rMenu" style="position:absolute; visibility:hidden;">
+		<button class='btn' style="font-size:12px;" onclick="addTreeNode();">
+			<i class=' icon-plus'></i> 增加
+		</button>
+		<button class='btn' style="font-size:12px;" onclick="editTreeNode();">
+			<i class='icon-wrench'></i> 修改
+		</button>
+		<button class='btn' style="font-size:12px;" onclick="freezeTreeNode();">
+			<i class='icon-ban'></i> 冻结
+		</button>
+		<button class='btn' style="font-size:12px;" onclick="recoverTreeNode();">
+			<i class='icon-action-undo'></i> 恢复
+		</button>
+		<button class='btn' style="font-size:12px;" onclick="removeTreeNode();">
+			<i class='icon-trash'></i> 删除
+		</button>
+	</div>
+
+	<%= modal_dialog("opt_dialog") %>
+
+</div>
+<div class="profile col-md-9">
+	<div class="profile-body">
+		<div class="tab-content">
+			<div class="profile-edit tab-pane fade active in" id="show_ztree_content">
+				<div class="panel-heading overflow-h margin-bottom-20" id="ztree_title">
+				</div>
+				<div id="ztree_content">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<SCRIPT type="text/javascript">
+	function get_ztree_params(type) {
+		var path = "";
+		switch (type)
+		{
+			case 'init': path = "<%= get_path %>"; break;
+			case 'move': path = "<%= post_path %>"; break;
+			case 'current_node_id': path = "<%= current_node_id ||= 0 %>"; break;
+			// ajax加载显示当前节点 false为默认显示 true不显示
+			case 'ajax_show_node': path = <%= ajax_show_node ||= false %>; break;
+			case 'model_name': path = "<%= controller_name.classify %>"; break;
+			// 右键菜单增加:new、修改:edit、删除:destroy、点击展示页面:show
+			default: path = '<%= "/#{params[:controller]}/" %>';
+		}
+		return path
+	};
+
+	var zTree, rMenu;
+	$(document).ready(function(){
+		init_ztree();
+		zTree = $.fn.zTree.getZTreeObj("ztree_show");
+		rMenu = $("#rMenu");
+		$("#callbackTrigger").bind("change", {}, setTrigger);
+	});
+
+</SCRIPT>

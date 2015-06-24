@@ -1,0 +1,156 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require plugins/bootstrap/css/bootstrap.min
+ *= require style
+ *= require plugins/themes/default
+ *= require plugins/ui-dialog
+ *= require plugins/dialog-select
+ *= require plugins/line-icons/line-icons
+ *= require plugins/font-awesome/css/font-awesome.min
+ *= require plugins/jquery.fileupload-ui
+ *= require plugins/zTreeStyle
+ *= require plugins/sky-forms/version-2.0.1/css/custom-sky-forms
+ *= require plugins/fancybox/source/jquery.fancybox
+ *= require_self
+ */
+
+.text-red{color:#ff0000;}
+table td, .word_break {word-break: break-all;}
+table th.select_all {width:36px;}
+table th.index {width:56px;}
+table th.status_badge {width:92px;}
+table th.status_bar {width:142px;}
+table th.date {width:88px;}
+table th.time {width:140px;}
+table th.cando {width:114px;}
+.no-border {border: none;}
+#add_content {display: none;}
+.fa-chevron-circle-right,.fa-chevron-circle-down{cursor:pointer;}
+.font_24px{font-size: 24px;}
+#ztree_show{overflow:auto;}
+.no-display{display:none;}
+
+/*
+.step {border-bottom: 2px solid #eee; position: relative; z-index: 99; margin-bottom: 20px;	background: none repeat scroll 0 0 rgba(0, 0, 0, 0);}
+.step .nav-justified {position: relative; top: 2px;}
+.step .nav-justified > .active > a {color: #006633;}
+.step .nav-justified > li > a, .step .nav-justified > li > a:hover, .step .nav-justified > li > a:focus, .step .nav-justified > .active > a, .step .nav-justified > .active > a:hover, .step .nav-justified > .active > a:focus {background: none repeat scroll 0 0 rgba(0, 0, 0, 0);}
+.step .nav-justified > .active > a {border-bottom: 2px solid #72c02c;}
+.step .nav-justified > li > a {padding: 9px 30px 9px 20px; color: #687074; font-size: 15px; font-weight: 400; text-transform: uppercase;}
+*/
+
+ol {
+    /*float:left;*/
+    /*display:inline; */
+    counter-reset: li; /* Initiate a counter */
+    list-style: none; /* Remove default numbering */
+    *list-style: decimal; /* Keep using default numbering for IE6/7 */
+    font: 15px 'trebuchet MS', 'lucida sans';
+    padding: 0;
+    margin-bottom: 4em;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+ol li {
+    /*float:left;*/
+    display:inline; 
+}
+
+ol ol {
+    margin: 0 0 0 2em; /* Add some left margin for inner lists */
+}
+
+
+/*圆形*/
+.rounded-list a{
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em 2em;
+    *padding: .4em;
+    margin: .5em 0;
+    background: #ddd;
+    color: #444;
+    text-decoration: none;
+    border-radius: .3em;
+    transition: all .3s ease-out;   
+}
+
+.rounded-list a:hover{
+    background: #eee;
+}
+
+.rounded-list a:hover:before{
+    transform: rotate(360deg);  
+}
+
+.rounded-list a:before{
+    content: counter(li);
+    counter-increment: li;
+    position: absolute; 
+    left: -1.3em;
+    top: 50%;
+    margin-top: -1.3em;
+    background: #87ceeb;
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    border: .3em solid #fff;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 2em;
+    transition: all .3s ease-out;
+}
+
+/*方形*/
+.rectangle-list a{
+    position: relative;
+    display: block;
+    padding: .4em .4em .4em .8em;
+    *padding: .4em;
+    margin: .5em 0 .5em 2.5em;
+    background: #ddd;
+    color: #444;
+    text-decoration: none;
+    transition: all .3s ease-out;   
+}
+
+.rectangle-list a:hover{
+    background: #eee;
+}   
+
+.rectangle-list a:before{
+    content: counter(li);
+    counter-increment: li;
+    position: absolute; 
+    left: -2.5em;
+    top: 50%;
+    margin-top: -1em;
+    background: #fa8072;
+    height: 2em;
+    width: 2em;
+    line-height: 2em;
+    text-align: center;
+    font-weight: bold;
+}
+
+.rectangle-list a:after{
+    position: absolute; 
+    content: '';
+    border: .5em solid transparent;
+    left: -1em;
+    top: 50%;
+    margin-top: -.5em;
+    transition: all .3s ease-out;               
+}
+
+.rectangle-list a:hover:after{
+    left: -.5em;
+    border-left-color: #fa8072;             
+}

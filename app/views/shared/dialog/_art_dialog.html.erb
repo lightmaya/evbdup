@@ -1,0 +1,10 @@
+<script type="text/javascript">
+	var flash = '<%= raw get_tips_msg flash[:notice] %>';
+	var tips = '<%= raw get_tips_msg flash[:tips] %>';
+	if(flash.length > 0 ) {
+		flash_dialog(flash);
+	}
+	if(tips.length > 0 ) {
+		tips_dialog(tips);
+	}
+</script>

@@ -1,0 +1,14 @@
+/*
+ *= require application
+ *= require pages/feature_timeline2
+ *= require pages/profile
+*/
+
+.ajax_loading{
+	height: 80px;
+	background: url('/plugins/icons/ajax_loading.gif') center 0 no-repeat;
+	margin: auto;
+	padding-top: 58px;
+	text-align: center;
+	margin-top: 10px;
+}

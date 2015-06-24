@@ -1,0 +1,72 @@
+<%
+form_id = myform.options[:form_id]
+upload_model = myform.obj.class.upload_model
+master_id = myform.obj.id
+min_number_of_files = myform.options[:min_number_of_files]
+rules = myform.rules
+messages = myform.messages
+%>
+<div class="headline"><h2><strong><i class="fa fa-paperclip"></i> 上传附件</strong></h2></div>
+<%= form_tag(uploads_path(master_id: master_id, upload_model: upload_model), multipart: true, id: "#{form_id}_fileupload", class: "sky-form fileupload_form no-border" ) %>
+  <div class="fileupload-buttonbar">
+    <div class="alert alert-warning  fade in">
+      <%= raw upload_model.tips.html_safe %>
+    </div>
+    <div class="span7">
+      <span class="pull-left btn btn-xs btn-success fileinput-button">
+        <i class="fa fa-plus-circle"></i>
+        <span>添加新文件</span>
+        <input id="<%= "#{form_id}_upload_file_upload" %>" name="upload_file[upload]" type="file" />
+      </span>
+      <button type="submit" class="btn btn-xs btn-primary start">
+        <i class="fa fa-upload"></i>
+        <span>开始上传</span>
+      </button>
+      <button type="reset" class="btn btn-xs btn-warning cancel">
+        <i class="fa fa-ban"></i>
+        <span>取消上传</span>
+      </button>
+      <button type="button" class="btn btn-xs btn-danger delete">
+        <i class="fa fa-trash-o"></i>
+        <span>删除选中文件</span>
+      </button>
+      <label class="checkbox pull-right"><input type="checkbox" class="toggle"><i></i>选中全部文件</label>
+    </div>
+    <div class="span5">
+      <div class="progress progress-striped active fade">
+        <div class="bar progress-bar progress-bar-success" style="width:0%;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fileupload-loading"></div>
+  <table class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody>
+  </table>
+  <%= raw get_button_part(myform,false).html_safe %>
+</form>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    $("#<%= form_id %>_fileupload").fileupload(<%= upload_model.jquery_setting %>);
+    $('#<%= form_id %>_submit').on('click',function(){
+      var ids = $('form#<%= form_id %>_fileupload tr.template-download .preview[file_id]').map(function() {
+        return $(this).attr('file_id');
+      }).get().join(',');
+      var minNumberOfFiles = <%= min_number_of_files.to_i %>;
+      var alertContent = "<div class='alert alert-danger fade in'><button aria-hidden='true' data-dismiss='alert' class='close' type='button'>×</button><h4>出错了!</h4><p>上传附件没有达到数量要求（不少于"+ minNumberOfFiles +"个），请按要求上传附件。</p></div>";
+      if (ids.split(",").length < minNumberOfFiles){
+        if ($(this).prevAll("div.alert").length == 0){
+          $(this).parent().prepend(alertContent);
+        }
+        return false;
+      }else{
+        $("#<%= form_id %>_uploaded_file_ids").val(ids);
+        $('#<%= form_id %>').submit();
+      }
+    });
+    $('#<%= form_id %>_reset').on("click",function(){$('#<%= form_id %>')[0].reset();});
+
+    var <%= form_id %>_rules = {<%= raw rules.join(",").html_safe %>};
+    var <%= form_id %>_messages = {<%= raw messages.join(",").html_safe %>};
+    validate_form_rules('#<%= form_id %>', <%= form_id %>_rules, <%= form_id %>_messages);
+
+  });
+</script>

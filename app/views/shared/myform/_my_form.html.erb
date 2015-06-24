@@ -1,0 +1,17 @@
+<div class="tag-box tag-box-v6">
+<%= form_tag(action, method: method, class: 'sky-form no-border', id: form_id) %>
+<h2><strong><%= title %></strong></h2>
+<hr />
+<div class="row">
+  <section class="col col-6"><label class="label">项目名称<span class="text-red">*</span></label>
+    <label class="input">
+      <i class="icon-append fa fa-info"></i>
+      <input type="text" value="" name="orders[name]" id="orders_name">
+      <b class="tooltip tooltip-bottom-right">项目名称应该包含主要产品信息，例如：XXX直属库输送机采购项目</b>
+    </label>
+  </section>
+</div>
+<input type="hidden" name="uploaded_file_ids" id="myform_uploaded_file_ids">
+</form>
+<hr />
+</div>
