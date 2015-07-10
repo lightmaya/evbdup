@@ -16,16 +16,8 @@
 }
 
 /*Scrollbar*/
-.contentHolder {
-	padding: 0;
+.mCustomScrollbar {
 	height: 320px; 
-	margin: 0px auto;
-	overflow: hidden; 
-	position: relative; 
-}
-
-.spacer { 
-  	text-align: center 
 }
 
 /*Panel Title Box*/
@@ -95,7 +87,7 @@
 
 .profile .notification small {
 	color: #999;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .profile .notification h4 {
@@ -201,6 +193,31 @@
 	background: #fff;
 }
 
+.profile .table th {
+	min-width: 100px;
+}
+
+.profile .table td {
+	vertical-align: middle;
+}
+
+.profile .table h3 {
+	margin-top: 0;
+	font-size: 16px;
+	margin-bottom: 5px;
+}
+
+.profile .table a {
+	color: #555;
+}
+
+.profile .table-search-v2 td img {
+	width: 70px;
+	height: 70px;
+	margin: 0 auto;
+	display: block;
+}
+
 .profile .table > thead > tr > th, 
 .profile .table > tbody > tr > th, 
 .profile .table > tfoot > tr > th, 
@@ -242,7 +259,7 @@
 
 .profile .comment-list li {
 	color: #999;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .profile .comment-list li a {
@@ -392,10 +409,6 @@
 }
 
 /*Image Uploaded*/
-.profile .img-uploaded li {
-	padding: 0;
-}
-
 .profile .img-uploaded img {
 	width: 120px;
 	height: auto;
@@ -702,12 +715,14 @@
 }
 
 .profile .blog-info-v2 {
+	margin-left: 0;
 	margin-bottom: 15px;
 }
 
 .profile .blog-info-v2 li {
 	font-size: 12px;
 	padding-left: 8px;
+	line-height: 12px;
 	border-left: 1px solid #eee;
 }
 
@@ -728,6 +743,7 @@
 }
 
 .profile .project-share ul {
+	margin-left: 0;
 	margin-bottom: 0;
 }
 
@@ -761,7 +777,7 @@
 
 /*Profile History
 ------------------------------------*/
-/*.profile .timeline-v2:before {
+.profile .timeline-v2:before {
 	background: #eee;
 }
 
@@ -786,7 +802,7 @@
 		border-right-color: transparent;
 	}
 }
-*/
+
 /*Profile Settings
 ------------------------------------*/
 /*Profile Edit*/
@@ -809,7 +825,7 @@
 
 /*Tab*/
 .profile .tab-content {
-	/*padding: 0;*/
+	padding: 0;
 }
 
 @media (max-width: 768px) {
@@ -826,4 +842,3 @@
 .profile .sky-form .toggle-change i {
 	left: 180px;
 }
-

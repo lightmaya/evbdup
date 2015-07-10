@@ -1,7 +1,5 @@
 /*Import custom_jquery-jvectormap.css*/
-/*
- *= require plugins/vector-map/jquery-jvectormap
-*/
+@import url(jquery-jvectormap.css);
 
 .jvectormap-zoomin, .jvectormap-zoomout {
     width: 20px;

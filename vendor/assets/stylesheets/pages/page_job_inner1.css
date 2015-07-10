@@ -60,6 +60,7 @@
 
 .job-description .star-vote {
 	float: left;
+	margin-left: 5px;
 	margin-right: 10px;
 }
 
@@ -115,7 +116,7 @@
 }
 
 .job-description .p-chart .overflow-h li a {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 /*Circle in Responsive*/
@@ -131,13 +132,13 @@
 }
 
 .job-description .save-job i {
-	color: #999;
+	color: #555;
 	min-width: 25px;
 	text-align: center;
 }
 
 .job-description .save-job a {
-	color: #999;
+	color: #555;
 }
 
 .job-description .save-job a:hover {

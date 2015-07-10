@@ -8,17 +8,19 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require plugins/bootstrap/css/bootstrap.min
+ *= require plugins/bootstrap.min
  *= require style
- *= require plugins/themes/default
+ *= require headers/header-default
+ *= require footers/footer-v1
+ *= require plugins/animate
  *= require plugins/ui-dialog
  *= require plugins/dialog-select
- *= require plugins/line-icons/line-icons
- *= require plugins/font-awesome/css/font-awesome.min
+ *= require plugins/line-icons
+ *= require plugins/font-awesome/font-awesome.min
  *= require plugins/jquery.fileupload-ui
  *= require plugins/zTreeStyle
- *= require plugins/sky-forms/version-2.0.1/css/custom-sky-forms
- *= require plugins/fancybox/source/jquery.fancybox
+ *= require plugins/sky-forms/custom-sky-forms
+ *= require plugins/jquery.fancybox
  *= require_self
  */
 

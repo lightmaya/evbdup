@@ -13,22 +13,25 @@
 //= require plugins/jquery-1.10.2.min
 //= require plugins/jquery-migrate-1.2.1.min
 //= require jquery_ujs 
-//= require plugins/bootstrap/js/bootstrap.min
+//= require plugins/bootstrap.min
 //= require plugins/back-to-top
 //= require plugins/jquery.query
 //= require plugins/dialog-min
-//= require plugins/fancybox/source/jquery.fancybox.pack
+//= require plugins/fancybox/jquery.fancybox.pack
+//= require plugins/smoothScroll
+//= require plugins/jquery.parallax
 //= require app
 //= require form
 //= require plugins/jquery.dragsort-0.5.2.min
-
+//= require plugins/style-switcher
 
 $(function() {
 
 	// 初始化
 	App.init();
+  StyleSwitcher.initStyleSwitcher();
 	// 初始化 图片展示
-	App.initFancybox();
+	// App.initFancybox();
 
 	// 状态筛选,用于list列表页面
 	$(".status_filter").on('click',function(){
