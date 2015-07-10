@@ -341,7 +341,7 @@
    min-width: 65px;
    font-size: 30px;
    position: relative;
-   background: #72c02c;
+   background: #018b3e;
 }
 
 .counters span.counter-icon i:after {
@@ -352,7 +352,7 @@
    bottom: -7px;
    display: block; 
    position: absolute;
-   border-top: 7px solid #72c02c;
+   border-top: 7px solid #018b3e;
    border-left: 7px solid transparent;
    border-right: 7px solid transparent;
    border-left-style: inset; /*FF fixes*/
@@ -389,7 +389,7 @@
 
 #topcontrol:hover {
   color: #fff;
-  background: #72c02c;
+  background: #018b3e;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
@@ -409,7 +409,7 @@
 
 .owl-btn:hover {
   color: #fff;
-  background: #72c02c;
+  background: #018b3e;
 }
 
 /*Owl Carousel v1*/
@@ -484,7 +484,7 @@
 
 .owl-carousel-v5 .owl-controls .owl-page.active span,
 .owl-carousel-v5 .owl-controls.clickable .owl-page:hover span {
-  background: #72c02c;
+  background: #018b3e;
 }
 
 .owl-carousel-v5 .owl-controls .owl-page span {
@@ -615,7 +615,7 @@
 }
 
 .testimonials-v3 .testimonials-v3-title p {
-  color: #72c02c;
+  color: #018b3e;
   margin-bottom: 0;
 }
 
@@ -667,7 +667,7 @@
 
 .testimonials-v3 .owl-buttons .owl-prev:hover,
 .testimonials-v3 .owl-buttons .owl-next:hover {
-  background: #72c02c;
+  background: #018b3e;
   -webkit-transition: background 0.4s ease-in-out;
   -moz-transition: background 0.4s ease-in-out;
   -o-transition: background 0.4s ease-in-out;
@@ -734,7 +734,7 @@
 }
 
 .owl-work-v1 .item a:hover span {
-  border-bottom: solid 2px #72c02c;
+  border-bottom: solid 2px #018b3e;
     -webkit-transition: all 0.2s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.2s ease-in-out;

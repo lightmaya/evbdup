@@ -29,7 +29,7 @@
 
     <div class="wrapper">
         <!--=== Header ===-->    
-        <%= render :partial => '/layouts/header' %>
+        <%= render :partial => '/shared/header' %>
         <!--=== End Header ===-->     
 
         <!--=== Breadcrumbs ===-->
@@ -58,22 +58,7 @@
         <!--=== End Content Part ===-->
 
         <!--=== Copyright ===-->
-        <div class="copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6">                     
-                        <p> 
-                            Copyright © 2011-2014 中储粮服务网 fwgs.sinograin.com.cn 
-                        </p>
-                    </div>
-                    <div class="col-md-6">  
-                        <a href="index-2.html">
-                            <img class="pull-right" id="logo-footer" src="/plugins/images/logo2-default.png" alt="">
-                        </a>
-                    </div>
-                </div>
-            </div> 
-        </div><!--/copyright--> 
+        <%= render :partial => '/shared/footer' %>
         <!--=== End Copyright ===-->
     </div><!--/End Wrapepr-->
 
