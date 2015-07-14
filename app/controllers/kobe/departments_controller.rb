@@ -6,7 +6,7 @@ class Kobe::DepartmentsController < KobeController
   layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit]
 
   def index
-    
+    @dep ||= current_user.department
   end
 
   def move
@@ -14,7 +14,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def ztree
-    ztree_json(Department)
+    ztree_json(Department,current_user.department)
   end
 
   def new

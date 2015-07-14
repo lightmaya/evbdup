@@ -1,4 +1,8 @@
 function get_ztree_setting(){
+	if(get_ztree_params('hide_tree')){
+		$("#show_tree_div").css("display","none");
+		$("#show_content_div").removeClass("col-md-9").addClass("col-12");
+	}
 	return {
 		async: {
 			enable: true,

@@ -8,15 +8,15 @@
 			<thead>
 				<tr>
 					<th class="select_all">
-						<label class="checkbox">
+						<label>
 							<input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
 						</label>
 					</th>
 					<th class="index">序号</th>
 					<th>用户名</th>
-					<th class="hidden-sm">姓名</th>
-					<th class="hidden-sm">联系电话</th>
-					<th class="hidden-sm">手机</th>
+					<th>姓名</th>
+					<th>联系电话</th>
+					<th>手机</th>
 					<th>状态</th>
 					<th class="cando">操作</th>
 				</tr>
@@ -25,11 +25,11 @@
 				<% @dep.user.each_with_index do |user,index| %>
 				<tr>
 					<td>
-						<label class="checkbox">
+						<label>
 							<input type="checkbox" name="check[]" value="<%= user.id %>" onclick="setSelectAll();"><i></i>
 						</label>
 					</td>
-					<td><%= show_index(index) %></td>
+					<td align="center"><%= show_index(index) %></td>
 					<td><%= user.login %></td>
 					<td><%= user.name %></td>
 					<td><%= user.tel %></td>

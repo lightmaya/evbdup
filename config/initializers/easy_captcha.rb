@@ -15,8 +15,8 @@ EasyCaptcha.setup do |config|
   # config.length         = 6
 
   # Image
-  # config.image_height   = 40
-  # config.image_width    = 140
+  config.image_height   = 32
+  config.image_width    = 100
 
   # eSpeak
   # config.espeak do |espeak|

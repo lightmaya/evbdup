@@ -1,4 +1,4 @@
-<div class="col-md-3 md-margin-bottom-40">
+<div class="col-md-3 md-margin-bottom-40" id="show_tree_div">
 	<div class='tag-box tag-box-v3'>
 		<ul id="ztree_show" class="ztree"></ul>
 	</div>
@@ -21,17 +21,14 @@
 		</button>
 	</div>
 
-	<%= modal_dialog("opt_dialog") %>
-
 </div>
-<div class="profile col-md-9">
-	<div class="profile-body">
-		<div class="tab-content">
-			<div class="profile-edit tab-pane fade active in" id="show_ztree_content">
-				<div class="panel-heading overflow-h margin-bottom-20" id="ztree_title">
-				</div>
-				<div id="ztree_content">
-				</div>
+<div class="tag-box tag-box-v4 col-md-9" id="show_content_div">
+	<%= modal_dialog("opt_dialog") %>
+	<div class="tab-content">
+		<div class="tab-pane fade active in" id="show_ztree_content">
+			<div class="panel-heading overflow-h margin-bottom-20 no-padding" id="ztree_title">
+			</div>
+			<div id="ztree_content">
 			</div>
 		</div>
 	</div>
@@ -42,6 +39,8 @@
 		var path = "";
 		switch (type)
 		{
+			// 隐藏左侧的树 false为默认不隐藏显示树 true不显示树
+			case 'hide_tree': path = <%= hide_tree ||= false %>; break;
 			case 'init': path = "<%= get_path %>"; break;
 			case 'move': path = "<%= post_path %>"; break;
 			case 'current_node_id': path = "<%= current_node_id ||= 0 %>"; break;

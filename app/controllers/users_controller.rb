@@ -47,7 +47,7 @@ class UsersController < JamesController
       write_logs(dep,"注册",'账号创建成功')
       write_logs(user,"注册",'账号创建成功')
       UserMailer.registration_confirmation(user).deliver
-      tips_get '账号创建成功！请激活账号'
+      tips_get '账号创建成功！请完善资料'
       redirect_to kobe_departments_path
     else
       msg = dep.errors.full_messages.blank? ? user.errors.full_messages : dep.errors.full_messages

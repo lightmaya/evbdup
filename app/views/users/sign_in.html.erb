@@ -2,50 +2,66 @@
   <div class="row">
     <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 shadow-wrapper">
       <div class="box-shadow shadow-effect-2">
-        <%= form_for(User.new, url: login_users_path, method: :post, html: { class: "sky-form reg-page", id: "sign_in_form" }) do |u| %>
-        <div class="reg-header">            
-          <h2>用户登录</h2>
-        </div>
-        
-        <div class="input-group margin-bottom-20">
-          <span class="input-group-addon"><i class="fa fa-user"></i></span>
-          <%= u.text_field :login, placeholder: "登录名", class: "form-control" %>
-        </div>  
 
-        <div class="input-group margin-bottom-20">
-          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-          <%= u.password_field :password, placeholder: "密码", class: "form-control" %>
-        </div>
+        <%= form_for(User.new, url: login_users_path, method: :post, html: { class: "sky-form", id: "sign_in_form" }) do |u| %>
+          <header>用户登录</header>
+          
+          <fieldset>                  
+            <section>
+              <div class="row">
+                <label class="label col col-4">用户名</label>
+                <div class="col col-8">
+                  <label class="input">
+                    <i class="icon-append fa fa-user"></i>
+                    <%= u.text_field :login, placeholder: "用户名" %>
+                  </label>
+                </div>
+              </div>
+            </section>
+            
+            <section>
+              <div class="row">
+                <label class="label col col-4">密 码</label>
+                <div class="col col-8">
+                  <label class="input">
+                    <i class="icon-append fa fa-lock"></i>
+                    <%= u.password_field :password, placeholder: "密 码" %>
+                  </label>
+                  <div class="note"><%= link_to "忘记密码?", forgot_password_users_path %></div>
+                </div>
+              </div>
+            </section>
 
-        <div id="captcha_div" style="display: none;">
-          <div class="col-md-6 input-group">
-            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-            <input id='user_captcha' name='user[captcha]' type='text' placeholder="验证码" class="form-control" >
-          </div>
-          <div class="col-md-6">
-            <%= captcha_tag %>
-          </div>
-        </div>
+            <div id="captcha_div" style="display: none;">
+              <section>
+                <div class="row">
+                  <label class="label col col-4">验证码</label>
+                  <div class="col col-8">
+                    <label class="input input-captcha">
+                      <%= captcha_tag %>
+                      <input id='user_captcha' name='user[captcha]' type='text' placeholder="验证码">
+                    </label>
+                  </div>
+                </div>
+              </section>
+            </div>
+            
+            <section>
+              <div class="row">
+                <div class="col col-4"></div>
+                <div class="col col-8">
+                  <label class="checkbox">
+                    <input id='user_remember_me' name='user[remember_me]' type='checkbox' value='1'><i></i> 自动登录?
+                  </label>
+                </div>
+              </div>
+            </section>
+          </fieldset>
+          <footer>
+            <button type="submit" class="btn-u pull-right">登 录</button>
+            <%= link_to "注 册", sign_up_users_path, class: "btn-u btn-u-default" %>
+          </footer>
 
-        <div class="row">
-          <div class="col-md-6 checkbox">
-            <label><input id='user_remember_me' name='user[remember_me]' type='checkbox' value='1'> 自动登录?</label>
-          </div>
-          <div class="col-md-6">
-            <button class="btn-u pull-right" type="submit"> 登 录 </button>                        
-          </div>
-        </div>
-
-        <hr>
-        
-        <div class="row">
-          <div class="col-lg-6">
-            <%= link_to "忘记密码?", forgot_password_users_path %>
-          </div>
-          <div class="col-lg-6 text-right">
-            <%= link_to "免费注册", sign_up_users_path %>
-          </div>
-        </div>
         <% end %>
       </div>    
     </div>

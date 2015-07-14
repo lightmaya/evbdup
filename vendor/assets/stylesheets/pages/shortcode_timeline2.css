@@ -52,7 +52,7 @@
 
 /* Right content */
 .timeline-v2 > li .cbp_tmlabel {
-	color: #fff;
+	/*color: #fff;*/
 	padding: 10px 20px 20px;
 	background: #f3f3f3;
 	line-height: 1.4;

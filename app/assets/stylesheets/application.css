@@ -19,6 +19,7 @@
  *= require plugins/font-awesome/font-awesome.min
  *= require plugins/jquery.fileupload-ui
  *= require plugins/zTreeStyle
+ *= require plugins/sky-forms/sky-forms
  *= require plugins/sky-forms/custom-sky-forms
  *= require plugins/jquery.fancybox
  *= require_self
@@ -27,7 +28,7 @@
 .text-red{color:#ff0000;}
 table td, .word_break {word-break: break-all;}
 table th.select_all {width:36px;}
-table th.index {width:56px;}
+table th.index {width:52px;}
 table th.status_badge {width:92px;}
 table th.status_bar {width:142px;}
 table th.date {width:88px;}
