@@ -39,9 +39,9 @@ class UsersController < JamesController
 
   # 注册 department表和user表占位子
   def create_user_dep
-    dep = Department.new(name: params[:user][:dep], parent_id: '3')
-    user = User.new(params.require(:user).permit(:login, :email, :password, :password_confirmation))
-    if dep.save && user.save
+    dep = Department.create(name: params[:user][:dep], parent_id: '3', dep_type: false)
+    user = User.create(params.require(:user).permit(:login, :email, :password, :password_confirmation))
+    if dep.present? && user.present?
       user.update(department_id: dep.id)
       sign_in_user user
       write_logs(dep,"注册",'账号创建成功')
@@ -57,7 +57,7 @@ class UsersController < JamesController
   end
 
   def valid_dep_name
-    render :text => valid_remote(Department, ["name = ?", params.require(:user).permit(:dep)[:dep]])
+    render :text => valid_remote(Department, ["name = ? and dep_type is false", params.require(:user).permit(:dep)[:dep]])
   end
 
   def valid_user_login

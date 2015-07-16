@@ -118,9 +118,9 @@ private
     else
       result = "<label class='label'>#{name}</label>#{input_str}"
       if ["textarea","richtext"].include?(input_opts[:data_type])
-        section_class = "col col-12"
+        section_class = "col-md-12"
       else
-        section_class = "col col-#{12/grid.to_i}"
+        section_class = "col-md-#{12/grid.to_i}"
       end
       return content_tag(:section, raw(result).html_safe, :class => section_class)
     end

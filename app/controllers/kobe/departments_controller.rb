@@ -20,11 +20,13 @@ class Kobe::DepartmentsController < KobeController
   def new
     @dep = Department.new
     @dep.parent_id = params[:pid] unless params[:pid].blank?
-    @myform = SingleForm.new(Department.xml, @dep, { form_id: "department_form", action: kobe_department_path(@dep) })
+    @myform = SingleForm.new(@dep.parent.get_xml, @dep, { form_id: "department_form", action: kobe_department_path(@dep), grid: 2  })
   end
 
   def create
-    dep = create_and_write_logs(Department, Department.xml)
+    p_id = params[:departments][:parent_id].present? ? params[:departments][:parent_id] : 2
+    parent_dep = Department.find_by_id(p_id) 
+    dep = create_and_write_logs(Department, parent_dep.get_xml)
     if dep
       redirect_to kobe_departments_path(id: dep)
     else
@@ -33,7 +35,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def update
-    if update_and_write_logs(@dep, Department.xml)
+    if update_and_write_logs(@dep, @dep.get_xml)
       redirect_to kobe_departments_path(id: @dep)
     else
       redirect_back_or
@@ -41,7 +43,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def edit
-    @myform = SingleForm.new(Department.xml, @dep, { form_id: "department_form", action: kobe_department_path(@dep), method: "patch" })
+    @myform = SingleForm.new(@dep.get_xml, @dep, { form_id: "department_form", action: kobe_department_path(@dep), method: "patch", grid: 2 })
   end
 
   def show
@@ -133,7 +135,7 @@ class Kobe::DepartmentsController < KobeController
 
   # 验证单位名称
   def valid_dep_name
-    render :text => valid_remote(Department, ["name = ? and id != ?", params[:departments][:name], params[:obj_id]])
+    render :text => valid_remote(Department, ["name = ? and id != ? and dep_type is false", params[:departments][:name], params[:obj_id]])
   end
 
   private  

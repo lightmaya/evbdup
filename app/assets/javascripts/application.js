@@ -93,7 +93,12 @@ function validate_form_rules (form_id,form_rules,form_messages) {
 		messages: form_messages,
 		errorPlacement: function(error, element)
 		{
-			error.insertAfter(element.parent());
+      // 如果是radio 或者是checkbox 错误提示显示在 input.parent('label').parent('div')上
+      if(element.attr('type') == "radio" || element.attr('type') == "checkbox"){
+        error.insertAfter(element.parent().parent());
+      } else {
+        error.insertAfter(element.parent());
+      }
 		}
 	});
 };
