@@ -23,12 +23,14 @@
 //= require app
 //= require form
 //= require plugins/jquery.dragsort-0.5.2.min
+//= require plugins/fancybox/fancy-box
 //= require plugins/style-switcher
 
 $(function() {
 
 	// 初始化
 	App.init();
+  FancyBox.initFancybox(); // 初始化 图片展示
   StyleSwitcher.initStyleSwitcher();
 	// 初始化 图片展示
 	// App.initFancybox();

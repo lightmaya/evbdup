@@ -1,31 +1,33 @@
 <%= form_tag(update_add_user_kobe_department_path(@dep), method: "post", class: 'sky-form', id: "add_user_form") do %>
-<section>
-  <label class="label">登录名 <span class="color-red">*</span></label>
-  <label class="input">
-    <i class="icon-append fa fa-user"></i>
-    <input type="text" name="user[login]" id="user_login" placeholder="登录名" />
-    <b class="tooltip tooltip-bottom-right">长度为6-20个字符，不能是中文</b>
-  </label>
-</section>
-
-<div class="row">
-  <section class="col col-6">
-    <label class="label">密码 <span class="color-red">*</span></label>
+<fieldset>
+  <section>
+    <label class="label">用户名 <span class="color-red">*</span></label>
     <label class="input">
-      <i class="icon-append fa fa-lock"></i>
-      <input type="password" name="user[password]" id="user_password" placeholder="密码" />
-      <b class="tooltip tooltip-bottom-right">长度为6-20个字符</b>
+      <i class="icon-append fa fa-user"></i>
+      <input type="text" name="user[login]" id="user_login" placeholder="用户名" />
+      <b class="tooltip tooltip-bottom-right">长度为6-20个字符，不能是中文</b>
     </label>
   </section>
 
-  <section class="col col-6">
-    <label class="label">确认密码 <span class="color-red">*</span></label>
-    <label class="input">
-      <i class="icon-append fa fa-lock"></i>
-      <input type="password" name="user[password_confirmation]" id="user_password_confirmation" placeholder="确认密码" />
-    </label>
-  </section>
-</div>
+  <div class="row">
+    <section class="col col-6">
+      <label class="label">密码 <span class="color-red">*</span></label>
+      <label class="input">
+        <i class="icon-append fa fa-lock"></i>
+        <input type="password" name="user[password]" id="user_password" placeholder="密码" />
+        <b class="tooltip tooltip-bottom-right">长度为6-20个字符</b>
+      </label>
+    </section>
+
+    <section class="col col-6">
+      <label class="label">确认密码 <span class="color-red">*</span></label>
+      <label class="input">
+        <i class="icon-append fa fa-lock"></i>
+        <input type="password" name="user[password_confirmation]" id="user_password_confirmation" placeholder="确认密码" />
+      </label>
+    </section>
+  </div>
+</fieldset>
 <footer>
   <button class="btn-u" type="submit"><i class="fa fa-floppy-o"></i> 保 存 </button>
   <button class="btn-u btn-u-default" type="reset"><i class="fa fa-repeat"></i> 重 置 </button>

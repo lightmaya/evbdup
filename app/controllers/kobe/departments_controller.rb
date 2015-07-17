@@ -20,7 +20,7 @@ class Kobe::DepartmentsController < KobeController
   def new
     @dep = Department.new
     @dep.parent_id = params[:pid] unless params[:pid].blank?
-    @myform = SingleForm.new(@dep.parent.get_xml, @dep, { form_id: "department_form", action: kobe_department_path(@dep), grid: 2  })
+    @myform = SingleForm.new(@dep.parent.get_xml, @dep, { form_id: "department_form", action: kobe_department_path(@dep), grid: 2 })
   end
 
   def create
@@ -124,8 +124,7 @@ class Kobe::DepartmentsController < KobeController
 
   # 注册提交
   def commit
-    logs = prepare_logs_content(@dep,"提交","注册完成，提交！")
-    if @dep.change_status_and_write_logs("等待审核",logs)
+    if @dep.change_status_and_write_logs("等待审核",stateless_logs("提交","注册完成，提交！", false))
       tips_get("提交成功，请等待审核。")
     else
       flash_get(@dep.errors.full_messages)
@@ -141,6 +140,6 @@ class Kobe::DepartmentsController < KobeController
   private  
 
     def get_dep
-      @dep = Department.find(params[:id]) unless params[:id].blank? 
+      @dep = Department.find_by_id(params[:id]) unless params[:id].blank? 
     end
 end

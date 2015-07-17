@@ -43,9 +43,9 @@
 			case 'hide_tree': path = <%= hide_tree ||= false %>; break;
 			case 'init': path = "<%= get_path %>"; break;
 			case 'move': path = "<%= post_path %>"; break;
+			// ajax加载显示指定node和url current_node_id和ajax_show_url一起使用 'ajax_show_url'为默认显示show页面 
 			case 'current_node_id': path = "<%= current_node_id ||= 0 %>"; break;
-			// ajax加载显示当前节点 false为默认显示 true不显示
-			case 'ajax_show_node': path = <%= ajax_show_node ||= false %>; break;
+			case 'ajax_show_url': path = "<%= ajax_show_url ||= 'ajax_show_url'  %>"; break;
 			case 'model_name': path = "<%= controller_name.classify %>"; break;
 			// 右键菜单增加:new、修改:edit、删除:destroy、点击展示页面:show
 			default: path = '<%= "/#{params[:controller]}/" %>';

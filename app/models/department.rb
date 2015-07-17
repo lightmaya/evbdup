@@ -54,17 +54,17 @@ class Department < ActiveRecord::Base
 	      <node name='单位名称' column='name' hint='必须与参照营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:6, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
 	      <node name='单位简称' column='short_name'/>
         <node name='曾用名' column='old_name' display='disabled'/>
-        <node name='单位类型' column='dep_type' data_type='radio' data='[[0,"独立核算单位"],[1,"部门"]]' hint='必须与参照营业执照中的单位名称保持一致'/>
+        <node name='单位类型' column='dep_type' data_type='radio' data='[[0,"独立核算单位"],[1,"部门"]]' hint='独立核算单位是****************'/>
         <node name='营业执照注册号' column='license' hint='请参照营业执照上的注册号' rules='{required:true, minlength:15}' messages='请输入15个字符'/>
         <node name='税务登记证' column='tax' hint='请参照税务登记证上的号码' rules='{required:true, minlength:15}' messages='请输入15个字符'/>
         <node name='组织机构代码' column='org_code' hint='请参照组织机构代码证上的代码' rules='{required:true, minlength:10}' messages='请输入10个字符'/>
-        <node name='单位法人姓名' column='legal_name' icon='jpy' class='required'/>
+        <node name='单位法人姓名' column='legal_name' class='required'/>
         <node name='单位法人证件类型' class='required' data_type='radio' data='["居民身份证","驾驶证","护照"]'/>
-        <node name='单位法人证件号码' column='legal_number' icon='jpy' class='required'/>
-        <node name='开户银行' column='bank' icon='jpy' class='required box_radio' json_url='/json/roles'/>
-        <node name='银行帐号' column='bank_code' icon='jpy' class='required'/>
-        <node name='注册资金' column='capital' icon='jpy' class='required'/>
-        <node name='年营业额' column='turnover' icon='jpy' class='required'/>
+        <node name='单位法人证件号码' column='legal_number' class='required'/>
+        <node name='开户银行' column='bank' class='required box_radio' json_url='/json/roles'/>
+        <node name='银行帐号' column='bank_code' class='required'/>
+        <node name='注册资金' column='capital' class='required'/>
+        <node name='年营业额' column='turnover' class='required'/>
         <node name='单位人数' column='employee' data_type='radio' class='required' data='["20人以下","21-100人","101-500人","501-1001人","1001-10000人","1000人以上"]'/>
         <node name='邮政编码' column='post_code' rules='{required:true, number:true}'/>
 	      <node name='所在地区' class='tree_radio required' json_url='/json/areas' partner='area_id'/>
@@ -118,8 +118,8 @@ class Department < ActiveRecord::Base
     msg = []
     if [0].include?(self.status)
       msg << "单位信息填写不完整，请点击[修改]。" if self.org_code.blank?
-      msg << "没有上传资质证书，请点击[上传资质]。" if self.uploads.blank?
-      msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.user.find{ |u| !u.name.blank? }.blank?
+      msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 4
+      msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.user.find{ |u| u.name.present? }.blank?
     end
     return msg
   end

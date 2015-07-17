@@ -120,7 +120,7 @@ def get_node_value(obj,node,for_form=false)
     doc = Nokogiri::XML(obj.logs)
     doc.xpath("/root/node").each do |n|
       opt_time = n.attributes["操作时间"].to_s.split(" ")
-      act = n.attributes["操作内容"].to_s[0,2]
+      # act = n.attributes["操作内容"].to_s[0,2]
       infobar = []
       infobar << "状态:#{obj.status_badge(n.attributes["当前状态"].to_str.to_i)}" if n.attributes.has_key?("当前状态")
       infobar << "姓名:#{n.attributes["操作人姓名"]}"
@@ -148,17 +148,20 @@ def get_node_value(obj,node,for_form=false)
     # 图片类型
     if picture
       tmp = obj.uploads.map do |file|
-        %Q|<div class="col-md-#{12/grid}"><div class="thumbnails thumbnail-style thumbnail-kenburn">
-            <a href="#{file.upload.url(:original)}" title="#{file.upload_file_name}" data-rel="fancybox-button" class="fancybox-button zoomer">
-              <span class="overlay-zoom overflow-hidden">  
-                <img alt="" src="#{file.upload.url(:md)}" class="img-responsive">
-                <span class="zoom-icon"></span>                   
-              </span>                                              
-            </a>
-            <div class="caption">
-              <p class="word_break">#{file.upload_file_name}<br>[#{number_to_human_size(file.upload_file_size)}]</p>
-            </div>                  
-          </div></div>|.html_safe
+        %Q|<div class="col-md-#{12/grid}">
+            <div class="thumbnails thumbnail-style thumbnail-kenburn">
+              <div class="thumbnail-img">
+                <div class="overflow-hidden">
+                  <a href="#{file.upload.url(:lg)}" title="#{file.upload_file_name}" rel="#{obj.class.to_s.tableize}" class="fancybox">
+                    <span><img alt="" src="#{file.upload.url(:md)}" class="img-responsive"></span>                                              
+                  </a>
+                </div>
+              </div>
+              <div class="caption">
+                <p class="word_break">#{file.upload_file_name}<br>[#{number_to_human_size(file.upload_file_size)}]</p>
+              </div>                  
+            </div>
+          </div>|.html_safe
       end
     # 非图片类型
     else

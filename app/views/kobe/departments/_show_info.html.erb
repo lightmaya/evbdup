@@ -15,8 +15,7 @@
 					<th class="index">序号</th>
 					<th>用户名</th>
 					<th>姓名</th>
-					<th>联系电话</th>
-					<th>手机</th>
+					<th>联系方式</th>
 					<th>状态</th>
 					<th class="cando">操作</th>
 				</tr>
@@ -32,8 +31,7 @@
 					<td align="center"><%= show_index(index) %></td>
 					<td><%= user.login %></td>
 					<td><%= user.name %></td>
-					<td><%= user.tel %></td>
-					<td><%= user.mobile %></td>
+					<td><%= user.tel.present? ? "#{user.tel} / #{user.mobile}" : user.mobile %></td>
 					<td><%= user.status_badge %></td>
 					<td><%= btn_group(user.cando_list) %></td>
 				</tr>

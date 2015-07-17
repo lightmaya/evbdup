@@ -58,20 +58,14 @@ class User < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='登录名' column='login' class='required rangelength_6_20' display='readonly'/>
-        <node name='电子邮箱' column='email' class='required email' display='readonly'/>
+        <node name='用户名' column='login' class='required rangelength_6_20' display='readonly'/>
+        <node name='电子邮箱' column='email' class='required email'/>
         <node name='姓名' column='name' class='required'/>
-        <node name='出生日期' column='birthday' class='date_select required dateISO'/>
-        <node name='性别' column='gender' data_type='radio' class='required' data='["男","女"]'/>
-        <node name='身份证' column='identity_num'/>
+        <node name='电话' column='tel'/>
         <node name='手机' column='mobile' class='required'/>
         <node name='是否公开' column='is_visible' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
-        <node name='电话' column='tel'/>
         <node name='传真' column='fax'/>
         <node name='是否管理员' column='is_admin' data_type='radio' data='[[1,"是"],[0,"否"]]' class='required'/>
-        <node name='职务' column='duty'/>
-        <node name='职称' column='professional_title'/>
-        <node name='个人简历' column='bio' data_type='textarea'/>
       </root>
     }
   end

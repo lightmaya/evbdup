@@ -250,7 +250,7 @@ private
     if spoor.blank?
       return ""
     else
-      return %Q|<div class="headline"><h3 class="heading-sm">#{title}</h3></div><table class='table table-bordered'><thead><tr><th>参数名称</th><th>参数值</th></tr></thead><tbody>#{spoor}</tbody></table>|.html_safe.to_str
+      return %Q|<div class="headline"><h3 class="heading-sm">#{title}</h3></div><table class="table table-bordered"><thead><tr><th>参数名称</th><th>参数值</th></tr></thead><tbody>#{spoor}</tbody></table>|.html_safe.to_str
     end
   end
 
@@ -273,7 +273,7 @@ private
     if spoor.blank?
       return ""
     else
-      return %Q|<div class="headline"><h3 class="heading-sm">#{title}</h3></div><table class='table table-bordered'><thead><tr><th>参数名称</th><th>修改前</th><th>修改后</th></tr></thead><tbody>#{spoor}</tbody></table>|.html_safe.to_str
+      return %Q|<div class="headline"><h3 class="heading-sm">#{title}</h3></div><table class="table table-bordered"><thead><tr><th>参数名称</th><th>修改前</th><th>修改后</th></tr></thead><tbody>#{spoor}</tbody></table>|.html_safe.to_str
     end
   end
 

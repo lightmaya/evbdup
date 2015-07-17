@@ -50,25 +50,25 @@ table th.cando {width:114px;}
 .step .nav-justified > li > a {padding: 9px 30px 9px 20px; color: #687074; font-size: 15px; font-weight: 400; text-transform: uppercase;}
 */
 
-ol {
+/*ol {*/
     /*float:left;*/
     /*display:inline; */
-    counter-reset: li; /* Initiate a counter */
-    list-style: none; /* Remove default numbering */
-    *list-style: decimal; /* Keep using default numbering for IE6/7 */
-    font: 15px 'trebuchet MS', 'lucida sans';
-    padding: 0;
-    margin-bottom: 4em;
-    text-shadow: 0 1px 0 rgba(255,255,255,.5);
-}
-ol li {
+    /*counter-reset: li;  Initiate a counter */
+    /*list-style: none;  Remove default numbering */
+    /**list-style: decimal;  Keep using default numbering for IE6/7 */
+    /*font: 15px 'trebuchet MS', 'lucida sans';*/
+    /*padding: 0;*/
+    /*margin-bottom: 4em;*/
+    /*text-shadow: 0 1px 0 rgba(255,255,255,.5);*/
+/*}*/
+/*ol li {*/
     /*float:left;*/
-    display:inline; 
-}
+    /*display:inline; */
+/*}*/
 
-ol ol {
-    margin: 0 0 0 2em; /* Add some left margin for inner lists */
-}
+/*ol ol {*/
+    /*margin: 0 0 0 2em;  Add some left margin for inner lists */
+/*}*/
 
 
 /*圆形*/

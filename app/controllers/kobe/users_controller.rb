@@ -6,7 +6,7 @@ class Kobe::UsersController < KobeController
 
 
   def edit
-    @myform = SingleForm.new(User.xml, @user, { form_id: "user_form", action: kobe_user_path(@user), method: "patch" })
+    @myform = SingleForm.new(User.xml, @user, { form_id: "user_form", action: kobe_user_path(@user), method: "patch", grid: 2 })
   end
 
   def show
@@ -43,7 +43,7 @@ class Kobe::UsersController < KobeController
   end
 
   def save_freeze
-    logs = prepare_logs_content(@user,"冻结用户",params[:opt_liyou])
+    logs = stateless_logs("冻结用户", params[:opt_liyou], false)
     if @user.change_status_and_write_logs("冻结",logs)
       tips_get("冻结用户成功。")
     else
