@@ -1,0 +1,80 @@
+<div class="header">
+    <div class="container">
+        <!-- Logo -->
+        <a class="logo" href="#">
+            <img src="/plugins/images/logo1-default.png" alt="Logo">
+        </a>
+        <!-- End Logo -->
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <ul class="loginbar pull-right">
+                <li>您好，<%#= current_user.name %></li>  
+                <li class="topbar-devider"></li> 
+                <li>
+                    <a href="#">
+                        <i class="fa fa-shopping-cart"></i> 购物车
+                    </a>
+                    <span class="badge badge-red rounded-x">4</span>
+                </li> 
+                <li class="topbar-devider"></li> 
+                <li>
+                    <a href="#">
+                        <i class="fa fa-bolt"></i> 待办事项
+                    </a>
+                    <span class="badge badge-yellow rounded-x">2</span>
+                </li> 
+                <li class="topbar-devider"></li> 
+                <li>
+                    <a href="#">
+                        <i class="fa fa-envelope"></i> 站内消息
+                    </a>
+                    <span class="badge badge-orange rounded-x">5</span>
+                </li> 
+                <li class="topbar-devider"></li>   
+                <li><a href="page_faq.html">内部论坛</a></li> 
+                <li class="topbar-devider"></li>   
+                <li><a href="page_faq.html">帮助</a></li>  
+                <li class="topbar-devider"></li>   
+                <li><a href="/users/sign_out">退出</a></li>   
+            </ul>
+        </div>
+        <!-- End Topbar -->
+
+        <!-- Toggle get grouped for better mobile display -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="fa fa-bars"></span>
+        </button>
+        <!-- End Toggle -->
+    </div><!--/end container-->
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse mega-menu navbar-responsive-collapse">
+        <div class="container">
+            <ul class="nav navbar-nav">
+                <!-- Home -->
+                <li>
+                    <a href="/"><i class="fa fa-home"></i> 首页</a>
+                </li>
+                <!-- End Home -->
+
+                <%= current_user.show_menus.html_safe %>
+
+                <!-- Search Block -->
+                <li>
+                    <i class="search fa fa-search search-btn"></i>
+                    <div class="search-open">
+                        <div class="input-group animated fadeInDown">
+                            <input type="text" class="form-control" placeholder="请输入订单号">
+                            <span class="input-group-btn">
+                                <button class="btn-u" type="button">Go</button>
+                            </span>
+                        </div>
+                    </div>    
+                </li>
+                <!-- End Search Block -->
+            </ul>
+        </div>
+    </div><!--/navbar-collapse-->
+</div>
