@@ -14,7 +14,7 @@ module AboutAncestry
 
   # 拓展类方法
   module AncestryClassMethods
-	  def get_json(node) # name -> node
+	  def get_json(node,ajax_key='') # name -> node
 	    # if name.blank?
 	    #   nodes = self.attribute_method?("status") ? self.where.not(status: 404) : self.all
 	    # else
@@ -24,13 +24,10 @@ module AboutAncestry
 	    # end
       # 如果node为空 生成树的json 取所有状态不是已删除的节点 例如 menu、role等
       # 如果node不为空 取node和他的子孙们 例如 department 
-      if node.blank?
-        nodes = self.attribute_method?("status") ? self.where.not(status: 404) : self.all
-      else
-        # nodes = node.has_children? ? node.descendants.where.not(status: 404) : []
-        # nodes << node
-        nodes = node.subtree.where.not(status: 404)
-      end
+      cdt = []
+      cdt << "status != 404" if self.attribute_method?("status")
+      cdt << "name like ? " if ajax_key.present?
+      nodes = node.blank? ? self.where(cdt.join(" and "), "%#{ajax_key}%") : node.subtree.where(cdt.join(" and "), "%#{ajax_key}%")
 	    json = nodes.map{|n|%Q|{"id":#{n.id}, "pId":#{n.pid}, "name":"#{n.name}"}|}
 	    return "[#{json.join(", ")}]" 
 	  end

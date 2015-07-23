@@ -232,7 +232,7 @@
 			});
 		}
 		var chkStyle = getChkStyle(input_id);
-		var params = name == undefined ? {} : {'name' : name};
+		var params = name == undefined ? {} : {'ajax_key' : name};
 		// 树形搜索
 		if ($(dom).parents("div:first").siblings(".ztree").length > 0){
 			var treeId = $(dom).parents("div:first").siblings(".ztree").attr("id");
