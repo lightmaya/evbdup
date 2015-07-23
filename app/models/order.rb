@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Order < ActiveRecord::Base
-	has_many :products, class_name: :OrdersProduct
+	has_many :items, class_name: :OrdersItem
 	has_many :uploads, class_name: :OrdersUpload, foreign_key: :master_id
   default_scope -> {order("id desc")}
 

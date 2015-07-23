@@ -38,7 +38,7 @@
             <thead>
                 <tr>
                     <th class="select_all">
-                        <label class="checkbox">
+                        <label class="">
                             <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
                         </label>
                     </th>
@@ -54,7 +54,7 @@
                 <% @objs.each_with_index do |obj,index| %>
                 <tr>
                     <td>
-                        <label class="checkbox">
+                        <label class="">
                             <input type="checkbox" name="check[]" value="<%= obj.id %>" onclick="setSelectAll();"><i></i>
                         </label>
                     </td>

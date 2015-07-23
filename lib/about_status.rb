@@ -62,7 +62,8 @@ module AboutStatus
 		# status = self.class.get_status_attributes(status)[1] unless status.is_a?(Integer)
 		# self.update_columns("status" => status, "logs" => logs) unless status == self.status
 		if self.class.is_ancestry? && self.has_children?
-			id_array = self.class.self_and_descendants(self.id).status_not_in([404, status]).map(&:id)
+			# id_array = self.class.self_and_descendants(self.id).status_not_in([404, status]).map(&:id)
+			id_array = self.subtree.status_not_in([404, status]).map(&:id)
 		else
 			id_array = self.id
 		end

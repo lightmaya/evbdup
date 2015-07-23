@@ -5,7 +5,7 @@ module AboutAncestry
     base.extend(AncestryClassMethods)
     base.class_eval do 
       # 自己和后代
-      scope :self_and_descendants, lambda { |id| where(["FIND_IN_SET(?, CONCAT_WS(',',id,REPLACE(ancestry,'/',','))) >0", id ]) }
+      # scope :self_and_descendants, lambda { |id| where(["FIND_IN_SET(?, CONCAT_WS(',',id,REPLACE(ancestry,'/',','))) >0", id ]) }
       default_scope -> {order(:ancestry, :sort, :id)}
       # 树形结构
       has_ancestry :cache_depth => true
@@ -22,11 +22,14 @@ module AboutAncestry
 	    #   sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{self.to_s.tableize} a INNER JOIN  #{self.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
 	    #   nodes = self.find_by_sql([sql,"%#{name}%"])
 	    # end
+      # 如果node为空 生成树的json 取所有状态不是已删除的节点 例如 menu、role等
+      # 如果node不为空 取node和他的子孙们 例如 department 
       if node.blank?
         nodes = self.attribute_method?("status") ? self.where.not(status: 404) : self.all
       else
-        nodes = node.has_children? ? node.descendants : []
-        nodes << node
+        # nodes = node.has_children? ? node.descendants.where.not(status: 404) : []
+        # nodes << node
+        nodes = node.subtree.where.not(status: 404)
       end
 	    json = nodes.map{|n|%Q|{"id":#{n.id}, "pId":#{n.pid}, "name":"#{n.name}"}|}
 	    return "[#{json.join(", ")}]" 

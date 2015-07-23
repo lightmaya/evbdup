@@ -2,7 +2,8 @@
 class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |t|
-      t.integer :department_id, :default => 0, :comment => "单位id"
+      t.belongs_to :department, :default => 0, :comment => "单位id"
+      t.string :roleids, :limit => 800, :comment => "角色id"
       t.string :login, :comment => "登录名"
       t.string :password_digest, :null => false, :comment => "密码"
       t.string :remember_token, :comment => "自动登录"
@@ -15,10 +16,10 @@ class CreateUsers < ActiveRecord::Migration
       t.string :identity_pic, :comment => "身份证图片"
       t.string :email, :comment => "电子邮箱"#, :null => false
       t.string :mobile, :comment => "手机"
-      t.boolean :is_visible, :null => false, :default => true, :comment => "是否公开,目前仅指身份证和手机号"
+      # t.boolean :is_visible, :null => false, :default => true, :comment => "是否公开,目前仅指身份证和手机号"
       t.string :tel, :comment => "电话"
       t.string :fax, :comment => "传真"
-      t.boolean :is_admin, :null => false, :default => false, :comment => "是否管理员"                
+      # t.boolean :is_admin, :null => false, :default => false, :comment => "是否管理员"                
       t.integer :status, :null => false, :default => 0, :comment => "状态"
       t.string :duty, :comment => "职务"
       t.string :professional_title, :comment => "职称"

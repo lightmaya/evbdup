@@ -4,21 +4,22 @@
 	</div>
 
 	<div class='btn-group-vertical' id="rMenu" style="position:absolute; visibility:hidden;">
-		<button class='btn' style="font-size:12px;" onclick="addTreeNode();">
-			<i class=' icon-plus'></i> 增加
+	<% 
+		default_ztree_opt = []
+		default_ztree_opt << {onclick_func: "addTreeNode();", icon_class: "icon-plus", opt_name: "增加"}
+		default_ztree_opt << {onclick_func: "editTreeNode();", icon_class: "icon-wrench", opt_name: "修改"}
+		default_ztree_opt << {onclick_func: "removeTreeNode();", icon_class: "icon-trash", opt_name: "删除"}
+		default_ztree_opt << {onclick_func: "freezeTreeNode();", icon_class: "icon-ban", opt_name: "冻结"}
+		default_ztree_opt << {onclick_func: "recoverTreeNode();", icon_class: "icon-action-undo", opt_name: "恢复"}
+		ztree_opt ||= ["增加","修改","删除"]
+		ztree_opt.each do |opt|
+			ha = default_ztree_opt.find{|d| d[:opt_name] == opt}
+	%>
+		
+		<button class='btn' style="font-size:12px;" onclick="<%= ha[:onclick_func] %>">
+			<i class='<%= ha[:icon_class] %>'></i> <%= ha[:opt_name] %>
 		</button>
-		<button class='btn' style="font-size:12px;" onclick="editTreeNode();">
-			<i class='icon-wrench'></i> 修改
-		</button>
-		<button class='btn' style="font-size:12px;" onclick="freezeTreeNode();">
-			<i class='icon-ban'></i> 冻结
-		</button>
-		<button class='btn' style="font-size:12px;" onclick="recoverTreeNode();">
-			<i class='icon-action-undo'></i> 恢复
-		</button>
-		<button class='btn' style="font-size:12px;" onclick="removeTreeNode();">
-			<i class='icon-trash'></i> 删除
-		</button>
+		<% end %>
 	</div>
 
 </div>

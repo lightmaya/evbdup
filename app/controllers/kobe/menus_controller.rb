@@ -2,26 +2,28 @@
 class Kobe::MenusController < KobeController
   # load_and_authorize_resource
   
-  skip_before_action :verify_authenticity_token, :only => [:move,:destroy]
+  skip_before_action :verify_authenticity_token, :only => [:move]
   # protect_from_forgery :except => :index
-  before_action :get_menu, :only => [:edit, :update, :destroy, :show]
-  before_action :get_icon, :only => [:new, :index, :edit, :show]
-  layout false, :only => [:edit, :new, :show]
+  before_action :get_menu, :only => [:edit, :update, :destroy, :show, :index, :delete]
+  layout false, :only => [:edit, :new, :show, :delete]
 
 	def index
-		@menu = Menu.new
 	end
 
   def new
-  	@menu = Menu.new
-    @menu.parent_id = params[:pid] unless params[:pid].blank?
+  	menu = Menu.new
+    menu.parent_id = params[:pid] unless params[:pid].blank?
+    @myform = SingleForm.new(Menu.xml, menu, { form_id: "menu_form", action: kobe_menu_path(menu), grid: 2 })
   end
 
   def edit
-
+    @myform = SingleForm.new(Menu.xml, @menu, { form_id: "menu_form", action: kobe_menu_path(@menu), method: "patch", grid: 2 })
   end
 
   def show
+    @arr  = []
+    @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@menu,Menu.xml) }
+    @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@menu) }
   end
 
   def create
@@ -35,9 +37,9 @@ class Kobe::MenusController < KobeController
     #   flash_get(menu.errors.full_messages)
     #   render 'index'
     # end
-
-    if create_and_write_logs(Menu, Menu.xml)
-      redirect_to kobe_menus_path
+    menu = create_and_write_logs(Menu, Menu.xml)
+    if menu
+      redirect_to kobe_menus_path(id: menu)
     else
       render 'index'
     end
@@ -45,18 +47,24 @@ class Kobe::MenusController < KobeController
 
   def update
     if update_and_write_logs(@menu, Menu.xml)
-      redirect_to kobe_menus_path
+      redirect_to kobe_menus_path(id: @menu)
     else
       render 'index'
     end
   end
 
+  # 删除
+  def delete
+    render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_menu_form', action: kobe_menu_path(@menu), method: 'delete' }
+  end
+
   def destroy
-    if @menu.destroy
-      render :text => "删除成功！"
+    if @menu.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou]))
+      tips_get("删除单位成功。")
     else
-      render :text => "操作失败！"
+      flash_get(@menu.errors.full_messages)
     end
+    redirect_to kobe_menus_path(id: @menu.parent_id)
   end
 
   def move
@@ -70,11 +78,7 @@ class Kobe::MenusController < KobeController
   private  
 
     def get_menu
-      @menu = Menu.find(params[:id]) unless params[:id].blank?
-    end
-
-    def get_icon
-      @icon = Icon.leaves.map(&:name)
+      @menu = Menu.find_by_id(params[:id]) unless params[:id].blank?
     end
 
 end

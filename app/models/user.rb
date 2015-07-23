@@ -10,9 +10,12 @@ class User < ActiveRecord::Base
   validates :login, presence: true, length: { in: 6..20 }, uniqueness: { case_sensitive: false }
 
   belongs_to :department
-  has_and_belongs_to_many :menus
-  has_and_belongs_to_many :roles
-  has_many :permissions, through: :roles
+  # has_and_belongs_to_many :menus
+  # has_and_belongs_to_many :roles
+  # has_many :permissions, through: :roles
+  has_many :user_roles, :dependent => :destroy
+  has_many :roles, through: :user_roles
+  has_many :menus, through: :roles
   # 收到的消息
   has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  
 
@@ -30,7 +33,7 @@ class User < ActiveRecord::Base
 
   # 是否超级管理员,超级管理员不留操作痕迹
   def admin?
-    self.roles.map(&:name).include?("系统管理员")
+    # self.roles.map(&:name).include?("系统管理员")
   end
 
   def User.new_remember_token
@@ -63,9 +66,10 @@ class User < ActiveRecord::Base
         <node name='姓名' column='name' class='required'/>
         <node name='电话' column='tel'/>
         <node name='手机' column='mobile' class='required'/>
-        <node name='是否公开' column='is_visible' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
         <node name='传真' column='fax'/>
-        <node name='是否管理员' column='is_admin' data_type='radio' data='[[1,"是"],[0,"否"]]' class='required'/>
+        <node name='职务' column='duty'/>
+        <node name='权限分配' class='tree_checkbox required' json_url='/json/roles' partner='roleids'/>
+        <node column='roleids' data_type='hidden'/>
       </root>
     }
   end
@@ -78,8 +82,7 @@ class User < ActiveRecord::Base
     arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}', '#{dialog}') }]
     # 修改
     if [0,404].include?(self.status)
-      title = self.class.icon_action("修改")
-      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/edit', '#{dialog}') }]
+      arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/users/#{self.id}/edit','#show_ztree_content #ztree_content')"]
     end
     # 重置密码
     if [0,404].include?(self.status)
@@ -92,6 +95,15 @@ class User < ActiveRecord::Base
       arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/freeze', '#{dialog}') }]
     end
     return arr
+  end
+  
+  # 显示菜单
+  def show_menus
+    str = ""
+    Menu.roots.each do |menu|
+      str << menu.show_top(self.menus.uniq)
+    end
+    str
   end
 
   private

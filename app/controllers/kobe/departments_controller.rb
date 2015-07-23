@@ -18,9 +18,9 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def new
-    @dep = Department.new
-    @dep.parent_id = params[:pid] unless params[:pid].blank?
-    @myform = SingleForm.new(@dep.parent.get_xml, @dep, { form_id: "department_form", action: kobe_department_path(@dep), grid: 2 })
+    dep = Department.new
+    dep.parent_id = params[:pid] unless params[:pid].blank?
+    @myform = SingleForm.new(dep.parent.get_xml, dep, { form_id: "department_form", action: kobe_department_path(dep), grid: 2 })
   end
 
   def create
@@ -134,7 +134,7 @@ class Kobe::DepartmentsController < KobeController
 
   # 验证单位名称
   def valid_dep_name
-    render :text => valid_remote(Department, ["name = ? and id != ? and dep_type is false", params[:departments][:name], params[:obj_id]])
+    render :text => valid_remote(Department, ["name = ? and id <> ? and dep_type is false and status <> 404", params[:departments][:name], params[:obj_id]])
   end
 
   private  

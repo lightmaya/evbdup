@@ -20,7 +20,7 @@ Evbdup::Application.routes.draw do
 
   resources :json, :only => :index  do 
     collection do
-      get :areas, :menus, :categories, :roles
+      get :areas, :menus, :categories, :roles, :icons
     end
   end
 
@@ -62,6 +62,18 @@ Evbdup::Application.routes.draw do
       collection do
         get :ztree
         post :move
+      end
+      member do 
+        get :delete
+      end
+    end
+    resources :roles do
+      collection do
+        get :ztree
+        post :move
+      end
+      member do 
+        get :delete
       end
     end
     resources :users, :except => :index do 

@@ -5,4 +5,6 @@ class Icon < ActiveRecord::Base
   default_scope -> {order(:ancestry, :sort, :id)}
   scope :leaves, -> {where(:ancestry_depth => 1)}
 
+  include AboutAncestry
+
 end

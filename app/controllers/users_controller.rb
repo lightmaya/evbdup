@@ -57,7 +57,7 @@ class UsersController < JamesController
   end
 
   def valid_dep_name
-    render :text => valid_remote(Department, ["name = ? and dep_type is false", params.require(:user).permit(:dep)[:dep]])
+    render :text => valid_remote(Department, ["name = ? and dep_type is false and status <> 404", params.require(:user).permit(:dep)[:dep]])
   end
 
   def valid_user_login
