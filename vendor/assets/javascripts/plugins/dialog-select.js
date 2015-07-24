@@ -76,20 +76,20 @@
 	$(function(){
 		// 树形复选框
 	  $('body').on("click",".tree_checkbox",function(){
-	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"tree","checkbox");
+	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"tree","checkbox",$.parseJSON($(this).attr("json_params")));
 		});
 		// 树形单选框
 	  $('body').on("click",'.tree_radio',function(){
-	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"tree","radio");
+	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"tree","radio",$.parseJSON($(this).attr("json_params")));
 		});
 
 		// 弹框复选框
 	  $('body').on("click",'.box_checkbox',function(){
-	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"box","checkbox");
+	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"box","checkbox",$.parseJSON($(this).attr("json_params")));
 		});
 		// 弹框单选框
 	  $('body').on("click",'.box_radio',function(){
-	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"box","radio");
+	  	showDialog(this,$(this).attr("id"),$(this).attr("json_url"),"box","radio",$.parseJSON($(this).attr("json_params")));
 		});
 
 		// 绑定搜索输入框的回车事件
@@ -225,6 +225,7 @@
 		var dialog_id = $(dom).parents("div.dialog:first").attr("id");
 		var input_id = getInputId(dialog_id);
 		var url = $("#" + input_id).attr("json_url");
+		var params = $.parseJSON($("#" + input_id).attr("json_params"))
 		var d = dialog.get(dialog_id);
 		if (!d){
 			d = dialog({
@@ -232,7 +233,8 @@
 			});
 		}
 		var chkStyle = getChkStyle(input_id);
-		var params = name == undefined ? {} : {'ajax_key' : name};
+		// var params = name == undefined ? {} : {'ajax_key' : name};
+		if(name != undefined) {params["ajax_key"] = name}
 		// 树形搜索
 		if ($(dom).parents("div:first").siblings(".ztree").length > 0){
 			var treeId = $(dom).parents("div:first").siblings(".ztree").attr("id");
@@ -252,7 +254,7 @@
 	// 初始化树
 	function initZtree(d,treeId,url,chkStyle,params,filter){
 		$.ajax({
-		  type: 'get',
+		  type: 'post',
 		  url: url,
 		  dataType: 'json',
 		  data: params,
@@ -289,7 +291,7 @@
 	// 初始化BOX
 	function initBox(d,boxId,url,chkStyle,params,filter){
 		$.ajax({
-		  type: 'get',
+		  type: 'post',
 		  url: url,
 		  dataType: 'json',
 		  data: params,

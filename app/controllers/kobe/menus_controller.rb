@@ -72,7 +72,7 @@ class Kobe::MenusController < KobeController
   end
 
   def ztree
-    ztree_json(Menu)
+    ztree_nodes_json(Menu)
   end
 
   private  

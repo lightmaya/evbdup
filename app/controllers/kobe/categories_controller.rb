@@ -94,7 +94,7 @@ class Kobe::CategoriesController < KobeController
   end
 
   def ztree
-    ztree_json(Category)
+    ztree_nodes_json(Category)
   end
 
   # 验证品目名称

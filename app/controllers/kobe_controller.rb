@@ -29,7 +29,7 @@ class KobeController < ApplicationController
       str = '[]'
     else
       begin
-        str = obj_class.constantize.get_json(params[:name])
+        # str = obj_class.constantize.get_json(params[:name])
       rescue 
         str = '[]'
       end

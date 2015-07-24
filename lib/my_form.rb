@@ -181,6 +181,7 @@ private
     opt << "placeholder='#{node_options["placeholder"]}'" if node_options.has_key?("placeholder")
     opt << "class='#{node_options["class"]}'" if node_options.has_key?("class")
     opt << "json_url='#{node_options["json_url"]}'" if node_options.has_key?("json_url")
+    opt << "json_params='#{node_options["json_params"]}'" if node_options.has_key?("json_params")
     opt << "limited='#{node_options["limited"]}'" if node_options.has_key?("limited")
     return opt
   end

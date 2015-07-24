@@ -47,7 +47,7 @@ class Product < ActiveRecord::Base
 
   def self.more_actions_list(action='')
     arr = []
-    arr << [self.icon_action("增加"), "javascript:void(0)", json_url: "/json/categories", class: 'tree_checkbox']
+    arr << [self.icon_action("增加"), "javascript:void(0)", json_url: '/kobe/shared/ztree_json' json_params: '{"json_class":"Category"}' class: 'tree_checkbox']
     arr << [self.icon_action("冻结"), "/kobe/products/freeze"]
     arr << [self.icon_action("恢复"), "/kobe/products/recover"]
     arr << [self.icon_action("删除"), "/kobe/products/delete"]

@@ -5,9 +5,8 @@ class Menu < ActiveRecord::Base
   has_ancestry :cache_depth => true
   default_scope -> {order(:ancestry, :sort, :id)}
 
-  has_many :role_menus, :dependent => :destroy
-  has_many :roles, through: :role_menus
-  has_many :users, through: :roles
+  has_many :user_menus, :dependent => :destroy
+  has_many :users, through: :user_menus
 
 	include AboutAncestry
 	include AboutStatus
@@ -37,6 +36,9 @@ class Menu < ActiveRecord::Base
 	      <node name='相对路径' column='route_path' class='required'/>
 	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
 	      <node name='图标' column='icon'/>
+        <node name='显示菜单' column='is_show' data_type='radio' data='[[0,"不显示菜单"],[1,"显示菜单"]]'/>
+        <node name='自动获取' column='is_auto' data_type='radio' data='[[0,"不自动获取"],[1,"自动获取"]]'/>
+        <node name='弹出页面' column='is_blank' data_type='radio' data='[[0,"不弹出页面"],[1,"弹出页面"]]'/>
 	    </root>
 	  }
 	end
@@ -45,9 +47,9 @@ class Menu < ActiveRecord::Base
   def show_top(arr=[])
     return '' if (self.subtree & arr).blank?
     # 如果有孩子
-    if self.has_children? 
+    if self.has_visible_children? 
       substr = "<ul class=\"dropdown-menu\">"
-      self.children.each{|c|substr << c.show_top(arr)}
+      self.visible_children.each{|c|substr << c.show_top(arr)}
       substr << "</ul>"
       # 如果是根节点
       unless self.root?
@@ -69,5 +71,16 @@ class Menu < ActiveRecord::Base
     end
     return str
   end
+
+  # 可以显示的孩子菜单
+  def visible_children
+    self.children.where(is_show:true)
+  end
+
+  # 是否有可以显示的孩子菜单
+  def has_visible_children?
+    self.visible_children.present?
+  end
+
 
 end

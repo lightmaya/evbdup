@@ -10,12 +10,8 @@ class User < ActiveRecord::Base
   validates :login, presence: true, length: { in: 6..20 }, uniqueness: { case_sensitive: false }
 
   belongs_to :department
-  # has_and_belongs_to_many :menus
-  # has_and_belongs_to_many :roles
-  # has_many :permissions, through: :roles
-  has_many :user_roles, :dependent => :destroy
-  has_many :roles, through: :user_roles
-  has_many :menus, through: :roles
+  has_many :user_menus, :dependent => :destroy
+  has_many :menus, through: :user_menus
   # 收到的消息
   has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  
 
@@ -68,8 +64,8 @@ class User < ActiveRecord::Base
         <node name='手机' column='mobile' class='required'/>
         <node name='传真' column='fax'/>
         <node name='职务' column='duty'/>
-        <node name='权限分配' class='tree_checkbox required' json_url='/json/roles' partner='roleids'/>
-        <node column='roleids' data_type='hidden'/>
+        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Menu"}' partner='menuids'/>
+        <node column='menuids' data_type='hidden'/>
       </root>
     }
   end

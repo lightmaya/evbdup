@@ -14,7 +14,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def ztree
-    ztree_json(Department,current_user.department)
+    ztree_nodes_json(Department,current_user.department)
   end
 
   def new

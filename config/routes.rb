@@ -18,12 +18,6 @@ Evbdup::Application.routes.draw do
     end
   end
 
-  resources :json, :only => :index  do 
-    collection do
-      get :areas, :menus, :categories, :roles, :icons
-    end
-  end
-
   resources :uploads, :only => [:index, :create, :destroy]
 
   resources :users, :except => :show  do
@@ -40,6 +34,11 @@ Evbdup::Application.routes.draw do
     resources :main, :only => :index do
       collection do
         get :to_do
+      end
+    end
+    resources :shared, :only => :index do
+      collection do
+        post :get_ztree_title, :ztree_json
       end
     end
     resources :orders
@@ -59,15 +58,6 @@ Evbdup::Application.routes.draw do
       end
     end
     resources :menus do
-      collection do
-        get :ztree
-        post :move
-      end
-      member do 
-        get :delete
-      end
-    end
-    resources :roles do
       collection do
         get :ztree
         post :move
@@ -108,14 +98,6 @@ Evbdup::Application.routes.draw do
     end
   end
 # 后台end
-
-  resources :shared do
-    collection do
-      delete :department, :area
-      get :department, :area
-      post :get_ztree_title
-    end
-  end
 
   resources :kobe, :only => :index do
     collection do

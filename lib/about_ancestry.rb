@@ -14,20 +14,7 @@ module AboutAncestry
 
   # 拓展类方法
   module AncestryClassMethods
-	  def get_json(node,ajax_key='') # name -> node
-	    # if name.blank?
-	    #   nodes = self.attribute_method?("status") ? self.where.not(status: 404) : self.all
-	    # else
-     #    cdt = self.attribute_method?("status") ? "and status != 404" : ""
-	    #   sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{self.to_s.tableize} a INNER JOIN  #{self.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
-	    #   nodes = self.find_by_sql([sql,"%#{name}%"])
-	    # end
-      # 如果node为空 生成树的json 取所有状态不是已删除的节点 例如 menu、role等
-      # 如果node不为空 取node和他的子孙们 例如 department 
-      cdt = []
-      cdt << "status != 404" if self.attribute_method?("status")
-      cdt << "name like ? " if ajax_key.present?
-      nodes = node.blank? ? self.where(cdt.join(" and "), "%#{ajax_key}%") : node.subtree.where(cdt.join(" and "), "%#{ajax_key}%")
+	  def get_json(nodes)
 	    json = nodes.map{|n|%Q|{"id":#{n.id}, "pId":#{n.pid}, "name":"#{n.name}"}|}
 	    return "[#{json.join(", ")}]" 
 	  end

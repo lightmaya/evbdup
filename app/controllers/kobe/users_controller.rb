@@ -20,7 +20,7 @@ class Kobe::UsersController < KobeController
 
   def update()
     if update_and_write_logs(@user, User.xml)
-      @user.role_ids = @user.roleids.split(",")
+      @user.menu_ids = @user.menuids.split(",")
       redirect_to kobe_departments_path(id: @user.department.id)
     else
       redirect_back_or

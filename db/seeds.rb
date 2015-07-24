@@ -23,7 +23,7 @@ end
 
 if Menu.first.blank?
   [["订单管理",  "fa-tasks"], ["入围产品管理",  "fa-bookmark-o"], ["单位及用户管理", "fa-users"], ["数据统计与分析",  "fa-bar-chart-o"], ["公告管理", "fa-tag"], ["系统设置",  "fa-cogs"]].each do |option|
-    Menu.create(:name => option[0], :icon => option[1])
+    Menu.create(:name => option[0], :icon => option[1], :is_show => true)
   end
 end
 
@@ -35,16 +35,5 @@ if Category.first.blank?
   end
   ["输送机","清理筛"].each do |option|
     Category.create(:name => option, :status => 1, :parent => b)
-  end
-end
-
-if Role.first.blank?
-  a = Role.create(:name => "监管平台") 
-  b = Role.create(:name => "采购人平台") 
-  ["系统管理员","部长","处长","经办人"].each do |option|
-    Role.create(:name => option, :parent => a)
-  end
-  ["单位管理员","普通用户"].each do |option|
-    Role.create(:name => option, :parent => b)
   end
 end

@@ -61,13 +61,11 @@ class Department < ActiveRecord::Base
         <node name='单位法人姓名' column='legal_name' class='required'/>
         <node name='单位法人证件类型' class='required' data_type='radio' data='["居民身份证","驾驶证","护照"]'/>
         <node name='单位法人证件号码' column='legal_number' class='required'/>
-        <node name='开户银行' column='bank' class='required box_radio' json_url='/json/roles'/>
-        <node name='银行帐号' column='bank_code' class='required'/>
         <node name='注册资金' column='capital' class='required'/>
         <node name='年营业额' column='turnover' class='required'/>
         <node name='单位人数' column='employee' data_type='radio' class='required' data='["20人以下","21-100人","101-500人","501-1001人","1001-10000人","1000人以上"]'/>
         <node name='邮政编码' column='post_code' rules='{required:true, number:true}'/>
-	      <node name='所在地区' class='tree_radio required' json_url='/json/areas' partner='area_id'/>
+	      <node name='所在地区' class='tree_radio required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Area"}' partner='area_id'/>
 	      <node column='area_id' data_type='hidden'/>
         <node name='详细地址' column='address' class='required'/>
         <node name='公司网址' column='website'/>
@@ -119,6 +117,7 @@ class Department < ActiveRecord::Base
     if [0].include?(self.status)
       msg << "单位信息填写不完整，请点击[修改]。" if self.org_code.blank?
       msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 4
+      msg << "开户银行信息不完整，请点击[维护开户银行]" if self.bank.blank? || self.bank_code.blank?
       msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.user.find{ |u| u.name.present? }.blank?
     end
     return msg

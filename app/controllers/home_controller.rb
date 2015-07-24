@@ -11,7 +11,7 @@ class HomeController < JamesController
     end
 
     def json_test
-        ztree_json(Menu)
+        ztree_nodes_json(Menu)
     end
 
     def form_test

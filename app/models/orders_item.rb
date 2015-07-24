@@ -9,7 +9,7 @@ class OrdersItem < ActiveRecord::Base
 	    <root>
 	    	<node column='id' data_type='hidden'/>
 	    	<node column='category_code' data_type='hidden'/>
-	    	<node name='品目' class='tree_radio required' json_url='/json/areas' partner='category_code'/>
+	    	<node name='品目' class='tree_radio required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Category"}' partner='category_code'/>
 	    	<node name='品牌' column='brand' class='required'/>
 	    	<node name='型号' column='model' class='required'/>
 	    	<node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。'/>

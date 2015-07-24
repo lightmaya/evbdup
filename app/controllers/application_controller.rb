@@ -36,10 +36,29 @@ class ApplicationController < ActionController::Base
 
   protected
 
-    # 生产ztree的json
-    def ztree_json(obj_class,node='')
-      # render :json => obj_class.get_json(params[:name])
-      render :json => obj_class.get_json(node,params[:ajax_key])
+    # 生成带搜索的ztree的json 用于下拉框选择
+    def ztree_box_json(obj_class)
+      name = params[:ajax_key]
+      if name.blank?
+        nodes = obj_class.attribute_method?("status") ? obj_class.where.not(status: 404) : obj_class.all
+      else
+        cdt = obj_class.attribute_method?("status") ? "and a.status != 404 and b.status != 404" : ""
+        sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{obj_class.to_s.tableize} a INNER JOIN  #{obj_class.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
+        nodes = obj_class.find_by_sql([sql,"%#{name}%"])
+      end
+      render :json => obj_class.get_json(nodes)
+    end
+
+    # 生成不带搜索的ztree的json 用于维护树形结构 例如单位维护 菜单维护 角色维护等
+    # 如果node为空 生成树的json 取所有状态不是已删除的节点 例如 menu、category等
+    # 如果node不为空 取node和他的子孙们 例如 department 
+    def ztree_nodes_json(obj_class,node='')
+      if node.blank?
+        nodes = obj_class.attribute_method?("status") ? obj_class.where.not(status: 404) : obj_class.all
+      else
+        nodes = node.subtree.where.not(status: 404)
+      end
+      render :json => obj_class.get_json(nodes)
     end
 
     # 设置后退页面
