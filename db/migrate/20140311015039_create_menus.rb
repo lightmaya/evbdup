@@ -7,6 +7,7 @@ class CreateMenus < ActiveRecord::Migration
     t.integer :ancestry_depth        , :comment => "层级"
     t.string :icon                   , :comment => "图标"
     t.string :route_path             , :comment => "url"
+    t.string :can_opt_action         , :comment => "用于cancancan判断用户是否有这个操作 例如：Department|update"
     t.integer :status                , :comment => "状态", :limit => 2, :default => 0 ,:null => false
     t.integer :sort                  , :comment => "排序"
     t.boolean :is_show, :null => false, :default => false, :comment => "是否显示菜单"
