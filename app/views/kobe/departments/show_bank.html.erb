@@ -1,0 +1,4 @@
+<%= render partial: 'show_bank' if @dep.bank_account.present? %>
+<%= show_tips('warning','',@dep.bank_tips) %>
+
+<%= render partial: 'search', locals: { url: search_bank_kobe_departments_path, id: @dep.id } %>

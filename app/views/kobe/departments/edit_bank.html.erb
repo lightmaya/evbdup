@@ -1,0 +1,38 @@
+<%= form_tag(update_bank_kobe_department_path(@dep), method: 'post', class: 'sky-form', id: "bank_form") do %>
+<fieldset>
+	<section>
+		<label class="label">银行编号 <span class="color-red">*</span></label>
+		<label class="input">
+			<i class="icon-append fa fa-pencil"></i>
+			<input type="text" name="dep[bank_code]" id="bank_code" placeholder="银行编号" value="<%= params[:code] %>" readonly="readonly" />
+		</label>
+	</section>
+
+	<section>
+		<label class="label">开户银行名称 <span class="color-red">*</span></label>
+		<label class="input">
+			<i class="icon-append fa fa-pencil"></i>
+			<input type="text" name="dep[bank]" id="bank" placeholder="开户银行名称" value="<%= params[:name] %>" readonly="readonly" />
+		</label>
+	</section>
+
+	<section>
+		<label class="label">开户银行账号 <span class="color-red">*</span></label>
+		<label class="input">
+			<i class="icon-append fa fa-pencil"></i>
+			<input type="text" name="dep[bank_account]" id="bank_account" placeholder="开户银行账号" />
+		</label>
+	</section>
+
+</fieldset>
+<footer>
+	<button class="btn-u" type="submit"><i class="fa fa-floppy-o"></i> 保 存 </button>
+	<button class="btn-u btn-u-default" type="reset"><i class="fa fa-repeat"></i> 重 置 </button>
+</footer>
+<% end %>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		validate_form_rules("#bank_form", {"dep[bank_code]": {required: true},"dep[bank]": {required: true},"dep[bank_account]": {required: true}});
+	});
+</script>

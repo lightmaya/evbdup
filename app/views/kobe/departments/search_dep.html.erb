@@ -1,0 +1,18 @@
+<% if @deps.present? %>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th class="index">序号</th>
+            <th class="hidden-sm">名称</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @deps.each_with_index do |dep,index| %>
+        <tr>
+            <td><%= show_index(index) %></td>
+            <td><%= link_to dep.name, kobe_departments_path(id: dep.id), target: "_blank" %></td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+<% end %>

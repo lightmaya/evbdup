@@ -1,0 +1,33 @@
+<% if @banks.present? %>
+    <table class="table table-bordered table-hover" id="bank_rs_list">
+        <thead>
+            <tr>
+                <th class="index">序号</th>
+                <th>银行编号</th>
+                <th class="hidden-sm">开户银行名称</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @banks.each_with_index do |bank,index| %>
+            <tr>
+                <td><%= show_index(index) %></td>
+                <td class="bank_code"><%= bank.code %></td>
+                <td class="bank_name">
+                    <%= link_to bank.name, "#opt_dialog", "data-toggle" => "modal" %>
+                </td>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+<% end %>
+
+<script type="text/javascript">
+$("#bank_rs_list .bank_name a").on("click", function () {
+    var code = $(this).parent().prev("td.bank_code").text();
+    var name = $(this).text();
+    $("#opt_dialog .modal-header .modal-title").html("<%= Department.icon_action('维护开户银行').html_safe %>");
+    ajax_post_show("<%= edit_bank_kobe_department_path(params[:id]) %>",{id: "<%= params[:id] %>", code: code, name: name}, "#opt_dialog .modal-body",function(data){
+        $("#opt_dialog .modal-body").html(data);
+    });
+})
+</script>
