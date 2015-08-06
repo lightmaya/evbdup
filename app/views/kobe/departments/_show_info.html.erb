@@ -1,18 +1,13 @@
 <%= show_obj_info(@dep,@dep.get_xml) %>
 <div class="panel panel-grey margin-top-40">
 	<div class="panel-heading">
-		<h3 class="panel-title"><i class="fa fa-user"></i> 用户列表</h3>
+		<h3 class="panel-title"><i class="fa fa-users"></i> 用户列表</h3>
 	</div>
 	<div class="panel-body">
 		<table class="table table-bordered table-hover">
 			<thead>
 				<tr>
-					<th class="select_all">
-						<label>
-							<input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
-						</label>
-					</th>
-					<th class="index">序号</th>
+					<th></th>
 					<th>用户名</th>
 					<th>姓名</th>
 					<th>联系方式</th>
@@ -23,17 +18,12 @@
 			<tbody>
 				<% @dep.user.each_with_index do |user,index| %>
 				<tr>
-					<td>
-						<label>
-							<input type="checkbox" name="check[]" value="<%= user.id %>" onclick="setSelectAll();"><i></i>
-						</label>
-					</td>
-					<td align="center"><%= show_index(index) %></td>
+					<td align="center"><i class="fa fa-user color-<%= user.is_admin ? "orange" : "sea" %>"></i></td>
 					<td><%= user.login %></td>
 					<td><%= user.name %></td>
 					<td><%= user.tel.present? ? "#{user.tel} / #{user.mobile}" : user.mobile %></td>
 					<td><%= user.status_badge %></td>
-					<td><%= btn_group(user.cando_list) %></td>
+					<td><%= btn_group(user.cando_list(current_user.can_option_hash[user.class.to_s])) %></td>
 				</tr>
 				<% end %>
 			</tbody>

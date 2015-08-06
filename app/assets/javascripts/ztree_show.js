@@ -47,9 +47,11 @@ function zTreeOnAsyncSuccess(event, treeId, treeNode, msg) {
 	var current_node_id = get_ztree_params('current_node_id');
 	if (current_node_id != 0){
 		var node = zTree.getNodeByParam("id", current_node_id, null);
-		zTree.expandNode(node.getParentNode(), true, false, true);
-		var url = (get_ztree_params('ajax_show_url') == "ajax_show_url") ? get_ztree_params('show') + node.id : get_ztree_params('ajax_show_url');
-		show_ztree_content(url,node);
+		if (node) {
+			zTree.expandNode(node.getParentNode(), true, false, true);
+			var url = (get_ztree_params('ajax_show_url') == "ajax_show_url") ? get_ztree_params('show') + node.id : get_ztree_params('ajax_show_url');
+			show_ztree_content(url,node);
+		};
 	}
 };
 

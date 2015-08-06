@@ -42,7 +42,10 @@ class KobeController < ApplicationController
 
   # 树节点移动
   def ztree_move(obj_class)
-    render :text => obj_class.ztree_move_node(params[:sourceId],params[:targetId],params[:moveType],params[:isCopy])
+    # render :text => obj_class.ztree_move_node(params[:sourceId],params[:targetId],params[:moveType],params[:isCopy])
+    logs = obj_class.ztree_move_node(params[:sourceId],params[:targetId],params[:moveType],params[:isCopy])
+    write_logs(obj_class.find_by(id: params[:sourceId]), "移动",logs)
+    render :text => "targetId=#{params[:targetId]},sourceId=#{params[:sourceId]},moveType=#{params[:moveType]},isCopy=#{params[:isCopy]}"
   end
 
   # 以下是私有方法

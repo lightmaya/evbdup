@@ -44,12 +44,12 @@ Evbdup::Application.routes.draw do
     resources :orders
     resources :departments do 
       collection do
-        get :ztree
-        post :move, :valid_dep_name
+        get  :list
+        post :move, :valid_dep_name, :search_bank, :search_dep
       end
       member do 
-        get :add_user, :freeze, :upload, :delete, :recover
-        post :update_add_user, :update_freeze, :update_upload, :commit, :update_recover
+        get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank
+        post :update_add_user, :update_freeze, :update_upload, :commit, :update_recover, :edit_bank, :update_bank
       end
     end
     resources :articles do 

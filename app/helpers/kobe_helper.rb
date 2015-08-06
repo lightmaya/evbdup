@@ -33,5 +33,31 @@ module KobeHelper
     str << head_filter("more_actions",arr.push(["更多操作", "all"]))
     return raw str.html_safe
   end
+
+  # 树形结构的右键菜单 默认增加、修改、删除、冻结、恢复,can_opt_action对应cancancan验证的action
+  def ztree_right_btn(model_name='')
+    return '' if model_name.blank?
+    str = ""
+    default_ztree_opt = []
+    default_ztree_opt << {onclick_func: "addTreeNode();", icon_class: "icon-plus", opt_name: "增加", can_opt_action: "create"}
+    default_ztree_opt << {onclick_func: "editTreeNode();", icon_class: "icon-wrench", opt_name: "修改", can_opt_action: "update"}
+    default_ztree_opt << {onclick_func: "removeTreeNode();", icon_class: "icon-trash", opt_name: "删除", can_opt_action: "update_destroy"}
+    default_ztree_opt << {onclick_func: "freezeTreeNode();", icon_class: "icon-ban", opt_name: "冻结", can_opt_action: "update_freeze"}
+    default_ztree_opt << {onclick_func: "recoverTreeNode();", icon_class: "icon-action-undo", opt_name: "恢复", can_opt_action: "update_recover"}
+    opt = current_user.can_option_hash[model_name]
+    if opt.present?
+      opt.each do |opt|
+        ha = default_ztree_opt.find{|d| d[:can_opt_action] == opt.to_s}
+        if ha.present?
+          str << %Q{
+            <button class='btn' style="font-size:12px;" onclick="#{ha[:onclick_func]}">
+              <i class='#{ha[:icon_class]}'></i> #{ha[:opt_name]}
+            </button>
+          }
+        end
+      end
+    end
+    return raw str.html_safe
+  end
   
 end

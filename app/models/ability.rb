@@ -3,27 +3,33 @@ class Ability
 
   def initialize(user)
     # Define abilities for the passed in user here. For example:
-      alias_action :create, :read, :update, :destroy, :to => :crud
+      # alias_action :create, :read, :update, :destroy, :to => :crud
+      alias_action :delete, :destroy, :to => :update_destroy
+      alias_action :show_bank, :edit_bank, :to => :bank # 用于单位管理的维护开户银行
+
       user ||= User.new # guest user (not logged in)
-      if user.admin?
-        can :manage, :all
-      else
-        user.permissions.each do |p|
-        begin
-          subject = begin
-                      # RESTful Controllers
-                      p.subject.camelize.constantize
-                    rescue
-                      # Non RESTful Controllers
-                      p.subject.underscore.to_sym
-                    end
-          can p.action.to_sym, subject
-        rescue => e
-          Rails.logger.info "cancancan异常---------#{e}"
-          Rails.logger.info "cancancan对象#{subject}"
-        end
+      user.can_option_hash.each do |k,v|
+        can v, k.constantize
       end
-      end
+      # if user.admin?
+      #   can :manage, :all
+      # else
+      #   user.permissions.each do |p|
+      #   begin
+      #     subject = begin
+      #                 # RESTful Controllers
+      #                 p.subject.camelize.constantize
+      #               rescue
+      #                 # Non RESTful Controllers
+      #                 p.subject.underscore.to_sym
+      #               end
+      #     can p.action.to_sym, subject
+      #   rescue => e
+      #     Rails.logger.info "cancancan异常---------#{e}"
+      #     Rails.logger.info "cancancan对象#{subject}"
+      #   end
+      # end
+      # end
     #
     # The first argument to `can` is the action you are giving the user
     # permission to do.
@@ -42,5 +48,6 @@ class Ability
     #
     # See the wiki for details:
     # https://github.com/bryanrite/cancancan/wiki/Defining-Abilities
+    
   end
 end

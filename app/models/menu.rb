@@ -33,7 +33,8 @@ class Menu < ActiveRecord::Base
 	    	<node name='parent_id' data_type='hidden'/>
 	    	<node name='父节点名称' display='disabled'/>
 	      <node name='名称' column='name' class='required'/>
-	      <node name='相对路径' column='route_path' class='required'/>
+	      <node name='相对路径' column='route_path'/>
+        <node name='权限判断' column='can_opt_action' hint='用于cancancan判断用户是否有这个操作 默认read,create,update,destroy 也可自定义action 例如：Department|update'/>
 	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
 	      <node name='图标' column='icon'/>
         <node name='显示菜单' column='is_show' data_type='radio' data='[[0,"不显示菜单"],[1,"显示菜单"]]'/>
@@ -81,6 +82,5 @@ class Menu < ActiveRecord::Base
   def has_visible_children?
     self.visible_children.present?
   end
-
 
 end

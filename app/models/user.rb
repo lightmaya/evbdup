@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
 
   # 是否超级管理员,超级管理员不留操作痕迹
   def admin?
+    false
     # self.roles.map(&:name).include?("系统管理员")
   end
 
@@ -41,9 +42,9 @@ class User < ActiveRecord::Base
   end
 
   # 获取当前人的菜单
-  def show_menus
-    return menus_ul(Menu.to_depth(0))
-  end
+  # def show_menus
+  #   return menus_ul(Menu.to_depth(0))
+  # end
 
   def self.status_array
     [
@@ -64,6 +65,7 @@ class User < ActiveRecord::Base
         <node name='手机' column='mobile' class='required'/>
         <node name='传真' column='fax'/>
         <node name='职务' column='duty'/>
+        <node name='是否单位管理员' column='is_admin' data_type='radio' data='[[0,"否"],[1,"是"]]'/>
         <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Menu"}' partner='menuids'/>
         <node column='menuids' data_type='hidden'/>
       </root>
@@ -102,6 +104,35 @@ class User < ActiveRecord::Base
     str
   end
 
+  # 判断用户是否有这个操作 用于cancancan 
+  # 如果是管理员增加一个admin的操作 有admin的可以对别人的订单进行操作
+  # menu.can_opt_action = Department|create
+  def can_option_hash
+    arr = []
+    self.menus.each do |m|
+      arr << m.can_opt_action if m.can_opt_action.present?
+      arr |= m.ancestors.where("can_opt_action is not null and can_opt_action != ''").map(&:can_opt_action)
+    end
+    rs = {}
+    arr.uniq.each do |e| # e = Department|create
+      next if e.blank?
+      a = e.split("|") 
+      if a.length == 2
+        rs[a[0]] = [] unless rs.key?(a[0])
+        rs[a[0]] << a[1].to_sym
+        rs[a[0]] << "update_#{a[1]}".to_sym unless ["create", "read", "update", "update_destroy"].include?(a[1])
+      end
+    end
+    # {"Department"=> [:create, :read, :update, :update_destroy, :freeze, :update_freeze], 
+    # "Menu"=>[:create, :read, :update]}
+    return rs
+  end
+
+  # 自动获取操作权限
+  def set_auto_menu
+    self.menu_ids = Menu.where(is_auto: true).map(&:id)
+  end
+
   private
 
   def create_remember_token
@@ -109,32 +140,32 @@ class User < ActiveRecord::Base
   end
 
   # 在layout中展开菜单menu
-  def menus_ul(mymenus = [])
-    str = "<ul class='nav nav-stacked'>"
-    mymenus.each{|m| str << menus_li(m) }
-    str << "</ul>"
-    return str
-  end
+  # def menus_ul(mymenus = [])
+  #   str = "<ul class='nav nav-stacked'>"
+  #   mymenus.each{|m| str << menus_li(m) }
+  #   str << "</ul>"
+  #   return str
+  # end
 
-  def menus_li(menu)
-    if menu.icon.blank?
-      case menu.depth
-      when 0
-        menu.icon = "icon-caret-right"  
-      when 1
-        menu.icon = "icon-chevron-right"
-      else
-        menu.icon = "icon-angle-right"
-      end
-    end
-    unless menu.has_children?
-      str = "<li><a href='#{menu.route_path}'><i class='#{menu.icon}'></i><span>#{menu.name}</span></a></li>"
-    else
-      str = "<li><a class='dropdown-collapse' href='#{menu.route_path}'><i class='#{menu.icon}'></i><span>#{menu.name}</span><i class='icon-angle-down angle-down'></i></a>"
-      str << menus_ul(menu.children)
-      str << "</li>"
-    end
-    return str
-  end
+  # def menus_li(menu)
+  #   if menu.icon.blank?
+  #     case menu.depth
+  #     when 0
+  #       menu.icon = "icon-caret-right"  
+  #     when 1
+  #       menu.icon = "icon-chevron-right"
+  #     else
+  #       menu.icon = "icon-angle-right"
+  #     end
+  #   end
+  #   unless menu.has_children?
+  #     str = "<li><a href='#{menu.route_path}'><i class='#{menu.icon}'></i><span>#{menu.name}</span></a></li>"
+  #   else
+  #     str = "<li><a class='dropdown-collapse' href='#{menu.route_path}'><i class='#{menu.icon}'></i><span>#{menu.name}</span><i class='icon-angle-down angle-down'></i></a>"
+  #     str << menus_ul(menu.children)
+  #     str << "</li>"
+  #   end
+  #   return str
+  # end
 
 end

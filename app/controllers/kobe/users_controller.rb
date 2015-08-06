@@ -57,6 +57,6 @@ class Kobe::UsersController < KobeController
 
   def get_user
     params[:id] ||= current_user.id
-    @user = User.find(params[:id])
+    @user = User.find_by(id: params[:id])
   end
 end

@@ -48,6 +48,8 @@ class UsersController < JamesController
       write_logs(user,"注册",'账号创建成功')
       UserMailer.registration_confirmation(user).deliver
       tips_get '账号创建成功！请完善资料'
+      # 默认权限
+      user.set_auto_menu
       redirect_to kobe_departments_path
     else
       msg = dep.errors.full_messages.blank? ? user.errors.full_messages : dep.errors.full_messages

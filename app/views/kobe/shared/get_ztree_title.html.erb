@@ -1,6 +1,6 @@
 <h2 class="panel-title heading-sm pull-left">
-	<i class="fa fa-group"></i> <%= raw "#{@obj.name} #{@obj.status_badge if @obj.class.attribute_method?("status_badge")}" %>
+	<i class="fa fa-bars"></i> <%= raw "#{@obj.name} #{@obj.status_badge if @obj.class.attribute_method?("status_badge")}" %>
 </h2>
 <div class='pull-right'>
-	<%= btn_group(@obj.cando_list,false) if @obj.class.attribute_method?("cando_list") %>
+	<%= btn_group(@obj.cando_list(current_user.can_option_hash[@obj.class.to_s]),false) if @obj.class.attribute_method?("cando_list") %>
 </div>

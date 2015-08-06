@@ -1,12 +1,14 @@
 # -*- encoding : utf-8 -*-
 class Kobe::DepartmentsController < KobeController
+  skip_before_action :verify_authenticity_token, :only => [:move, :valid_dep_name, :commit, :edit_bank, :search_bank, :search_dep]
+  before_action :get_dep, :except => [:valid_dep_name, :search_bank, :search_dep, :move, :new, :create, :list]
+  layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank, :search_dep]
 
-  skip_before_action :verify_authenticity_token, :only => [:move, :valid_dep_name, :commit]
-  before_action :get_dep, :only => [:index, :show, :edit, :update, :add_user, :delete, :destroy, :freeze, :update_freeze, :recover, :update_recover, :upload, :update_upload, :commit]
-  layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit]
+  # cancancan验证 如果有before_action cancancan放最后
+  load_and_authorize_resource 
+  skip_authorize_resource :only => [:ztree, :valid_dep_name, :search_bank, :search_dep]
 
   def index
-    @dep ||= current_user.department
   end
 
   def move
@@ -14,7 +16,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def ztree
-    ztree_nodes_json(Department,current_user.department)
+    ztree_nodes_json(Department,@dep)
   end
 
   def new
@@ -25,7 +27,7 @@ class Kobe::DepartmentsController < KobeController
 
   def create
     p_id = params[:departments][:parent_id].present? ? params[:departments][:parent_id] : 2
-    parent_dep = Department.find_by_id(p_id) 
+    parent_dep = Department.find_by(id: p_id) 
     dep = create_and_write_logs(Department, parent_dep.get_xml)
     if dep
       redirect_to kobe_departments_path(id: dep)
@@ -47,9 +49,6 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def show
-    @arr  = []
-    @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@dep,true) }
-    @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@dep) }
   end
 
   # 删除单位
@@ -103,6 +102,7 @@ class Kobe::DepartmentsController < KobeController
     attributes[:department_id] = params[:id]
     user = User.new(attributes)
     if user.save
+      user.set_auto_menu
       write_logs(user,"分配人员账号",'账号创建成功')
       tips_get("账号创建成功。")
       redirect_to kobe_departments_path(id: params[:id],u_id: user.id)
@@ -122,6 +122,30 @@ class Kobe::DepartmentsController < KobeController
     redirect_to kobe_departments_path(id: @dep)
   end
 
+  # 维护开户银行
+  def show_bank
+  end
+
+  def edit_bank
+  end
+
+  def update_bank
+    attributes = params.require(:dep).permit(:bank_account, :bank, :bank_code)
+    if @dep.update(attributes)
+      write_logs(@dep,"维护开户银行","#{@dep.bank} [#{@dep.bank_account}]")
+      tips_get("开户银行保存成功。")
+      redirect_to kobe_departments_path(id: @dep)
+    else
+      flash_get(@dep.errors.full_messages)
+      redirect_back_or
+    end
+  end
+
+  # 搜索开户银行
+  def search_bank
+    @banks = Bank.where(["name like ?", "%#{params[:keyword].gsub(' ','%')}%"]).limit(20) if params[:keyword].present?
+  end
+
   # 注册提交
   def commit
     if @dep.change_status_and_write_logs("等待审核",stateless_logs("提交","注册完成，提交！", false))
@@ -137,9 +161,26 @@ class Kobe::DepartmentsController < KobeController
     render :text => valid_remote(Department, ["name = ? and id <> ? and dep_type is false and status <> 404", params[:departments][:name], params[:obj_id]])
   end
 
+  # 供应商管理
+  def list
+  end
+
+  # 搜索单位
+  def search_dep
+    @deps = Department.where(["name like ?", "%#{params[:keyword].gsub(' ','%')}%"]) if params[:keyword].present?
+  end
+
   private  
 
     def get_dep
-      @dep = Department.find_by_id(params[:id]) unless params[:id].blank? 
+      @dep = current_user.department if params[:id].blank?
+      if current_user.can_option_hash["Department"].present? && current_user.can_option_hash["Department"].include?(:admin)
+        @dep = Department.find_by(id: params[:id]) if params[:id].present?
+      else
+        @dep = (current_user.is_admin && params[:id].present?) ? current_user.department.subtree.find_by(id: params[:id]) : current_user.department
+      end
+
+      raise CanCan::AccessDenied.new("抱歉，您没有相关操作权限！") if @dep.blank?
     end
+
 end

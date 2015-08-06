@@ -25,6 +25,7 @@ module AboutAncestry
 	    source_node = self.find_by(id: source_id)
 	    target_node = self.find_by(id: target_id)
 	    return unless source_node && target_node
+      old_parent = source_node.parent.try(:name)
 	    if move_type == "inner" 
 	      source_node.reset_parent(target_node)
 	    else
@@ -38,7 +39,8 @@ module AboutAncestry
 	      end
 	      source_node.siblings_move(target_node,move_type)
 	    end
-	    return "targetId=#{target_id},sourceId=#{source_id},moveType=#{move_type},isCopy=#{is_copy}"
+	    # return "targetId=#{target_id},sourceId=#{source_id},moveType=#{move_type},isCopy=#{is_copy}"
+      return "[#{old_parent}] 移动到 [#{source_node.parent.try(:name)}]"
 	  end
   end
 

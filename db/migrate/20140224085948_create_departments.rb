@@ -10,7 +10,8 @@ class CreateDepartments < ActiveRecord::Migration
 		t.string :old_name               , :comment => "曾用名"
 		t.boolean :dep_type              , :comment => "0-独立核算单位/1-部门", :default => 0 ,:null => false
 		t.string :bank                   , :comment => "开户银行"
-		t.string :bank_code              , :comment => "银行帐号"
+		t.string :bank_code	             , :comment => "银行code"
+		t.string :bank_account           , :comment => "银行账号"
 		t.string :org_code               , :comment => "组织机构代码"
 		t.string :legal_name             , :comment => "单位法人姓名"
 		t.string :legal_number           , :comment => "单位法人身份证"

@@ -13,7 +13,12 @@ class ApplicationController < ActionController::Base
   before_action :store_location
   # cancan 权限校验
   rescue_from CanCan::AccessDenied do |exception|
-    redirect_to errors_path, :alert => exception.message
+    flash_get(exception.message)
+    respond_to do |format|
+      format.json { render text: exception.message }
+      format.html { redirect_to root_path}
+    end
+    # redirect_to errors_path, :alert => exception.message
     # render :file => "#{Rails.root}/public/403.html", :status => 403, :layout => false
   end
 

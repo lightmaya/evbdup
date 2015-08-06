@@ -81,33 +81,27 @@ class Department < ActiveRecord::Base
 
   end
 
-	def cando_list(action='')
+  # can_opt_arr = [:create, :read, :update] 对应cancancan验证的action 
+	def cando_list(can_opt_arr=[])
+    return "" if can_opt_arr.blank?
 		show_div = '#show_ztree_content #ztree_content'
     dialog = "#opt_dialog"
     arr = [] 
     # 查看单位信息
-    arr << [self.class.icon_action("详细"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}', '#{show_div}')"]
+    arr << [self.class.icon_action("详细"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}', '#{show_div}')"] if can_opt_arr.include?(:read)
     # 提交
-    if [0].include?(self.status) && self.get_tips.blank?
-      arr << [self.class.icon_action("提交"), "/kobe/departments/#{self.id}/commit", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }]
-    end
+    arr << [self.class.icon_action("提交"), "/kobe/departments/#{self.id}/commit", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can_opt_arr.include?(:commit) && self.get_tips.blank? and self.status == 0
     # 修改单位信息
-    if [0,1,404].include?(self.status)
-      arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/edit','#{show_div}')"]
-    end
+    arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/edit','#{show_div}')"] if can_opt_arr.include?(:update)
     # 修改资质证书
-    if [0,1,404].include?(self.status)
-      arr << [self.class.icon_action("上传资质"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/upload','#{show_div}','edit_upload_fileupload')"]
-    end
+    arr << [self.class.icon_action("上传资质"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/upload','#{show_div}','edit_upload_fileupload')"] if can_opt_arr.include?(:upload)
+    # 维护开户银行
+    arr << [self.class.icon_action("维护开户银行"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/show_bank','#{show_div}')"] if can_opt_arr.include?(:bank)
     # 增加下属单位
-    if [0,1,404].include?(self.status)
-      arr << [self.class.icon_action("增加下属单位"), "javascript:void(0)", onClick: "show_content('/kobe/departments/new?pid=#{self.id}','#{show_div}')"]
-    end
+    arr << [self.class.icon_action("增加下属单位"), "javascript:void(0)", onClick: "show_content('/kobe/departments/new?pid=#{self.id}','#{show_div}')"] if can_opt_arr.include?(:create)
     # 分配人员账号
-    if [0,1,404].include?(self.status)
-      title = self.class.icon_action("增加人员")
-      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/departments/#{self.id}/add_user', '#{dialog}') }]
-    end
+    title = self.class.icon_action("增加人员")
+    arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/departments/#{self.id}/add_user', '#{dialog}') }] if can_opt_arr.include?(:add_user)
     return arr
   end
 
@@ -121,6 +115,19 @@ class Department < ActiveRecord::Base
       msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.user.find{ |u| u.name.present? }.blank?
     end
     return msg
+  end
+
+  # 维护开户银行提示
+  def bank_tips
+    msg = []
+    msg << "请输入开户银行关键字，例如：开户银行是[招商银行股份有限公司北京西直门支行]，可输入“招商 北京 西直门”"
+    msg << "请尽量细化搜索的关键字，搜索结果最多20个"
+    msg << "如需修改开户银行，请点击开户银行的银行名称"
+  end
+
+  # 是否需要隐藏树形结构 用于没有下级单位的单位 不显示树
+  def hide_tree?
+    self.is_childless? || self.descendants.where.not(status: 404).blank?
   end
 
 end

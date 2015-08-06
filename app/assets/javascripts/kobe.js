@@ -31,21 +31,38 @@ function ajax_before_send(div){
 
 // Ajax加载页面
 function show_content(url,div,upload_form_id) {
+    ajax_get_show(url,'',div,function(data){
+        $(div).html(data);
+        // 如果有上传附件 加载上传的js
+        if(upload_form_id != undefined){
+            upload_files(upload_form_id);
+        }
+        // 如果有form 加载日期控件
+        if($(div).has('form').length != 0) {
+            Datepicker.initDatepicker();
+        }
+    })
+}
+// post 加载页面
+function ajax_post_show(url,data,div,success_function) {
+    $.ajax({
+        type: "post",
+        url: url,
+        data: data,
+        beforeSend: ajax_before_send(div),
+        success: success_function,
+        error: function(data) { $(div).html(data.responseText); }
+    });
+}
+// get 加载页面
+function ajax_get_show(url,data,div,success_function) {
     $.ajax({
         type: "get",
         url: url,
+        data: data,
         beforeSend: ajax_before_send(div),
-        success: function(data) {
-            $(div).html(data);
-            // 如果有上传附件 加载上传的js
-            if(upload_form_id != undefined){
-                upload_files(upload_form_id);
-            }
-            // 如果有form 加载日期控件
-            if($(div).has('form').length != 0) {
-                Datepicker.initDatepicker();
-            }
-        }
+        success:success_function,
+        error: function(data) { $(div).html(data.responseText); }
     });
 }
 

@@ -78,7 +78,7 @@ class Kobe::MenusController < KobeController
   private  
 
     def get_menu
-      @menu = Menu.find_by_id(params[:id]) unless params[:id].blank?
+      @menu = Menu.find_by(id: params[:id]) unless params[:id].blank?
     end
 
 end
