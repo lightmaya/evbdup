@@ -11,6 +11,9 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :signed_in?, :redirect_back_or, :cando_list
 
   before_action :store_location
+
+  before_action :init_params_search
+
   # cancan 权限校验
   rescue_from CanCan::AccessDenied do |exception|
     flash_get(exception.message)
@@ -37,6 +40,11 @@ class ApplicationController < ActionController::Base
   def redirect_back_or(default=nil)
     redirect_to(default || session[:return_to] || root_path)
     session.delete(:return_to)
+  end
+
+  # 查询初始化参数 
+  def init_params_search
+    params[:q] ||= {}
   end
 
   protected

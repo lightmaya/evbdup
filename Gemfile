@@ -88,6 +88,9 @@ gem "bcrypt-ruby", "~> 3.0.1"
 # 权限校验
 gem 'cancancan', '~> 1.7'
 
+# 查询
+gem 'ransack'
+
 
 # Use unicorn as the app server
 # gem 'unicorn'

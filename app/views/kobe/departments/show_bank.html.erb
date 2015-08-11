@@ -1,4 +1,28 @@
 <%= render partial: 'show_bank' if @dep.bank_account.present? %>
 <%= show_tips('warning','',@dep.bank_tips) %>
 
-<%= render partial: 'search', locals: { url: search_bank_kobe_departments_path, id: @dep.id } %>
+<div class="margin-bottom-10">
+    <div class="input-group">
+        <input type="text" class="form-control input-sm" name="keyword" id="search_keyword" placeholder="请输入关键字...">
+        <span class="input-group-btn">
+          <button class="btn btn-success btn-sm" type="button" id="search_btn">搜索</button>
+        </span>
+    </div>
+</div>
+<div id="search_rs">
+</div>
+
+
+<script type="text/javascript">
+    // ajax 显示搜索银行结果
+    function get_search_rs(){
+        ajax_post_show("<%= search_bank_kobe_departments_path %>",{id: "<%= @dep.id %>", keyword: $("#search_keyword").val()}, "#search_rs", function(data){
+            $("#search_rs").html(data);
+        });
+    };
+    $("#search_keyword").keyup(function(event){
+        if(event.keyCode == 13){ get_search_rs(); }
+    });
+    $("#search_btn").on('click',get_search_rs);
+
+</script>

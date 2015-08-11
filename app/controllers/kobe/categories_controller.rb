@@ -1,40 +1,45 @@
 # -*- encoding : utf-8 -*-
 class Kobe::CategoriesController < KobeController
 
-  skip_before_action :verify_authenticity_token, :only => [:move, :destroy, :valid_name]
+  skip_before_action :verify_authenticity_token, :only => [:move, :valid_name]
   # protect_from_forgery :except => :index
   before_action :get_category, :only => [:index, :edit, :show, :update, :delete, :destroy, :freeze, :update_freeze, :recover, :update_recover]
   layout false, :only => [:edit, :new, :show, :delete, :freeze, :recover]
+
+  # cancancan验证 如果有before_action cancancan放最后
+  load_and_authorize_resource 
+  skip_authorize_resource :only => [:ztree, :valid_name]
 
 	def index
 	end
 
   def show
     @arr  = []
-    unless @category.has_children?
-      obj_contents = ""
-      create_objs_from_xml_model(@category.params, CategoriesParam).each_with_index do |param,index|
+    obj_contents = show_obj_info(@category, Category.xml)
+    if @category.is_childless?
+      create_objs_from_xml_model(@category.params_xml, CategoriesParam).each_with_index do |param,index|
         obj_contents << show_obj_info(param,CategoriesParam.xml,{title: "参数明细 ##{index+1}"})
       end
-      @arr << {title: "参数信息", icon: "fa-info", content: obj_contents} 
+      
     end
+    @arr << {title: "详细信息", icon: "fa-info", content: obj_contents} 
     @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@category)}
   end
 
   def new
     category = Category.new
-    category.parent_id = params[:pid] unless params[:pid].blank?
+    category.parent_id = params[:pid] if params[:pid].present?
     slave_objs = create_objs_from_xml_model(CategoriesParam.default_xml, CategoriesParam)
     @ms_form = MasterSlaveForm.new(Category.xml, CategoriesParam.xml, category, slave_objs, { form_id: 'new_category', title: '<i class="fa fa-pencil-square-o"></i> 新增品目', action: kobe_categories_path, grid: 2 }, { title: '参数明细', grid: 4 })
   end
 
   def edit
-    slave_objs = create_objs_from_xml_model(@category.params, CategoriesParam)
+    slave_objs = create_objs_from_xml_model(@category.params_xml, CategoriesParam)
     @my_form = MasterSlaveForm.new(Category.xml, CategoriesParam.xml, @category, slave_objs, { action: kobe_category_path(@category), method: "patch", grid: 2 }, { title: '参数明细', grid: 4 })
   end
 
   def create
-    category = create_and_write_logs(Category, Category.xml, { :action => "新增品目" }, { "params" => create_xml(CategoriesParam.xml, CategoriesParam) })
+    category = create_and_write_logs(Category, Category.xml, { :action => "新增品目" }, { "params_xml" => create_xml(CategoriesParam.xml, CategoriesParam) })
     if category
       redirect_to kobe_categories_path(id: category)
     else
@@ -43,7 +48,7 @@ class Kobe::CategoriesController < KobeController
   end
 
   def update
-    update_and_write_logs(@category, Category.xml, { :action => "修改品目" }, { "params" => create_xml(CategoriesParam.xml, CategoriesParam) })
+    update_and_write_logs(@category, Category.xml, { :action => "修改品目" }, { "params_xml" => create_xml(CategoriesParam.xml, CategoriesParam) })
     redirect_to kobe_categories_path(id: @category)
   end
 
@@ -53,7 +58,7 @@ class Kobe::CategoriesController < KobeController
   end
   
   def destroy
-    if @category.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou]))
+    if @category.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
       tips_get("删除品目成功。")
     else
       flash_get(@category.errors.full_messages)
@@ -67,7 +72,7 @@ class Kobe::CategoriesController < KobeController
   end
 
   def update_freeze
-    if @category.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou]))
+    if @category.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou],false))
       tips_get("冻结品目成功。")
     else
       flash_get(@category.errors.full_messages)
@@ -81,7 +86,7 @@ class Kobe::CategoriesController < KobeController
   end
 
   def update_recover
-    if @category.change_status_and_write_logs("正常", stateless_logs("恢复",params[:opt_liyou]))
+    if @category.change_status_and_write_logs("正常", stateless_logs("恢复",params[:opt_liyou],false))
       tips_get("恢复品目成功。")
     else
       flash_get(@category.errors.full_messages)
@@ -105,7 +110,7 @@ class Kobe::CategoriesController < KobeController
 
   private
     def get_category
-      @category = Category.find(params[:id]) unless params[:id].blank?
+      @category = Category.find(params[:id]) if params[:id].present?
     end
 
 end

@@ -1,0 +1,23 @@
+<div class="col-md-3 md-margin-bottom-40">
+
+    <ul class="list-group sidebar-nav-v1 margin-bottom-40" id="user_left_bar">
+        <% @left_bar_arr.each_with_index do |ha, i| %>
+            <li class="list-group-item <%= "active" if i == 0 %>">
+                <a href="#" onclick='show_content("<%= ha[:url] %>","#show_user_content");'><i class="fa <%= ha[:icon] %>"></i> <%= ha[:title] %></a>
+            </li>
+        <% end %>
+    </ul>   
+</div>
+<div class="col-md-9" id="show_user_content">
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        show_content("<%= only_show_info_kobe_user_path(@user) %>","#show_user_content");
+        $("#user_left_bar .list-group-item").on("click", function () {
+            $("#user_left_bar .list-group-item.active").removeClass("active");
+            $(this).addClass("active");
+        })
+    });
+</script>

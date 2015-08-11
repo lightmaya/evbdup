@@ -12,6 +12,9 @@ class User < ActiveRecord::Base
   belongs_to :department
   has_many :user_menus, :dependent => :destroy
   has_many :menus, through: :user_menus
+
+  has_many :user_categories, :dependent => :destroy
+  has_many :categories, through: :user_categories
   # 收到的消息
   has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  
 
@@ -59,36 +62,41 @@ class User < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='用户名' column='login' class='required rangelength_6_20' display='readonly'/>
-        <node name='电子邮箱' column='email' class='required email'/>
         <node name='姓名' column='name' class='required'/>
         <node name='电话' column='tel'/>
         <node name='手机' column='mobile' class='required'/>
         <node name='传真' column='fax'/>
         <node name='职务' column='duty'/>
         <node name='是否单位管理员' column='is_admin' data_type='radio' data='[[0,"否"],[1,"是"]]'/>
+        <node name='用户类型' column='user_type' data_type='radio' data='[[0,"单位用户"],[1,"个人用户"]]'/>
         <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Menu"}' partner='menuids'/>
         <node column='menuids' data_type='hidden'/>
+        <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Category"}' partner='categoryids'/>
+        <node column='categoryids' data_type='hidden'/>
       </root>
     }
   end
 
-  def cando_list(action='')
+  def cando_list(can_opt_arr=[])
+    return "" if can_opt_arr.blank?
     arr = [] 
     dialog = "#opt_dialog"
     # 详细
-    title = self.class.icon_action("详细")
-    arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}', '#{dialog}') }]
+    if can_opt_arr.include?(:read)
+      title = self.class.icon_action("详细")
+      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}', '#{dialog}') }]
+    end
     # 修改
-    if [0,404].include?(self.status)
+    if [0,404].include?(self.status) && can_opt_arr.include?(:update)
       arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/users/#{self.id}/edit','#show_ztree_content #ztree_content')"]
     end
     # 重置密码
-    if [0,404].include?(self.status)
+    if [0,404].include?(self.status) && can_opt_arr.include?(:reset_password)
       title = self.class.icon_action("重置密码")
       arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/reset_password', '#{dialog}') }]
     end
     # 冻结
-    if [0,404].include?(self.status)
+    if [0,404].include?(self.status) && can_opt_arr.include?(:freeze)
       title = self.class.icon_action("冻结")
       arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/freeze', '#{dialog}') }]
     end
@@ -104,7 +112,7 @@ class User < ActiveRecord::Base
     str
   end
 
-  # 判断用户是否有这个操作 用于cancancan 
+  # 返回用户的所有操作 用于cancancan {"Department"=> [:create, :read, :update, :update_destroy, :freeze, :update_freeze], "Menu"=>[:create, :read, :update]}
   # 如果是管理员增加一个admin的操作 有admin的可以对别人的订单进行操作
   # menu.can_opt_action = Department|create
   def can_option_hash
@@ -123,9 +131,14 @@ class User < ActiveRecord::Base
         rs[a[0]] << "update_#{a[1]}".to_sym unless ["create", "read", "update", "update_destroy"].include?(a[1])
       end
     end
-    # {"Department"=> [:create, :read, :update, :update_destroy, :freeze, :update_freeze], 
-    # "Menu"=>[:create, :read, :update]}
     return rs
+  end
+
+  # 判断用户是否有某个操作
+  def has_option?(option_key='',action='')
+    return false if option_key.blank? || action.blank?
+    opt = self.can_option_hash[option_key]
+    return opt.present? && opt.include?(action.to_sym)
   end
 
   # 自动获取操作权限

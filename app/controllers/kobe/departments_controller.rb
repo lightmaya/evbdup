@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 class Kobe::DepartmentsController < KobeController
-  skip_before_action :verify_authenticity_token, :only => [:move, :valid_dep_name, :commit, :edit_bank, :search_bank, :search_dep]
-  before_action :get_dep, :except => [:valid_dep_name, :search_bank, :search_dep, :move, :new, :create, :list]
-  layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank, :search_dep]
+  skip_before_action :verify_authenticity_token, :only => [:move, :valid_dep_name, :commit, :edit_bank, :search_bank]
+  before_action :get_dep, :except => [:valid_dep_name, :search_bank, :move, :new, :create, :search]
+  layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank]
 
   # cancancan验证 如果有before_action cancancan放最后
   load_and_authorize_resource 
-  skip_authorize_resource :only => [:ztree, :valid_dep_name, :search_bank, :search_dep]
+  skip_authorize_resource :only => [:ztree, :valid_dep_name, :search_bank]
 
   def index
   end
@@ -57,7 +57,7 @@ class Kobe::DepartmentsController < KobeController
   end
   
   def destroy
-    if @dep.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou]))
+    if @dep.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
       tips_get("删除单位成功。")
     else
       flash_get(@dep.errors.full_messages)
@@ -71,7 +71,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def update_freeze
-    if @dep.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou]))
+    if @dep.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou],false))
       tips_get("冻结单位成功。")
     else
       flash_get(@dep.errors.full_messages)
@@ -85,7 +85,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def update_recover
-    if @dep.change_status_and_write_logs("正常", stateless_logs("恢复",params[:opt_liyou]))
+    if @dep.change_status_and_write_logs("正常", stateless_logs("恢复",params[:opt_liyou],false))
       tips_get("恢复单位成功。")
     else
       flash_get(@dep.errors.full_messages)
@@ -161,23 +161,20 @@ class Kobe::DepartmentsController < KobeController
     render :text => valid_remote(Department, ["name = ? and id <> ? and dep_type is false and status <> 404", params[:departments][:name], params[:obj_id]])
   end
 
-  # 供应商管理
-  def list
-  end
-
-  # 搜索单位
-  def search_dep
-    @deps = Department.where(["name like ?", "%#{params[:keyword].gsub(' ','%')}%"]) if params[:keyword].present?
+  # 单位查询
+  def search
+    @q = Department.ransack(params[:q]) 
+    @deps = @q.result.page params[:page] if params[:q].present?
   end
 
   private  
 
     def get_dep
-      @dep = current_user.department if params[:id].blank?
-      if current_user.can_option_hash["Department"].present? && current_user.can_option_hash["Department"].include?(:admin)
+      @dep = current_user.department
+      if current_user.has_option?("Department", :search)
         @dep = Department.find_by(id: params[:id]) if params[:id].present?
       else
-        @dep = (current_user.is_admin && params[:id].present?) ? current_user.department.subtree.find_by(id: params[:id]) : current_user.department
+        @dep = current_user.department.subtree.find_by(id: params[:id]) if current_user.is_admin && params[:id].present?
       end
 
       raise CanCan::AccessDenied.new("抱歉，您没有相关操作权限！") if @dep.blank?

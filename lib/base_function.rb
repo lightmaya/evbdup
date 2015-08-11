@@ -81,8 +81,8 @@ def get_node_value(obj,node,for_form=false)
     tbody = ""
     if options.has_key?(:title) && !options[:title].blank?
       str << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
-    else
-      str << "<br />"
+    # else
+      # str << "<br />"
     end 
     doc = Nokogiri::XML(xml)
     # 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'的

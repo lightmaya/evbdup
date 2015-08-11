@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 class CategoriesParam < XmlColumn
-	# belongs_to :category
 
 	def self.xml(who='',options={})
 	  %Q{
@@ -24,11 +23,11 @@ class CategoriesParam < XmlColumn
 			<root>
 			  <node name="品牌" column='brand' class="required"/>
 			  <node name="型号" column='model' class="required"/>
-			  <node name="版本号" column='version' class="text"/>
+			  <node name="版本号" column='version'/>
 			  <node name="计量单位" column='unit' class="required"/>
 			  <node name="市场价格" column='market_price' class="required number"/>
 			  <node name="中标价格" column='bid_price' class="required number"/>
-			  <node name="基本描述" column='summary' class="required"/>
+			  <node name="基本描述" column='summary' class="required"  data_type='textarea'/>
 			</root>
 		}
 	end

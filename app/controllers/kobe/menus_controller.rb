@@ -7,6 +7,10 @@ class Kobe::MenusController < KobeController
   before_action :get_menu, :only => [:edit, :update, :destroy, :show, :index, :delete]
   layout false, :only => [:edit, :new, :show, :delete]
 
+  # cancancan验证 如果有before_action cancancan放最后
+  load_and_authorize_resource 
+  skip_authorize_resource :only => [:ztree]
+  
 	def index
 	end
 
@@ -59,8 +63,8 @@ class Kobe::MenusController < KobeController
   end
 
   def destroy
-    if @menu.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou]))
-      tips_get("删除单位成功。")
+    if @menu.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
+      tips_get("删除成功。")
     else
       flash_get(@menu.errors.full_messages)
     end
@@ -78,7 +82,7 @@ class Kobe::MenusController < KobeController
   private  
 
     def get_menu
-      @menu = Menu.find_by(id: params[:id]) unless params[:id].blank?
+      @menu = Menu.find_by(id: params[:id]) if params[:id].present?
     end
 
 end

@@ -3,12 +3,14 @@ class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |t|
       t.belongs_to :department, :default => 0, :comment => "单位id"
-      t.string :menuids, :limit => 800, :comment => "角色id"
       t.string :login, :comment => "登录名"
-      t.string :password_digest, :null => false, :comment => "密码"
-      t.string :remember_token, :comment => "自动登录"
       t.string :name, :comment => "姓名"
       t.boolean :is_admin, :null => false, :default => false, :comment => "是否管理员"
+      t.boolean :user_type, :null => false, :default => false, :comment => "用户类型 0:单位用户,1:个人用户"
+      t.string :menuids, :limit => 800, :comment => "角色id" 
+      t.string :categoryids, :limit => 800, :comment => "品目id" 
+      t.string :password_digest, :null => false, :comment => "密码"
+      t.string :remember_token, :comment => "自动登录"
       t.date :birthday, :comment => "出生日期"
       t.string :portrait, :comment => "头像"
       t.string :gender, :limit => 2, :comment => "性别"

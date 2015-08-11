@@ -44,8 +44,8 @@ Evbdup::Application.routes.draw do
     resources :orders
     resources :departments do 
       collection do
-        get  :list
-        post :move, :valid_dep_name, :search_bank, :search_dep
+        post :move, :valid_dep_name, :search_bank
+        match 'search' => 'departments#search', via: [:get, :post], as: :search
       end
       member do 
         get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank
@@ -66,10 +66,15 @@ Evbdup::Application.routes.draw do
         get :delete
       end
     end
-    resources :users, :except => :index do 
+    resources :contract_templates do
+      member do 
+        get :delete
+      end
+    end
+    resources :users do 
       member do
-        get :reset_password, :freeze
-        post :update_password, :save_freeze
+        get :reset_password, :freeze, :recover, :only_show_info, :only_show_logs
+        post :update_reset_password, :update_freeze, :update_recover
       end
     end
     resources :categories do

@@ -133,8 +133,10 @@ module SaveXmlForm
         when "is_required"
           rule << "required" if value == "1"
         when "rule"
-          rule << value
+          rule << value unless value == "text"
           rule << "date_select" if ["dateISO", "date"].include?(value)
+        when "data_type"
+          node[column] = value unless value == "text"
         else
           node[column] = value
         end
@@ -161,6 +163,10 @@ module SaveXmlForm
         else
           obj.attributes[key] = value.to_str
         end
+        # 设置默认类型、默认规则、是否必填
+        obj.attributes["data_type"] = "text" if obj.attributes["data_type"].blank?
+        obj.attributes["rule"] = "text" if obj.attributes["rule"].blank?
+        obj.attributes["is_required"] = false if obj.attributes["is_required"].blank?
       end
       arr << obj
     end
