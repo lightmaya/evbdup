@@ -17,8 +17,8 @@ class Kobe::CategoriesController < KobeController
     @arr  = []
     obj_contents = show_obj_info(@category, Category.xml)
     if @category.is_childless?
-      create_objs_from_xml_model(@category.params_xml, CategoryParams).each_with_index do |param,index|
-        obj_contents << show_obj_info(param,CategoryParams.xml,{title: "参数明细 ##{index+1}"})
+      create_objs_from_xml_model(@category.params_xml, CategoryParam).each_with_index do |param,index|
+        obj_contents << show_obj_info(param,CategoryParam.xml,{title: "参数明细 ##{index+1}"})
       end
       
     end
@@ -29,17 +29,17 @@ class Kobe::CategoriesController < KobeController
   def new
     category = Category.new
     category.parent_id = params[:pid] if params[:pid].present?
-    slave_objs = create_objs_from_xml_model(CategoryParams.default_xml, CategoryParams)
-    @ms_form = MasterSlaveForm.new(Category.xml, CategoryParams.xml, category, slave_objs, { form_id: 'new_category', title: '<i class="fa fa-pencil-square-o"></i> 新增品目', action: kobe_categories_path, grid: 2 }, { title: '参数明细', grid: 4 })
+    slave_objs = create_objs_from_xml_model(CategoryParam.default_xml, CategoryParam)
+    @ms_form = MasterSlaveForm.new(Category.xml, CategoryParam.xml, category, slave_objs, { form_id: 'new_category', title: '<i class="fa fa-pencil-square-o"></i> 新增品目', action: kobe_categories_path, grid: 2 }, { title: '参数明细', grid: 4 })
   end
 
   def edit
-    slave_objs = create_objs_from_xml_model(@category.params_xml, CategoryParams)
-    @my_form = MasterSlaveForm.new(Category.xml, CategoryParams.xml, @category, slave_objs, { action: kobe_category_path(@category), method: "patch", grid: 2 }, { title: '参数明细', grid: 4 })
+    slave_objs = create_objs_from_xml_model(@category.params_xml, CategoryParam)
+    @my_form = MasterSlaveForm.new(Category.xml, CategoryParam.xml, @category, slave_objs, { action: kobe_category_path(@category), method: "patch", grid: 2 }, { title: '参数明细', grid: 4 })
   end
 
   def create
-    category = create_and_write_logs(Category, Category.xml, { :action => "新增品目" }, { "params_xml" => create_xml(CategoryParams.xml, CategoryParams) })
+    category = create_and_write_logs(Category, Category.xml, { :action => "新增品目" }, { "params_xml" => create_xml(CategoryParam.xml, CategoryParam) })
     if category
       redirect_to kobe_categories_path(id: category)
     else
@@ -48,7 +48,7 @@ class Kobe::CategoriesController < KobeController
   end
 
   def update
-    update_and_write_logs(@category, Category.xml, { :action => "修改品目" }, { "params_xml" => create_xml(CategoryParams.xml, CategoryParams) })
+    update_and_write_logs(@category, Category.xml, { :action => "修改品目" }, { "params_xml" => create_xml(CategoryParam.xml, CategoryParam) })
     redirect_to kobe_categories_path(id: @category)
   end
 
