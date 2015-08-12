@@ -55,6 +55,11 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => contract_template)
   end
 
+  rule = Menu.create(:name => "流程定制", :route_path => "/kobe/rules", :can_opt_action => "Rule|read", :is_show => true, :parent => setting)
+  [["增加", "Rule|create"], ["修改", "Rule|update"], ["删除", "Rule|update_destroy"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => rule)
+  end
+
 end
 
 if Category.first.blank?

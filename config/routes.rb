@@ -71,6 +71,11 @@ Evbdup::Application.routes.draw do
         get :delete
       end
     end
+    resources :rules do
+      member do 
+        get :delete
+      end
+    end
     resources :users do 
       member do
         get :reset_password, :freeze, :recover, :only_show_info, :only_show_logs

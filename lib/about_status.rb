@@ -59,7 +59,7 @@ module AboutStatus
 
 	# 更新状态并写入日志
 	def change_status_and_write_logs(status,stateless_logs)
-		# status = self.class.get_status_attributes(status)[1] unless status.is_a?(Integer)
+		status = self.class.get_status_attributes(status)[1] unless status.is_a?(Integer)
 		# self.update_columns("status" => status, "logs" => logs) unless status == self.status
 		if self.class.is_ancestry? && self.has_children?
 			# id_array = self.class.self_and_descendants(self.id).status_not_in([404, status]).map(&:id)

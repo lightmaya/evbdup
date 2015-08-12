@@ -22,7 +22,7 @@ class Kobe::DepartmentsController < KobeController
   def new
     dep = Department.new
     dep.parent_id = params[:pid] unless params[:pid].blank?
-    @myform = SingleForm.new(dep.parent.get_xml, dep, { form_id: "department_form", action: kobe_department_path(dep), grid: 2 })
+    @myform = SingleForm.new(dep.parent.get_xml, dep, { form_id: "department_form", action: kobe_departments_path, grid: 2 })
   end
 
   def create
