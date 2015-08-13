@@ -17,9 +17,12 @@ module AboutStatus
 	  end
 
 	  # 批量改变状态并写入日志
-	  def batch_change_status_and_write_logs(id_array,status,stateless_logs)
+	  def batch_change_status_and_write_logs(id_array,status,stateless_logs,update_params=[])
 			status = self.get_status_attributes(status)[1] unless status.is_a?(Integer)
-	    self.where(id: id_array).where.not(status: [404, status]).update_all("status = #{status}, logs = replace(IFNULL(logs,'<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n</root>'),'</root>','  #{stateless_logs.gsub('$STATUS$',status.to_s)}\n</root>')")
+			update_params << "status = #{status}"
+			update_params << "logs = replace(IFNULL(logs,'<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n</root>'),'</root>','  #{stateless_logs.gsub('$STATUS$',status.to_s)}\n</root>')"
+	    # self.where(id: id_array).where.not(status: [404, status]).update_all("status = #{status}, logs = replace(IFNULL(logs,'<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n</root>'),'</root>','  #{stateless_logs.gsub('$STATUS$',status.to_s)}\n</root>')")
+	    self.where(id: id_array).where.not(status: [404, status]).update_all(update_params.join(", "))
 	  end
 
 	  # 判断是否树形结构
@@ -58,16 +61,39 @@ module AboutStatus
 	end
 
 	# 更新状态并写入日志
-	def change_status_and_write_logs(status,stateless_logs)
-		status = self.class.get_status_attributes(status)[1] unless status.is_a?(Integer)
+	def change_status_and_write_logs(opt,stateless_logs,update_params=[])
+		# status = self.class.get_status_attributes(status)[1] unless status.is_a?(Integer)
 		# self.update_columns("status" => status, "logs" => logs) unless status == self.status
+		status = self.get_change_status(opt)
 		if self.class.is_ancestry? && self.has_children?
 			# id_array = self.class.self_and_descendants(self.id).status_not_in([404, status]).map(&:id)
 			id_array = self.subtree.status_not_in([404, status]).map(&:id)
 		else
 			id_array = self.id
 		end
-		self.class.batch_change_status_and_write_logs(id_array,status,stateless_logs)
+		self.class.batch_change_status_and_write_logs(id_array,status,stateless_logs,update_params)
+	end
+
+	# 根据不同操作 获取需改变的状态 返回数字格式的状态
+	def get_change_status(opt)
+		if self.class.attribute_method? "change_status_hash"
+			cn_status = self.class.get_status_attributes(self.status,1)[0] # 当前状态转成中文
+			status = self.change_status_hash[opt][cn_status] # 获取更新后的状态
+			return status.present? ? self.class.get_status_attributes(status)[1] : self.status # 更新后的状态转成数字
+		else
+			return opt.is_a?(Integer) ? opt : self.class.get_status_attributes(opt)[1]
+		end
+	end
+
+	# 根据状态变更判断是否有某个操作
+	def can_opt?(opt)
+		if self.class.attribute_method? "change_status_hash"
+			cn_status = self.class.get_status_attributes(self.status,1)[0] # 当前状态转成中文
+			status = self.change_status_hash[opt][cn_status] # 获取更新后的状态
+			return status.present?
+		else
+			return false
+		end
 	end
 
 end

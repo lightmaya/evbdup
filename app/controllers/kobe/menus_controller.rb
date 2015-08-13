@@ -59,15 +59,13 @@ class Kobe::MenusController < KobeController
 
   # 删除
   def delete
+    cannot_do_tips unless @menu.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_menu_form', action: kobe_menu_path(@menu), method: 'delete' }
   end
 
   def destroy
-    if @menu.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
-      tips_get("删除成功。")
-    else
-      flash_get(@menu.errors.full_messages)
-    end
+    @menu.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
+    tips_get("删除成功。")
     redirect_to kobe_menus_path(id: @menu.parent_id)
   end
 

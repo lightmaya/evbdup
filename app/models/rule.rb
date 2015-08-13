@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
 class Rule < ActiveRecord::Base
 
+	has_many :departments
+	has_many :orders
+
 	include AboutStatus
 
 	# 中文意思 状态值 标签颜色 进度 
@@ -9,6 +12,13 @@ class Rule < ActiveRecord::Base
       ["正常",0,"u",100],
       ["已删除",404,"red",0]
     ]
+  end
+
+  # 根据不同操作 改变状态
+  def change_status_hash
+    {
+      "删除" => { "正常" => "已删除" }
+    }
   end
 
   # 列表中的状态筛选,current_status当前状态不可以点击

@@ -5,6 +5,7 @@ class CreateDepartments < ActiveRecord::Migration
 		t.string :name                   , :comment => "单位名称", :null => false
 		t.string :ancestry               , :comment => "祖先节点"
 		t.integer :ancestry_depth        , :comment => "层级"
+		t.integer :rule_id               , :comment => "流程ID"
 		t.integer :status                , :comment => "状态", :limit => 2, :default => 0 ,:null => false
 		t.string :short_name             , :comment => "单位简称"
 		t.string :old_name               , :comment => "曾用名"

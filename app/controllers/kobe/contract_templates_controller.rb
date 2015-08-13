@@ -43,15 +43,13 @@ class Kobe::ContractTemplatesController < KobeController
 
   # 删除
   def delete
+    cannot_do_tips unless @ct.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_ct_form', action: kobe_contract_template_path(@ct), method: 'delete' }
   end
 
   def destroy
-    if @ct.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
-      tips_get("删除成功。")
-    else
-      flash_get(@ct.errors.full_messages)
-    end
+    @ct.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
+    tips_get("删除成功。")
     redirect_to kobe_contract_templates_path
   end
 

@@ -44,15 +44,13 @@ class Kobe::RulesController < KobeController
 
   # 删除
   def delete
+    cannot_do_tips unless @rule.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_rule_form', action: kobe_rule_path(@rule), method: 'delete' }
   end
 
   def destroy
-    if @rule.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
-      tips_get("删除成功。")
-    else
-      flash_get(@rule.errors.full_messages)
-    end
+    @rule.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
+    tips_get("删除成功。")
     redirect_to kobe_rules_path
   end
 

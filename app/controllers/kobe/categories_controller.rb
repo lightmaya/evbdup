@@ -54,43 +54,37 @@ class Kobe::CategoriesController < KobeController
 
   # 删除
   def delete
+    cannot_do_tips unless @category.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_category_form', action: kobe_category_path(@category), method: 'delete' } 
   end
   
   def destroy
-    if @category.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
-      tips_get("删除品目成功。")
-    else
-      flash_get(@category.errors.full_messages)
-    end
+    @category.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
+    tips_get("删除品目成功。")
     redirect_to kobe_categories_path(id: @category.parent_id)
   end
 
   # 冻结
   def freeze
+    cannot_do_tips unless @category.can_opt?("冻结")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'freeze_category_form', action: update_freeze_kobe_category_path(@category) }
   end
 
   def update_freeze
-    if @category.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou],false))
-      tips_get("冻结品目成功。")
-    else
-      flash_get(@category.errors.full_messages)
-    end
+    @category.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou],false))
+    tips_get("冻结品目成功。")
     redirect_to kobe_categories_path(id: @category)
   end
 
   # 恢复
   def recover
+    cannot_do_tips unless @category.can_opt?("恢复")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'recover_category_form', action: update_recover_kobe_category_path(@category) }
   end
 
   def update_recover
-    if @category.change_status_and_write_logs("正常", stateless_logs("恢复",params[:opt_liyou],false))
-      tips_get("恢复品目成功。")
-    else
-      flash_get(@category.errors.full_messages)
-    end
+    @category.change_status_and_write_logs("恢复", stateless_logs("恢复",params[:opt_liyou],false))
+    tips_get("恢复品目成功。")
     redirect_to kobe_categories_path(id: @category)
   end
 

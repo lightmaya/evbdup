@@ -46,6 +46,7 @@ Evbdup::Application.routes.draw do
       collection do
         post :move, :valid_dep_name, :search_bank
         match 'search' => 'departments#search', via: [:get, :post], as: :search
+        match 'list' => 'departments#list', via: [:get, :post], as: :list
       end
       member do 
         get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank

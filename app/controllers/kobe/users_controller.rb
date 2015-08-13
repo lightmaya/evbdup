@@ -58,30 +58,26 @@ class Kobe::UsersController < KobeController
 
   # 冻结
   def freeze
+    cannot_do_tips unless @user.can_opt?("冻结")
     render partial: '/shared/dialog/opt_liyou', locals: {form_id: 'freeze_user_form', action: update_freeze_kobe_user_path(@user)}
   end
 
   def update_freeze
     logs = stateless_logs("冻结用户", params[:opt_liyou], false)
-    if @user.change_status_and_write_logs("冻结",logs)
-      tips_get("冻结用户成功。")
-    else
-      flash_get(@user.errors.full_messages)
-    end
+    @user.change_status_and_write_logs("冻结",logs)
+    tips_get("冻结用户成功。")
     redirect_to kobe_departments_path(id: @user.department.id)
   end
 
   # 恢复
   def recover
+    cannot_do_tips unless @user.can_opt?("恢复")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'recover_user_form', action: update_recover_kobe_user_path(@user) }
   end
 
   def update_recover
-    if @user.change_status_and_write_logs("正常", stateless_logs("恢复",params[:opt_liyou],false))
-      tips_get("恢复用户成功。")
-    else
-      flash_get(@user.errors.full_messages)
-    end
+    @user.change_status_and_write_logs("恢复", stateless_logs("恢复",params[:opt_liyou],false))
+    tips_get("恢复用户成功。")
     redirect_to kobe_departments_path(id: @user.department.id)
   end
 
@@ -94,7 +90,7 @@ class Kobe::UsersController < KobeController
     else
       if current_user.is_admin && params[:id].present?
         current_user.department.subtree.each do |d|
-          u = d.user.find_by(id: params[:id])
+          u = d.users.find_by(id: params[:id])
           @user = u if u.present?
         end
       end

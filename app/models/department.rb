@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
-
 class Department < ActiveRecord::Base
-	has_many :user, dependent: :destroy
+	has_many :users, dependent: :destroy
   has_many :uploads, class_name: :DepartmentsUpload, foreign_key: :master_id
   # validates :name, presence: true, length: { in: 2..30 }, uniqueness: { case_sensitive: false }
+  
+  belongs_to :rule
 
   include AboutAncestry
   include AboutStatus
@@ -14,9 +15,22 @@ class Department < ActiveRecord::Base
       ["未提交",0,"orange",10],
       ["正常",1,"u",100],
       ["等待审核",2,"blue",50],
-      ["冻结",3,"yellow",20],
+      ["审核拒绝",3,"red",50],
+      ["冻结",4,"yellow",20],
       ["已删除",404,"red",0]
     ]
+  end
+
+  # 根据不同操作 改变状态
+  def change_status_hash
+    {
+      "提交" => { "未提交" => "等待审核" },
+      "通过" => { "等待审核" => "正常" },
+      "不通过" => { "等待审核" => "审核拒绝" },
+      "删除" => { "未提交" => "已删除" },
+      "冻结" => { "正常" => "冻结" },
+      "恢复" => { "冻结" => "正常" }
+    }
   end
 
   # 附件的类
@@ -90,18 +104,25 @@ class Department < ActiveRecord::Base
     # 查看单位信息
     arr << [self.class.icon_action("详细"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}', '#{show_div}')"] if can_opt_arr.include?(:read)
     # 提交
-    arr << [self.class.icon_action("提交"), "/kobe/departments/#{self.id}/commit", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can_opt_arr.include?(:commit) && self.get_tips.blank? and self.status == 0
-    # 修改单位信息
-    arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/edit','#{show_div}')"] if can_opt_arr.include?(:update)
-    # 修改资质证书
-    arr << [self.class.icon_action("上传资质"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/upload','#{show_div}','edit_upload_fileupload')"] if can_opt_arr.include?(:upload)
-    # 维护开户银行
-    arr << [self.class.icon_action("维护开户银行"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/show_bank','#{show_div}')"] if can_opt_arr.include?(:bank)
-    # 增加下属单位
-    arr << [self.class.icon_action("增加下属单位"), "javascript:void(0)", onClick: "show_content('/kobe/departments/new?pid=#{self.id}','#{show_div}')"] if can_opt_arr.include?(:create)
-    # 分配人员账号
-    title = self.class.icon_action("增加人员")
-    arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/departments/#{self.id}/add_user', '#{dialog}') }] if can_opt_arr.include?(:add_user)
+    arr << [self.class.icon_action("提交"), "/kobe/departments/#{self.id}/commit", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can_opt_arr.include?(:commit) && self.can_commit?
+    if [0,1,3].include? self.status
+      # 修改单位信息
+      arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/edit','#{show_div}')"] if can_opt_arr.include?(:update)
+      # 修改资质证书
+      arr << [self.class.icon_action("上传资质"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/upload','#{show_div}','edit_upload_fileupload')"] if can_opt_arr.include?(:upload)
+      # 维护开户银行
+      arr << [self.class.icon_action("维护开户银行"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/show_bank','#{show_div}')"] if can_opt_arr.include?(:bank)
+      # 增加下属单位
+      arr << [self.class.icon_action("增加下属单位"), "javascript:void(0)", onClick: "show_content('/kobe/departments/new?pid=#{self.id}','#{show_div}')"] if can_opt_arr.include?(:create)
+      # 分配人员账号
+      title = self.class.icon_action("增加人员")
+      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/departments/#{self.id}/add_user', '#{dialog}') }] if can_opt_arr.include?(:add_user)
+    end
+    if self.status == 2
+      # 审核
+      title = self.class.icon_action("审核")
+      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/departments/#{self.id}/audit', '#{dialog}') }] if can_opt_arr.include?(:first_audit)
+    end
     return arr
   end
 
@@ -112,7 +133,7 @@ class Department < ActiveRecord::Base
       msg << "单位信息填写不完整，请点击[修改]。" if self.org_code.blank?
       msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 4
       msg << "开户银行信息不完整，请点击[维护开户银行]" if self.bank.blank? || self.bank_code.blank?
-      msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.user.find{ |u| u.name.present? }.blank?
+      msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.users.find{ |u| u.name.present? }.blank?
     end
     return msg
   end
@@ -128,6 +149,20 @@ class Department < ActiveRecord::Base
   # 是否需要隐藏树形结构 用于没有下级单位的单位 不显示树
   def hide_tree?
     self.is_childless? || self.descendants.where.not(status: 404).blank?
+  end
+
+  # 是否可以提交
+  def can_commit?
+    self.get_tips.blank? && self.can_opt?("提交")
+  end
+
+  # 提交时需更新的参数 主要用于更新rule_id 
+  # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
+  def commit_params
+    arr = []
+    rule_id = Rule.find_by(name: '单位管理').id
+    arr << "rule_id = #{rule_id}"
+    return arr
   end
 
 end

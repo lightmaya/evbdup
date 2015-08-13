@@ -52,9 +52,16 @@ class User < ActiveRecord::Base
   def self.status_array
     [
       ["正常",0,"u",100], 
-      ["冻结",1,"yellow",100], 
-      ["已删除",98,"red",100]
+      ["冻结",1,"yellow",100]
     ]
+  end
+
+  # 根据不同操作 改变状态
+  def change_status_hash
+    {
+      "冻结" => { "正常" => "冻结" },
+      "恢复" => { "冻结" => "正常" }
+    }
   end
 
   def self.xml(who='',options={})
@@ -86,19 +93,21 @@ class User < ActiveRecord::Base
       title = self.class.icon_action("详细")
       arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}', '#{dialog}') }]
     end
-    # 修改
-    if [0,404].include?(self.status) && can_opt_arr.include?(:update)
-      arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/users/#{self.id}/edit','#show_ztree_content #ztree_content')"]
-    end
-    # 重置密码
-    if [0,404].include?(self.status) && can_opt_arr.include?(:reset_password)
-      title = self.class.icon_action("重置密码")
-      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/reset_password', '#{dialog}') }]
-    end
-    # 冻结
-    if [0,404].include?(self.status) && can_opt_arr.include?(:freeze)
-      title = self.class.icon_action("冻结")
-      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/freeze', '#{dialog}') }]
+    if [0,1,3].include? self.department.status
+      # 修改
+      if [0,404].include?(self.status) && can_opt_arr.include?(:update)
+        arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/users/#{self.id}/edit','#show_ztree_content #ztree_content')"]
+      end
+      # 重置密码
+      if [0,404].include?(self.status) && can_opt_arr.include?(:reset_password)
+        title = self.class.icon_action("重置密码")
+        arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/reset_password', '#{dialog}') }]
+      end
+      # 冻结
+      if [0,404].include?(self.status) && can_opt_arr.include?(:freeze)
+        title = self.class.icon_action("冻结")
+        arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/freeze', '#{dialog}') }]
+      end
     end
     return arr
   end

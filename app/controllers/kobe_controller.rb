@@ -98,6 +98,10 @@ class KobeController < ApplicationController
       return Time.now.beginning_of_year
     end
   end
-  
 
+  # 自定义条件判断没有某权限的提示
+  def cannot_do_tips(msg="抱歉，您没有相关操作权限！")
+    raise CanCan::AccessDenied.new(msg) 
+  end
+  
 end

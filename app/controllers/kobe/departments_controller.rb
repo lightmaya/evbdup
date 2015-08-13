@@ -53,43 +53,37 @@ class Kobe::DepartmentsController < KobeController
 
   # 删除单位
   def delete
+    cannot_do_tips unless @dep.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_dep_form', action: kobe_department_path(@dep), method: 'delete' }
   end
   
   def destroy
-    if @dep.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
-      tips_get("删除单位成功。")
-    else
-      flash_get(@dep.errors.full_messages)
-    end
+    @dep.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
+    tips_get("删除单位成功。")
     redirect_to kobe_departments_path(id: @dep.parent_id)
   end
 
   # 冻结单位
   def freeze
+    cannot_do_tips unless @dep.can_opt?("冻结")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'freeze_dep_form', action: update_freeze_kobe_department_path(@dep) }
   end
 
   def update_freeze
-    if @dep.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou],false))
-      tips_get("冻结单位成功。")
-    else
-      flash_get(@dep.errors.full_messages)
-    end
+    @dep.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou],false))
+    tips_get("冻结单位成功。")
     redirect_to kobe_departments_path(id: @dep)
   end
 
   # 恢复单位
   def recover
+    cannot_do_tips unless @dep.can_opt?("恢复")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'recover_dep_form', action: update_recover_kobe_department_path(@dep) }
   end
 
   def update_recover
-    if @dep.change_status_and_write_logs("正常", stateless_logs("恢复",params[:opt_liyou],false))
-      tips_get("恢复单位成功。")
-    else
-      flash_get(@dep.errors.full_messages)
-    end
+    @dep.change_status_and_write_logs("恢复", stateless_logs("恢复",params[:opt_liyou],false))
+    tips_get("恢复单位成功。")
     redirect_to kobe_departments_path(id: @dep)
   end
 
@@ -136,7 +130,7 @@ class Kobe::DepartmentsController < KobeController
       tips_get("开户银行保存成功。")
       redirect_to kobe_departments_path(id: @dep)
     else
-      flash_get(@dep.errors.full_messages)
+      flash_get("操作失败！#{@dep.errors.full_messages}")
       redirect_back_or
     end
   end
@@ -148,11 +142,9 @@ class Kobe::DepartmentsController < KobeController
 
   # 注册提交
   def commit
-    if @dep.change_status_and_write_logs("等待审核",stateless_logs("提交","注册完成，提交！", false))
-      tips_get("提交成功，请等待审核。")
-    else
-      flash_get(@dep.errors.full_messages)
-    end
+    cannot_do_tips unless @dep.can_commit?
+    @dep.change_status_and_write_logs("提交",stateless_logs("提交","注册完成，提交！", false),@dep.commit_params)
+    tips_get("提交成功，请等待审核。")
     redirect_to kobe_departments_path(id: @dep)
   end
 
@@ -167,6 +159,13 @@ class Kobe::DepartmentsController < KobeController
     @deps = @q.result.page params[:page] if params[:q].present?
   end
 
+  # 审核单位
+  def list
+    @q = Department.ransack(params[:q]) 
+    @deps = @q.result.where(status: 2).page params[:page]
+    render :search
+  end
+
   private  
 
     def get_dep
@@ -176,8 +175,7 @@ class Kobe::DepartmentsController < KobeController
       else
         @dep = current_user.department.subtree.find_by(id: params[:id]) if current_user.is_admin && params[:id].present?
       end
-
-      raise CanCan::AccessDenied.new("抱歉，您没有相关操作权限！") if @dep.blank?
+      cannot_do_tips if @dep.blank?
     end
 
 end

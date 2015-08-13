@@ -20,6 +20,15 @@ class Category < ActiveRecord::Base
     ]
   end
 
+  # 根据不同操作 改变状态
+  def change_status_hash
+    {
+      "删除" => { "正常" => "已删除" },
+      "冻结" => { "正常" => "冻结" },
+      "恢复" => { "冻结" => "正常" }
+    }
+  end
+
   # 列表中的状态筛选,current_status当前状态不可以点击
   def self.status_filter(action='')
   	# 列表中不允许出现的
