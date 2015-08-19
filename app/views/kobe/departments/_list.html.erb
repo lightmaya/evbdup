@@ -1,0 +1,46 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+    </div>
+    <div class="panel-body">
+      <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
+				<div class="margin-bottom-10">
+				    <div class="input-group">
+				    	<%= f.search_field :name_cont, class: "form-control input-sm", placeholder: "请输入单位名称..." %>
+				        <span class="input-group-btn">
+				          <button class="btn btn-success btn-sm" type="submit">搜索</button>
+				        </span>
+				    </div>
+				</div>
+			<% end %>
+			<% if @deps.present? %>
+				<table class="table table-bordered table-hover">
+				    <thead>
+				        <tr>
+				            <th class="index">序号</th>
+				            <th class="hidden-sm">名称</th>
+				            <th class="status_bar"><%= action_name == "search" ? status_filter(Department) : "状态" %></th>
+                    <th class="date"><%= date_filter %></th>
+                    <% if title.include?("审核")  %>
+				            <th class="cando">操作</th>
+										<% end %>
+				        </tr>
+				    </thead>
+				    <tbody>
+				        <% @deps.each_with_index do |dep,index| %>
+				        <tr>
+				            <td><%= show_index(index) %></td>
+				            <td><%= link_to dep.name, kobe_departments_path(id: dep.id), target: "_blank" %></td>
+				            <td><%= dep.status_bar %></td>
+                    <td><%= show_date(dep.created_at) %></td>
+                    <% if title.include?("审核")  %>
+				            <td><%= btn_group(dep.cando_list(current_user.can_option_hash[dep.class.to_s],true)) %></td>
+										<% end %>
+				        </tr>
+				        <% end %>
+				    </tbody>
+				</table>
+				<%= paginate @deps %> 
+			<% end %>
+    </div>                     
+</div>

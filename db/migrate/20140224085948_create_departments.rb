@@ -5,7 +5,9 @@ class CreateDepartments < ActiveRecord::Migration
 		t.string :name                   , :comment => "单位名称", :null => false
 		t.string :ancestry               , :comment => "祖先节点"
 		t.integer :ancestry_depth        , :comment => "层级"
+		t.string :real_ancestry          , :comment => "祖先和自己中是独立核算单位的节点"
 		t.integer :rule_id               , :comment => "流程ID"
+		t.string :rule_step              , :comment => "审核流程 例：start 、分公司审核、总公司审核、done"
 		t.integer :status                , :comment => "状态", :limit => 2, :default => 0 ,:null => false
 		t.string :short_name             , :comment => "单位简称"
 		t.string :old_name               , :comment => "曾用名"

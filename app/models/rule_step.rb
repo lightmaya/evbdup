@@ -2,7 +2,7 @@
 class RuleStep < XmlColumn
 
 	def self.keys
-		%w(name junior senior inflow outflow first_audit last_audit)
+		%w(name dep junior senior inflow outflow first_audit last_audit)
 	end
 
 	def self.xml(who='',options={})
@@ -14,8 +14,9 @@ class RuleStep < XmlColumn
         <node column='junior' data_type='hidden'/>
         <node name='终审权限' column='last_audit' class='tree_checkbox required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Menu"}' partner='senior'/>
         <node column='senior' data_type='hidden'/>
-	      <node name='执行条件' column='inflow' data_type='textarea' class='required' hint='例如：obj.total > 3000'/>
-	      <node name='跳过条件' column='outflow' data_type='textarea' class='required' hint='例如：status in (404)'/>
+	      <node name='审核单位' column='dep' data_type='textarea' class='required' hint='例如：self.real_ancestry_level(2)'/>
+	      <node name='执行条件' column='inflow' data_type='textarea' class='required' hint='例如：self.total > 3000'/>
+	      <node name='跳过条件' column='outflow' data_type='textarea' class='required' hint='例如：self.status == 404'/>
 	    </root>
 	  }
 	end

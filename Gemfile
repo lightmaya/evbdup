@@ -91,6 +91,9 @@ gem 'cancancan', '~> 1.7'
 # 查询
 gem 'ransack'
 
+# 定时任务
+gem 'rufus-scheduler'
+
 
 # Use unicorn as the app server
 # gem 'unicorn'

@@ -2,6 +2,7 @@
 class Kobe::DepartmentsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:move, :valid_dep_name, :commit, :edit_bank, :search_bank]
   before_action :get_dep, :except => [:valid_dep_name, :search_bank, :move, :new, :create, :search]
+  before_action :get_audit_menu_ids, :only => [:list, :audit]
   layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank]
 
   # cancancan验证 如果有before_action cancancan放最后
@@ -26,7 +27,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def create
-    p_id = params[:departments][:parent_id].present? ? params[:departments][:parent_id] : 2
+    p_id = params[:departments][:parent_id].present? ? params[:departments][:parent_id] : 3
     parent_dep = Department.find_by(id: p_id) 
     dep = create_and_write_logs(Department, parent_dep.get_xml)
     if dep
@@ -143,7 +144,8 @@ class Kobe::DepartmentsController < KobeController
   # 注册提交
   def commit
     cannot_do_tips unless @dep.can_commit?
-    @dep.change_status_and_write_logs("提交",stateless_logs("提交","注册完成，提交！", false),@dep.commit_params)
+    @dep.change_status_and_write_logs("提交",stateless_logs("提交","注册完成，提交！", false),@dep.commit_params, false)
+    @dep.reload.create_task_queue
     tips_get("提交成功，请等待审核。")
     redirect_to kobe_departments_path(id: @dep)
   end
@@ -155,15 +157,24 @@ class Kobe::DepartmentsController < KobeController
 
   # 单位查询
   def search
-    @q = Department.ransack(params[:q]) 
+    @q = Department.where(get_conditions("departments")).ransack(params[:q]) 
     @deps = @q.result.page params[:page] if params[:q].present?
   end
 
   # 审核单位
   def list
-    @q = Department.ransack(params[:q]) 
-    @deps = @q.result.where(status: 2).page params[:page]
-    render :search
+    cdt = get_conditions("departments", [["departments.status = ? ", 2],["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]])
+    @q =  Department.joins(:task_queues).where(cdt).ransack(params[:q]) 
+    @deps = @q.result.page params[:page]
+  end
+
+  def audit
+    audit_tips unless can_audit?(@dep,@menu_ids)
+  end
+
+  def update_audit
+    save_audit(@dep)
+    redirect_to list_kobe_departments_path
   end
 
   private  
@@ -176,6 +187,10 @@ class Kobe::DepartmentsController < KobeController
         @dep = current_user.department.subtree.find_by(id: params[:id]) if current_user.is_admin && params[:id].present?
       end
       cannot_do_tips if @dep.blank?
+    end
+
+    def get_audit_menu_ids
+      @menu_ids = Menu.get_menu_ids("Department|list")
     end
 
 end

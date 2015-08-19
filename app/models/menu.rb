@@ -8,6 +8,8 @@ class Menu < ActiveRecord::Base
   has_many :user_menus, :dependent => :destroy
   has_many :users, through: :user_menus
 
+  has_many :task_queues
+
 	include AboutAncestry
 	include AboutStatus
 
@@ -41,7 +43,7 @@ class Menu < ActiveRecord::Base
 	    	<node name='父节点名称' display='disabled'/>
 	      <node name='名称' column='name' class='required'/>
 	      <node name='相对路径' column='route_path'/>
-        <node name='权限判断' column='can_opt_action' hint='用于cancancan判断用户是否有这个操作 默认read,create,update,destroy 也可自定义action 例如：Department|update'/>
+        <node name='权限判断' column='can_opt_action' hint='用于cancancan判断用户是否有这个操作 默认read,create,update,update_destroy 也可自定义action 例如：Department|update'/>
 	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
 	      <node name='图标' column='icon'/>
         <node name='显示菜单' column='is_show' data_type='radio' data='[[0,"不显示菜单"],[1,"显示菜单"]]'/>
@@ -88,6 +90,13 @@ class Menu < ActiveRecord::Base
   # 是否有可以显示的孩子菜单
   def has_visible_children?
     self.visible_children.present?
+  end
+
+  # 根据can_opt_action找到menu 返回menu的subtree的id数组 can_act="Department|update"
+  def self.get_menu_ids(can_act='')
+    return [] if can_act.blank?
+    menu = self.find_by(can_opt_action: can_act)
+    return menu.present? ? menu.subtree.map(&:id) : []
   end
 
 end

@@ -1,0 +1,86 @@
+<% 
+	# 参数 action、obj 没有默认值
+	form_id ||= "audit_form"
+	method ||= 'post'
+	title ||= "审核"
+%>
+<%= modal_dialog("audit_reason_dialog", obj.rule.get_audit_reason.html_safe, "审核理由") if obj.rule.get_audit_reason.present? %>
+<div class="tag-box tag-box-v1 margin-top-20">
+	<h2><%= title %></h2>
+	<%= form_tag(action, method: method, class: 'sky-form', id: form_id) do %>
+	<fieldset>
+		<section>
+			<label class="label">当前状态 <span class="color-red padding-left-5"><%= obj.class.get_status_attributes(obj.status,1)[0] %></span></label>
+		</section>
+
+		<section>
+			<label class="label">审核意见 <span class="color-red">*</span></label>
+			<div class="inline-group">
+				<label class="radio">
+					<input type="radio" name="audit_yijian" value="通过"><i class="rounded-x"></i> 通过 
+				</label>
+				<label class="radio">
+					<input type="radio" name="audit_yijian" value="不通过"><i class="rounded-x"></i> 不通过 
+				</label>
+			</div>
+		</section>
+
+		<section>
+			<label class="label">审核理由 <span class="color-red">*</span><a class="padding-left-5" href="#audit_reason_dialog" data-toggle="modal" id="default_audit_reason"><i class="fa fa-history"></i></a></label>
+			<label class="textarea textarea-resizable">
+				<textarea rows="2" name="audit_liyou" id="audit_liyou" placeholder="审核理由"></textarea>
+			</label>
+		</section>
+
+		<section>
+			<label class="label">下一步 <span class="color-red">*</span></label>
+			<div class="col" id="audit_next_step">
+				<%= audit_next_step(obj, "通过") %>
+			</div>
+		</section>
+	</fieldset>
+	<footer>
+		<button class="btn-u" type="submit"><i class="fa fa-floppy-o"></i> 保 存 </button>
+		<button class="btn-u btn-u-default" type="reset"><i class="fa fa-repeat"></i> 重 置 </button>
+	</footer>
+	<% end %>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		// 点审核意见 选择通过不通过
+		$('#<%= form_id %> input[name="audit_yijian"]').on("click", function () {
+			var yijian = $(this).val();
+			var yes_yijian = '<%= audit_next_step(obj, "通过") %>';
+			var no_yijian = '<%= audit_next_step(obj, "不通过") %>';
+			if (yijian == "通过") {
+				$("#<%= form_id %> #audit_next_step").html(yes_yijian);
+			}else {
+				$("#<%= form_id %> #audit_next_step").html(no_yijian);
+			};
+		});
+
+		// 转向下一个审核人
+		$('#<%= form_id %> input[name="audit_next"]').live("click", function () {
+			if ($(this).val() == "turn") {
+				$(this).parent().after('<label class="input" id="audit_next_turn_user"><input id="audit_next_user" class="tree_radio required" type="text" json_params=\'{"json_class": "<%= obj.class %>", "id": "<%= obj.id %>"}\' json_url="/kobe/shared/audit_next_user" partner="audit_next_user_id" name="audit_next_user" value=""><input id="audit_next_user_id" type="hidden" value="" name="audit_next_user_id"></label>');
+			}else{
+				$("#audit_next_turn_user").remove();
+			};
+		});
+
+		// 默认操作理由
+		$('#audit_reason_dialog input[name="default_audit_reason"]').live("click", function () {
+			$('#<%= form_id %> #audit_liyou').text($(this).val());
+			$('#audit_reason_dialog').modal('hide');
+		});
+		
+
+		var audit_rules = {
+			"audit_yijian": {required: true},
+			"audit_liyou": {required: true},
+			"audit_next": {required: true},
+		};
+		validate_form_rules("#<%= form_id %>", audit_rules);
+	});
+</script>

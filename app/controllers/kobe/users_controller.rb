@@ -86,7 +86,7 @@ class Kobe::UsersController < KobeController
   def get_user
     @user = current_user
     if current_user.has_option?("User", :admin)
-      @user = User.find_by(id: params[:id])
+      @user = User.find_by(id: params[:id]) if params[:id].present?
     else
       if current_user.is_admin && params[:id].present?
         current_user.department.subtree.each do |d|
@@ -96,6 +96,6 @@ class Kobe::UsersController < KobeController
       end
     end
 
-    raise CanCan::AccessDenied.new("抱歉，您没有相关操作权限！") if @user.blank?
+    cannot_do_tips if @user.blank?
   end
 end

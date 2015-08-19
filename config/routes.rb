@@ -31,26 +31,25 @@ Evbdup::Application.routes.draw do
 
 # 后台begin
   namespace :kobe do
-    resources :main, :only => :index do
-      collection do
-        get :to_do
-      end
-    end
+    resources :main, :only => :index # do
+    #   collection do
+    #     get :to_do
+    #   end
+    # end
     resources :shared, :only => :index do
       collection do
-        post :get_ztree_title, :ztree_json
+        post :get_ztree_title, :ztree_json, :audit_next_user
       end
     end
     resources :orders
     resources :departments do 
       collection do
+        get :search, :list
         post :move, :valid_dep_name, :search_bank
-        match 'search' => 'departments#search', via: [:get, :post], as: :search
-        match 'list' => 'departments#list', via: [:get, :post], as: :list
       end
       member do 
-        get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank
-        post :update_add_user, :update_freeze, :update_upload, :commit, :update_recover, :edit_bank, :update_bank
+        get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank, :audit
+        post :update_add_user, :update_freeze, :update_upload, :commit, :update_recover, :edit_bank, :update_bank, :update_audit
       end
     end
     resources :articles do 

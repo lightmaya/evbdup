@@ -1,6 +1,8 @@
 /*
  *= require application
  *= require pages/shortcode_timeline2
+ *= require pages/profile
+ *= require plugins/jquery.mCustomScrollbar
 */
 
 .ajax_loading{

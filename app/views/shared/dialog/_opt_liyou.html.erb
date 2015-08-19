@@ -21,6 +21,6 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		validate_form_rules("#<%= form_id %>", {"opt_liyou": {required: true, minlength: 6}});
+		validate_form_rules("#<%= form_id %>", {"<%= input_name %>": {required: true, minlength: 6}});
 	});
 </script>

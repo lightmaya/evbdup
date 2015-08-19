@@ -33,6 +33,7 @@ class Rule < ActiveRecord::Base
 	    <?xml version='1.0' encoding='UTF-8'?>
 	    <root>
 	      <node name='名称' column='name' class='required'/>
+        <node name='审核理由' column='audit_reason' data_type='textarea' class='required' placeholder='审核理由' hint='每条审核理由用 "|" 分割'/>
 	    </root>
 	  }
 	end
@@ -68,6 +69,28 @@ class Rule < ActiveRecord::Base
       arr << obj
     end
     return arr
+  end
+
+  # 获取整个流程的实例数组 返回数组 [{"name"=>"总公司审核", "dep"=>"self.real_ancestry_level(2)","junior"=>[19], "senior"=>[20], "inflow"=>"self.status == 2", "outflow"=>"self.status == 404", "first_audit"=>"单位初审", "last_audit"=>"单位终审"}, {}, {}]
+  def get_step_objs
+    objs = []
+    self.create_rule_objs.each do |obj|
+      # 初审、终审权限转成数字类型的数组
+      obj.attributes["junior"] = obj.attributes["junior"].split(",").map { |e| e.to_i }
+      obj.attributes["senior"] = obj.attributes["senior"].split(",").map { |e| e.to_i }
+      objs << obj.attributes
+    end
+    return objs
+  end
+
+  # 获取默认的审核理由 返回数组
+  def get_audit_reason
+    str = "<div class='sky-form'><fieldset><section>"
+    self.audit_reason.split("|").each do |reason|
+      str << %Q{ <label class="radio"><input type="radio" name="default_audit_reason" value="#{reason}"><i class="rounded-x"></i> #{reason}</label> }
+    end
+    str << "</section></fieldset></div>"
+    return str
   end
 
 end

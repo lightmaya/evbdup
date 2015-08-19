@@ -15,6 +15,13 @@ class Kobe::SharedController < KobeController
     end
   end
 
+  # 转向下一个审核人
+  def audit_next_user
+    obj = params[:json_class].constantize.find_by(id: params[:id])
+    nodes = obj.turn_next_user_json(current_user)
+    render :json => nodes.blank? ? "没有相关用户，请先联系管理员授权！" : "[#{nodes.uniq.join(", ")}]"
+  end
+
   private
 
 end

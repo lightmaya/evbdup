@@ -1,5 +1,8 @@
 //= require plugins/jquery.ztree.all-3.5
 //= require ztree_show
+//= require plugins/counter/waypoints.min
+//= require plugins/counter/jquery.counterup.min
+//= require plugins/jquery.mCustomScrollbar.concat.min
 
 // 全选、取消全选的事件  
 function selectAll(){  
