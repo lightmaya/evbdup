@@ -71,7 +71,8 @@ class Rule < ActiveRecord::Base
     return arr
   end
 
-  # 获取整个流程的实例数组 返回数组 [{"name"=>"总公司审核", "dep"=>"self.real_ancestry_level(2)","junior"=>[19], "senior"=>[20], "inflow"=>"self.status == 2", "outflow"=>"self.status == 404", "first_audit"=>"单位初审", "last_audit"=>"单位终审"}, {}, {}]
+  # 获取整个流程的实例数组 
+  # 返回数组 [{"name"=>"总公司审核", "dep"=>"self.real_ancestry_level(2)","junior"=>[19], "senior"=>[20], "inflow"=>"self.status == 2", "outflow"=>"self.status == 404", "first_audit"=>"单位初审", "last_audit"=>"单位终审", "to_do_id"=>"1"}, {}, {}]
   def get_step_objs
     objs = []
     self.create_rule_objs.each do |obj|

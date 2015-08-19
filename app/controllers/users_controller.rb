@@ -29,7 +29,7 @@ class UsersController < JamesController
         redirect_to kobe_departments_path # 登录成功返回页面待定
       else
         flash_get user.department.get_tips
-        redirect_to kobe_departments_path
+        redirect_to main_path
       end
     else
       flash_get '用户名或者密码错误!'

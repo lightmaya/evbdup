@@ -2,10 +2,11 @@
 class RuleStep < XmlColumn
 
 	def self.keys
-		%w(name dep junior senior inflow outflow first_audit last_audit)
+		%w(name dep junior senior inflow outflow first_audit last_audit to_do_id)
 	end
 
 	def self.xml(who='',options={})
+		to_do_data = ToDoList.status_not_in(404).map{ |e| [e.id, e.name] }
 	  %Q{
 	    <?xml version='1.0' encoding='UTF-8'?>
 	    <root>
@@ -14,6 +15,7 @@ class RuleStep < XmlColumn
         <node column='junior' data_type='hidden'/>
         <node name='终审权限' column='last_audit' class='tree_checkbox required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Menu"}' partner='senior'/>
         <node column='senior' data_type='hidden'/>
+        <node name='待办事项显示名称' column='to_do_id' class='required' data_type='select' data='#{to_do_data}' hint='例如：审核定点采购项目'/>
 	      <node name='审核单位' column='dep' data_type='textarea' class='required' hint='例如：self.real_ancestry_level(2)'/>
 	      <node name='执行条件' column='inflow' data_type='textarea' class='required' hint='例如：self.total > 3000'/>
 	      <node name='跳过条件' column='outflow' data_type='textarea' class='required' hint='例如：self.status == 404'/>
@@ -23,10 +25,14 @@ class RuleStep < XmlColumn
 
 	# 生成规则
 	# <step name="总公司审核">
-  #   <junior>21,22,23</junior>
-  #   <senior>23,24,25</senior>
-  #   <inflow>tottal > 5000 and obj.items.select{|i|i.category.level.index("总公司") >= 0}</inflow>
-  #   <outflow>status in (404,405,406)</outflow>
+  #   <first_audit>单位初审</first_audit>
+  #   <junior>19</junior>
+  #   <last_audit>单位终审</last_audit>
+  #   <senior>20</senior>
+  #   <to_do_id>1</to_do_id>
+  #   <dep>Department.find(2).children.first.real_ancestry_level(2)</dep>
+  #   <inflow>self.status == 2</inflow>
+  #   <outflow>self.status == 404</outflow>
   # </step>
 	def self.create_rule_xml(params='')
 		return '' if params.blank?

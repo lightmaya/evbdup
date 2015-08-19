@@ -10,6 +10,7 @@ Evbdup::Application.routes.draw do
   captcha_route
 
   get 'errors' => 'errors#index'
+  get 'main' => 'kobe/main#index'
 
   resources :home, :only => :index  do 
     collection do
@@ -31,11 +32,6 @@ Evbdup::Application.routes.draw do
 
 # 后台begin
   namespace :kobe do
-    resources :main, :only => :index # do
-    #   collection do
-    #     get :to_do
-    #   end
-    # end
     resources :shared, :only => :index do
       collection do
         post :get_ztree_title, :ztree_json, :audit_next_user
@@ -67,6 +63,11 @@ Evbdup::Application.routes.draw do
       end
     end
     resources :contract_templates do
+      member do 
+        get :delete
+      end
+    end
+    resources :to_do_lists do
       member do 
         get :delete
       end

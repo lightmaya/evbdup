@@ -1,0 +1,50 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> 待办事项</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8 pull-left padding-top-5">
+                <%= link_to '<i class="fa fa-plus"></i> 新增</a>'.html_safe, new_kobe_to_do_list_path %>
+            </div>
+            <div class="col-md-4 pull-right">
+            <%= search_form_for @q, url: kobe_to_do_lists_path, html: { method: :get } do |f| %>
+                <div class="margin-bottom-10">
+                    <div class="input-group">
+                        <%= f.search_field :name_cont, class: "form-control input-sm", placeholder: "请输入待办事项名称..." %>
+                        <span class="input-group-btn">
+                          <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                        </span>
+                    </div>
+                </div>
+            <% end %>
+            </div>
+        </div>
+        <%= modal_dialog("opt_dialog") %>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="index">序号</th>
+                    <th>待办事项名称</th>
+                    <th>列表url</th>
+                    <th>审核url</th>
+                    <th>排序</th>
+                    <th class="cando">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @to_do_lists.each_with_index do |obj,index| %>
+                <tr>
+                    <td><%= show_index(index) %></td>
+                    <td><%= obj.name %></td>
+                    <td><%= obj.list_url %></td>
+                    <td><%= obj.audit_url %></td>
+                    <td><%= obj.sort %></td>
+                    <td><%= btn_group(obj.cando_list(current_user.can_option_hash[obj.class.to_s])) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @to_do_lists %> 
+    </div>                     
+</div>

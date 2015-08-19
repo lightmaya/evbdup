@@ -13,8 +13,6 @@ class User < ActiveRecord::Base
   has_many :user_menus, :dependent => :destroy
   has_many :menus, through: :user_menus
 
-  has_many :task_queues
-
   has_many :user_categories, :dependent => :destroy
   has_many :categories, through: :user_categories
   # 收到的消息
@@ -161,6 +159,22 @@ class User < ActiveRecord::Base
   # 自动获取操作权限
   def set_auto_menu
     self.menu_ids = Menu.where(is_auto: true).map(&:id)
+  end
+
+  # 待办事项 每一个待办事项有多少个 用于列表显示
+  # 用select不用count是因为页面显示需要用到task_queue.to_do_list 而count只返回｛to_do_list_id: 3｝
+  def to_do_list
+    TaskQueue.where(["user_id = ? or menu_id in (?) ", self.id, self.menu_ids]).select("to_do_list_id,count(id) as num").group(:to_do_list_id)
+  end
+
+  # 该用户的所有待办事项个数
+  def to_do_count
+    TaskQueue.where(["user_id = ? or menu_id in (?) ", self.id, self.menu_ids]).count
+  end
+
+  # 该用户的所有待办事项
+  def to_do_all
+    TaskQueue.where(["user_id = ? or menu_id in (?) ", self.id, self.menu_ids])
   end
 
   private

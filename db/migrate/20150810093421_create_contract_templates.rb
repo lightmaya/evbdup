@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateContractTemplates < ActiveRecord::Migration
   def change
     create_table :contract_templates do |t|

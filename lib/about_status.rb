@@ -106,7 +106,7 @@ module AboutStatus
 	end
 
 	# 判断到哪一步 
-  # 返回 rs = {"name"=>"总公司审核", "dep"=>"self.real_ancestry_level(2)","junior"=>[19], "senior"=>[20], "inflow"=>"self.status == 2", "outflow"=>"self.status == 404", "first_audit"=>"单位初审", "last_audit"=>"单位终审"}
+  # 返回 rs = {"name"=>"总公司审核", "dep"=>"self.real_ancestry_level(2)","junior"=>[19], "senior"=>[20], "inflow"=>"self.status == 2", "outflow"=>"self.status == 404", "first_audit"=>"单位初审", "last_audit"=>"单位终审", "to_do_id"=>"1"}
   # self.rule_step = start|done|总公司审核|分公司审核 
 	# start 表示流程刚开始 根据rule的xml判断到哪一步 
 	# 总公司审核|分公司审核 只根据xml的step["name"]判断到哪一步
@@ -187,12 +187,12 @@ module AboutStatus
 			if user_id.blank?
 	      # 没有指定user_id时，只有初审的人插入待办事项
 	      rs["junior"].each do |m|
-	      	tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m)
+	      	tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m, to_do_list_id: rs["to_do_id"])
 	      end
 	    else
 	    	user = User.find_by(id: user_id)
 	    	if (user.menu_ids & (rs["junior"] | rs["senior"])).present?
-	    		tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, user_id: user_id)
+	    		tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, user_id: user_id, to_do_list_id: rs["to_do_id"])
 	    	end
 	    end
 	    if tqs.present? # 删除旧的待办事项

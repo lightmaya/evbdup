@@ -60,6 +60,11 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => contract_template)
   end
 
+  to_do_list = Menu.create(:name => "待办事项", :route_path => "/kobe/to_do_lists", :can_opt_action => "ToDoList|read", :is_show => true, :parent => setting)
+  [["增加待办事项", "ToDoList|create"], ["修改待办事项", "ToDoList|update"], ["删除待办事项", "ToDoList|update_destroy"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => to_do_list)
+  end
+
   rule = Menu.create(:name => "流程定制", :route_path => "/kobe/rules", :can_opt_action => "Rule|read", :is_show => true, :parent => setting)
   [["增加", "Rule|create"], ["修改", "Rule|update"], ["删除", "Rule|update_destroy"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => rule)
