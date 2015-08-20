@@ -150,8 +150,8 @@ module AboutStatus
   	rs = ""
   	steps[step_index..steps.length].each do |step|
       next if eval(step["outflow"]) # 满足 outflow 跳出
-      next unless eval(step["inflow"]) # 不满足 inflow 跳出
       next if eval(step["dep"]).blank? # 判断单位是否存在
+      next unless eval(step["inflow"]) # 不满足 inflow 跳出
       rs = step
       break 
     end

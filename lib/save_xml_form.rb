@@ -187,6 +187,7 @@ private
     name_params = []
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
+      next if node.attributes.has_key?("data_type") && node.attributes["data_type"].to_s == 'xml'
       if node.attributes.has_key?("column")
         column_params << node.attributes["column"].to_s
       else

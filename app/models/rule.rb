@@ -33,7 +33,7 @@ class Rule < ActiveRecord::Base
 	    <?xml version='1.0' encoding='UTF-8'?>
 	    <root>
 	      <node name='名称' column='name' class='required'/>
-        <node name='审核理由' column='audit_reason' data_type='textarea' class='required' placeholder='审核理由' hint='每条审核理由用 "|" 分割'/>
+        <node name='审核理由' column='audit_reason' data_type='xml' class='required' placeholder='审核理由' hint='填好审核理由需点击提交'/>
 	    </root>
 	  }
 	end
@@ -85,13 +85,10 @@ class Rule < ActiveRecord::Base
   end
 
   # 获取默认的审核理由 返回数组
-  def get_audit_reason
-    str = "<div class='sky-form'><fieldset><section>"
-    self.audit_reason.split("|").each do |reason|
-      str << %Q{ <label class="radio"><input type="radio" name="default_audit_reason" value="#{reason}"><i class="rounded-x"></i> #{reason}</label> }
-    end
-    str << "</section></fieldset></div>"
-    return str
+  def get_audit_reason_arr
+    arr = []
+    Nokogiri::XML(self.audit_reason).css("node").each { |reason| arr << reason.to_str }
+    return arr
   end
 
 end

@@ -75,6 +75,15 @@ module KobeHelper
   def audit_next_step_label(key,value)
     %Q{ <label class="radio"><input type="radio" name="audit_next" value="#{key}"><i class="rounded-x"></i> #{value}</label> }
   end
+
+  def audit_reason_modal(get_audit_reason_arr=[])
+    str = "<div class='sky-form'><fieldset><section>"
+    get_audit_reason_arr.each do |reason|
+      str << %Q{ <label class="radio"><input type="radio" name="default_audit_reason" value="#{reason}"><i class="rounded-x"></i> #{reason}</label> }
+    end
+    str << "</section></fieldset></div>"
+    return str.html_safe
+  end
   
   # 待办事项显示
   # 当前用户有超过10条的待办事项 用list方式显示 不足10条全部显示

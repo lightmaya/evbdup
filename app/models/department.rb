@@ -85,12 +85,20 @@ class Department < ActiveRecord::Base
   	limited = [404]
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
+
+  def self.purchaser
+    Department.find_by(id: 2)
+  end
   
+  def self.supplier
+    Department.find_by(id: 3)
+  end
+
   # 根据单位的祖先节点判断单位是采购单位还是供应商
   def get_xml
     case self.try(:root_id)
-    when 2 then Department.purchaser_xml
-    when 3 then Department.supplier_xml
+    when Department.purchaser.try(:id) then Department.purchaser_xml
+    when Department.supplier.try(:id) then Department.supplier_xml
     else Department.other_xml
     end
   end

@@ -4,7 +4,7 @@
 	method ||= 'post'
 	title ||= "审核"
 %>
-<%= modal_dialog("audit_reason_dialog", obj.rule.get_audit_reason.html_safe, "审核理由") if obj.rule.get_audit_reason.present? %>
+<%= modal_dialog("audit_reason_dialog",  audit_reason_modal(obj.rule.get_audit_reason_arr), "审核理由") if obj.rule.try(:get_audit_reason_arr).present? %>
 <div class="tag-box tag-box-v1 margin-top-20">
 	<h2><%= title %></h2>
 	<%= form_tag(action, method: method, class: 'sky-form', id: form_id) do %>

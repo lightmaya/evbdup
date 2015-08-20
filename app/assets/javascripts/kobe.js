@@ -91,3 +91,15 @@ $(".more_actions").on('click',function(){
         $('#more_actions_dialog').modal();
     }
 });
+
+// 生成表单时 有xml类型的字段 使用ajax提交xml的node
+function ajax_submit_or_remove_xml_column (url,data,submit_div) {
+    var value = $(submit_div + " input").val();
+    if (value != "" || value != undefined) { data["column_value"] = value; };
+    ajax_post_show(url,data,'',function (data) {
+        $(submit_div).prevAll().remove();
+        $(submit_div).before(data);
+        if (data!="") {$(submit_div + " input").removeClass("required").val("");};
+    });
+    
+}

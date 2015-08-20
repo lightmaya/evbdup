@@ -24,7 +24,7 @@ class Kobe::RulesController < KobeController
 
   def show
     @arr  = []
-    obj_contents = ""
+    obj_contents = show_obj_info(@rule,Rule.xml)
     @rule.create_rule_objs.each_with_index do |step,index|
       obj_contents << show_obj_info(step,RuleStep.xml,{title: "Step ##{index+1}"})
     end
