@@ -100,13 +100,13 @@ class KobeController < ApplicationController
   end
 
   # 自定义条件判断没有某权限的提示
-  def cannot_do_tips(msg="抱歉，您没有相关操作权限！")
+  def cannot_do_tips(msg=Dictionary.tips.custom_default_cannot)
     raise CanCan::AccessDenied.new(msg) 
   end
 
   # 审核提示
   def audit_tips
-    cannot_do_tips("抱歉，您没有审核权限或者本项目已被其他用户审核过了！")
+    cannot_do_tips(Dictionary.tips.audit_default_cannot)
   end
 
   # 生成审核日志

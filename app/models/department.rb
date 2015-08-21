@@ -206,10 +206,7 @@ class Department < ActiveRecord::Base
 
   # 维护开户银行提示
   def bank_tips
-    msg = []
-    msg << "请输入开户银行关键字，例如：开户银行是[招商银行股份有限公司北京西直门支行]，可输入“招商 北京 西直门”"
-    msg << "请尽量细化搜索的关键字，搜索结果最多20个"
-    msg << "如需修改开户银行，请点击开户银行的银行名称"
+    Dictionary.tips.bank
   end
 
   # 是否需要隐藏树形结构 用于没有下级单位的单位 不显示树

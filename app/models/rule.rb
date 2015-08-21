@@ -51,8 +51,7 @@ class Rule < ActiveRecord::Base
   end
 
   def self.tips
-		msg = []
-    msg << "所有实例请用 obj 代替。"
+    Dictionary.tips.rule
 	end
 
 	# 根据rule xml 生成的n个实例 返回数组

@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
     flash_get(exception.message)
     respond_to do |format|
       format.json { render text: exception.message }
-      format.html { redirect_to root_path}
+      format.html { redirect_to current_user.present? ? main_path : root_path}
     end
     # redirect_to errors_path, :alert => exception.message
     # render :file => "#{Rails.root}/public/403.html", :status => 403, :layout => false

@@ -32,7 +32,6 @@ class ContractTemplate < ActiveRecord::Base
 	      <node name='文件名' column='file_name' class='required' hint='英文的文件名，用于打印时系统自动选择合同模板。例如：common。'/>
 	      <node name='模板名称' column='name' class='required' hint='中文的模板名称，用于对应品目的合同模板的选择。例如：普通模版、汽车模板。'/>
 	      <node name='模板文件URL' column='url' class='required' hint='存放模板的文件夹路径，例如：/kobe/orders/ht 。'/>
-	      <node name='内容' column='content' data_type='textarea' class='required'/>
 	    </root>
 	  }
 	end
@@ -57,30 +56,6 @@ class ContractTemplate < ActiveRecord::Base
   # 文件的完整路径
   def full_file_path
   	File.join(self.full_dir_path, "_#{self.file_name}.html.erb")
-  end
-
-  # 文件夹是否存在 如果不存在生成文件夹
-	def dir_exists?
-  	if File::directory?(self.full_dir_path)
-  		return true
-  	else
-  		Dir.mkdir(self.full_dir_path)
-  		self.dir_exists?
-  	end
-	end
-
-	# 生成文件
-	def create_file
-		if self.dir_exists?
-			file = File.open(self.full_file_path, "w")
-    	file.puts self.content
-		  file.close
-  	end
-	end
-
-	def self.tips
-    msg = []
-    msg << "合同模板内容中需添加数据表格时，请用 <%= render :partial => '/kobe/orders/ht/table', :locals => { :myform => @ms_form } %> 代替"
   end
 
 end

@@ -27,17 +27,12 @@ class Kobe::ContractTemplatesController < KobeController
   end
 
   def create
-  	ct = create_and_write_logs(ContractTemplate, ContractTemplate.xml)
-    if ct.present?
-    	ct.create_file
-    end
+  	create_and_write_logs(ContractTemplate, ContractTemplate.xml)
     redirect_to kobe_contract_templates_path
   end
 
   def update
-    if update_and_write_logs(@ct, ContractTemplate.xml)
-			@ct.create_file
-    end
+    update_and_write_logs(@ct, ContractTemplate.xml)
     redirect_to kobe_contract_templates_path
   end
 
