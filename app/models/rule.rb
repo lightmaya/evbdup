@@ -33,7 +33,6 @@ class Rule < ActiveRecord::Base
 	    <?xml version='1.0' encoding='UTF-8'?>
 	    <root>
 	      <node name='名称' column='name' class='required'/>
-        <node name='审核理由' column='audit_reason' data_type='xml' class='required' placeholder='审核理由' hint='填好审核理由需点击提交'/>
 	    </root>
 	  }
 	end
@@ -45,6 +44,7 @@ class Rule < ActiveRecord::Base
     arr << [self.class.icon_action("详细"), "/kobe/rules/#{self.id}", target: "_blank"]  if can_opt_arr.include?(:read)
     # 修改
     arr << [self.class.icon_action("修改"), "/kobe/rules/#{self.id}/edit"] if can_opt_arr.include?(:update)
+    arr << [self.class.icon_action("维护审核理由"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{self.class.icon_action('维护审核理由')}", '/kobe/rules/#{self.id}/audit_reason', "#opt_dialog") }] if can_opt_arr.include?(:audit_reason)
     # 删除
     arr << [self.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{self.class.icon_action('删除')}", '/kobe/rules/#{self.id}/delete', "#opt_dialog") }] if can_opt_arr.include?(:update_destroy)
     return arr

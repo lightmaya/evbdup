@@ -14,16 +14,13 @@ class MyForm
   def get_input_str(xml=self.xml,obj=self.obj,table_name=self.table_name,grid=self.options[:grid],index=nil)
   	input_str = ""
   	doc = Nokogiri::XML(xml)
-  	# 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'、'隐藏'、'xml'的
-    tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')][not(@data_type='xml')]")
+  	# 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'、'隐藏'的
+    tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')]")
     tds.each_slice(grid).with_index do |node,i|
       tmp = ""
       node.each{|n| tmp << _create_text_field(n,obj,table_name,grid,index)}
       input_str << content_tag(:div, raw(tmp).html_safe, :class=>'row')
     end
-    # 生成xml类型
-    doc.xpath("/root/node[@data_type='xml']").each{ |n| input_str << _create_xml_field(n,obj,table_name,index) if obj.id.present? }
-
     # 再生成文本框和富文本框--针对大文本、富文本或者隐藏域
     doc.xpath("/root/node[@data_type='textarea'] | /root/node[@data_type='richtext'] | /root/node[@data_type='hidden']").each{|n|
       unless n.attributes["data_type"].to_s == "hidden"
@@ -33,45 +30,6 @@ class MyForm
       end
     }
     return input_str
-  end
-
-  # 生成xml类型
-  def _create_xml_field(node,obj,table_name,index)
-    node_options = node.attributes
-    # display=skip的直接跳过
-    return "" if node_options.has_key?("display") && node_options["display"].to_s == "skip"
-    name = node_options["name"].blank? ? "" : node_options["name"].to_str
-    # 必填字段要加上红*
-    name << _red_text("*")  if "#{node_options["rules"]}#{node_options["class"]}".index("required")
-
-    column = node_options["column"] || node_options["name"]
-    result = show_xml_node_value(obj,node)
-
-    input_opts = {} #传递参数用的哈希
-    input_opts[:table_name] = table_name
-    # input_opts[:value] = get_node_value(obj,node,true) 
-    input_opts[:icon] = get_icon(node_options)
-    input_opts[:node_attr] = get_node_attr(table_name,node_options,column,index)
-    input_opts[:data_type] = "text"
-    input_opts[:hint] = (node_options.has_key?("hint") && !node_options["hint"].blank?) ? node_options["hint"] : ""
-    # 如果有xml 不验证require 没有则验证
-    if result.present?
-      a = input_opts[:node_attr].find{|e| e.include?("required") }
-      if a.present?
-        i = input_opts[:node_attr].index(a)
-        input_opts[:node_attr][i] = a.gsub("required",'') if i.present?
-      end
-    end 
-    submit_click = %Q|ajax_submit_or_remove_xml_column("/kobe/shared/ajax_submit",{id: "#{obj.id}", class_name: "#{obj.class}", column_node: "#{column}"},"##{column}_ajax_submit")|
-    result << %Q{
-      <div class="row padding-left-10" id="#{column}_ajax_submit">
-        <div class="col-md-8">#{ _create_input_str(input_opts) }</div>
-        <div class="col-md-4"><a class="btn-u btn-u-default" onclick='#{submit_click}'>提交</a></div>
-      </div>
-    }
-    field_str = content_tag(:div, raw(result).html_safe, :class => 'tag-box tag-box-v3 padding-left-5 margin-bottom-5')
-    section = content_tag(:section, raw("<label class='label'>#{name}</label>#{field_str}").html_safe, :class => "col-md-12")
-    return content_tag(:div, raw(section).html_safe, :class=>'row')
   end
 
   # 生成提交按钮

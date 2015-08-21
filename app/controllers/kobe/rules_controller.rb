@@ -24,7 +24,7 @@ class Kobe::RulesController < KobeController
 
   def show
     @arr  = []
-    obj_contents = show_obj_info(@rule,Rule.xml)
+    obj_contents = ""
     @rule.create_rule_objs.each_with_index do |step,index|
       obj_contents << show_obj_info(step,RuleStep.xml,{title: "Step ##{index+1}"})
     end
@@ -52,6 +52,11 @@ class Kobe::RulesController < KobeController
     @rule.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除成功。")
     redirect_to kobe_rules_path
+  end
+
+  # 维护审核理由
+  def audit_reason
+    render partial: '/kobe/shared/show_xml_column', locals: { obj: @rule, column: "audit_reason" }
   end
 
   private  

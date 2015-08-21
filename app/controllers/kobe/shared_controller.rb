@@ -42,8 +42,7 @@ class Kobe::SharedController < KobeController
         obj.update(column.to_sym => doc.to_s)
       end
       # 展示xml字段
-      node = Nokogiri::XML(obj.class.xml).xpath("/root/node[@column='#{column}']").first
-      rs = show_xml_node_value(obj,node).html_safe if node.present?
+      rs = show_xml_node_value(obj,column).html_safe
     end
     render :text => rs
   end
@@ -62,8 +61,7 @@ class Kobe::SharedController < KobeController
         obj.update(column.to_sym => doc.to_s)
       end
       # 展示xml字段
-      node = Nokogiri::XML(obj.class.xml).xpath("/root/node[@column='#{column}']").first
-      rs = show_xml_node_value(obj,node).html_safe if node.present?
+      rs = show_xml_node_value(obj,column).html_safe
     end
     render :text => rs
      

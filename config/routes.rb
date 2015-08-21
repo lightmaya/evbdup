@@ -74,7 +74,7 @@ Evbdup::Application.routes.draw do
     end
     resources :rules do
       member do 
-        get :delete
+        get :delete, :audit_reason
       end
     end
     resources :users do 

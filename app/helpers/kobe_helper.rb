@@ -76,6 +76,7 @@ module KobeHelper
     %Q{ <label class="radio"><input type="radio" name="audit_next" value="#{key}"><i class="rounded-x"></i> #{value}</label> }
   end
 
+  # 审核理由的弹框
   def audit_reason_modal(get_audit_reason_arr=[])
     str = "<div class='sky-form'><fieldset><section>"
     get_audit_reason_arr.each do |reason|
@@ -119,6 +120,27 @@ module KobeHelper
         </div>
       </div>
     |.html_safe
+  end
+
+  # 针对xml类型的字段 ajax增加、删除每一个node
+  def ajax_xml_column(obj,column)
+    result = show_xml_node_value(obj,column)
+
+    input_str = %Q{
+      <i class="icon-append fa fa-info"></i>
+      <input id="#{obj.class.to_s.tableize}_#{column}" class="required" type="text" name="#{obj.class.to_s.tableize}[#{column}]" value="">
+    }
+
+    submit_click = %Q|ajax_submit_or_remove_xml_column("/kobe/shared/ajax_submit",{id: "#{obj.id}", class_name: "#{obj.class}", column_node: "#{column}"},"##{column}_ajax_submit")|
+    result << %Q{
+      <div class="row padding-left-10" id="#{column}_ajax_submit">
+        <div class="col-md-8 sky-form no-border">#{ content_tag(:label, raw(input_str).html_safe, :class=>'input') }</div>
+        <div class="col-md-4"><a class="btn-u btn-u-default" onclick='#{submit_click}'>提交</a></div>
+      </div>
+    }
+    field_str = content_tag(:div, raw(result).html_safe, :class => 'tag-box tag-box-v3 padding-left-5 margin-bottom-5')
+    section = content_tag(:section, raw("#{field_str}").html_safe, :class => "col-md-12")
+    return content_tag(:div, raw(section).html_safe, :class=>'row')
   end
 
 end

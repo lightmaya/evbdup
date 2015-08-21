@@ -85,8 +85,8 @@ module BaseFunction
       # str << "<br />"
     end 
     doc = Nokogiri::XML(xml)
-    # 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'、'xml'的
-    tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')][not(@data_type='xml')]")
+    # 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'的
+    tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')]")
     tds.each_slice(grid).with_index do |node,i|
       tbody << "<tr>"
       node.each_with_index{|n,ii|
@@ -95,15 +95,6 @@ module BaseFunction
       }
       tbody << "</tr>"
     end
-    # 生成xml类型
-    doc.xpath("/root/node[@data_type='xml']").each do |n| 
-      next if obj.attributes[n["column"]].blank?
-      node_arr = Nokogiri::XML(obj.attributes[n["column"]]).css("node").map { |xml_node| xml_node.to_str }
-      tbody << "<tr>"
-        tbody << "<td>#{n.attributes["name"]}</td><td colspan='#{grid*2-1}'>#{node_arr.join("<br>")}</td>"
-      tbody << "</tr>"
-    end
-
     # 再生成文本框和富文本框--针对大文本或者富文本
     doc.xpath("/root/node[contains(@data_type,'text')]").each_slice(1) do |node|
       node.each{|n|
@@ -221,14 +212,13 @@ module BaseFunction
   end
 
   # 显示xml类型的node的值
-  def show_xml_node_value(obj,node)
-    return "" unless node.attributes.has_key?("column") && obj.class.attribute_method?(node["column"])
+  def show_xml_node_value(obj,column)
     result = ""
-    doc = Nokogiri::XML(obj.attributes[node["column"]])
+    doc = Nokogiri::XML(obj[column])
     doc.css("node").each_with_index do |n,i|
-      remove_click = %Q|ajax_submit_or_remove_xml_column("/kobe/shared/ajax_remove",{id: "#{obj.id}", class_name: "#{obj.class}", column_node: "#{node["column"]}", column_index: "#{i}"},"##{node["column"]}_ajax_submit")|
+      remove_click = %Q|ajax_submit_or_remove_xml_column("/kobe/shared/ajax_remove",{id: "#{obj.id}", class_name: "#{obj.class}", column_node: "#{column}", column_index: "#{i}"},"##{column}_ajax_submit")|
       result << %Q{
-        <div class="btn-u btn-brd rounded btn-u-xs btn-u-default margin-bottom-10 margin-left-10">
+        <div class="bg-light bg-color-white rounded margin-bottom-10 margin-left-10">
           <button class="close margin-left-10" data-dismiss="alert" type="button" onclick='#{remove_click}'>×</button>
           #{n.to_str}
         </div>
