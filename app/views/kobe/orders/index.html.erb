@@ -3,35 +3,21 @@
         <h3 class="panel-title"><i class="fa fa-tasks"></i> 采购项目</h3>
     </div>
     <div class="panel-body">
-        <div class="row margin-bottom-10">
-            <div class="col-md-8 pull-left">
-            	<%= form_tag(batch_opt_kobe_suggestions_path, method: 'post', id: "list_form") do %>
-                <button class="btn btn-sm btn-danger rounded" value="delete" name="batch_opt">
-                    <i class="fa fa-trash-o"></i>
-                    删除
-                </button>
-                <button class="btn btn-sm btn-info rounded" value="read" name="batch_opt">
-                    <i class="fa fa-check-square-o"></i>
-                    标记为已读
-                </button>
-                <button class="btn btn-sm btn-warning rounded" value="unread" name="batch_opt">
-                    <i class="fa fa-minus-square-o"></i>
-                    标记为未读
-                </button>
-                <button class="btn btn-sm btn-danger rounded" value="clean" name="batch_opt">
-                    <i class="fa fa-trash-o"></i>
-                    彻底删除
-                </button>
-              </form>
+        <div class="row">
+            <div class="col-md-8 pull-left padding-top-5">
+                <%= link_to '<i class="fa fa-plus"></i> 新增</a>'.html_safe, new_kobe_order_path %>
             </div>
             <div class="col-md-4 pull-right">
-                <div class="input-group">
-                    <input type="text" class="form-control input-sm" placeholder="请输入关键字...">
-                    <span class="input-group-btn">
-                      <button class="btn btn-success btn-sm" type="button">搜索</button>
-                      <button type="button" class="btn btn-success btn-sm" style="margin-left:6px;"><i class="fa fa-filter"></i> 高级搜索</button>
-                    </span>
+            <%= search_form_for @q, url: kobe_orders_path, html: { method: :get } do |f| %>
+                <div class="margin-bottom-10">
+                    <div class="input-group">
+                        <%= f.search_field :sn_or_contract_sn_or_name_cont, class: "form-control input-sm", placeholder: "请输入项目名称、凭证编号、合同编号..." %>
+                        <span class="input-group-btn">
+                          <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                        </span>
+                    </div>
                 </div>
+            <% end %>
             </div>
         </div>
         <table class="table table-bordered table-hover">
@@ -45,6 +31,7 @@
                     <th class="index">序号</th>
                     <th>编号</th>
                     <th class="hidden-sm">名称</th>
+                    <th class="hidden-sm">总金额（元）</th>
                     <th class="status_bar"><%= status_filter(Order) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
@@ -61,14 +48,14 @@
                     <td><%= show_index(index) %></td>
                     <td><%= obj.sn %></td>
                     <td><%= obj.name %></td>
+                    <td><%= obj.total %></td>
                     <td><%= obj.status_bar %></td>
                     <td><%= show_date(obj.created_at) %></td>
-                    <td><%= btn_group(obj.cando_list) %></td>
+                    <td><%= btn_group(obj.cando_list(current_user.can_option_hash[obj.class.to_s])) %></td>
                 </tr>
                 <% end %>
             </tbody>
         </table>
         <%= paginate @objs %> 
-        <% end %>
     </div>                     
 </div>

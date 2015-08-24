@@ -102,4 +102,5 @@ function ajax_submit_or_remove_xml_column (url,data,submit_div) {
         if (data!="") {$(submit_div + " input").removeClass("required").val("");};
     });
     
-}
+};
+

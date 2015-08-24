@@ -60,3 +60,28 @@ $(function() {
     //   });
     // });
 });
+
+//  输入框有变动
+function input_blur(me,master_table_names,slave_table_names){
+    var id = me.attr("id").split("_").pop();
+    var price = $("#"+slave_table_names+"_price_" + id).val();
+    var quantity = $("#"+slave_table_names+"_quantity_" + id).val();
+    if ( !isNaN(price) && (price != '') && (quantity != '') && !isNaN(quantity) ) {
+        $("#"+slave_table_names+"_total_" + id).val(parseFloat(price) * parseFloat(quantity));
+    }
+    calc_total(master_table_names,slave_table_names);
+}
+//  计算总金额
+function calc_total(master_table_names,slave_table_names) {
+    var total = 0;
+    $("input[name^='"+slave_table_names+"[total]']").each(function () {
+        var thisValue = $(this).val();
+        if ( (thisValue != '') ) {
+            total += formatFloat(parseFloat(thisValue),2);
+            $(this).val(formatFloat(parseFloat(thisValue),2));
+        };
+    });
+    total = formatFloat(total,2);
+    $("#"+master_table_names+"_total").val(total);
+    $(".show_total #form_sum_total").text(total);
+};

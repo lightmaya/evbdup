@@ -37,7 +37,14 @@ Evbdup::Application.routes.draw do
         post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove
       end
     end
-    resources :orders
+    resources :orders do
+      collection do
+        post :same_template
+      end
+      member do
+        post :commit
+      end
+    end
     resources :departments do 
       collection do
         get :search, :list

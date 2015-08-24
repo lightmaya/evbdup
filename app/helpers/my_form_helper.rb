@@ -5,6 +5,9 @@ module MyFormHelper
   def draw_myform(myform)
     set_top_part(myform) # 设置FORM头部
     set_input_part(myform) #设置主表input
+    if myform.options.has_key?(:show_total) && myform.options[:show_total] == true
+      set_total_part(myform) # 设置金额
+    end
     if myform.options.has_key?(:upload_files) && myform.options[:upload_files] == true
       set_upload_part(myform) # 设置上传附件
     else
@@ -47,6 +50,29 @@ module MyFormHelper
 
   def get_button_part(myform,self_form=true)
     myform.get_form_button(self_form)
+  end
+
+  # 设置金额
+  def set_total_part(myform)
+    myform.html_code << %Q|
+      <div class="row show_total">
+        <section class="col">
+          <h2 class="text-red">
+            <strong>总计：￥<span id="form_sum_total">0</span></strong>
+          </h2>
+        </section>
+      </div>
+      <script type="text/javascript">
+      $(function() {
+        var master_table_names = "#{myform.table_name}";
+        var slave_table_names = "#{myform.slave_table_name}";
+        //影响小计的输入框有变动
+        $("input[name^='"+slave_table_names+"[price]']").live('change blur',function(){input_blur($(this),master_table_names,slave_table_names)});
+        $("input[name^='"+slave_table_names+"[quantity]']").live('change blur',function(){input_blur($(this),master_table_names,slave_table_names)});
+        calc_total(master_table_names,slave_table_names);
+      });
+      </script>
+    |
   end
 	
 end

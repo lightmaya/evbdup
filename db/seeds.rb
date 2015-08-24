@@ -22,11 +22,22 @@ if Department.first.blank?
 end
 
 if Menu.first.blank?
-  [["订单管理",  "fa-tasks"], ["入围产品管理",  "fa-bookmark-o"], ["数据统计与分析",  "fa-bar-chart-o"], ["公告管理", "fa-tag"]].each do |option|
+  [["入围产品管理",  "fa-bookmark-o"], ["数据统计与分析",  "fa-bar-chart-o"], ["公告管理", "fa-tag"]].each do |option|
     Menu.create(:name => option[0], :icon => option[1], :is_show => true)
   end
 
-  dep = Menu.create(:name => "单位及用户管理", :icon => "fa-users", :is_show => true)
+  order = Menu.create(:name => "订单管理", :icon => "fa-tasks", :is_show => true)
+  ddcg = Menu.create(:name => "定点采购", :is_show => true, :parent => order)
+  ddcg_list = Menu.create(:name => "定点采购项目", :route_path => "/kobe/orders", :can_opt_action => "Order|read", :is_show => true, :parent => ddcg)
+  [["增加定点采购", "Order|create"], ["修改定点采购", "Order|update"], ["提交定点采购", "Order|commit"], ["删除定点采购", "Order|update_destroy"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => ddcg_list)
+  end
+  ddcg_audit = Menu.create(:name => "审核定点采购", :route_path => "/kobe/orders", :can_opt_action => "Order|list", :is_show => true, :parent => ddcg)
+  [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => ddcg_audit)
+  end
+
+  dep = Menu.create(:name => "单位及用户管理", :icon => "fa-users", :is_auto => true, :is_show => true)
   dep_p = Menu.create(:name => "单位管理", :route_path => "/kobe/departments", :can_opt_action => "Department|read", :is_show => true, :is_auto => true, :parent => dep)
   [["增加下属单位", "Department|create"], ["修改单位信息", "Department|update", true], ["上传附件", "Department|upload", true], ["分配人员账号", "Department|add_user"], ["维护开户银行", "Department|bank", true], ["提交", "Department|commit", true], ["删除单位", "Department|update_destroy"], ["冻结单位", "Department|freeze"], ["恢复单位", "Department|recover"], ["移动单位", "Department|move"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :is_auto => m[2].present?, :parent => dep_p)
@@ -36,7 +47,7 @@ if Menu.first.blank?
 
   audit_dep = Menu.create(:name => "审核单位", :route_path => "/kobe/departments/list", :can_opt_action => "Department|list", :is_show => true, :parent => dep)
   [["单位初审", "Department|first_audit"], ["单位终审", "Department|last_audit"]].each do |m|
-    Menu.create(:name => m[0], :can_opt_action => m[1], :is_auto => m[2].present?, :parent => audit_dep)
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_dep)
   end
 
   user = Menu.create(:name => "用户管理", :route_path => "/kobe/users", :can_opt_action => "User|read", :is_show => true, :is_auto => true, :parent => dep)
@@ -81,6 +92,11 @@ if Category.first.blank?
   ["输送机","清理筛"].each do |option|
     Category.create(:name => option, :status => 1, :parent => b)
   end
+  # file = File.open("#{Rails.root}/db/sql/categories.sql")
+  # file.each{ |line|
+  #   ActiveRecord::Base.connection.execute(line)
+  # }
+  # file.close
 end
 
 if Bank.first.blank?

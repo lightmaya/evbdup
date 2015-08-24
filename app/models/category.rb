@@ -47,8 +47,43 @@ class Category < ActiveRecord::Base
 	    	<node name='是否显示在首页' column='show_mall' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
 	      <node name='是否采购计划显示' column='show_plan' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
 	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
+        <node name='审核部门' column='audit_type' class='digits' hint='-1：分公司审核，0：分公司和总公司都审核，1：总公司审核'/>
 	    </root>
 	  }
 	end
+
+  # 汽车类品目
+  def self.qc
+    qc = self.find_by(id: 4)
+    return qc.present? ? qc.subtree.where(status: 0) : qc
+  end
+
+  # 粮机类品目
+  def self.lj
+    lj = self.find_by(id: 2)
+    return lj.present? ? lj.subtree.where(status: 0) : lj
+  end
+
+  # 职工工装类品目
+  def self.gz
+    gz = self.find_by(id: 56)
+    return gz.present? ? gz.subtree.where(status: 0) : gz
+  end
+
+  # 办公用品类品目
+  def self.bg
+    not_in_ids = []
+    not_in_ids |= self.qc.map(&:id) if self.qc.present?
+    not_in_ids |= self.gz.map(&:id) if self.gz.present?
+    cdt = []
+    cdt << "status = :status"
+    cdt << "(id = :id or ancestry like :like or ancestry = :id)"
+    value = { status: 0, id: 1, like: "1/%" }
+    if not_in_ids.present?
+      cdt << "id not in (:not_id)"
+      value[:not_id] = not_in_ids
+    end
+    return self.where([ cdt.join(" and "), value ])
+  end
 
 end

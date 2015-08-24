@@ -14,12 +14,12 @@ class Kobe::RulesController < KobeController
   def new
   	rule = Rule.new
     slave_objs = rule.create_rule_objs
-    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, rule, slave_objs, { form_id: 'rule_form', action: kobe_rules_path }, { title: 'Step', grid: 3 })
+    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, rule, slave_objs, { form_id: 'rule_form', action: kobe_rules_path }, { title: 'Step', grid: 4 })
   end
 
   def edit
     slave_objs = @rule.create_rule_objs
-    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, @rule, slave_objs, { form_id: 'rule_form', action: kobe_rule_path(@rule), method: "patch" }, { title: 'Step', grid: 3 })
+    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, @rule, slave_objs, { form_id: 'rule_form', action: kobe_rule_path(@rule), method: "patch" }, { title: 'Step', grid: 4 })
   end
 
   def show

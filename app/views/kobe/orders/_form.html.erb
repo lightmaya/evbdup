@@ -1,3 +1,36 @@
 <div class='col-md-12'>
 <%= draw_myform(myform) %>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+  	$('#new_order').on('submit',function(){
+  		var msg = []
+  		// 判断品目模板是否相同
+  		var ca_ids = $("input[name^='orders_items[category_id]']").map(function(){ 
+  			if ($(this).val() != "") { return $(this).val(); };  			
+  		}).get().join(",");
+  		$.ajax({
+        type: "post",
+        url: '/kobe/orders/same_template',
+        async:false,
+        data: { category_ids: ca_ids },
+        success: function(rs){ if(parseInt(rs) != 1){ msg.push("请选择同一类品目！"); }	}
+    	});
+
+  		// 判断预算是否大于总金额
+  		var total = parseFloat($("input#orders_total").val());
+  		var budget = parseFloat($("input#orders_budget").val());
+  		if (budget < total) {
+  			// flash_dialog("订单总金额不能超过预算！");
+  			msg.push("订单总金额不能超过预算！");
+  			// return false;
+  		};
+
+  		if (msg.length != 0) {
+  			flash_dialog(msg.join("<br/>"));
+  			return false;
+  		};
+  	});
+  });
+</script>

@@ -5,6 +5,7 @@ class CreateCategories < ActiveRecord::Migration
         t.string :name             , :comment => "名称", :null => false
         t.string :ancestry         , :comment => "祖先节点"
         t.integer :ancestry_depth  , :comment => "层级"
+        t.integer :audit_type      , :comment => "审核部门 -1：分公司审核，0：分公司审完总公司审，1：总公司审核"
         t.integer :status          , :comment => "状态", :limit => 2, :default => 0 , :null => false
         t.string :ht_template      , :comment => "合同模板", :default => "common", :null => false
         t.boolean :show_mall       , :comment => "显示在首页", :null => false, :default => false
