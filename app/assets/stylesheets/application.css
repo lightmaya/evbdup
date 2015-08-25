@@ -10,8 +10,6 @@
  *
  *= require plugins/bootstrap.min
  *= require style
- *= require headers/header-default
- *= require footers/footer-v2.css
  *= require plugins/animate
  *= require plugins/ui-dialog
  *= require plugins/dialog-select

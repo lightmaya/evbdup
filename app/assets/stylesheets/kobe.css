@@ -1,5 +1,7 @@
 /*
  *= require application
+ *= require headers/header-default
+ *= require footers/footer-v2.css
  *= require pages/shortcode_timeline2
  *= require pages/profile
  *= require plugins/jquery.mCustomScrollbar

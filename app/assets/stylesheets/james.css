@@ -1,4 +1,13 @@
 /*
  *= require application
+ *= require headers/header-v4
+ *= require footers/footer-v2
+ *= require plugins/img-hover
+ *= require plugins/brand-buttons/brand-buttons
+ *= require plugins/brand-buttons/brand-buttons-inversed
+ *= require plugins/owl.carousel
+ *= require pages/blog_magazine
+ *= require pages/page_job
  *= require pages/page_log_reg_v1
+ *
 */

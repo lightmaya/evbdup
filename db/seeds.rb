@@ -33,7 +33,7 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => ddcg_list)
   end
   ddcg_audit = Menu.create(:name => "审核定点采购", :route_path => "/kobe/orders", :can_opt_action => "Order|list", :is_show => true, :parent => ddcg)
-  [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"]].each do |m|
+  [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"],["定点采购分公司初审", "Order|first_audit"], ["定点采购分公司终审", "Order|last_audit"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => ddcg_audit)
   end
 

@@ -5,7 +5,7 @@ Evbdup::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
    #root 'home#index'
-  root :to => 'users#sign_in'
+  root :to => 'home#index'
   
   captcha_route
 

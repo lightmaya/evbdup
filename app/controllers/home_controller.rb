@@ -3,7 +3,7 @@ class HomeController < JamesController
   # layout "application" ,:only => :test
 
     def index
-        trial and error
+        # trial and error
     end
     
     def ajax_test

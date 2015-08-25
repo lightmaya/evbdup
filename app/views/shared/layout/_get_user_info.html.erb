@@ -1,0 +1,1 @@
+您好，<%= current_user.present? ? "#{current_user.name} [#{link_to('后台管理',main_path)}]".html_safe : link_to('请登录', sign_in_users_path) %>

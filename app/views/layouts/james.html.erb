@@ -8,59 +8,42 @@
     <!-- Meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="zcl">
+    <meta name="keywords" content="中储粮服务网 中储粮 集中采购 电子采购 网上商城 粮油机械">
+    <meta name="description" content="中储粮总公司唯一指定的物资集中采购信息管理平台。">
+    <meta name="author" content="zcl">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
 
     <!-- Favicon -->
     <!-- <link rel="shortcut icon" href="favicon.ico"> -->
 
     <!-- CSS Global Compulsory -->
     <%= stylesheet_link_tag "james" %>
-    <%= javascript_include_tag "application" %>
-
+    <%= javascript_include_tag "james" %>
 </head> 
 
 <body>
 
 <div class="wrapper">
     <!--=== Header ===-->    
-    <%#= render :partial => '/shared/kobe/header' %>
+    <%= render :partial => '/shared/layout/james_header' %>
     <!--=== End Header ===-->     
-
-    <!--=== Breadcrumbs ===-->
-    <!-- <div class="breadcrumbs">
-        <div class="container">
-            <h1 class="pull-left"> Carousel</h1>
-            <ul class="pull-right breadcrumb">
-                <li><a href="index-2.html">Home</a></li>
-                <li><a href="#">Features</a></li>
-                <li class="active">Carousel</li>
-            </ul>
-        </div>
-    </div> --><!--/breadcrumbs-->
-    <!--=== End Breadcrumbs ===-->
 
     <!--=== Content Part ===-->
     <div class="container content">
-        <div class="row">
-            <div class="col-md-12" style="min-height:400px;">
-                <%= yield %>
-            </div>
-        </div>          
+        <%= yield %>
     </div><!--/container-->     
     <!--=== End Content Part ===-->
 
     <!--=== Copyright ===-->
-    <%= render :partial => '/shared/kobe/footer' %>
+    <%= render :partial => '/shared/layout/james_footer' %>
     <!--=== End Copyright ===-->
 </div><!--/End Wrapepr-->
 
 <!--[if lt IE 9]>
     <%= javascript_include_tag "ie_9" %>
 <![endif]-->
-<%= javascript_include_tag "james" %>
-<%= render :partial => '/shared/myform/fileupload_layout' %>
 <%= render partial: '/shared/dialog/art_dialog' %>
 </body>
 </html>
