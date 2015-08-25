@@ -84,19 +84,19 @@ if Menu.first.blank?
 end
 
 if Category.first.blank?
-  a = Category.create(:name => "办公物资", :status => 1) 
-  b = Category.create(:name => "粮机物资", :status => 1) 
-  ["计算机","打印机","复印机","服务器"].each do |option|
-    Category.create(:name => option, :status => 1, :parent => a)
-  end
-  ["输送机","清理筛"].each do |option|
-    Category.create(:name => option, :status => 1, :parent => b)
-  end
-  # file = File.open("#{Rails.root}/db/sql/categories.sql")
-  # file.each{ |line|
-  #   ActiveRecord::Base.connection.execute(line)
-  # }
-  # file.close
+  # a = Category.create(:name => "办公物资", :status => 1) 
+  # b = Category.create(:name => "粮机物资", :status => 1) 
+  # ["计算机","打印机","复印机","服务器"].each do |option|
+  #   Category.create(:name => option, :status => 1, :parent => a)
+  # end
+  # ["输送机","清理筛"].each do |option|
+  #   Category.create(:name => option, :status => 1, :parent => b)
+  # end
+  file = File.open("#{Rails.root}/db/sql/categories.sql")
+  file.each{ |line|
+    ActiveRecord::Base.connection.execute(line)
+  }
+  file.close
 end
 
 if Bank.first.blank?
