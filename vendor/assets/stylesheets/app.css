@@ -3068,6 +3068,9 @@ blockquote.hero.hero-default small {
 .progress-bar-dark {
   background: #555;
 }
+.progress-bar-yellow{
+  background: #f1c40f;
+}
 
 /*Progress Bar Animation
 ------------------------------------*/
