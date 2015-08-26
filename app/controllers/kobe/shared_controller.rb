@@ -10,16 +10,28 @@ class Kobe::SharedController < KobeController
 
   # 表单的下拉框 树形结构 只允许menu area category 
   def ztree_json
-    if ["Menu", "Area", "Category"].include? params[:json_class]
+    if ["Menu", "Area"].include? params[:json_class]
     	ztree_box_json(params[:json_class].constantize)
     end
+  end
+
+  def category_ztree_json
+    name = params[:ajax_key]
+    if name.blank?
+      nodes = Category.attribute_method?("status") ? Category.where(status: 0) : Category.all
+    else
+      cdt = Category.attribute_method?("status") ? "and a.status = 0 and b.status = 0" : ""
+      sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
+      nodes = Category.find_by_sql([sql,"%#{name}%"])
+    end
+    render :json => Category.get_json(nodes)
   end
 
   # 转向下一个审核人
   def audit_next_user
     obj = params[:json_class].constantize.find_by(id: params[:id])
     nodes = obj.turn_next_user_json(current_user)
-    render :json => nodes.blank? ? "没有相关用户，请先联系管理员授权！" : "[#{nodes.uniq.join(", ")}]"
+    render :json => nodes.blank? ? "" : "[#{nodes.uniq.join(", ")}]"
   end
 
   # ajax提交xml字段的node

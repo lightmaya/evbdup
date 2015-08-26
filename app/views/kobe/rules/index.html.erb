@@ -34,7 +34,7 @@
                 <tr>
                     <td><%= show_index(index) %></td>
                     <td><%= obj.name %></td>
-                    <td><%= btn_group(obj.cando_list(current_user.can_option_hash[obj.class.to_s])) %></td>
+                    <td><%= btn_group(rules_btn(obj)) %></td>
                 </tr>
                 <% end %>
             </tbody>

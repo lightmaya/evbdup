@@ -16,7 +16,7 @@ class UsersController < JamesController
     self.current_user = nil
     cookies.delete(:remember_token)
     tips_get '退出成功！'
-    redirect_to sign_in_users_path
+    redirect_to root_path
   end
 
   def login

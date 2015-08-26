@@ -163,36 +163,50 @@ module AboutStatus
 		rs = self.get_current_step
 		nodes = []
 		if rs.is_a?(Hash)
-    	# rs["dep"]是real_ancestry相同的数组，因此只需取第一个单位的real_users（所有的用户）
-    	deps = eval(rs["dep"])
-    	if deps.present?
-	    	deps.first.real_users.each do |user| 
+    	dep = eval(rs["dep"])
+    	if dep.present?
+	    	dep.real_users.each do |user|
 	    		next if current_u.id == user.id
 	    		next if (user.menu_ids & (rs["junior"] | rs["senior"])).blank?
 	    		audit_type = (user.menu_ids & rs["senior"]).present? ? "确认审核" : "普通审核"
 	    		nodes << %Q|{ "id": "u_#{user.id}", "pId": #{user.department.id}, "name": "#{user.name}[#{audit_type}]" }|
-	    		((user.department.ancestors << user.department) & deps).each{ |e| nodes << %Q|{ "id": #{e.id}, "pId": #{e.parent_id}, "name": "#{e.name}", "isParent":true, "open":true }| }
+	    		((user.department.ancestors << user.department) & dep.subtree).each{ |e| nodes << %Q|{ "id": #{e.id}, "pId": #{e.parent_id}, "name": "#{e.name}", "isParent":true, "open":true }| }
 	    	end
 	    end
     end
     return nodes.uniq
 	end
 
+	# 获取审核单位 用在待办事项和审核 判断有没有审核权限
+	def get_rule_dep
+		cs = self.get_current_step
+		return cs.is_a?(Hash) ? eval(cs["dep"]) : nil
+	end
 
 	# 插入待办事项
 	def create_task_queue(user_id='')
 		rs = self.get_current_step
 		tqs = []
 		if rs.is_a?(Hash)
+			to_do_id = rs["to_do_id"]
+			dep = eval(rs["dep"])
 			if user_id.blank?
-	      # 没有指定user_id时，只有初审的人插入待办事项
-	      rs["junior"].each do |m|
-	      	tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m, to_do_list_id: rs["to_do_id"])
-	      end
+				rs["junior"].each do |m|
+					# 没有指定user_id时，判断当前审核用户有没有关联品目（判断有没有audit_user_ids和current_step_users交集）
+					current_step_users = dep.real_users.map(&:id)
+					if self.class.attribute_method?("audit_user_ids") && ( current_step_users & self.audit_user_ids).present?
+						self.audit_user_ids.each do |u_id|
+							tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m, user_id: u_id, to_do_list_id: to_do_id, dep_id: dep.id)
+						end
+					else
+						# 没有audit_user_ids，只有初审的人插入待办事项
+		      	tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m, to_do_list_id: to_do_id, dep_id: dep.id)
+		      end
+				end
 	    else
 	    	user = User.find_by(id: user_id)
 	    	if (user.menu_ids & (rs["junior"] | rs["senior"])).present?
-	    		tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, user_id: user_id, to_do_list_id: rs["to_do_id"])
+	    		tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, user_id: user_id, to_do_list_id: to_do_id, dep_id: dep.id)
 	    	end
 	    end
 	    if tqs.present? # 删除旧的待办事项
@@ -209,7 +223,7 @@ module AboutStatus
 	def delete_task_queue(except_id=[])
 		delete_id = TaskQueue.where(class_name: self.class,obj_id: self.id)
 		delete_id = delete_id.where.not(id: except_id) if except_id.present?
-		TaskQueue.destroy(delete_id) if delete_id.present?
+		TaskQueue.destroy(delete_id.map(&:id)) if delete_id.present?
 	end
 
 end

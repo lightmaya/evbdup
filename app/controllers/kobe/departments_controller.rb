@@ -1,8 +1,9 @@
 # -*- encoding : utf-8 -*-
 class Kobe::DepartmentsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:move, :valid_dep_name, :commit, :edit_bank, :search_bank]
-  before_action :get_dep, :except => [:valid_dep_name, :search_bank, :move, :new, :create, :search]
-  before_action :get_audit_menu_ids, :only => [:list, :audit]
+  before_action :get_dep, :except => [:valid_dep_name, :search_bank, :move, :new, :create, :search, :list, :audit, :update_audit]
+  before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
+  before_action :get_audit_dep, :only => [:audit, :update_audit]
   layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank]
 
   # cancancan验证 如果有before_action cancancan放最后
@@ -54,7 +55,6 @@ class Kobe::DepartmentsController < KobeController
 
   # 删除单位
   def delete
-    cannot_do_tips unless @dep.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_dep_form', action: kobe_department_path(@dep), method: 'delete' }
   end
   
@@ -66,7 +66,6 @@ class Kobe::DepartmentsController < KobeController
 
   # 冻结单位
   def freeze
-    cannot_do_tips unless @dep.can_opt?("冻结")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'freeze_dep_form', action: update_freeze_kobe_department_path(@dep) }
   end
 
@@ -78,7 +77,6 @@ class Kobe::DepartmentsController < KobeController
 
   # 恢复单位
   def recover
-    cannot_do_tips unless @dep.can_opt?("恢复")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'recover_dep_form', action: update_recover_kobe_department_path(@dep) }
   end
 
@@ -143,7 +141,6 @@ class Kobe::DepartmentsController < KobeController
 
   # 注册提交
   def commit
-    cannot_do_tips unless @dep.can_commit?
     @dep.change_status_and_write_logs("提交",stateless_logs("提交","注册完成，提交！", false),@dep.commit_params, false)
     @dep.reload.create_task_queue
     tips_get("提交成功，请等待审核。")
@@ -163,13 +160,15 @@ class Kobe::DepartmentsController < KobeController
 
   # 审核单位
   def list
-    cdt = get_conditions("departments", [["departments.status = ? ", 2],["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]])
+    arr = []
+    arr << ["departments.status = ? ", 2]
+    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    cdt = get_conditions("departments", arr)
     @q =  Department.joins(:task_queues).where(cdt).ransack(params[:q]) 
     @deps = @q.result.page params[:page]
   end
 
   def audit
-    audit_tips unless can_audit?(@dep,@menu_ids)
   end
 
   def update_audit
@@ -181,14 +180,24 @@ class Kobe::DepartmentsController < KobeController
 
     def get_dep
       @dep = current_user.department
-      if current_user.has_option?("Department", :search)
+      if can? :search, @dep
         @dep = Department.find_by(id: params[:id]) if params[:id].present?
       else
         @dep = current_user.department.subtree.find_by(id: params[:id]) if current_user.is_admin && params[:id].present?
       end
-      cannot_do_tips if @dep.blank?
+      unless action_name == "ztree"
+        cannot_do_tips unless @dep.present? && @dep.cando(action_name)
+      end
     end
 
+    def get_audit_dep
+      if params[:id].present?
+        @dep = Department.find_by(id: params[:id])
+      end
+      audit_tips unless @dep.present? && @dep.cando(action_name) && can_audit?(@dep,@menu_ids)
+    end
+
+    # 获取审核的menu_ids
     def get_audit_menu_ids
       @menu_ids = Menu.get_menu_ids("Department|list")
     end

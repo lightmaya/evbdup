@@ -29,6 +29,17 @@ class Category < ActiveRecord::Base
     }
   end
 
+  # 根据action_name 判断obj有没有操作
+  # :index, :delete, :destroy, :freeze, :update_freeze, :recover, :update_recover
+  def cando(act='')
+    case act
+    when "delete", "destroy" then self.can_opt?("删除")
+    when "recover", "update_recover" then self.can_opt?("恢复")
+    when "freeze", "update_freeze" then self.can_opt?("冻结")
+    else false
+    end
+  end
+
   # 列表中的状态筛选,current_status当前状态不可以点击
   def self.status_filter(action='')
   	# 列表中不允许出现的

@@ -260,24 +260,28 @@
 		  data: params,
 		  cache: false,
 		  success: function(data){
-		  	if (data.length == 0){
-		  		$("#" + treeId).html("搜索结果为空，请换个关键字试试。");
+		  	if (data == null) {
+		  		d.content("没有相关权限，请先联系管理员！");
 		  	}else{
-		  		var input_id = getInputId(treeId);
-			  	$.fn.zTree.init($("#" + treeId), ztree_setting(chkStyle), data);
-			  	d.title("请选择...");
-					var partner_id = getPartnerId(input_id);
-					var vArray = $("#" + partner_id).val() == undefined ? [] : $("#" + partner_id).val().split(",");
-					var treeObj = $.fn.zTree.getZTreeObj(treeId);
-			  	if (!filter){
-			  		d.content($("#" + getDialogId(input_id)));
+			  	if (data.length == 0){
+			  		$("#" + treeId).html("搜索结果为空，请换个关键字试试。");
 			  	}else{
-			  		treeObj.expandAll(true); //搜索展开全部节点
+			  		var input_id = getInputId(treeId);
+				  	$.fn.zTree.init($("#" + treeId), ztree_setting(chkStyle), data);
+				  	d.title("请选择...");
+						var partner_id = getPartnerId(input_id);
+						var vArray = $("#" + partner_id).val() == undefined ? [] : $("#" + partner_id).val().split(",");
+						var treeObj = $.fn.zTree.getZTreeObj(treeId);
+				  	if (!filter){
+				  		d.content($("#" + getDialogId(input_id)));
+				  	}else{
+				  		treeObj.expandAll(true); //搜索展开全部节点
+				  	}
+				  	//默认勾上已选项
+						initZtreeCheckStatus(treeObj,vArray);
+						// 自动滚动条
+						overflow_y_auto(treeId);
 			  	}
-			  	//默认勾上已选项
-					initZtreeCheckStatus(treeObj,vArray);
-					// 自动滚动条
-					overflow_y_auto(treeId);
 		  	}
 		  },
 			error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -297,28 +301,32 @@
 		  data: params,
 		  cache: false,
 		  success: function(data){
-		  	if (data.length == 0){
-		  		$("#" + boxId).html("搜索结果为空，请换个关键字试试。");
+		  	if (data == null) {
+		  		d.content("没有相关权限，请先联系管理员！");
 		  	}else{
-		  		var input_id = getInputId(boxId);
-			  	d.title("请选择...");
-					var partner_id = getPartnerId(input_id);
-					var vArray = $("#" + partner_id).val() == undefined ? [] : $("#" + partner_id).val().split(",");
-					var arr = convertSimpleData(data);
-					var content = '<section><fieldset>';
-					$.each(arr, function (index, obj) {  
-						content += create_box_item(input_id,obj,chkStyle,false);
-			    });  
-					content += '</fieldset></section>';
-					$("#" + boxId).html(content);
-					if (!filter){
-			  		d.content($("#" + getDialogId(input_id)));
+			  	if (data.length == 0){
+			  		$("#" + boxId).html("搜索结果为空，请换个关键字试试。");
+			  	}else{
+			  		var input_id = getInputId(boxId);
+				  	d.title("请选择...");
+						var partner_id = getPartnerId(input_id);
+						var vArray = $("#" + partner_id).val() == undefined ? [] : $("#" + partner_id).val().split(",");
+						var arr = convertSimpleData(data);
+						var content = '<section><fieldset>';
+						$.each(arr, function (index, obj) {  
+							content += create_box_item(input_id,obj,chkStyle,false);
+				    });  
+						content += '</fieldset></section>';
+						$("#" + boxId).html(content);
+						if (!filter){
+				  		d.content($("#" + getDialogId(input_id)));
+				  	}
+				  	//默认勾上已选项
+						initBoxCheckStatus(boxId,vArray,chkStyle);
+						// 自动滚动条
+						overflow_y_auto(boxId);
 			  	}
-			  	//默认勾上已选项
-					initBoxCheckStatus(boxId,vArray,chkStyle);
-					// 自动滚动条
-					overflow_y_auto(boxId);
-		  	}
+			  }
 		  },
 			error: function(XMLHttpRequest, textStatus, errorThrown) {
 				// alert(textStatus);

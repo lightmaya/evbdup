@@ -15,6 +15,8 @@ class User < ActiveRecord::Base
 
   has_many :user_categories, :dependent => :destroy
   has_many :categories, through: :user_categories
+
+  has_many :orders
   # 收到的消息
   has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  
 
@@ -78,40 +80,12 @@ class User < ActiveRecord::Base
         <node name='用户类型' column='user_type' data_type='radio' data='[[0,"单位用户"],[1,"个人用户"]]'/>
         <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Menu"}' partner='menuids'/>
         <node column='menuids' data_type='hidden'/>
-        <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Category"}' partner='categoryids'/>
+        <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden'/>
       </root>
     }
   end
 
-  def cando_list(can_opt_arr=[])
-    return "" if can_opt_arr.blank?
-    arr = [] 
-    dialog = "#opt_dialog"
-    # 详细
-    if can_opt_arr.include?(:read)
-      title = self.class.icon_action("详细")
-      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}', '#{dialog}') }]
-    end
-    if [0,1,3].include? self.department.status
-      # 修改
-      if [0,404].include?(self.status) && can_opt_arr.include?(:update)
-        arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/users/#{self.id}/edit','#show_ztree_content #ztree_content')"]
-      end
-      # 重置密码
-      if [0,404].include?(self.status) && can_opt_arr.include?(:reset_password)
-        title = self.class.icon_action("重置密码")
-        arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/reset_password', '#{dialog}') }]
-      end
-      # 冻结
-      if [0,404].include?(self.status) && can_opt_arr.include?(:freeze)
-        title = self.class.icon_action("冻结")
-        arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/users/#{self.id}/freeze', '#{dialog}') }]
-      end
-    end
-    return arr
-  end
-  
   # 显示菜单
   def show_menus
     str = ""
@@ -150,31 +124,47 @@ class User < ActiveRecord::Base
   end
 
   # 判断用户是否有某个操作
-  def has_option?(option_key='',action='')
-    return false if option_key.blank? || action.blank?
-    opt = self.can_option_hash[option_key]
-    return opt.present? && opt.include?(action.to_sym)
-  end
+  # def has_option?(option_key='',action='')
+  #   return false if option_key.blank? || action.blank?
+  #   opt = self.can_option_hash[option_key]
+  #   return opt.present? && opt.include?(action.to_sym)
+  # end
 
   # 自动获取操作权限
   def set_auto_menu
     self.menu_ids = Menu.where(is_auto: true).map(&:id)
   end
 
+  # 待办事项的条件
+  def to_do_condition
+    ["(user_id = ? or (user_id is null and menu_id in (?))) and dep_id = ?", self.id, self.menu_ids, self.department.real_dep.id]
+  end
+
   # 待办事项 每一个待办事项有多少个 用于列表显示
   # 用select不用count是因为页面显示需要用到task_queue.to_do_list 而count只返回｛to_do_list_id: 3｝
   def to_do_list
-    TaskQueue.where(["user_id = ? or menu_id in (?) ", self.id, self.menu_ids]).select("to_do_list_id,count(id) as num").group(:to_do_list_id)
+    TaskQueue.where(self.to_do_condition).select("to_do_list_id,count(id) as num").group(:to_do_list_id)
   end
 
   # 该用户的所有待办事项个数
   def to_do_count
-    TaskQueue.where(["user_id = ? or menu_id in (?) ", self.id, self.menu_ids]).count
+    TaskQueue.where(self.to_do_condition).count
   end
 
   # 该用户的所有待办事项
   def to_do_all
-    TaskQueue.where(["user_id = ? or menu_id in (?) ", self.id, self.menu_ids])
+    TaskQueue.where(self.to_do_condition)
+  end
+
+  # 根据action_name 判断obj有没有操作
+  def cando(act='')
+    case act
+    when "show", "index", "only_show_info", "only_show_logs" then true
+    when "edit", "update", "reset_password", "update_reset_password" then [0,1,3].include?(self.department.status) && self.status == 0
+    when "recover", "update_recover" then [0,1,3].include?(self.department.status) && self.can_opt?("恢复")
+    when "freeze", "update_freeze" then [0,1,3].include?(self.department.status) && self.can_opt?("冻结")
+    else false
+    end
   end
 
   private

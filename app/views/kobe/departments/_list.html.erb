@@ -34,7 +34,7 @@
 				            <td><%= dep.status_bar %></td>
                     <td><%= show_date(dep.created_at) %></td>
                     <% if title.include?("审核")  %>
-				            <td><%= btn_group(dep.cando_list(current_user.can_option_hash[dep.class.to_s],true)) %></td>
+				            <td><%= btn_group(departments_btn(dep,true)) %></td>
 										<% end %>
 				        </tr>
 				        <% end %>

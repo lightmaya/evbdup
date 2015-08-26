@@ -28,6 +28,11 @@ class Menu < ActiveRecord::Base
     }
   end
 
+  # 根据action_name 判断obj有没有操作
+  def cando(act='')
+    ["delete", "destroy"].include?(act) ? self.can_opt?("删除") : false
+  end
+
   # 列表中的状态筛选,current_status当前状态不可以点击
   def self.status_filter(action='')
   	# 列表中不允许出现的

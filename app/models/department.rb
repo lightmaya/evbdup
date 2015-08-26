@@ -7,6 +7,9 @@ class Department < ActiveRecord::Base
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Department") }, foreign_key: :obj_id
 
+  has_many :buyer_orders, class_name: :Order, foreign_key: :buyer_id
+  has_many :seller_orders, class_name: :Order, foreign_key: :seller_id
+
   include AboutAncestry
   include AboutStatus
 
@@ -26,11 +29,10 @@ class Department < ActiveRecord::Base
     self.real_ancestry.split("/")
   end
 
-  # 获取单位的第几层祖先 例如总公司(level = 2)还是分公司(level = 3) 没有返回nil
+  # 获取单位的第几层祖先 例如总公司(level = 1)还是分公司(level = 2) 没有返回nil
   def real_ancestry_level(level)
-    return nil if self.real_ancestry_id_arr.length <= level - 1
-    dep_id = self.real_ancestry_id_arr[0..level - 1].join("/")
-    return Department.where(real_ancestry: dep_id)
+    dep_id = self.real_ancestry_id_arr[level.to_i]
+    return dep_id.present? ? Department.find_by(id: dep_id) : nil
   end
 
   # 发票单位 real_ancestry最后一位
@@ -41,13 +43,7 @@ class Department < ActiveRecord::Base
 
   # 独立核算单位下的所有用户
   def real_users
-    users = []
-    Department.where(real_ancestry: self.real_ancestry).each do |dep|
-      dep.users.each do |user|
-        users << user
-      end
-    end
-    return users
+    Department.where(real_ancestry: self.real_ancestry).map(&:users).flatten.uniq
   end
 
   # 中文意思 状态值 标签颜色 进度 
@@ -94,6 +90,53 @@ class Department < ActiveRecord::Base
     Department.find_by(id: 3)
   end
 
+  # 根据action_name 判断obj有没有操作
+  def cando(act='')
+    case act
+    when "show", "index" then true
+    when "update", "edit", "upload", "update_upload", "show_bank", "edit_bank", "update_bank" then [0,1,3].include?(self.status)
+    when "commit" then [0,3].include?(self.status) && self.get_tips.blank? && self.can_opt?("提交")
+    when "add_user", "update_add_user", "new", "create" then self.status == 1
+    when "update_audit", "audit" then self.can_opt?("通过") && self.can_opt?("不通过")
+    when "delete", "destroy" then self.can_opt?("删除")
+    when "recover", "update_recover" then self.can_opt?("恢复")
+    when "freeze", "update_freeze" then self.can_opt?("冻结")
+    else false
+    end
+  end
+
+  # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
+  def get_tips
+    msg = []
+    if [0].include?(self.status)
+      msg << "单位信息填写不完整，请点击[修改]。" if self.area_id.blank?
+      msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 4
+      msg << "开户银行信息不完整，请点击[维护开户银行]" if self.bank.blank? || self.bank_code.blank?
+      msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.users.find{ |u| u.name.present? }.blank?
+    end
+    return msg
+  end
+
+  # 维护开户银行提示
+  def bank_tips
+    Dictionary.tips.bank
+  end
+
+  # 是否需要隐藏树形结构 用于没有下级单位的单位 不显示树
+  def hide_tree?
+    self.is_childless? || self.descendants.where.not(status: 404).blank?
+  end
+
+  # 提交时需更新的参数 主要用于更新rule_id 
+  # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
+  def commit_params
+    arr = []
+    rule_id = Rule.find_by(name: '单位管理').id
+    arr << "rule_id = #{rule_id}"
+    arr << "rule_step = 'start'"
+    return arr
+  end
+
   # 根据单位的祖先节点判断单位是采购单位还是供应商
   def get_xml
     case self.try(:root_id)
@@ -124,13 +167,13 @@ class Department < ActiveRecord::Base
   end
 
   # 供应商XML
-	def self.supplier_xml(who='',options={})
-	  %Q{
-	    <?xml version='1.0' encoding='UTF-8'?>
-	    <root>
-	    	<node name='parent_id' data_type='hidden'/>
-	      <node name='单位名称' column='name' hint='必须与参照营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:6, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
-	      <node name='单位简称' column='short_name'/>
+  def self.supplier_xml(who='',options={})
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='parent_id' data_type='hidden'/>
+        <node name='单位名称' column='name' hint='必须与参照营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:6, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
+        <node name='单位简称' column='short_name'/>
         <node name='曾用名' column='old_name' display='disabled'/>
         <node name='单位类型' column='dep_type' data_type='radio' data='[[0,"独立核算单位"],[1,"部门"]]' hint='独立核算单位是****************'/>
         <node name='营业执照注册号' column='license' hint='请参照营业执照上的注册号' rules='{required:true, minlength:15}' messages='请输入15个字符'/>
@@ -143,89 +186,20 @@ class Department < ActiveRecord::Base
         <node name='年营业额' column='turnover' class='required'/>
         <node name='单位人数' column='employee' data_type='radio' class='required' data='["20人以下","21-100人","101-500人","501-1001人","1001-10000人","1000人以上"]'/>
         <node name='邮政编码' column='post_code' rules='{required:true, number:true}'/>
-	      <node name='所在地区' class='tree_radio required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Area"}' partner='area_id'/>
-	      <node column='area_id' data_type='hidden'/>
+        <node name='所在地区' class='tree_radio required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Area"}' partner='area_id'/>
+        <node column='area_id' data_type='hidden'/>
         <node name='详细地址' column='address' class='required'/>
         <node name='公司网址' column='website'/>
         <node name='电话（总机）' column='tel' class='required'/>
         <node name='传真' column='fax' class='required'/>
-	      <node name='单位介绍' column='summary' data_type='textarea' class='required' placeholder='不超过800字'/>
-	    </root>
-	  }
-	end
+        <node name='单位介绍' column='summary' data_type='textarea' class='required' placeholder='不超过800字'/>
+      </root>
+    }
+  end
 
   # 其他单位XML
   def self.other_xml(who='',options={})
 
-  end
-
-  # can_opt_arr = [:create, :read, :update] 对应cancancan验证的action 
-	def cando_list(can_opt_arr=[],only_audit=false)
-    return "" if can_opt_arr.blank?
-		show_div = '#show_ztree_content #ztree_content'
-    dialog = "#opt_dialog"
-    arr = [] 
-    # 查看单位信息
-    arr << [self.class.icon_action("详细"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}', '#{show_div}')"] if can_opt_arr.include?(:read)
-    # 提交
-    arr << [self.class.icon_action("提交"), "/kobe/departments/#{self.id}/commit", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can_opt_arr.include?(:commit) && self.can_commit?
-    if [0,1,3].include? self.status
-      # 修改单位信息
-      arr << [self.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/edit','#{show_div}')"] if can_opt_arr.include?(:update)
-      # 修改资质证书
-      arr << [self.class.icon_action("上传资质"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/upload','#{show_div}','edit_upload_fileupload')"] if can_opt_arr.include?(:upload)
-      # 维护开户银行
-      arr << [self.class.icon_action("维护开户银行"), "javascript:void(0)", onClick: "show_content('/kobe/departments/#{self.id}/show_bank','#{show_div}')"] if can_opt_arr.include?(:bank)
-      # 增加下属单位
-      arr << [self.class.icon_action("增加下属单位"), "javascript:void(0)", onClick: "show_content('/kobe/departments/new?pid=#{self.id}','#{show_div}')"] if can_opt_arr.include?(:create)
-      # 分配人员账号
-      title = self.class.icon_action("增加人员")
-      arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '/kobe/departments/#{self.id}/add_user', '#{dialog}') }] if can_opt_arr.include?(:add_user)
-    end
-    # 审核
-    if self.status == 2
-      audit_opt = [self.class.icon_action("审核"), "/kobe/departments/#{self.id}/audit"] if can_opt_arr.include?(:audit)
-      return [audit_opt] if only_audit
-      arr << audit_opt
-    end
-    return arr
-  end
-
-  # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
-  def get_tips
-    msg = []
-    if [0].include?(self.status)
-      msg << "单位信息填写不完整，请点击[修改]。" if self.area_id.blank?
-      msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 4
-      msg << "开户银行信息不完整，请点击[维护开户银行]" if self.bank.blank? || self.bank_code.blank?
-      msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.users.find{ |u| u.name.present? }.blank?
-    end
-    return msg
-  end
-
-  # 维护开户银行提示
-  def bank_tips
-    Dictionary.tips.bank
-  end
-
-  # 是否需要隐藏树形结构 用于没有下级单位的单位 不显示树
-  def hide_tree?
-    self.is_childless? || self.descendants.where.not(status: 404).blank?
-  end
-
-  # 是否可以提交
-  def can_commit?
-    self.get_tips.blank? && self.can_opt?("提交")
-  end
-
-  # 提交时需更新的参数 主要用于更新rule_id 
-  # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
-  def commit_params
-    arr = []
-    rule_id = Rule.find_by(name: '单位管理').id
-    arr << "rule_id = #{rule_id}"
-    arr << "rule_step = 'start'"
-    return arr
   end
 
 end

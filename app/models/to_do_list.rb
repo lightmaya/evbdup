@@ -20,6 +20,11 @@ class ToDoList < ActiveRecord::Base
     }
   end
 
+  # 根据action_name 判断obj有没有操作
+  def cando(act='')
+    ["delete", "destroy"].include?(act) ? self.can_opt?("删除") : false
+  end
+
   # 列表中的状态筛选,current_status当前状态不可以点击
   def self.status_filter(action='')
   	# 列表中不允许出现的
@@ -39,15 +44,4 @@ class ToDoList < ActiveRecord::Base
 	  }
 	end
 
-	def cando_list(can_opt_arr=[])
-    return "" if can_opt_arr.blank?
-    arr = [] 
-    # 查看
-    arr << [self.class.icon_action("详细"), "/kobe/to_do_lists/#{self.id}", target: "_blank"]  if can_opt_arr.include?(:read)
-    # 修改
-    arr << [self.class.icon_action("修改"), "/kobe/to_do_lists/#{self.id}/edit"] if can_opt_arr.include?(:update)
-    # 删除
-    arr << [self.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{self.class.icon_action('删除')}", '/kobe/to_do_lists/#{self.id}/delete', "#opt_dialog") }] if can_opt_arr.include?(:update_destroy)
-    return arr
-  end
 end

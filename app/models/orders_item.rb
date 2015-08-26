@@ -8,7 +8,7 @@ class OrdersItem < ActiveRecord::Base
 		ca = self.category_id.present? ? Category.find_by(id: self.category_id) : Category.find_by(name: self.category_name)
 		self.category_code = ca.ancestry if ca.present?
   end
-	
+
 	# 从表的XML加ID是为了修改的时候能找到记录
 	def self.xml(who='',options={})
 	  %Q{
@@ -16,7 +16,7 @@ class OrdersItem < ActiveRecord::Base
 	    <root>
 	    	<node column='id' data_type='hidden'/>
 	    	<node column='category_id' data_type='hidden'/>
-	    	<node name='品目' column='category_name' class='tree_radio required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Category"}' partner='category_id'/>
+	    	<node name='品目' column='category_name' class='tree_radio required' json_url='/kobe/shared/category_ztree_json' partner='category_id'/>
 	    	<node name='品牌' column='brand' class='required'/>
 	    	<node name='型号' column='model' class='required'/>
 	    	<node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。'/>
@@ -25,7 +25,7 @@ class OrdersItem < ActiveRecord::Base
 	      <node name='成交单价（元）' column='price' class='required number'/>
 	      <node name='数量' column='quantity' class='required number'/>
 	      <node name='单位' class='zip' column='unit' class='required'/>
-	      <node name='小计（元）' column='total' class='required number'/>
+	      <node name='小计（元）' column='total' class='required number' display='readonly'/>
 	      <node name='备注' column='summary' data_type='textarea' class='maxlength_800' placeholder='不超过800字'/>
 	    </root>
 	  }

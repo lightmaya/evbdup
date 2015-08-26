@@ -32,17 +32,17 @@
                 </tr>
             </thead>
             <tbody>
-                <% @cts.each_with_index do |obj,index| %>
+                <% @contract_templates.each_with_index do |obj,index| %>
                 <tr>
                     <td><%= show_index(index) %></td>
                     <td><%= obj.file_name %></td>
                     <td><%= obj.name %></td>
                     <td><%= obj.full_file_path %></td>
-                    <td><%= btn_group(obj.cando_list(current_user.can_option_hash[obj.class.to_s])) %></td>
+                    <td><%= btn_group(contract_templates_btn(obj)) %></td>
                 </tr>
                 <% end %>
             </tbody>
         </table>
-        <%= paginate @cts %> 
+        <%= paginate @contract_templates %> 
     </div>                     
 </div>

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Kobe::ToDoListsController < KobeController
 
-  before_action :get_to_do_list, :only => [:edit, :update, :delete, :destroy, :show, :index]
+  before_action :get_to_do_list, :only => [:delete, :destroy]
 
   # cancancan验证 如果有before_action cancancan放最后
   load_and_authorize_resource 
@@ -38,7 +38,6 @@ class Kobe::ToDoListsController < KobeController
 
   # 删除
   def delete
-    cannot_do_tips unless @to_do_list.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_to_do_list_form', action: kobe_to_do_list_path(@to_do_list), method: 'delete' }
   end
 
@@ -52,6 +51,7 @@ class Kobe::ToDoListsController < KobeController
 
     def get_to_do_list
       @to_do_list = ToDoList.find_by(id: params[:id]) if params[:id].present?
+      cannot_do_tips unless @to_do_list.present? && @to_do_list.cando(action_name)
     end
 
 end

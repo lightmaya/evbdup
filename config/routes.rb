@@ -34,15 +34,17 @@ Evbdup::Application.routes.draw do
   namespace :kobe do
     resources :shared, :only => :index do
       collection do
-        post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove
+        post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json
       end
     end
     resources :orders do
       collection do
+        get :list
         post :same_template
       end
       member do
-        post :commit
+        get :audit
+        post :commit, :update_audit
       end
     end
     resources :departments do 

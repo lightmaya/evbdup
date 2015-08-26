@@ -1,0 +1,2 @@
+<%=show_tabs(@arr)%>
+<%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_order_path(@obj), obj: @obj, title: "审核: #{@obj.name}" } %>

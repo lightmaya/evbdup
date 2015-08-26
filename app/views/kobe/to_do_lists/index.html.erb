@@ -40,7 +40,7 @@
                     <td><%= obj.list_url %></td>
                     <td><%= obj.audit_url %></td>
                     <td><%= obj.sort %></td>
-                    <td><%= btn_group(obj.cando_list(current_user.can_option_hash[obj.class.to_s])) %></td>
+                    <td><%= btn_group(to_do_lists_btn(obj)) %></td>
                 </tr>
                 <% end %>
             </tbody>

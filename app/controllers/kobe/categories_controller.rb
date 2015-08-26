@@ -3,7 +3,7 @@ class Kobe::CategoriesController < KobeController
 
   skip_before_action :verify_authenticity_token, :only => [:move, :valid_name]
   # protect_from_forgery :except => :index
-  before_action :get_category, :only => [:index, :edit, :show, :update, :delete, :destroy, :freeze, :update_freeze, :recover, :update_recover]
+  before_action :get_category, :only => [:delete, :destroy, :freeze, :update_freeze, :recover, :update_recover]
   layout false, :only => [:edit, :new, :show, :delete, :freeze, :recover]
 
   # cancancan验证 如果有before_action cancancan放最后
@@ -11,6 +11,7 @@ class Kobe::CategoriesController < KobeController
   skip_authorize_resource :only => [:ztree, :valid_name]
 
 	def index
+    @category = Category.find(params[:id]) if params[:id].present?
 	end
 
   def show
@@ -55,7 +56,6 @@ class Kobe::CategoriesController < KobeController
 
   # 删除
   def delete
-    cannot_do_tips unless @category.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_category_form', action: kobe_category_path(@category), method: 'delete' } 
   end
   
@@ -67,7 +67,6 @@ class Kobe::CategoriesController < KobeController
 
   # 冻结
   def freeze
-    cannot_do_tips unless @category.can_opt?("冻结")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'freeze_category_form', action: update_freeze_kobe_category_path(@category) }
   end
 
@@ -79,7 +78,6 @@ class Kobe::CategoriesController < KobeController
 
   # 恢复
   def recover
-    cannot_do_tips unless @category.can_opt?("恢复")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'recover_category_form', action: update_recover_kobe_category_path(@category) }
   end
 
@@ -106,6 +104,7 @@ class Kobe::CategoriesController < KobeController
   private
     def get_category
       @category = Category.find(params[:id]) if params[:id].present?
+      cannot_do_tips unless @category.present? && @category.cando(action_name)
     end
 
 end

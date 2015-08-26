@@ -7,17 +7,11 @@ class Order < ActiveRecord::Base
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
 
+  scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("buyer_code like '#{dep_real_ancestry}/%' or buyer_code = '#{dep_real_ancestry}'") }
+
   validates_with MyValidator
 
 	include AboutStatus
-
-  before_save do
-    if self.items.present?
-      project_name = self.name.split(" ")
-      project_name[2] = self.items.map(&:category_name).join("、")
-      self.name = project_name.join(" ")
-    end
-  end
 
   before_create do
     # 生成sn、contract_sn
@@ -60,7 +54,7 @@ class Order < ActiveRecord::Base
   def change_status_hash
     ha = {
       "提交" => { "审核拒绝" => "等待审核" },
-      "通过" => { "等待审核" => "正常" },
+      "通过" => { "等待审核" => "审核通过" },
       "不通过" => { "等待审核" => "审核拒绝" },
       "删除" => { "未提交" => "已删除" },
     }
@@ -113,45 +107,23 @@ class Order < ActiveRecord::Base
   # order_items的category的audit_type数组
   # 获取该订单所有品目的审核类型 返回数组中有>=0的表示总公司审核 <=0表示分公司审核
   def audit_type_array
-    self.items.map{ |item| item.category.audit_type }.uniq
+    self.items.map{ |item| item.category.audit_type }.uniq.compact
   end
 
-  # can_opt_arr = [:create, :read, :update] 对应cancancan验证的action 
-  def cando_list(can_opt_arr=[],only_audit=false)
-    arr = [] 
-    # 查看详细
-    arr << [self.class.icon_action("详细"), "/kobe/orders/#{self.id}", target: "_blank"] if can_opt_arr.include?(:read)
-    # 修改
-    if [0,2].include?(self.status)
-    	arr << [self.class.icon_action("修改"), "/kobe/orders/#{self.id}/edit"] if can_opt_arr.include?(:update)
-    # 提交
-    	arr << [self.class.icon_action("提交"), "/kobe/orders/#{self.id}/commit", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if self.can_opt?("提交")
-    end
-    # 审核
-    if self.status == 2
-      audit_opt = [self.class.icon_action("审核"), "/kobe/orders/#{self.id}/audit"] if can_opt_arr.include?(:audit)
-      return [audit_opt] if only_audit
-      arr << audit_opt
-    end
+  # 根据品目判断审核人 插入待办事项用
+  def audit_user_ids
+    self.items.map{|e| e.category.user_ids}.flatten.uniq
+  end
 
-   #  # 确认
-   #  if [0,1,404].include?(self.status)
-   #  	arr << [self.class.icon_action("确认订单"), "/kobe/orders/#{self.id}/confirm"]
-   #  end
-
-   #  # 打印
-   #  if [0,1,404].include?(self.status)
-   #  	arr << [self.class.icon_action("打印"), "/kobe/orders/#{self.id}/print", target: "_blank"]
-   #  end
-   #  # 删除
-   #  if [0,1,3,4].include?(self.status)
-	  #   arr << [self.class.icon_action("删除"), "/kobe/orders/#{self.id}", method: :delete, data: {confirm: "确定要删除吗?"}]
-	  # end
-   #  # 彻底删除
-   #  if self.status == 404
-	  #   arr << [self.class.icon_action("彻底删除"), "/kobe/orders/#{self.id}", method: :delete, data: {confirm: "删除后不可恢复，确定要删除吗?"}]
-	  # end
-	  return arr
+  # 根据action_name 判断obj有没有操作
+  def cando(act='',current_u=nil)
+    case act
+    when "show" then true
+    when "update", "edit" then [0,2].include?(self.status) && current_u.try(:id) == self.user_id
+    when "commit" then self.can_opt?("提交") && current_u.try(:id) == self.user_id
+    when "update_audit", "audit" then self.status == 1
+    else false
+    end
   end
 
   def self.xml(who='',options={})

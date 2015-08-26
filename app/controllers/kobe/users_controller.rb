@@ -8,10 +8,10 @@ class Kobe::UsersController < KobeController
 
   def index
     @left_bar_arr = []
-    @left_bar_arr << { url: only_show_info_kobe_user_path(@user), icon: "fa-user", title: "查看用户信息" } if current_user.has_option?("User", :read)
-    @left_bar_arr << { url: edit_kobe_user_path(@user), icon: "fa-pencil", title: "修改用户信息" } if current_user.has_option?("User", :update)
-    @left_bar_arr << { url: reset_password_kobe_user_path(@user), icon: "fa-paypal", title: "重置密码" } if current_user.has_option?("User", :reset_password)
-    @left_bar_arr << { url: only_show_logs_kobe_user_path(@user), icon: "fa-history", title: "查看日志" } if current_user.has_option?("User", :read)
+    @left_bar_arr << { url: only_show_info_kobe_user_path(@user), icon: "fa-user", title: "查看用户信息" } if can? :read, @user
+    @left_bar_arr << { url: edit_kobe_user_path(@user), icon: "fa-pencil", title: "修改用户信息" } if can? :update, @user
+    @left_bar_arr << { url: reset_password_kobe_user_path(@user), icon: "fa-paypal", title: "重置密码" } if can? :reset_password, @user
+    @left_bar_arr << { url: only_show_logs_kobe_user_path(@user), icon: "fa-history", title: "查看日志" } if can? :read, @user
   end
 
   def edit
@@ -58,7 +58,6 @@ class Kobe::UsersController < KobeController
 
   # 冻结
   def freeze
-    cannot_do_tips unless @user.can_opt?("冻结")
     render partial: '/shared/dialog/opt_liyou', locals: {form_id: 'freeze_user_form', action: update_freeze_kobe_user_path(@user)}
   end
 
@@ -71,7 +70,6 @@ class Kobe::UsersController < KobeController
 
   # 恢复
   def recover
-    cannot_do_tips unless @user.can_opt?("恢复")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'recover_user_form', action: update_recover_kobe_user_path(@user) }
   end
 
@@ -85,7 +83,7 @@ class Kobe::UsersController < KobeController
 
   def get_user
     @user = current_user
-    if current_user.has_option?("User", :admin)
+    if can? :admin, @user
       @user = User.find_by(id: params[:id]) if params[:id].present?
     else
       if current_user.is_admin && params[:id].present?
@@ -95,7 +93,6 @@ class Kobe::UsersController < KobeController
         end
       end
     end
-
-    cannot_do_tips if @user.blank?
+    cannot_do_tips unless @user.present? && @user.cando(action_name)
   end
 end

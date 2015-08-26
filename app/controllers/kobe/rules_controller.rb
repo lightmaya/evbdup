@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Kobe::RulesController < KobeController
 
-  before_action :get_rule, :only => [:edit, :update, :delete, :destroy, :show, :index]
+  before_action :get_rule, :only => [:delete, :destroy]
 
   # cancancan验证 如果有before_action cancancan放最后
   load_and_authorize_resource 
@@ -44,7 +44,6 @@ class Kobe::RulesController < KobeController
 
   # 删除
   def delete
-    cannot_do_tips unless @rule.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_rule_form', action: kobe_rule_path(@rule), method: 'delete' }
   end
 
@@ -63,6 +62,7 @@ class Kobe::RulesController < KobeController
 
     def get_rule
       @rule = Rule.find_by(id: params[:id]) if params[:id].present?
+      cannot_do_tips unless @rule.present? && @rule.cando(action_name)
     end
 
 end

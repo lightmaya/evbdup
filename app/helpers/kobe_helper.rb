@@ -34,28 +34,23 @@ module KobeHelper
     return raw str.html_safe
   end
 
-  # 树形结构的右键菜单 默认增加、修改、删除、冻结、恢复,can_opt_action对应cancancan验证的action
+  # 树形结构的右键菜单 默认增加、修改、删除、冻结、恢复
   def ztree_right_btn(model_name='')
     return '' if model_name.blank?
     str = ""
-    default_ztree_opt = []
-    default_ztree_opt << {onclick_func: "addTreeNode();", icon_class: "icon-plus", opt_name: "增加", can_opt_action: "create"}
-    default_ztree_opt << {onclick_func: "editTreeNode();", icon_class: "icon-wrench", opt_name: "修改", can_opt_action: "update"}
-    default_ztree_opt << {onclick_func: "removeTreeNode();", icon_class: "icon-trash", opt_name: "删除", can_opt_action: "update_destroy"}
-    default_ztree_opt << {onclick_func: "freezeTreeNode();", icon_class: "icon-ban", opt_name: "冻结", can_opt_action: "update_freeze"}
-    default_ztree_opt << {onclick_func: "recoverTreeNode();", icon_class: "icon-action-undo", opt_name: "恢复", can_opt_action: "update_recover"}
-    opt = current_user.can_option_hash[model_name]
-    if opt.present?
-      opt.each do |opt|
-        ha = default_ztree_opt.find{|d| d[:can_opt_action] == opt.to_s}
-        if ha.present?
-          str << %Q{
-            <button class='btn' style="font-size:12px;" onclick="#{ha[:onclick_func]}">
-              <i class='#{ha[:icon_class]}'></i> #{ha[:opt_name]}
-            </button>
-          }
-        end
-      end
+    opt = []
+    opt << {onclick_func: "addTreeNode();", icon_class: "icon-plus", opt_name: "增加"} if can? :create, model_name.constantize
+    opt << {onclick_func: "editTreeNode();", icon_class: "icon-wrench", opt_name: "修改"} if can? :update, model_name.constantize
+    opt << {onclick_func: "removeTreeNode();", icon_class: "icon-trash", opt_name: "删除"} if can? :update_destroy, model_name.constantize
+    opt << {onclick_func: "freezeTreeNode();", icon_class: "icon-ban", opt_name: "冻结"} if can? :update_freeze, model_name.constantize
+    opt << {onclick_func: "recoverTreeNode();", icon_class: "icon-action-undo", opt_name: "恢复"} if can? :update_recover, model_name.constantize
+
+    opt.each do |ha|
+      str << %Q{
+        <button class='btn' style="font-size:12px;" onclick="#{ha[:onclick_func]}">
+          <i class='#{ha[:icon_class]}'></i> #{ha[:opt_name]}
+        </button>
+      }
     end
     return raw str.html_safe
   end
@@ -65,7 +60,7 @@ module KobeHelper
     # ha = { "next" => (obj.get_next_step.is_a?(Hash) ? "确认并转向上级单位审核" : "确认并结束审核流程"), "return" => "退回发起人", "turn" => "转向本单位下一位审核人" }
     ha = obj.audit_next_hash 
     str = ""
-    step = yijian == "通过" ? (current_user.has_option?(obj.class.to_s, :last_audit) ? "next" : "") : "return"
+    step = yijian == "通过" ? (can?(:last_audit, obj) ? "next" : "") : "return"
     str << audit_next_step_label(step, ha[step]) if step.present?
     str << content_tag(:div, audit_next_step_label("turn", ha["turn"]).html_safe, :class=>'inline-group')
     return str.html_safe

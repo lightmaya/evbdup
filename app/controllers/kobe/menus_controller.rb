@@ -4,7 +4,7 @@ class Kobe::MenusController < KobeController
   
   skip_before_action :verify_authenticity_token, :only => [:move]
   # protect_from_forgery :except => :index
-  before_action :get_menu, :only => [:edit, :update, :destroy, :show, :index, :delete]
+  before_action :get_menu, :only => [:destroy, :delete]
   layout false, :only => [:edit, :new, :show, :delete]
 
   # cancancan验证 如果有before_action cancancan放最后
@@ -12,6 +12,7 @@ class Kobe::MenusController < KobeController
   skip_authorize_resource :only => [:ztree]
   
 	def index
+    @menu = Menu.find_by(id: params[:id]) if params[:id].present?
 	end
 
   def new
@@ -59,7 +60,6 @@ class Kobe::MenusController < KobeController
 
   # 删除
   def delete
-    cannot_do_tips unless @menu.can_opt?("删除")
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_menu_form', action: kobe_menu_path(@menu), method: 'delete' }
   end
 
@@ -81,6 +81,7 @@ class Kobe::MenusController < KobeController
 
     def get_menu
       @menu = Menu.find_by(id: params[:id]) if params[:id].present?
+      cannot_do_tips unless @menu.present? && @menu.cando(action_name)
     end
 
 end

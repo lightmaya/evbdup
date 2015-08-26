@@ -23,7 +23,7 @@
 					<td><%= user.name %></td>
 					<td><%= user.tel.present? ? "#{user.tel} / #{user.mobile}" : user.mobile %></td>
 					<td><%= user.status_badge %></td>
-					<td><%= btn_group(user.cando_list(current_user.can_option_hash[user.class.to_s])) %></td>
+					<td><%= btn_group(users_btn(user)) %></td>
 				</tr>
 				<% end %>
 			</tbody>

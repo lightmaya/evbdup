@@ -1,0 +1,61 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8 pull-left padding-top-5">
+                <%= link_to( '<i class="fa fa-plus"></i> 新增</a>'.html_safe, new_kobe_order_path) unless title.include?("审核") %>
+            </div>
+            <div class="col-md-4 pull-right">
+            <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
+                <div class="margin-bottom-10">
+                    <div class="input-group">
+                        <%= f.search_field :sn_or_contract_sn_or_name_cont, class: "form-control input-sm", placeholder: "请输入项目名称、凭证编号、合同编号..." %>
+                        <span class="input-group-btn">
+                          <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                        </span>
+                    </div>
+                </div>
+            <% end %>
+            </div>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="select_all">
+                        <label class="">
+                            <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
+                        </label>
+                    </th>
+                    <th class="index">序号</th>
+                    <th>编号</th>
+                    <th class="hidden-sm">名称</th>
+                    <th class="hidden-sm">总金额（元）</th>
+                    <th class="status_bar"><%= title.include?("审核") ? "状态" : status_filter(Order) %></th>
+                    <th class="date"><%= date_filter %></th>
+                    <th class="cando">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @objs.each_with_index do |obj,index| %>
+                <tr>
+                    <td>
+                        <label class="">
+                            <input type="checkbox" name="check[]" value="<%= obj.id %>" onclick="setSelectAll();"><i></i>
+                        </label>
+                    </td>
+                    <td><%= show_index(index) %></td>
+                    <td><%= obj.sn %></td>
+                    <td><%= obj.name %></td>
+                    <td><%= obj.total %></td>
+                    <td><%= obj.status_bar %></td>
+                    <td><%= show_date(obj.created_at) %></td>
+                    <td><%= btn_group(orders_btn(obj, title.include?("审核"))) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @objs %> 
+    </div>                     
+</div>
