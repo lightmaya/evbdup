@@ -39,11 +39,11 @@ Evbdup::Application.routes.draw do
     end
     resources :orders do
       collection do
-        get :list
+        get :audit_ddcg, :ddcg_list
         post :same_template
       end
       member do
-        get :audit
+        get :audit, :print
         post :commit, :update_audit
       end
     end

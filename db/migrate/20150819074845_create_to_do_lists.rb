@@ -3,8 +3,8 @@ class CreateToDoLists < ActiveRecord::Migration
   def change
     create_table :to_do_lists do |t|
     	t.string :name, :comment => "名称"
-      t.text :list_url, :comment => "列表url"
-      t.text :audit_url, :comment => "审核url"
+      t.string :list_url, :comment => "列表url"
+      t.string :audit_url, :comment => "审核url"
       t.integer :sort, :comment => "排序"
       t.integer :status, :comment => "状态", :limit => 2, :default => 0 , :null => false
       t.text :details, :comment => "明细"

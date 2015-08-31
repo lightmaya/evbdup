@@ -27,14 +27,15 @@ if Menu.first.blank?
   end
 
   order = Menu.create(:name => "订单管理", :icon => "fa-tasks", :is_show => true)
+  Menu.create(:name => "辖区内采购项目", :route_path => "/kobe/orders", :can_opt_action => "Order|read", :is_show => true, :parent => order)
   ddcg = Menu.create(:name => "定点采购", :is_show => true, :parent => order)
-  ddcg_list = Menu.create(:name => "定点采购项目", :route_path => "/kobe/orders", :can_opt_action => "Order|read", :is_show => true, :parent => ddcg)
-  [["增加定点采购", "Order|create"], ["修改定点采购", "Order|update"], ["提交定点采购", "Order|commit"], ["删除定点采购", "Order|update_destroy"]].each do |m|
+  ddcg_list = Menu.create(:name => "我的定点采购项目", :route_path => "/kobe/orders/ddcg_list", :can_opt_action => "Order|ddcg_list", :is_show => true, :parent => ddcg)
+  [["查看定点采购", "Order|read"],["增加定点采购", "Order|create"], ["修改定点采购", "Order|update"], ["提交定点采购", "Order|commit"], ["删除定点采购", "Order|update_destroy"], ["打印定点采购订单", "Order|print"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => ddcg_list)
   end
-  ddcg_audit = Menu.create(:name => "审核定点采购", :route_path => "/kobe/orders/list", :can_opt_action => "Order|list", :is_show => true, :parent => ddcg)
+  audit_ddcg = Menu.create(:name => "审核定点采购", :route_path => "/kobe/orders/audit_ddcg", :can_opt_action => "Order|audit_ddcg", :is_show => true, :parent => ddcg)
   [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"]].each do |m|
-    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => ddcg_audit)
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_ddcg)
   end
 
   dep = Menu.create(:name => "单位及用户管理", :icon => "fa-users", :is_auto => true, :is_show => true)

@@ -14,6 +14,7 @@ class Order < ActiveRecord::Base
 	include AboutStatus
 
   before_create do
+    rule = Rule.find_by(yw_type: self.yw_type)
     # 生成sn、contract_sn
     maxid = Order.maximum('id').to_i + 1
     if maxid.to_s.length > 4
@@ -22,11 +23,11 @@ class Order < ActiveRecord::Base
       uniq_id = "%04d" % maxid
     end
     timestamps = Time.new.strftime('%Y%m%d%H')
-    self.sn = "#{Dictionary.order_sn.ddcg}#{timestamps}#{uniq_id}"
+    self.sn = "#{rule.code}-#{timestamps}#{uniq_id}"
     self.contract_sn = "ZCL-#{timestamps}#{uniq_id}"
 
     # 设置rule_id
-    self.rule_id = Rule.find_by(name: '定点采购').id
+    self.rule_id = rule.id
   end
 
 	# 附件的类
@@ -110,6 +111,11 @@ class Order < ActiveRecord::Base
     self.items.map{ |item| item.category.audit_type }.uniq.compact
   end
 
+  # 同一个合同模板才可以下单
+  def ht
+    ht = self.items.map{ |item| item.category.ht_template }.uniq.compact.join
+    return "/kobe/orders/ht/#{ht}"
+  end
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
     self.items.map{|e| e.category.user_ids}.flatten.uniq
@@ -122,8 +128,16 @@ class Order < ActiveRecord::Base
     when "update", "edit" then [0,2].include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" then self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" then self.status == 1
+    when "print" then [3,5,6].include?(self.status)
     else false
     end
+  end
+
+  # 流程图的开始数组
+  def step_array
+    arr = ["下单", "提交"]
+    arr |= self.get_obj_step_names
+    return arr
   end
 
   def self.xml(who='',options={})
@@ -146,6 +160,7 @@ class Order < ActiveRecord::Base
         <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>
+        <node column='yw_type' data_type='hidden'/>
       </root>
     }
   end

@@ -1,0 +1,134 @@
+<div class="certificate">
+<div class="h_content" style="line-height:150%;">
+    <div id="output1" class="erweima"><%#=@qr%></div>
+    <div class="h1">中国储备粮管理总公司集中采购施工合同--工程</div>
+    <div class="h2">【合同编号：<%#= @info.ht_code%>】</div>
+    <div class="fl_2em" style="margin-bottom:8px;">核查合同文本格式条款内容的正确方法：供货商申请签署的每一个合同在系统中都会生成 “ 唯一的 ”电子合同编号，各单位的审计、财务人员可以登陆电子交易系统（http://fwgs.sinograin.com.cn中储粮服务网）输入合同号核查合同文本格式条款内容，若需进一步查询请直接与总公司联系。</div>
+    <div class="h3 float_left">甲方：<%#= h(@info.dep_p_name)  %></div>
+    <div class="h3 float_right">乙方：<%#= h(@info.dep_s_name)  %></div>
+    <div style="clear:both"></div>
+    <p class="fl_2em">双方经过平等协商，在真实、充分地表达各自意愿的基础上，根据《中华人民共和国合同法》的规定，达成如下协议，并由双方共同恪守：</p>
+    <p>第一条  合同标的（下称：货物）及合同总价 <br/>
+    <%#= render :partial => "/ddcg/print_product_content" %>
+    注：合同总价已包含货物的价款、包装、运输、装卸、安装、调试、技术、指导、培训、咨询、服务、保险、检测、验收合格交付使用之前以及技术和售后服务等等或其他各项有关费用，以及货物进口的商检、关税和海关手续等费用，甲方无须向乙方另外支付本合同规定之外的任何费用。</p>
+    <p>第二条  质量保证和技术标准<br/>
+      <div style="margin-left:2em;">
+        1、乙方提供的货物必须符合中华人民共和国国家安全环保标准、国家有关产品质量认证标准，以及甲方招标文件和乙方投标文件中规定的质量要求和技术指标为约定标准；甲乙双方如遇对质量要求和技术指标的约定标准有相互抵触或异议的事项，由甲方在招标与投标文件中按质量要求和技术指标比较优胜的原则确定该项的约定标准。<br/>
+        2、乙方提供的货物（含零配件、随机工具等）必须是全新的、表面和内部均无瑕疵的原厂正品。<br/>
+        3、包装和运输：<br/>
+          <span class="fl_2em">（1）乙方应采取防潮、防雨、防冻、防锈等相应措施对货物进行包装，确保货物在正常作业和装卸条件下安全无损地到达合同指定地点。<br/>
+          （2）包装箱及每一附件应由乙方注明货物名称、型号、件数、附件名，包装箱内应附有产品说明书和使用说明书。</span>
+      </div>
+    </p>
+    <p>第三条  保修和售后服务<br/>
+      <div style="margin-left:2em;">
+          乙方根据下表向甲方提供货物的免费保修和保养服务：
+          <table width="100%">
+            <tr>
+              <td>货物类型</td>
+              <td>免费保修期（年）</td>
+              <td>免费定期保养服务（年）</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>免费保修期<span class="underline"><%#="&nbsp;"*6%></span>年，终身（保用、服务、维修）</td>
+              <td>免费定期保养服务<span class="underline"><%#="&nbsp;"*6%></span>年</td>
+            </tr>
+          </table>
+          1、保修期、保养期按甲方经对货物验收合格并签署《质量验收报告》之日起计算。<br/>
+          2、在保修期、保养期内，如货物设备非因甲方的人为原因而出现质量问题，甲方有权向乙方提出质量异议，乙方应负责包修、包换或包退，承担修理、调换或退货的实际费用；乙方不能修理或不能退换，均按不能交货处理。乙方保证在接到故障电话后<span class="underline"> 2 </span>小时内响应用户要求，<span class="underline"> 24 </span>小时内派员上门现场维护并在<span class="underline"> 48 </span>小时内排除故障修复使用，如在规定时间内不能修复解决，则扣除质量保证金的10%作为赔偿。
+      </div>
+    </p>
+    <p>第四条  价款和支付方式<br/>
+      <%
+         buyer = @info.buyer
+         detail_address = buyer.blank? ? "&nbsp;"*40 : (buyer.detail_address.blank? ? "&nbsp;"*40 : buyer.detail_address)
+         seller = @info.seller
+         bank_name = seller.blank? ? "&nbsp;"*40 : (seller.bank_name.blank? ? "&nbsp;"*40 : seller.bank_name)
+         bank_account = seller.blank? ? "&nbsp;"*40 : (seller.bank_account.blank? ? "&nbsp;"*40 : seller.bank_account)
+      %>
+      <div style="margin-left:2em;">
+        1、<b>合同总价：￥<span style="text-decoration:underline;"> <%#= money(@info.total) %> </span>元 （人民币大写：<span class="underline"> <%#= total_money_cn(@info.total) %> </span>）。</b><br/>
+        2、支付方式：签订合同后，甲方在5个工作日内支付乙方合同总价的<span class="underline"><%#="&nbsp;"*6%></span>%，待产品全部交货并验收合格后，甲方在8个工作日之内支付乙方合同总价的<span class="underline"><%#="&nbsp;"*6%></span>%，甲方将合同总价剩余的<span class="underline"><%#="&nbsp;"*6%></span>%部分作为质量保证金，一年后无质量问题将支付剩余<span class="underline"><%#="&nbsp;"*6%></span>%。<br/>
+        3、乙方开户银行：<span class="underline"> <%#=bank_name%> </span>，账号：<span class="underline"> <%#=bank_account%> </span>。
+      </div>
+    </p>
+    <p>第五条  交货时间、地点和方式<br/>
+    <div style="margin-left:2em;">
+      1、<b>交货时间：乙方应在本合同签订之日起的<span class="underline"><%#="&nbsp;"*6%></span>个工作日内将货物及其配件、随机工具送达甲方指定地点进行安装调试，并提供技术培训和咨询服务。</b><br/>
+      2、交货时，乙方应将货物的用户手册、保修手册等单证交付给甲方，其中：进口产品必须提供国家进出口商品检验部门的检验证明，国内产品还必须提供出厂合格证。<br/>
+      3、<b>交货地点：<span class="underline"><%#=detail_address%></span>。</b><br/>
+      4、交货方式：由乙方送货上门。
+    </div>
+    </p>
+    <p>第六条  验收<br/>
+    <div style="margin-left:2em;">
+      1、数量清点：在到货后<span class="underline">   3  </span>个工作日内，由甲方对货物数量进行清点，签署《货物数量清点单据》。该单据仅作为甲方对乙方送货数量的清点说明，不得作为甲方对货物质量的验收证明。<br/>
+      2、质量验收：在乙方完成设备安装调试完毕后<span class="underline">   10   </span>个工作日内，甲方应组织质量验收。货物质量经验收合格的，甲方向乙方签署验收意见；不合格的，甲方应及时向乙方提出质量异议。<br/>
+      3、验收标准以本合同第二条的条款约定为准。如因货物的质量问题发生争议，甲方有权委托有资质的权威质检机构进行质量鉴定。货物符合质量标准的，鉴定费由甲方承担；货物不符合质量标准的，鉴定费由乙方承担，同时按本合同第八条第4款处理。
+    </div>
+    </p>
+    <p>第七条  保密<br/>
+    <div style="margin-left:2em;">
+      1、在本合同履行期间及履行完毕后的任何时候，任何一方均应对因履行本合同从对方获取或知悉的保密信息承担保密责任，未经对方书面同意不得向第三方透露，否则应赔偿由此给对方造成的全部损失。<br/>
+      2、保密信息指任何一方所有或持有的不为外界所公知的、经透露方采取了保密措施的各类信息，包括但不限于知识产权信息、技术资料、技术诀窍、业务经营信息、内部管理方法、内部规章制度以及其他与企业经营相关的信息，无论该信息采用的是书面的、口头的、图表或电子的还是任何其他的形式，无论上述信息是否享有知识产权。<br/>
+      3、乙方应根据甲方的要求签署相应的保密协议，保密协议与本条款存在不一致的，以保密协议为准。
+    </div>
+    </p>
+    <p>第八条  违约责任<br/>
+    <div style="margin-left:2em;">
+      1 、甲乙双方任何一方不履行合同义务或者履行合同义务不符合合同约定的，均视为违约。违约方应当承担继续履行、采取补救措施或者赔偿损失等违约责任。<br/>
+      2、因甲乙双方任何一方的原因致使另一方遭受第三方追诉的，违约方应赔偿由此给另一方造成的损失。<br/>
+      3、乙方逾期交付货物的，违约金按每周迟交货物或未提供服务交货价的0.5%计收，但违约金的最高限额为迟交货物或没有提供服务的合同价的5%。一周按7天计算，不足7天按一周计算。如果达到最高限额，甲方有权解除合同，乙方则应按合同总价的<span class="underline"> 5 %</span>计算，向甲方支付违约金。<br/>
+      4、乙方交付货物的品质、性能、技术标准、质量要求不符合合同约定的，甲方有权向乙方提出更换货物及索赔，乙方应在甲方提出之日起<span class="underline">  7  </span>天内免费更换货物，由此造成的时间延误视作乙方未按时交货，按本条前述第3款处理。如经两次更换，货物质量仍不符合本合同约定的，甲方有权终止合同，乙方应向甲方返还已付款项，并按合同总价的<span class="underline">  5 % </span>计算，向甲方支付违约金。<br/>
+      5、乙方保证本合同项下货物的权利无瑕疵，包括货物所有权及知识产权等权利无瑕疵。如任何第三方经法院（或仲裁机构）裁决有权对上述货物主张权利或国家机关依法对货物进行没收查处的，乙方除应向甲方返还已收款项外，还应按合同总价的 5 ％向甲方支付的违约金并赔偿因此给甲方造成的一切损失。<br/>
+      6、乙方偿付的违约金不足以弥补甲方损失的，还应按甲方损失尚未弥补的部分，支付赔偿金给甲方。
+    </div>
+    </p>
+    <p>第九条  不可抗力<br/>
+    <div style="margin-left:2em;">
+      任何一方由于不可抗力的原因不能履行合同时，应在不可抗力发生后 7  天内向对方通报不能履行或不能完全履行的理由，在取得不可抗力发生地市级以上政府相关部门证明以后，允许延期履行、部分履行或者不履行合同，并根据情况可部分或全部免于承担违约责任。
+    </div>
+    </p>
+    <p>第十条  合同的变更、中止、终止<br/>
+    <div style="margin-left:2em;">
+      甲乙双方均不得擅自变更、中止或者终止本合同。<br/>
+      如继续履行本合同将损害国家利益和社会公共利益的，双方应变更、中止或者终止合同。双方不能就此协商一致的，按本合同第十一条处理。
+    </div>
+    </p>
+    <p>第十一条  其它<br/>
+    <div style="margin-left:2em;">
+      （一）本合同适用法律为中华人民共和国法律、法规。在本合同履行过程中发生争议的，由双方协商解决；协商不成时，提请中国国际贸易仲裁委员会仲裁解决。<br/>
+      （二）有关本合同条款的修改、补充和变更，均应以书面形式进行，经双方签字、盖章后生效。<br/>
+      （三）甲方在签定合同后的两年内，从乙方采购相同规格或型号的货物时，乙方保证销售的单价不超过本合同中所列货物单价的5％。<br/>
+      （四）与履行本合同有关的下列文件，为本合同的组成部分，彼此相互解释，相互补充。为便于解释，组成合同的多个文件的优先支配地位的次序如下：<br/>
+      <span class="fl_2em">1、合同书</span><br/>
+      <span class="fl_2em">2、合同补充条款</span><br/>
+      <span class="fl_2em">3、双方有关供货问题的协商、会议纪要等书面协议或文件视为本合同组成部分。</span><br/>
+      （五）本合同自双方签字盖章后生效。本合同一式两份，甲乙双方各执一份。
+    </div>
+    </p>
+    <p></p>
+    <div style="clear:both"></div>
+    <div style="clear:both">
+        <div class="float_left">甲方（签章）：<%#= @info.dep_p_name %></div>
+        <div class="float_left">乙方（签章）：<%#= @info.dep_s_name %></div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">甲方代表（签字）：</div>
+        <div class="float_left">乙方代表（签字）：</div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">地址：<%#=@info.dep_p_add%></div>
+        <div class="float_left">地址：<%#=@info.dep_s_add%></div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">电话：<%#=@info.dep_p_tel%></div>
+        <div class="float_left">电话：<%#=@info.dep_s_tel%></div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+    </div>
+</div>
+</div>

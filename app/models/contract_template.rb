@@ -41,14 +41,4 @@ class ContractTemplate < ActiveRecord::Base
 	  }
 	end
 
-  # 文件夹的完整路径
-  def full_dir_path
-  	File.join(Rails.root, "app/views", self.url)
-  end
-
-  # 文件的完整路径
-  def full_file_path
-  	File.join(self.full_dir_path, "_#{self.file_name}.html.erb")
-  end
-
 end

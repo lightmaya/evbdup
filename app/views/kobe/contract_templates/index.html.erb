@@ -27,7 +27,6 @@
                     <th class="index">序号</th>
                     <th>文件名</th>
                     <th class="hidden-sm">模板名称</th>
-                    <th>文件路径</th>
                     <th class="cando">操作</th>
                 </tr>
             </thead>
@@ -37,7 +36,6 @@
                     <td><%= show_index(index) %></td>
                     <td><%= obj.file_name %></td>
                     <td><%= obj.name %></td>
-                    <td><%= obj.full_file_path %></td>
                     <td><%= btn_group(contract_templates_btn(obj)) %></td>
                 </tr>
                 <% end %>

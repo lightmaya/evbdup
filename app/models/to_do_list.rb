@@ -44,4 +44,9 @@ class ToDoList < ActiveRecord::Base
 	  }
 	end
 
+  # 替换 audit_url 中的 $$obj_id$$
+  def get_audit_url(obj_id)
+    self.audit_url.gsub("$$obj_id$$",obj_id)
+  end
+
 end

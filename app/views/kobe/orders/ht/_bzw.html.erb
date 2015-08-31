@@ -1,0 +1,188 @@
+<% 
+seller = get_dep(@info.dep_s_id,@info.dep_s_user_type)
+buyer = get_dep(@info.user_dep,@info.user_type)
+%>
+<style type="text/css">
+    .ht_dep, .ht_dep td, .ht_dep tr { border: none; font-size: 16px; font-weight: bold; }
+    .ht_dep .title { width: 15%; }
+    .ht_dep .content { width: 25%; }
+</style>
+<div class="certificate">
+<div class="h_content" style="line-height:150%;">
+<div id="output1" class="erweima"><%#=@qr%></div>
+<div class="h1">中国储备粮管理总公司集中采购供货合同--包装物</div>
+<div class="h2">【合同编号：<%#= @info.ht_code%>】</div>
+<div class="fl_2em" style="margin-bottom:8px;">核查合同文本格式条款内容的正确方法：</span> 供货商申请签署的每一个合同在系统中都会生成 “ 唯一的 ”电子合同编号，各单位的审计、财务人员可以登陆电子交易系统（http://fwgs.sinograin.com.cn中储粮服务网）输入合同号核查合同文本格式条款内容，若需进一步查询请直接与总公司联系。</div>
+<table class='ht_dep'>
+    <tr>
+    <td class='title'>甲方名称：</td><td class='content'><%#= h(@info.dep_p_name) %></td><td></td>
+    <td class='title'>乙方名称：</td><td class='content'><%#= h(@info.dep_s_name) %></td>
+    </tr>
+    <tr>
+    <td class='title'>地&nbsp;&nbsp;址：</td><td class='content'><%#= h(@info.dep_p_add) %></td><td></td>
+    <td class='title'>地&nbsp;&nbsp;址：</td><td class='content'><%#= h(@info.dep_s_add) %></td>
+    </tr>
+    <tr>
+    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%#= h(buyer.postalcode) %></td><td></td>
+    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%#= h(seller.postalcode) %></td>
+    </tr>
+    <tr>
+    <td class='title'>法定代表人：</td><td class='content'><%#= h(buyer.frdb) %></td><td></td>
+    <td class='title'>法定代表人：</td><td class='content'><%#= h(seller.frdb) %></td>
+    </tr>
+    <tr>
+    <td class='title'>项目联系人：</td><td class='content'><%#= h(@info.dep_p_man) %></td><td></td>
+    <td class='title'>项目联系人：</td><td class='content'><%#= h(@info.dep_s_man) %></td>
+    </tr>
+    <tr>
+    <td class='title'>账&nbsp;&nbsp;号：</td><td class='content'><%#= h(buyer.bank_account) %></td><td></td>
+    <td class='title'>账&nbsp;&nbsp;号：</td><td class='content'><%#= h(seller.bank_account) %></td>
+    </tr>
+    <tr>
+    <td class='title'>开户银行：</td><td class='content'><%#= h(buyer.bank_name) %></td><td></td>
+    <td class='title'>开户银行：</td><td class='content'><%#= h(seller.bank_name) %></td>
+    </tr>
+</table>
+<div style="clear:both"></div>
+<p class="fl_2em">双方经过平等协商，在真实、充分地表达各自意愿的基础上，根据《中华人民共和国合同法》的规定，达成如下合同，并由双方共同恪守：</p>
+<p>一、合同标的（下称：货物）及合同总价</p>
+<%#= render :partial => "/ddcg/print_product_content" %>
+<p>注：合同总价已包含货物的价款、包装、运输、装卸、咨询、服务等其他各项有关费用。</p>
+<p>二、采购时间和采购期限：
+    <ol>
+        <li>乙方严格按照甲方订货数量、质量组织生产，乙方应按照甲方提供的粮食调出计划的时间安排，将包装物配送至甲方指定地点。</li>
+        <li>除此合同标的外，甲方还会向乙方提出同一批次新的包装物采购需求，将以传真函的形式向乙方发送，乙方均应按照此合同的单价、质量标准进行生产和配送，均须提供经使用单位或者计划库点盖章确认的《包装物交接验收单》作为付款依据。</li>
+    </ol>
+</p>
+<p>三、质量要求、技术标准和定量包装重量：
+    <ol>
+        <li>包装物材料：聚丙烯，带两边各有两条<span class="underline"><%#="&nbsp;"*6%></span>色线条用以区分。</li>
+        <li>规格：长度<span class="underline"><%#="&nbsp;"*6%></span>cm±1厘米，宽度<span class="underline"><%#="&nbsp;"*6%></span>cm±1厘米。每袋重量<span class="underline"><%#="&nbsp;"*6%></span>g±2克。要求能够包装<span class="underline"><%#="&nbsp;"*6%></span>kg。</li>
+        <li>质量标准：经公路、铁路运输到对方接货时不散、不漏。乙方出售的货物除符合前述标准以外还应当同时与提供的货物样品相符。质量要求符合下述标准：</li>
+        <table>
+            <tr><td colspan="2">组织</td><td>单经平纹</td></tr>
+            <tr><td colspan="2">经纬密：根／100mm</td><td>40×42</td></tr>
+            <tr><td rowspan="2">拉断力不小于N/50mm</td><td>经向</td><td></td></tr>
+            <tr><td>纬向</td><td></td></tr>
+            <tr><td>缝底向拉力不小于N/50mm</td><td colspan="2">300</td></tr>
+        </table>
+        <li>包装物封口要求：包装物必须采取双向机械封口。</li>
+    </ol>
+</p>
+<p>四、包装物的采购数量、金额和运输要求：
+    <ol>
+        <li>计划执行结束后，甲方按<span class="underline"><%#="&nbsp;"*6%>元/条</span>的价格，据实结算。</li>
+        <li>乙方负责将包装物运送到甲方指定地点，并负责运送到甲方的一切费用，包括1%损耗。</li>
+    </ol>
+</p>
+<p>五、价款和支付方式
+    <ol>
+        <li>合同总价：￥<span class="underline"> <%#= @info.total %> </span>元 （人民币大写：<span class="underline"> <%#= total_money_cn(@info.total) %> </span>）。</li>
+        <li>支付方式：产品全部交货并验收无误后，甲方在八日之内支付乙方全部货款。</li>
+    </ol>
+</p>
+<p>六、委托方式、验收标准、方法及提出异议期限：
+    <ol>
+        <li>甲方对包装物进行验收。在包装物到达后，乙方应配合使用单位立即清点数量，并检查包装物有无破损、脏污、能否达到定量包装要求等情况。不合格的包装物应退还给乙方，甲方不承担任何运费。</li>
+        <li>甲方检查包装物单位重量是否在规定范围之内，如果重量不符合要求，则甲方有权把包装物退还给供应商，甲方不承担任何运费。</li>
+        <li>甲方或使用单位在验收时，对存在质量争议的包装物，应立即联系乙方，双方在2日内协商解决，否则甲方有权拒绝对存在质量争议的包装物部分支付货款。</li>
+        <li>甲方有权利且必须对乙方所供货物进行抽查，具体结算与包装物抽查结果遵照如下规则：
+            <ul>
+                <li>包装物实际质量与上述第三条中第2小条中所要求的质量的比率，即为使用单位实际应向乙方支付比率；</li>
+                <li>包装物实际拉力与上述第三条中第3小条中所要求的拉力的比率，即为使用单位实际应向乙方支付比率；</li>
+                <li>若上述A、B两条均不能满足上述质量标准，则按照与质量标准差别较大的比率结算。</li>
+            </ul>
+        </li>
+    </ol>
+</p>
+<p>七、货款支付方式：</p>
+<p class="fl_2em">对验收合格的包装物，乙方需提供乙方留存的经计划库点盖章确认的《包装物验收合格单》，甲方在确认此《包装物验收合格单》数量后按实际的购买数量向乙方支付货款。</p>
+<p>八、甲方权利和义务</p>
+<p>(一)、权利
+    <ol>
+        <li>向乙方询问采购工作的计划、程序和进展情况；</li>
+        <li>如乙方不能满足甲方采购需求，甲方有权中止乙方的采购活动；</li>
+    </ol>
+</p>
+<p>(二)、义务</p>
+<ol>
+    <li>认真贯彻执行各项法律、法规和各项文件规定；</li>
+    <li>认真履行采购或合同约定的各项义务；</li>
+    <li>及时向乙方提供包装物配送计划和货款支付等工作；</li>
+    <li>协助乙方处理货物验收等环节的行为。</li>
+</ol>
+</p>
+<p>九、乙方权利和义务</p>
+<p>(一)、权利
+<ol>
+    <li>督促甲方按供货进度支付货款；</li>
+    <li>向有关部门提出对违约行为的处罚意见和建议。</li>
+</ol>
+</p>
+<p>(二)、义务
+<ol>
+    <li>遵守国家法律、法规和中储粮相关文件的规定和保密规定；</li>
+    <li>负责处理在包装物供应过程中出现的问题；</li>
+    <li>负责委托采购过程的解释、资料备案、整理归档，接受有关部门的监督检查。</li>
+    <li>乙方在收到甲方的包装物配送计划后，应在<span class="underline"><%#="&nbsp;"*6%></span>天内将包装物送到甲方指定的地点。</li>
+</ol>
+</p>
+<p>十、保密
+<ol>
+    <li>在本合同履行期间及履行完毕后的任何时候，任何一方均应对因履行本合同从对方获取或知悉的保密信息承担保密责任，未经对方书面同意不得向第三方透露，否则应赔偿由此给对方造成的全部损失。</li>
+    <li>保密信息指任何一方所有或持有的不为外界所公知的、经透露方采取了保密措施的各类信息，包括但不限于知识产权信息、技术资料、技术诀窍、业务经营信息、内部管理方法、内部规章制度以及其他与企业经营相关的信息，无论该信息采用的是书面的、口头的、图表或电子的还是任何其他的形式，无论上述信息是否享有知识产权。</li>
+</ol>
+</p>
+<p>十一、违约条款
+<ol>
+    <li>甲乙双方任何一方不履行合同义务或者履行合同义务不符合合同约定的，均视为违约。违约方应当承担继续履行、采取补救措施或者赔偿损失等违约责任。</li>
+    <li>因甲乙双方任何一方的原因致使另一方遭受第三方追诉的，违约方应赔偿由此给另一方造成的损失。</li>
+    <li>乙方保证本合同项下货物的权利无瑕疵，包括货物所有权及知识产权等权利无瑕疵。如任何第三方经法院（或仲裁机构）裁决有权对上述货物主张权利或国家机关依法对货物进行没收查处的，乙方除应向甲方返还已收款项外，还应按合同总价的<span class="underline"> 5 </span>％向甲方支付的违约金并赔偿因此给甲方造成的一切损失。</li>
+    <li>乙方偿付的违约金不足以弥补甲方损失的，还应按甲方损失尚未弥补的部分，支付赔偿金给甲方。</li>
+</ol>
+</p>
+<p>十二、不可抗力</p>
+<p class="fl_2em">任何一方由于不可抗力的原因不能履行合同时，应在不可抗力发生后<span class="underline"> 7 </span>天内向对方通报不能履行或不能完全履行的理由，在取得不可抗力发生地市级以上政府相关部门证明以后，允许延期履行、部分履行或者不履行合同，并根据情况可部分或全部免于承担违约责任。</p>
+<p>十三、合同的变更、中止、终止</p>
+<p class="fl_2em">甲乙双方均不得擅自变更、中止或者终止本合同。</p>
+<p class="fl_2em">如继续履行本合同将损害国家利益和社会公共利益的，双方应变更、中止或者终止合同。双方不能就此协商一致的，按本合同第十一条处理。</p>
+<p>十四、其它
+<ol>
+    <li>本合同适用法律为中华人民共和国法律、法规。在本合同履行过程中发生争议的，由双方协商解决；协商不成时，提请中国国际贸易仲裁委员会仲裁解决。</li>
+    <li>有关本合同条款的修改、补充和变更，均应以书面形式进行，经双方签字、盖章后生效。</li>
+    <li>与履行本合同有关的下列文件，为本合同的组成部分，彼此相互解释，相互补充。为便于解释，组成合同的多个文件的优先支配地位的次序如下：
+        <ol>
+            <li>合同书</li>
+            <li>合同补充条款</li>
+            <li>传真函</li>
+            <li>双方有关供货问题的协商、会议纪要等书面协议或文件视为本合同组成部分。</li>
+            <li>本合同自双方签字盖章后生效。本合同一式3份，甲方执2份、乙方执1份。</li>
+        </ol>
+    </li>
+</ol>
+</p>
+<p></p>
+<div style="clear:both"></div>
+<div style="clear:both">
+<div class="float_left">甲方（签章）：<%#= @info.dep_p_name %></div>
+<div class="float_left">乙方（签章）：<%#= @info.dep_s_name %></div>
+</div>
+<div style="clear:both">
+<div class="float_left">甲方代表（签字）：</div>
+<div class="float_left">乙方代表（签字）：</div>
+</div>
+<div style="clear:both">
+<div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+<div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+

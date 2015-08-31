@@ -38,6 +38,8 @@ class Rule < ActiveRecord::Base
 	    <?xml version='1.0' encoding='UTF-8'?>
 	    <root>
 	      <node name='名称' column='name' class='required'/>
+        <node name='编码' column='code' class='required'/>
+        <node name='业务类型' column='yw_type' class='required' hint='用于区分订单的类型：ddcg、xygh、wsjj'/>
 	    </root>
 	  }
 	end

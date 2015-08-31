@@ -136,26 +136,27 @@ module AboutStatus
 
   # 获取步数
   def get_step_index(name)
-  	self.rule.get_step_objs.map{ |e| e["name"] }.index(name)
+  	self.get_obj_step_names.index(name)
   end
 
   # 根据rule的xml中step的name判断到哪一步
   def find_step_by_name
-  	self.rule.get_step_objs.find{|e| e["name"] == self.rule_step}
+  	self.get_obj_steps.find{|e| e["name"] == self.rule_step}
   end
 
   # 根据rule的xml判断到哪一步
   def find_step_by_rule(step_index=0)
-  	steps = self.rule.get_step_objs
-  	rs = ""
-  	steps[step_index..steps.length].each do |step|
-      next if eval(step["outflow"]) # 满足 outflow 跳出
-      next if eval(step["dep"]).blank? # 判断单位是否存在
-      next unless eval(step["inflow"]) # 不满足 inflow 跳出
-      rs = step
-      break 
-    end
-    return rs
+  	steps = self.get_obj_steps
+  	return steps.present? ? steps[step_index] : ""
+  	# rs = ""
+  	# steps[step_index..steps.length].each do |step|
+   #    next if eval(step["outflow"]) # 满足 outflow 跳出
+   #    next if eval(step["dep"]).blank? # 判断单位是否存在
+   #    next unless eval(step["inflow"]) # 不满足 inflow 跳出
+   #    rs = step
+   #    break 
+   #  end
+   #  return rs
   end
 
 	# 转向下一个审核人的json
@@ -224,6 +225,53 @@ module AboutStatus
 		delete_id = TaskQueue.where(class_name: self.class,obj_id: self.id)
 		delete_id = delete_id.where.not(id: except_id) if except_id.present?
 		TaskQueue.destroy(delete_id.map(&:id)) if delete_id.present?
+	end
+
+	# 获取该实例rule的所有步骤 如返回数组为空 表示不需要审核
+	def get_obj_steps
+		arr = []
+  	self.rule.get_step_objs.each do |step|
+      next if eval(step["outflow"]) # 满足 outflow 跳出
+      next if eval(step["dep"]).blank? # 判断单位是否存在
+      next unless eval(step["inflow"]) # 不满足 inflow 跳出
+      arr << step
+    end
+    return arr
+	end
+
+	# 该实例rule的步骤名称
+	def get_obj_step_names
+		self.get_obj_steps.map{ |e| e["name"] }
+	end
+
+	# 判断当前步骤在数组中的位置 返回整数
+	def get_current_step_in_array(array=[])
+		return 0 if array.blank?
+		current_index = 0
+		cs = self.get_current_step
+		# 先判断rule_step
+		if cs.is_a?(Hash)
+			index = array.index(cs["name"])
+			return index if index.present?
+		end
+		# 不在定制的rule里 包括rule_step == "done" 都取最后一条日志的操作内容在数组中的位置+1
+		node = self.get_last_node_by_logs
+		if node.present?
+			opt = node.attributes["操作内容"].to_str
+			index = array.index(opt)
+			if index.present?
+				# 如果是退回发起人 rule_step=null
+				steps = self.get_obj_step_names
+				return (self.rule_step.blank? && steps.index(opt)) ? array.index(steps[0])-1 : index+1
+			end
+		end
+		return current_index
+	end
+
+	# 获取日志中的最后一条记录 node_attr 可以指定node的attributes自带[] 例如 node_attr="[操作内容='下单']"
+	def get_last_node_by_logs(node_attr='')
+		doc = Nokogiri::XML(self.logs)
+		return node_attr.present? ? doc.css("node#{node_attr}").last : doc.css("node").last
 	end
 
 end

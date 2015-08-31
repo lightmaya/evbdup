@@ -20,6 +20,7 @@
  *= require plugins/sky-forms/sky-forms
  *= require plugins/sky-forms/custom-sky-forms
  *= require plugins/jquery.fancybox
+ *= require plugins/owl.carousel
  *= require_self
  */
 
@@ -32,6 +33,7 @@ table th.status_bar {width:142px;}
 table th.date {width:88px;}
 table th.time {width:140px;}
 table th.cando {width:114px;}
+table .money {width:120px; text-align: right;}
 .no-border {border: none;}
 #add_content {display: none;}
 .fa-chevron-circle-right,.fa-chevron-circle-down{cursor:pointer;}

@@ -103,6 +103,8 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("修改"), edit_kobe_order_path(obj)] if can?(:update, obj) && obj.cando("edit",current_user)
     # 提交
     arr << [obj.class.icon_action("提交"), commit_kobe_order_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit",current_user)
+    # 打印
+    arr << [obj.class.icon_action("打印"), print_kobe_order_path(obj), target: "_blank"] if can?(:print, obj) && obj.cando("print",current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_order_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
     if audit_opt.present?
@@ -113,10 +115,6 @@ module BtnArrayHelper
    #  	arr << [obj.class.icon_action("确认订单"), "/kobe/orders/#{obj.id}/confirm"]
    #  end
 
-   #  # 打印
-   #  if [0,1,404].include?(obj.status)
-   #  	arr << [obj.class.icon_action("打印"), "/kobe/orders/#{obj.id}/print", target: "_blank"]
-   #  end
    #  # 删除
    #  if [0,1,3,4].include?(obj.status)
 	  #   arr << [obj.class.icon_action("删除"), "/kobe/orders/#{obj.id}", method: :delete, data: {confirm: "确定要删除吗?"}]

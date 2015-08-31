@@ -111,9 +111,11 @@ class KobeController < ApplicationController
 
   # 生成审核日志
   def create_audit_logs(obj)
+    cs = obj.get_current_step
+    act = cs.is_a?(Hash) ? cs["name"] : "审核#{params[:audit_yijian]}"
     opt = obj.audit_next_hash[params[:audit_next]]
     opt << "：#{params[:audit_next_user]}" if params[:audit_next] == "turn"
-    return stateless_logs("审核#{params[:audit_yijian]}","#{opt}。审核理由：#{params[:audit_liyou]}", false)
+    return stateless_logs(act,"审核#{params[:audit_yijian]}，#{opt}。审核理由：#{params[:audit_liyou]}", false)
   end
 
   # 审核的下一步操作 确认并转向上级单位审核、确认并结束审核流程
@@ -136,7 +138,7 @@ class KobeController < ApplicationController
   # 审核 退回发起人 状态改变 rule_step改变
   def go_to_audit_return(obj)
     logs = create_audit_logs(obj)
-    obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = 'start'"],false)
+    obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = null"],false)
     # 删除待办事项
     obj.reload.delete_task_queue
     # 发送站内消息
