@@ -2,6 +2,7 @@
 class Kobe::SharedController < KobeController
 	skip_before_action :verify_authenticity_token
 	layout :false
+  skip_load_and_authorize_resource 
 	
   # ajax加载树形结构右侧展示页面的title 用于单位维护、品目参数维护
   def get_ztree_title

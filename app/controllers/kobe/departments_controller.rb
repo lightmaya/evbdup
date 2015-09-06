@@ -7,7 +7,7 @@ class Kobe::DepartmentsController < KobeController
   layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank]
 
   # cancancan验证 如果有before_action cancancan放最后
-  load_and_authorize_resource 
+  # load_and_authorize_resource 
   skip_authorize_resource :only => [:ztree, :valid_dep_name, :search_bank]
 
   def index

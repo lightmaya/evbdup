@@ -95,6 +95,15 @@ class User < ActiveRecord::Base
     str
   end
 
+  def cache_menus(force = false)
+    if force
+      Setting.send("menus_#{self.id}=", show_menus)
+    else
+      Setting.send("menus_#{self.id}=", show_menus) if Setting.send("menus_#{self.id}").blank?
+    end
+    Setting.send("menus_#{self.id}")
+  end
+
   # 返回用户的所有操作 用于cancancan {"Department"=> [:create, :read, :update, :update_destroy, :freeze, :update_freeze], "Menu"=>[:create, :read, :update]}
   # 如果是管理员增加一个admin的操作 有admin的可以对别人的订单进行操作
   # menu.can_opt_action = Department|create
@@ -120,7 +129,16 @@ class User < ActiveRecord::Base
         rs[a[0]].uniq!
       end
     end
-    return rs
+    rs
+  end
+
+  def cache_option_hash(force = false)
+    if force
+      Setting.send("user_options_#{self.id}=", can_option_hash)
+    else
+      Setting.send("user_options_#{self.id}=", can_option_hash) if Setting.send("user_options_#{self.id}").blank?
+    end
+    Setting.send("user_options_#{self.id}")
   end
 
   # 判断用户是否有某个操作

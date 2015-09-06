@@ -4,7 +4,7 @@ class Kobe::UsersController < KobeController
   before_action :get_user
   layout :false, :only => [:show, :edit, :reset_password]
 
-  load_and_authorize_resource 
+  # load_and_authorize_resource 
 
   def index
     @left_bar_arr = []
@@ -37,7 +37,11 @@ class Kobe::UsersController < KobeController
 
   def update
     if update_and_write_logs(@user, User.xml)
-      @user.menu_ids = @user.menuids.split(",")
+      if @user.previous_changes["menuids"].present?
+        @user.menu_ids = @user.menuids.split(",")
+        @user.cache_menus(true)
+        @user.cache_option_hash(true)
+      end
       @user.category_ids = @user.categoryids.split(",") if @user.categoryids.present?
       redirect_to kobe_departments_path(id: @user.department.id)
     else

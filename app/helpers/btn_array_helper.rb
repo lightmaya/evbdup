@@ -143,4 +143,13 @@ module BtnArrayHelper
     return arr
   end
 
+  def products_btn(obj)
+    arr = [] 
+    # 查看详细
+    arr << [obj.class.icon_action("详细"), kobe_product_path(obj), target: "_blank"]  if can?(:show, obj)
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_product_path(obj)] if can?(:update, obj)
+    return arr
+  end
+
 end

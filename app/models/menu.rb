@@ -13,6 +13,10 @@ class Menu < ActiveRecord::Base
 	include AboutAncestry
 	include AboutStatus
 
+  after_save do 
+    Setting.where("var like 'user_options_%'").delete_all if changes["id"].blank? && changes["can_opt_action"].present?
+  end
+
 	# 中文意思 状态值 标签颜色 进度 
   def self.status_array
     [

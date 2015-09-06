@@ -5,7 +5,7 @@ class Kobe::ItemsController < KobeController
 	before_action :get_item, :only => [:delete, :destroy, :commit, :pause, :update_pause, :update_recover, :recover]
 
   # cancancan验证 如果有before_action cancancan放最后
-  load_and_authorize_resource 
+  # load_and_authorize_resource 
 
 	def index
     @q = Item.where(get_conditions("items")).ransack(params[:q]) 

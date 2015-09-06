@@ -3,6 +3,7 @@ class Product < ActiveRecord::Base
 	has_many :uploads, class_name: :ProductsUpload, foreign_key: :master_id
 	default_scope -> {order("id desc")}
 	belongs_to :category
+  belongs_to :item
 
 
   # validates_with MyValidator
@@ -32,26 +33,26 @@ class Product < ActiveRecord::Base
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
 
-  def cando_list(action='')
-    arr = [] 
-    # 查看详细
-    if [0,1,2,3,404].include?(self.status)
-    	arr << [self.class.icon_action("详细"), "/kobe/products/#{self.id}", target: "_blank"]
-   	end
-    # 修改
-    if [0,3,404].include?(self.status)
-    	arr << [self.class.icon_action("修改"), "/kobe/products/#{self.id}/edit"]
-    end
-	  return arr
-  end
+  # def cando_list(action='')
+  #   arr = [] 
+  #   # 查看详细
+  #   if [0,1,2,3,404].include?(self.status)
+  #   	arr << [self.class.icon_action("详细"), "/kobe/products/#{self.id}", target: "_blank"]
+  #  	end
+  #   # 修改
+  #   if [0,3,404].include?(self.status)
+  #   	arr << [self.class.icon_action("修改"), "/kobe/products/#{self.id}/edit"]
+  #   end
+	 #  return arr
+  # end
 
-  def self.more_actions_list(action='')
-    arr = []
-    arr << [self.icon_action("增加"), "javascript:void(0)", json_url: '/kobe/shared/ztree_json' json_params: '{"json_class":"Category"}' class: 'tree_checkbox']
-    arr << [self.icon_action("冻结"), "/kobe/products/freeze"]
-    arr << [self.icon_action("恢复"), "/kobe/products/recover"]
-    arr << [self.icon_action("删除"), "/kobe/products/delete"]
-    arr << [self.icon_action("彻底删除"), "/kobe/products/clean"]
-  end
+  # def self.more_actions_list(action='')
+  #   arr = []
+  #   arr << [self.icon_action("增加"), "javascript:void(0)", json_url: '/kobe/shared/ztree_json' json_params: '{"json_class":"Category"}' class: 'tree_checkbox']
+  #   arr << [self.icon_action("冻结"), "/kobe/products/freeze"]
+  #   arr << [self.icon_action("恢复"), "/kobe/products/recover"]
+  #   arr << [self.icon_action("删除"), "/kobe/products/delete"]
+  #   arr << [self.icon_action("彻底删除"), "/kobe/products/clean"]
+  # end
 
 end

@@ -4,7 +4,7 @@ class Kobe::RulesController < KobeController
   before_action :get_rule, :only => [:delete, :destroy]
 
   # cancancan验证 如果有before_action cancancan放最后
-  load_and_authorize_resource 
+  # load_and_authorize_resource 
   
 	def index
 		@q = Rule.ransack(params[:q]) 

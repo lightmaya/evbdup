@@ -2,6 +2,8 @@
 class KobeController < ApplicationController
   before_action :request_signed_in!
   before_action :init_themes
+  # cancancan验证 如果有before_action cancancan放最后
+  load_and_authorize_resource
 
   def index
     # @user = current_user
