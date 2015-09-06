@@ -4,8 +4,6 @@ class Kobe::UsersController < KobeController
   before_action :get_user
   layout :false, :only => [:show, :edit, :reset_password]
 
-  # load_and_authorize_resource 
-
   def index
     @left_bar_arr = []
     @left_bar_arr << { url: only_show_info_kobe_user_path(@user), icon: "fa-user", title: "查看用户信息" } if can? :read, @user

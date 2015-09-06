@@ -3,9 +3,6 @@ class Kobe::ContractTemplatesController < KobeController
 
   before_action :get_ct, :only => [:delete, :destroy]
 
-  # cancancan验证 如果有before_action cancancan放最后
-  # load_and_authorize_resource 
-  
 	def index
 		@q = ContractTemplate.ransack(params[:q]) 
     @contract_templates = @q.result.status_not_in(404).page params[:page]
@@ -50,7 +47,6 @@ class Kobe::ContractTemplatesController < KobeController
   private  
 
     def get_ct
-      @contract_template = ContractTemplate.find_by(id: params[:id]) if params[:id].present?
       cannot_do_tips unless @contract_template.present? && @contract_template.cando(action_name)
     end
 

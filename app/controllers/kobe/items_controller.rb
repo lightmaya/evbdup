@@ -4,9 +4,6 @@ class Kobe::ItemsController < KobeController
 	skip_before_action :verify_authenticity_token, :only => [:commit]
 	before_action :get_item, :only => [:delete, :destroy, :commit, :pause, :update_pause, :update_recover, :recover]
 
-  # cancancan验证 如果有before_action cancancan放最后
-  # load_and_authorize_resource 
-
 	def index
     @q = Item.where(get_conditions("items")).ransack(params[:q]) 
     @items = @q.result.page params[:page]
@@ -84,7 +81,6 @@ class Kobe::ItemsController < KobeController
   private
 
   	def get_item
-      @item = Item.find_by(id: params[:id]) if params[:id].present?
       cannot_do_tips unless @item.present? && @item.cando(action_name)
     end
 

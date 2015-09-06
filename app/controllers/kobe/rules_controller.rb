@@ -3,9 +3,6 @@ class Kobe::RulesController < KobeController
 
   before_action :get_rule, :only => [:delete, :destroy]
 
-  # cancancan验证 如果有before_action cancancan放最后
-  # load_and_authorize_resource 
-  
 	def index
 		@q = Rule.ransack(params[:q]) 
     @rules = @q.result.status_not_in(404).page params[:page]
@@ -61,7 +58,6 @@ class Kobe::RulesController < KobeController
   private  
 
     def get_rule
-      @rule = Rule.find_by(id: params[:id]) if params[:id].present?
       cannot_do_tips unless @rule.present? && @rule.cando(action_name)
     end
 

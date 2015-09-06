@@ -1,14 +1,11 @@
 # -*- encoding : utf-8 -*-
 class Kobe::MenusController < KobeController
-  # load_and_authorize_resource
   
   skip_before_action :verify_authenticity_token, :only => [:move]
   # protect_from_forgery :except => :index
   before_action :get_menu, :only => [:destroy, :delete]
   layout false, :only => [:edit, :new, :show, :delete]
 
-  # cancancan验证 如果有before_action cancancan放最后
-  # load_and_authorize_resource 
   skip_authorize_resource :only => [:ztree]
   
 	def index
@@ -80,7 +77,6 @@ class Kobe::MenusController < KobeController
   private  
 
     def get_menu
-      @menu = Menu.find_by(id: params[:id]) if params[:id].present?
       cannot_do_tips unless @menu.present? && @menu.cando(action_name)
     end
 

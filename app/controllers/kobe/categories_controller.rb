@@ -6,8 +6,6 @@ class Kobe::CategoriesController < KobeController
   before_action :get_category, :only => [:delete, :destroy, :freeze, :update_freeze, :recover, :update_recover]
   layout false, :only => [:edit, :new, :show, :delete, :freeze, :recover]
 
-  # cancancan验证 如果有before_action cancancan放最后
-  # load_and_authorize_resource 
   skip_authorize_resource :only => [:ztree, :valid_name]
 
 	def index
@@ -103,7 +101,6 @@ class Kobe::CategoriesController < KobeController
 
   private
     def get_category
-      @category = Category.find(params[:id]) if params[:id].present?
       cannot_do_tips unless @category.present? && @category.cando(action_name)
     end
 

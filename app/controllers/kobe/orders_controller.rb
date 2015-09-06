@@ -7,8 +7,6 @@ class Kobe::OrdersController < KobeController
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
 
-  # cancancan验证 如果有before_action cancancan放最后
-  # load_and_authorize_resource 
   skip_authorize_resource :only => [:same_template]
 
   # 辖区内采购项目

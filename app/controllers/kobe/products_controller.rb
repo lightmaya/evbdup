@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Kobe::ProductsController < KobeController
 
-  before_action :get_product, :only => [:show, :edit, :update]
+  before_action :get_product, :only => [:delete, :destroy]
 
   def index
     @q = Product.where(get_conditions("products")).ransack(params[:q]) 
@@ -67,7 +67,7 @@ class Kobe::ProductsController < KobeController
   private
 
   def get_product
-    @product = Product.find(params[:id]) unless params[:id].blank? 
+    cannot_do_tips unless @product.present? && @product.cando(action_name)
   end
 
 end
