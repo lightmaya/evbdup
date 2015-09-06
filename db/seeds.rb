@@ -57,6 +57,12 @@ if Menu.first.blank?
   end
 
   setting = Menu.create(:name => "系统设置", :icon => "fa-cogs", :is_show => true)
+
+  item = Menu.create(:name => "入围项目管理", :route_path => "/kobe/items", :can_opt_action => "Item|read", :is_show => true, :parent => setting)
+  [["增加项目", "Item|create"], ["修改项目", "Item|update"], ["提交项目", "Item|commit", true], ["停止项目", "Item|pause"], ["恢复项目", "Item|recover"], ["删除项目", "Item|update_destroy"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => item)
+  end
+
   menu = Menu.create(:name => "菜单管理", :route_path => "/kobe/menus", :can_opt_action => "Menu|read", :is_show => true, :parent => setting)
   [["增加菜单", "Menu|create"], ["修改菜单", "Menu|update"], ["删除菜单", "Menu|update_destroy"], ["移动菜单", "Menu|move"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => menu)

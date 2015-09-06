@@ -39,7 +39,7 @@ module BtnArrayHelper
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_to_do_list_path(obj)] if can?(:update, obj)
     # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}", '#{delete_kobe_to_do_list_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj)
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}", '#{delete_kobe_to_do_list_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete")
     return arr
   end
 
@@ -52,7 +52,7 @@ module BtnArrayHelper
     # 维护审核理由
     arr << [obj.class.icon_action("维护审核理由"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('维护审核理由')}", '#{audit_reason_kobe_rule_path(obj)}', "#opt_dialog") }] if can?(:audit_reason, obj)
     # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}", '#{delete_kobe_rule_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj)
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}", '#{delete_kobe_rule_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete")
     return arr
   end
 
@@ -90,7 +90,7 @@ module BtnArrayHelper
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_contract_template_path(obj)] if can?(:update, obj)
     # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_contract_template_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj)
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_contract_template_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete")
     return arr
   end
 
@@ -125,5 +125,22 @@ module BtnArrayHelper
 	  # end
 	  return arr
 	end
+
+  def items_btn(obj)
+    arr = [] 
+    # 查看
+    arr << [obj.class.icon_action("详细"), kobe_item_path(obj), target: "_blank"]  if can?(:show, obj)
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_item_path(obj)] if can?(:update, obj) && obj.cando("edit")
+    # 提交
+    arr << [obj.class.icon_action("提交"), commit_kobe_item_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
+    # 停止
+    arr << [obj.class.icon_action("停止"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('停止')}",'#{pause_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:pause, obj) && obj.cando("pause")
+    # 恢复
+    arr << [obj.class.icon_action("恢复"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('恢复')}",'#{recover_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:recover, obj) && obj.cando("recover")
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete")
+    return arr
+  end
 
 end

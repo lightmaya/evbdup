@@ -129,7 +129,8 @@ module SaveXmlForm
         value = params_arr[column][i]
         case column
         when "data"
-          node[column] = value.split("|") 
+          # node[column] = value.split("|") 
+          node[column] = "['#{value.gsub('|',"','")}']"
         when "is_required"
           rule << "required" if value == "1"
         when "rule"

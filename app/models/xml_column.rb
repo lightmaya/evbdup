@@ -13,7 +13,7 @@ class XmlColumn
 	end
 
 	def self.keys
-		%w(name column data_type rule data is_required hint placeholder)
+		%w(name column data_type rule data is_required is_key hint placeholder)
 	end
 
 

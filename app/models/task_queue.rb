@@ -4,7 +4,9 @@ class TaskQueue < ActiveRecord::Base
 
 	# 根据class_name和obj_id 获取obj
 	def get_belongs_to_obj
-		self.class_name.constantize.find_by(id: self.obj_id)
+		obj = self.class_name.constantize.find_by(id: self.obj_id)
+		obj = obj.item if obj.is_a?(ItemDepartment)
+		return obj
 	end
 
 end

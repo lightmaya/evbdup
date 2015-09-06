@@ -10,6 +10,9 @@ class Department < ActiveRecord::Base
   has_many :buyer_orders, class_name: :Order, foreign_key: :buyer_id
   has_many :seller_orders, class_name: :Order, foreign_key: :seller_id
 
+  has_many :item_departments, dependent: :destroy
+  has_many :items, through: :item_departments
+
   include AboutAncestry
   include AboutStatus
 
@@ -22,6 +25,16 @@ class Department < ActiveRecord::Base
       self.real_ancestry = real_ancestry_arr.join("/") # 祖先和自己中是独立核算单位的id
       self.save 
     end
+
+    # 判断是不是入围供应商
+    item_deps = ItemDepartment.where(name: self.name, department_id: nil)
+    item_deps.update_all(department_id: self.id) if item_deps.present?
+      
+  end
+
+  # 有效的入围项目
+  def effective_items
+    self.items.where(status: 1)
   end
 
   # 拆分real_ancestry 获取独立核算单位的id数组
@@ -131,7 +144,7 @@ class Department < ActiveRecord::Base
   # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
   def commit_params
     arr = []
-    rule_id = Rule.find_by(name: '单位管理').id
+    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
     arr << "rule_id = #{rule_id}"
     arr << "rule_step = 'start'"
     return arr

@@ -174,6 +174,9 @@ class Kobe::DepartmentsController < KobeController
 
   def update_audit
     save_audit(@dep)
+    # 给刚注册的审核通过的入围供应商插入待办事项
+    items = @dep.effective_items
+    @dep.item_departments.where(item_id: items.map(&:id)).each{ |dep| dep.create_task_queue } if items.present?
     redirect_to list_kobe_departments_path
   end
 

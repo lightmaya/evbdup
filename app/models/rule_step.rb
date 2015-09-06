@@ -6,7 +6,7 @@ class RuleStep < XmlColumn
 	end
 
 	def self.xml(who='',options={})
-		to_do_data = ToDoList.status_not_in(404).map{ |e| [e.id, e.name] }
+		to_do_data = ToDoList.status_not_in(404).map{ |e| [e.id.to_s, e.name] }
 	  %Q{
 	    <?xml version='1.0' encoding='UTF-8'?>
 	    <root>

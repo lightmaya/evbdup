@@ -59,11 +59,7 @@ class Order < ActiveRecord::Base
       "不通过" => { "等待审核" => "审核拒绝" },
       "删除" => { "未提交" => "已删除" },
     }
-    if self.find_step_by_rule.blank?
-      ha["提交"]["未提交"] = "自动生效" 
-    else
-      ha["提交"]["未提交"] = "等待审核" 
-    end
+    ha["提交"]["未提交"] = self.find_step_by_rule.blank? ? "自动生效" : "等待审核" 
     return ha
   end
 

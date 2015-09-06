@@ -1,2 +1,2 @@
 <%= render partial: "show" %>
-<%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_department_path(@dep), obj: @dep, title: "审核单位: #{@dep.name}" } %>
+<%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_department_path(@dep), obj: @dep, title: "审核单位: #{@dep.name} #{'[入围供应商]' if @dep.effective_items.present?}" } %>

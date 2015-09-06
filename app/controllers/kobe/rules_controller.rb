@@ -14,21 +14,21 @@ class Kobe::RulesController < KobeController
   def new
   	rule = Rule.new
     slave_objs = rule.create_rule_objs
-    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, rule, slave_objs, { form_id: 'rule_form', action: kobe_rules_path }, { title: 'Step', grid: 4 })
+    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, rule, slave_objs, { form_id: 'rule_form', action: kobe_rules_path, grid: 3 }, { title: 'Step', grid: 4 })
   end
 
   def edit
     slave_objs = @rule.create_rule_objs
-    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, @rule, slave_objs, { form_id: 'rule_form', action: kobe_rule_path(@rule), method: "patch" }, { title: 'Step', grid: 4 })
+    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, @rule, slave_objs, { form_id: 'rule_form', action: kobe_rule_path(@rule), method: "patch", grid: 3 }, { title: 'Step', grid: 4 })
   end
 
   def show
     @arr  = []
-    obj_contents = ""
+    obj_contents = show_obj_info(@rule,Rule.xml,{grid: 3})
     @rule.create_rule_objs.each_with_index do |step,index|
       obj_contents << show_obj_info(step,RuleStep.xml,{title: "Step ##{index+1}"})
     end
-    @arr << {title: @rule.name, icon: "fa-info", content: obj_contents} 
+    @arr << {title: "详细信息", icon: "fa-info", content: obj_contents} 
     @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@rule)}
   end
 

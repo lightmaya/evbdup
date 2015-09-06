@@ -76,6 +76,12 @@ Evbdup::Application.routes.draw do
         get :delete
       end
     end
+    resources :items do
+      member do 
+        get :delete, :pause, :recover
+        post :commit, :update_pause, :update_recover
+      end
+    end
     resources :to_do_lists do
       member do 
         get :delete
