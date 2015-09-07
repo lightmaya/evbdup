@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddCodeToRules < ActiveRecord::Migration
   def change
     add_column :rules, :code, :string

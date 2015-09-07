@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 Evbdup::Application.routes.draw do
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -7,10 +8,11 @@ Evbdup::Application.routes.draw do
    #root 'home#index'
   root :to => 'home#index'
   
-  captcha_route
+  # captcha_route
 
   get 'errors' => 'errors#index'
   get 'main' => 'kobe/main#index'
+  get 'test' => 'errors#test'
 
   resources :home, :only => :index  do 
     collection do

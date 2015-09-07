@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MyValidator < ActiveModel::Validator
   def validate(record)
     changed_keys = record.changes.keys.delete_if{|k| %(status logs).include?(k)}
