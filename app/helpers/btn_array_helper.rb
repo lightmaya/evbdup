@@ -140,6 +140,8 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("恢复"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('恢复')}",'#{recover_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:recover, obj) && obj.cando("recover")
     # 删除
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete")
+    # 录入产品
+    arr << [obj.class.icon_action("录入产品"), item_list_kobe_products_path(item_id: obj.id)] if can?(:item_list, Product) && obj.finalist?(current_user.department.id)
     return arr
   end
 
@@ -148,7 +150,7 @@ module BtnArrayHelper
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_product_path(obj), target: "_blank"]  if can?(:show, obj)
     # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_product_path(obj)] if can?(:update, obj)
+    arr << [obj.class.icon_action("修改"), edit_kobe_product_path(obj)] if can?(:update, obj) #&& obj.cando("edit")
     return arr
   end
 

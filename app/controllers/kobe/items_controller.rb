@@ -2,7 +2,7 @@
 class Kobe::ItemsController < KobeController
 
 	skip_before_action :verify_authenticity_token, :only => [:commit]
-	before_action :get_item, :only => [:delete, :destroy, :commit, :pause, :update_pause, :update_recover, :recover]
+	before_action :get_item, :only => [:edit, :update, :delete, :destroy, :commit, :pause, :update_pause, :update_recover, :recover]
 
 	def index
     @q = Item.where(get_conditions("items")).ransack(params[:q]) 
@@ -76,6 +76,14 @@ class Kobe::ItemsController < KobeController
     @item.change_status_and_write_logs("恢复", stateless_logs("恢复",params[:opt_liyou],false))
     tips_get("恢复成功。")
     redirect_to kobe_items_path
+  end
+
+  # 我的入围项目
+  def list
+    arr = []
+    arr << ["item_departments.department_id = ?", current_user.department.id]
+    @q = Item.joins(:item_departments).where(get_conditions("items", arr)).ransack(params[:q]) 
+    @items = @q.result(distinct: true).page params[:page]
   end
 
   private

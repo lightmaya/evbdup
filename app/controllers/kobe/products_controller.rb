@@ -1,15 +1,32 @@
 # -*- encoding : utf-8 -*-
 class Kobe::ProductsController < KobeController
 
-  before_action :get_product, :only => [:delete, :destroy]
+  before_action :get_item, :except => [:index]
+  skip_before_action :verify_authenticity_token, :only => [:commit]
+  layout :false, :only => [:get_category]
+  skip_authorize_resource :only => [:get_category]
 
+  # 我的入围产品
   def index
     @q = Product.where(get_conditions("products")).ransack(params[:q]) 
     @products = @q.result.page params[:page]
   end
 
-  def new
+  # 某项目入围产品
+  def item_list
+    arr = []
+    arr << ["item_id = ? ", @item.id]
+    arr << ["user_id = ? ", current_user.id]
+    @q = Product.where(get_conditions("products", arr)).ransack(params[:q]) 
+    @products = @q.result.page params[:page]
+  end
 
+  # 新增产品前选择要新增产品的品目
+  def get_category
+    @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
+  end
+
+  def new
   	category = Category.find_by_id(params[:category_id])
     redirect_to root_path unless category
 
@@ -18,7 +35,7 @@ class Kobe::ProductsController < KobeController
   end
 
   def create
-  	category = Category.find(params[:id])
+    category = Category.find(params[:id])
     product = create_and_write_logs(Product, category.params_xml, {}, {category_id: category.id})
     if product
       redirect_to kobe_products_path
@@ -66,8 +83,9 @@ class Kobe::ProductsController < KobeController
 
   private
 
-  def get_product
-    cannot_do_tips unless @product.present? && @product.cando(action_name)
-  end
+    def get_item
+      @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
+      cannot_do_tips unless @item.present? && @item.finalist?(current_user.department.id)
+    end
 
 end

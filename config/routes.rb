@@ -77,6 +77,9 @@ Evbdup::Application.routes.draw do
       end
     end
     resources :items do
+      collection do
+        get :list
+      end
       member do 
         get :delete, :pause, :recover
         post :commit, :update_pause, :update_recover
@@ -110,7 +113,10 @@ Evbdup::Application.routes.draw do
     end
     resources :products do
       collection do
-        post :delete, :freeze, :recover
+        get :item_list, :get_category
+      end
+      member do
+        get :delete, :freeze, :recover
       end
     end
     # 意见反馈

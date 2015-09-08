@@ -5,6 +5,7 @@
  *= require pages/shortcode_timeline2
  *= require pages/profile
  *= require plugins/jquery.mCustomScrollbar
+ *= require plugins/hover-effects/custom-hover-effects
 */
 
 .ajax_loading{

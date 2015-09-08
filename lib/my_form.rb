@@ -277,6 +277,7 @@ private
       <select #{input_opts[:node_attr].join(" ")}>
         #{data_str}
       </select>
+      <i></i>
     </label>
     #{input_opts[:hint].blank? ? '' : "<div class='note'><strong>提示:</strong> #{input_opts[:hint]}</div>" }|
   end
@@ -298,6 +299,7 @@ private
       <select multiple #{input_opts[:node_attr].join(" ")}>
         #{data_str}
       </select>
+      <i></i>
     </label>
     <div class='note'><strong>提示:</strong> #{input_opts[:hint].blank? ? '按住ctrl键可以多选。' : "#{input_opts[:hint]}；按住ctrl键可以多选。" }</div>|
   end

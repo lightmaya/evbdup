@@ -65,6 +65,12 @@ class Item < ActiveRecord::Base
     end
   end
 
+  # 根据 department_id 判断该单位是否入围本项目
+  def finalist?(department_id)
+    item_department = self.registered_departments.find_by(department_id: department_id)
+    return item_department.present?
+  end
+
   # 保存后提示哪些供应商已经注册 哪些没有注册
   def tips
 		unregistered_names = self.unregistered_departments.map(&:name).join(", ")
@@ -80,7 +86,7 @@ class Item < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='项目名称' column='name' class='required'/>
-        <node name='项目类型' column='item_type' data_type='radio' data='[[0,"厂家供货"],[1,"代理商供货"]]'/>
+        <node name='项目类型' column='item_type' data_type='radio' data='#{Dictionary.item.item_type}'/>
         <node name='品目分配' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden'/>
         <node name='有效期开始时间' column='begin_time' class='date_select required dateISO'/>
