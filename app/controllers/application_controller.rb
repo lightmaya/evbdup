@@ -1,6 +1,7 @@
+# -*- encoding : utf-8 -*-
 class ApplicationController < ActionController::Base
   # reset captcha code after each request for security
-  after_action :reset_last_captcha_code!
+  # after_action :reset_last_captcha_code!
 
 
   # Prevent CSRF attacks by raising an exception.

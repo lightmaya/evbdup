@@ -2,10 +2,10 @@ source 'http://ruby.taobao.org'
 # source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.0'
+gem 'rails', '4.1.7'
 
 # Use sqlite3 as the database for Active Record
-gem 'mysql2','0.3.14'
+gem 'mysql2'#,'0.3.14'
 
 group :assets do
 	# Use SCSS for stylesheets
@@ -34,6 +34,10 @@ gem 'jquery-rails', '3.0.4'
 # 类xml解析
 gem "nokogiri", "~> 1.6.1"
 
+if RUBY_PLATFORM =~ /mingw32/
+	gem 'tzinfo-data'
+end
+
 # 分页
 gem 'kaminari', '~> 0.15.1'
 
@@ -44,7 +48,7 @@ gem "settingslogic", "~> 2.0.9"
 gem "rails-settings-cached", "~> 0.3.2"
 
 # 验证码
-gem 'easy_captcha'
+# gem 'easy_captcha'
 
 # 百度富文本编辑器
 gem "ueditor-rails", "~> 1.2.5.3"
@@ -89,10 +93,10 @@ gem "bcrypt-ruby", "~> 3.0.1"
 gem 'cancancan', '~> 1.7'
 
 # 查询
-gem 'ransack'
+gem 'ransack', '1.5.1'
 
 # 定时任务
-gem 'rufus-scheduler'
+gem 'rufus-scheduler', '3.0.9'
 
 
 # Use unicorn as the app server
@@ -108,7 +112,7 @@ group :development, :test do
 	# console print&debug 这个是手动，需要在代码里面写binding.pry
 	gem "pry-rails", "~> 0.3.2"
 	# 这2个加起来是自动，报错的地方会停下来，也能写代码
-  gem 'better_errors', '~> 2.0.0'
+  gem 'better_errors', '1.1.0'
   gem "binding_of_caller", "~> 0.7.2"
   # 开发模式加速
   gem 'rails-dev-tweaks', '~> 1.2.0'

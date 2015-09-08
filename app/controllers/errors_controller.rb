@@ -4,4 +4,8 @@ class ErrorsController < ApplicationController
 	
   def index
   end
+
+  def test
+  	asdfad
+  end
 end
