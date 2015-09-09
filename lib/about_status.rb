@@ -83,7 +83,7 @@ module AboutStatus
 	# 根据不同操作 获取需改变的状态 返回数字格式的状态
 	def get_change_status(opt)
 		if self.class.attribute_method? "change_status_hash"
-			cn_status = self.class.get_status_attributes(self.status,1)[0] # 当前状态转成中文
+			cn_status = self.class.get_status_attributes(self.status, 1)[0] # 当前状态转成中文
 			status = self.change_status_hash[opt][cn_status] # 获取更新后的状态
 			return status.present? ? self.class.get_status_attributes(status)[1] : self.status # 更新后的状态转成数字
 		else

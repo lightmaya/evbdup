@@ -13,6 +13,7 @@ Evbdup::Application.routes.draw do
   get 'errors' => 'errors#index'
   get 'main' => 'kobe/main#index'
   get 'test' => 'errors#test'
+  get 'not_found' => "home#not_found", as: :not_found
 
   resources :home, :only => :index  do 
     collection do
@@ -20,6 +21,8 @@ Evbdup::Application.routes.draw do
       post :form_test
     end
   end
+
+  resources :articles, :only => [:index, :show]
 
   resources :uploads, :only => [:index, :create, :destroy]
 
@@ -62,6 +65,9 @@ Evbdup::Application.routes.draw do
     resources :articles do 
       collection do
         post :batch_task
+      end
+      member do 
+        get :delete
       end
     end
     resources :menus do

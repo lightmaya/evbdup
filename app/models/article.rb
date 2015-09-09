@@ -8,11 +8,18 @@ class Article < ActiveRecord::Base
 
   include AboutStatus
 
+  default_value_for :hits, 0
+
    # 列表中的状态筛选,current_status当前状态不可以点击
   def self.status_filter(action='')
   	# 列表中不允许出现的
-  	limited = [404]
+  	# limited = [404]
+    limited = []
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  end
+
+  def incr_hit!
+    update(hits: self.hits + 1)
   end
 
   # 中文意思 状态值 标签颜色 进度 
@@ -25,7 +32,8 @@ class Article < ActiveRecord::Base
     ]
   end
 
-   def self.xml(who='',options={})
+
+  def self.xml(who='',options={})
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>

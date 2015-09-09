@@ -155,9 +155,11 @@ module BtnArrayHelper
   def articles_btn(obj)
     arr = [] 
     # 查看详细
-    arr << [obj.class.icon_action("详细"), kobe_article_path(obj), target: "_blank"]  if can?(:show, obj)
+    arr << [obj.class.icon_action("详细"), article_path(obj), target: "_blank"]  if can?(:show, obj)
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_article_path(obj)] if can?(:update, obj)
+     # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_article_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj)
     return arr
   end
 

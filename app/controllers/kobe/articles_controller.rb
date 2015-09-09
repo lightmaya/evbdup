@@ -4,7 +4,7 @@ class Kobe::ArticlesController < KobeController
   def index
     # authorize! :index, Article, :message => "您没有相关权限！"
     params[:q][:user_id_eq] = current_user.id unless current_user.admin?
-    @q = Article.where(get_conditions("artilces")).ransack(params[:q]) 
+    @q = Article.where(get_conditions("articles")).ransack(params[:q]) 
     @articles = @q.result.includes(:author).page params[:page]
   end
 
@@ -21,6 +21,7 @@ class Kobe::ArticlesController < KobeController
   end
 
   def edit
+    @myform = SingleForm.new(Article.xml, @article, { form_id: "article_form", action: kobe_article_path(@article), method: "patch", grid: 2 })
   end
 
   def create
@@ -29,18 +30,24 @@ class Kobe::ArticlesController < KobeController
   end
 
   def update
-    if @article.update(my_params)
-      tips_get("操作成功。")
-      redirect_to kobe_articles_path
-    else
-      flash_get(@article.errors.full_messages)
-      render 'edit'
-    end
+    update_and_write_logs(@article, Article.xml)
+    redirect_to kobe_articles_path
   end
 
   # 批处理
   def batch_task
     render :text => params[:grid].to_s
+  end
+
+    # 删除
+  def delete
+    render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_article_form', action: kobe_article_path(@article), method: 'delete' }
+  end
+
+  def destroy
+    @article.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
+    tips_get("删除成功。")
+    redirect_to kobe_articles_path
   end
 
   private  
