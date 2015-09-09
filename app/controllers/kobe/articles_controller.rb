@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Kobe::ArticlesController < KobeController
+  skip_before_action :verify_authenticity_token, :only => [:commit]
+  before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
 
   def index
     # authorize! :index, Article, :message => "您没有相关权限！"
@@ -9,6 +11,41 @@ class Kobe::ArticlesController < KobeController
   end
 
   def show
+  end
+
+  def audit
+
+  end
+
+  def update_audit
+    save_audit(@article)
+    # 给刚注册的审核通过的入围供应商插入待办事项
+    redirect_to list_kobe_articles_path
+  end
+
+  def list
+    arr = []
+    arr << ["articles.status = ? ", 1]
+    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    arr << ["task_queues.dep_id = ?", current_user.department.real_dep.id]
+    cdt = get_conditions("articles", arr)
+    @q =  Article.joins(:task_queues).where(cdt).ransack(params[:q]) 
+    @articles = @q.result(distinct: true).page params[:page]
+  end
+
+  # 获取审核的menu_ids
+  def get_audit_menu_ids
+    @menu_ids = Menu.get_menu_ids("Article|list")
+  end
+
+  # 注册提交
+  def commit
+    @article.change_status_and_write_logs("提交审核",
+      stateless_logs("提交审核","注册完成，提交审核！", false),
+      @article.commit_params, false)
+    @article.reload.create_task_queue
+    tips_get("提交成功，请等待审核。")
+    redirect_to kobe_articles_path(id: @article)
   end
 
   def new

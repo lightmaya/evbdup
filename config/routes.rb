@@ -65,9 +65,12 @@ Evbdup::Application.routes.draw do
     resources :articles do 
       collection do
         post :batch_task
+        get :list
       end
       member do 
+        get :audit
         get :delete
+        post :commit, :update_audit
       end
     end
     resources :menus do
