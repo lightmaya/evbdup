@@ -58,6 +58,7 @@ class Kobe::CategoriesController < KobeController
   
   def destroy
     @category.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
+    @category.clean_cache_ids
     tips_get("删除品目成功。")
     redirect_to kobe_categories_path(id: @category.parent_id)
   end
@@ -69,6 +70,7 @@ class Kobe::CategoriesController < KobeController
 
   def update_freeze
     @category.change_status_and_write_logs("冻结", stateless_logs("冻结",params[:opt_liyou],false))
+    @category.clean_cache_ids
     tips_get("冻结品目成功。")
     redirect_to kobe_categories_path(id: @category)
   end
@@ -80,6 +82,7 @@ class Kobe::CategoriesController < KobeController
 
   def update_recover
     @category.change_status_and_write_logs("恢复", stateless_logs("恢复",params[:opt_liyou],false))
+    @category.clean_cache_ids
     tips_get("恢复品目成功。")
     redirect_to kobe_categories_path(id: @category)
   end

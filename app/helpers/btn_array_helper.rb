@@ -150,7 +150,15 @@ module BtnArrayHelper
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_product_path(obj), target: "_blank"]  if can?(:show, obj)
     # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_product_path(obj)] if can?(:update, obj) #&& obj.cando("edit")
+    arr << [obj.class.icon_action("修改"), edit_kobe_product_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 提交
+    arr << [obj.class.icon_action("提交"), commit_kobe_product_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
+    # 冻结
+    arr << [obj.class.icon_action("冻结"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('冻结')}",'#{freeze_kobe_product_path(obj)}', "#opt_dialog") }] if can?(:freeze, obj) && obj.cando("freeze", current_user)
+    # 恢复
+    arr << [obj.class.icon_action("恢复"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('恢复')}",'#{recover_kobe_product_path(obj)}', "#opt_dialog") }] if can?(:recover, obj) && obj.cando("recover", current_user)
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_product_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     return arr
   end
 

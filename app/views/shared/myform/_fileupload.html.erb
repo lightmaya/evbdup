@@ -52,7 +52,7 @@ messages = myform.messages
       }).get().join(',');
       var minNumberOfFiles = <%= min_number_of_files.to_i %>;
       var alertContent = "<div class='alert alert-danger fade in'><button aria-hidden='true' data-dismiss='alert' class='close' type='button'>×</button><h4>出错了!</h4><p>上传附件没有达到数量要求（不少于"+ minNumberOfFiles +"个），请按要求上传附件。</p></div>";
-      if (ids.split(",").length < minNumberOfFiles){
+      if ((ids == "" && minNumberOfFiles > 0) || ids.split(",").length < minNumberOfFiles){
         if ($(this).prevAll("div.alert").length == 0){
           $(this).parent().prepend(alertContent);
         }

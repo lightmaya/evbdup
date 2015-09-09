@@ -61,8 +61,8 @@ class User < ActiveRecord::Base
   # 根据不同操作 改变状态
   def change_status_hash
     {
-      "冻结" => { "正常" => "冻结" },
-      "恢复" => { "冻结" => "正常" }
+      "冻结" => { 0 => 1 },
+      "恢复" => { 1 => 0 }
     }
   end
 

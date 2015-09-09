@@ -70,10 +70,9 @@ class Kobe::OrdersController < KobeController
 
   # 我的定点采购项目
   def ddcg_list
-    arr = []
-    arr << ["orders.user_id = ?", current_user.id]
-    arr << ["orders.yw_type = ?", 'ddcg']
-    @q = Order.where(get_conditions("orders", arr)).ransack(params[:q]) 
+    params[:q][:user_id_eq] = current_user.id
+    params[:q][:yw_type_eq] = 'ddcg'
+    @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
     @objs = @q.result.page params[:page]
   end
 

@@ -79,10 +79,9 @@ class Kobe::ItemsController < KobeController
 
   # 我的入围项目
   def list
-    arr = []
-    arr << ["item_departments.department_id = ?", current_user.department.id]
-    @q = Item.joins(:item_departments).where(get_conditions("items", arr)).ransack(params[:q]) 
-    @items = @q.result(distinct: true).page params[:page]
+    params[:q][:item_departments_department_id_eq] = current_user.department.id
+    @q = Item.where(get_conditions("items")).ransack(params[:q]) 
+    @items = @q.result(distinct: true).includes(:item_departments).page params[:page]
   end
 
   private

@@ -14,6 +14,11 @@ class ItemDepartment < ActiveRecord::Base
   	self.rule_step = 'start'
   end
 
+  # 某供应商某项目的全部产品
+  def products
+    Product.where(item_id: self.item_id, department_id: self.department_id)
+  end
+
   def self.xml(who='',options={})
 	  %Q{
 	    <?xml version='1.0' encoding='UTF-8'?>

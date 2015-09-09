@@ -16,7 +16,7 @@ class ToDoList < ActiveRecord::Base
   # 根据不同操作 改变状态
   def change_status_hash
     {
-      "删除" => { "正常" => "已删除" }
+      "删除" => { 0 => 404 }
     }
   end
 

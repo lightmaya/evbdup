@@ -16,14 +16,27 @@ class Product < ActiveRecord::Base
   end
 
   # 中文意思 状态值 标签颜色 进度 
-	def self.status_array
-		[
-	    ["未提交",0,"orange",10],
-	    ["等待审核",1,"blue",50],
-	    ["正常",2,"u",100],
-      ["冻结",3,"yellow",0],
-	    ["已删除",404,"red",0]
+  def self.status_array
+    [
+      ["未提交",0,"orange",10],
+      ["正常",1,"u",100],
+      ["等待审核",2,"blue",50],
+      ["审核拒绝",3,"red",0],
+      ["冻结",4,"yellow",20],
+      ["已删除",404,"light",0]
     ]
+  end
+
+  # 根据不同操作 改变状态
+  def change_status_hash
+    {
+      "提交" => { 0 => 2, 3 => 2 },
+      "通过" => { 2 => 1 },
+      "不通过" => { 2 => 3 },
+      "删除" => { 0 => 404 },
+      "冻结" => { 1 => 4 },
+      "恢复" => { 4 => 1 }
+    }
   end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
@@ -33,26 +46,18 @@ class Product < ActiveRecord::Base
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
 
-  # def cando_list(action='')
-  #   arr = [] 
-  #   # 查看详细
-  #   if [0,1,2,3,404].include?(self.status)
-  #   	arr << [self.class.icon_action("详细"), "/kobe/products/#{self.id}", target: "_blank"]
-  #  	end
-  #   # 修改
-  #   if [0,3,404].include?(self.status)
-  #   	arr << [self.class.icon_action("修改"), "/kobe/products/#{self.id}/edit"]
-  #   end
-	 #  return arr
-  # end
-
-  # def self.more_actions_list(action='')
-  #   arr = []
-  #   arr << [self.icon_action("增加"), "javascript:void(0)", json_url: '/kobe/shared/ztree_json' json_params: '{"json_class":"Category"}' class: 'tree_checkbox']
-  #   arr << [self.icon_action("冻结"), "/kobe/products/freeze"]
-  #   arr << [self.icon_action("恢复"), "/kobe/products/recover"]
-  #   arr << [self.icon_action("删除"), "/kobe/products/delete"]
-  #   arr << [self.icon_action("彻底删除"), "/kobe/products/clean"]
-  # end
+  # 根据action_name 判断obj有没有操作
+  def cando(act='',current_u=nil)
+    case act
+    when "show", "index" then true
+    when "update", "edit" then [0,3].include?(self.status) && current_u.try(:id) == self.user_id
+    when "commit" then self.can_opt?("提交") && current_u.try(:id) == self.user_id
+    when "update_audit", "audit" then self.can_opt?("通过") && self.can_opt?("不通过")
+    when "delete", "destroy" then self.can_opt?("删除")
+    when "recover", "update_recover" then self.can_opt?("恢复")
+    when "freeze", "update_freeze" then self.can_opt?("冻结")
+    else false
+    end
+  end
 
 end

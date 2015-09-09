@@ -11,6 +11,12 @@ class Category < ActiveRecord::Base
   include AboutStatus
   include AboutAncestry
 
+  after_save do 
+    if changes["id"].present? || changes["ancestry"].present?
+      clean_cache_ids
+    end
+  end
+
   # 中文意思 状态值 标签颜色 进度 
 	def self.status_array
 		[
@@ -23,9 +29,9 @@ class Category < ActiveRecord::Base
   # 根据不同操作 改变状态
   def change_status_hash
     {
-      "删除" => { "正常" => "已删除" },
-      "冻结" => { "正常" => "冻结" },
-      "恢复" => { "冻结" => "正常" }
+      "删除" => { 0 => 404 },
+      "冻结" => { 0 => 1 },
+      "恢复" => { 1 => 0 }
     }
   end
 
@@ -69,16 +75,46 @@ class Category < ActiveRecord::Base
     return qc.present? ? qc.subtree.where(status: 0) : qc
   end
 
+  # 缓存汽车类品目ID
+  def self.cache_qc_ids(force = false)
+    if force
+      Setting.send("category_qc_ids=", qc.map(&:id))
+    else
+      Setting.send("category_qc_ids=", qc.map(&:id)) if Setting.send("category_qc_ids").blank?
+    end
+    Setting.send("category_qc_ids")
+  end
+
   # 粮机类品目
   def self.lj
     lj = self.find_by(id: 2)
     return lj.present? ? lj.subtree.where(status: 0) : lj
   end
 
+  # 缓存粮机类品目ID
+  def self.cache_lj_ids(force = false)
+    if force
+      Setting.send("category_lj_ids=", lj.map(&:id))
+    else
+      Setting.send("category_lj_ids=", lj.map(&:id)) if Setting.send("category_lj_ids").blank?
+    end
+    Setting.send("category_lj_ids")
+  end
+
   # 职工工装类品目
   def self.gz
     gz = self.find_by(id: 56)
     return gz.present? ? gz.subtree.where(status: 0) : gz
+  end
+
+  # 缓存职工工装类品目ID
+  def self.cache_gz_ids(force = false)
+    if force
+      Setting.send("category_gz_ids=", gz.map(&:id))
+    else
+      Setting.send("category_gz_ids=", gz.map(&:id)) if Setting.send("category_gz_ids").blank?
+    end
+    Setting.send("category_gz_ids")
   end
 
   # 办公用品类品目
@@ -95,6 +131,24 @@ class Category < ActiveRecord::Base
       value[:not_id] = not_in_ids
     end
     return self.where([ cdt.join(" and "), value ])
+  end
+
+  # 缓存办公用品类品目ID
+  def self.cache_bg_ids(force = false)
+    if force
+      Setting.send("category_bg_ids=", bg.map(&:id))
+    else
+      Setting.send("category_bg_ids=", bg.map(&:id)) if Setting.send("category_bg_ids").blank?
+    end
+    Setting.send("category_bg_ids")
+  end
+
+  # 清除Setting的category_ids
+  def clean_cache_ids
+    self.class.cache_qc_ids(true)
+    self.class.cache_lj_ids(true)
+    self.class.cache_gz_ids(true)
+    self.class.cache_bg_ids(true)
   end
 
 end

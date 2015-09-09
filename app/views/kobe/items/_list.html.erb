@@ -1,0 +1,50 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8 pull-left padding-top-5">
+                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_item_path) if action_name == 'index' %>
+            </div>
+            <div class="col-md-4 pull-right">
+            <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
+                <div class="margin-bottom-10">
+                    <div class="input-group">
+                        <%= f.search_field :name_cont, class: "form-control input-sm", placeholder: "请输入项目名称..." %>
+                        <span class="input-group-btn">
+                          <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                        </span>
+                    </div>
+                </div>
+            <% end %>
+            </div>
+        </div>
+        <%= modal_dialog("opt_dialog") %>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="index">序号</th>
+                    <th>项目名称</th>
+                    <th>项目类型</th>
+                    <th>有效期</th>
+                    <th class="status_bar"><%= status_filter(Item) %></th>
+                    <th class="cando">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @items.each_with_index do |obj,index| %>
+                <tr>
+                    <td><%= show_index(index) %></td>
+                    <td><%= obj.name %></td>
+                    <td><%= Dictionary.item.item_type.find{|e| e.first == (obj.item_type ? 1 : 0) }.try(:last) %></td>
+                    <td><%= "#{obj.begin_time} 至 #{obj.end_time}" %></td>
+                    <td><%= obj.status_bar %></td>
+                    <td><%= btn_group(items_btn(obj)) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @items %> 
+    </div>                     
+</div>

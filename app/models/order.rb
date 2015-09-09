@@ -54,12 +54,12 @@ class Order < ActiveRecord::Base
   # 根据不同操作 改变状态
   def change_status_hash
     ha = {
-      "提交" => { "审核拒绝" => "等待审核" },
-      "通过" => { "等待审核" => "审核通过" },
-      "不通过" => { "等待审核" => "审核拒绝" },
-      "删除" => { "未提交" => "已删除" },
+      "提交" => { 2 => 1 },
+      "通过" => { 1 => 6 },
+      "不通过" => { 1 => 2 },
+      "删除" => { 0 => 404 },
     }
-    ha["提交"]["未提交"] = self.find_step_by_rule.blank? ? "自动生效" : "等待审核" 
+    ha["提交"][0] = self.find_step_by_rule.blank? ? 5 : 1 
     return ha
   end
 
