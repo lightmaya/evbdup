@@ -159,4 +159,27 @@ module ApplicationHelper
   #   return raw str.html_safe
   # end
 
+  # 网页title
+  def title(page_title)
+    content_for :title, page_title.to_s
+  end
+
+  # 加载css: <%= stylesheets 'my1','my2' %>
+  def stylesheets(*args)
+    stylesheet_link_tag(*args)
+  end
+
+  # 加载js: <%= javascripts 'my1','my2' %>
+  def javascripts(*args)
+    javascript_include_tag(*args)
+  end
+
+  # 加载富文本框插件UMeditor
+  def include_umeditor
+    javascripts("/plugins/umeditor1_2_2/umeditor.config.js", 
+      "/plugins/umeditor1_2_2/umeditor.min.js", 
+      "/plugins/umeditor1_2_2/lang/zh-cn/zh-cn.js"
+      ) + 
+    stylesheets("/plugins/umeditor1_2_2/themes/default/css/umeditor.css")
+  end
 end

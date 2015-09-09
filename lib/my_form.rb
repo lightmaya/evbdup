@@ -1,7 +1,8 @@
 # -*- encoding : utf-8 -*-
 class MyForm
 	include ActionView::Helpers
-  include MyFormHelper 
+  include MyFormHelper
+  include ApplicationHelper
 
 	def get_table_name(obj=self.obj)
 		obj.class.to_s.tableize
@@ -16,15 +17,15 @@ class MyForm
   	doc = Nokogiri::XML(xml)
   	# 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'、'隐藏'的
     tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')]")
-    tds.each_slice(grid).with_index do |node,i|
+    tds.each_slice(grid).with_index do |node, i|
       tmp = ""
-      node.each{|n| tmp << _create_text_field(n,obj,table_name,grid,index)}
+      node.each{|n| tmp << _create_text_field(n, obj, table_name, grid, index)}
       input_str << content_tag(:div, raw(tmp).html_safe, :class=>'row')
     end
     # 再生成文本框和富文本框--针对大文本、富文本或者隐藏域
     doc.xpath("/root/node[@data_type='textarea'] | /root/node[@data_type='richtext'] | /root/node[@data_type='hidden']").each{|n|
       unless n.attributes["data_type"].to_s == "hidden"
-        input_str << content_tag(:div, raw(_create_text_field(n,obj,table_name,grid,index)).html_safe, :class=>'row')
+        input_str << content_tag(:div, raw(_create_text_field(n, obj, table_name, grid, index)).html_safe, :class=>'row')
       else
         input_str << _create_text_field(n,obj,table_name,grid,index)
       end
@@ -74,7 +75,7 @@ private
   #   display 显示方式 disabled 不可操作 readonly 是否只读 skip 跳过不出现
   #   
   # # */
-  def _create_text_field(node,obj,table_name,grid,index)
+  def _create_text_field(node, obj, table_name, grid, index)
     node_options = node.attributes
     # display=skip的直接跳过
     return "" if node_options.has_key?("display") && node_options["display"].to_s == "skip"
@@ -84,13 +85,15 @@ private
     column = node_options["column"] || node_options["name"]
     input_opts = {} #传递参数用的哈希
     input_opts[:table_name] = table_name
-    input_opts[:value] = get_node_value(obj,node,true) 
+    input_opts[:value] = get_node_value(obj, node, true) 
     input_opts[:icon] = get_icon(node_options)
     if node_options.has_key?("data") && !node_options["data"].blank?
       eval("input_opts[:data] = #{node_options["data"]}")
     else
       input_opts[:data] = []
     end 
+    input_opts[:id] = index.nil? ? "#{table_name}_#{column}" : "#{table_name}_#{column}_#{index}"
+    input_opts[:style] = node_options["style"].to_s
     input_opts[:node_attr] = get_node_attr(table_name,node_options,column,index)
     # 主表有个性化规则
     if index.nil?
@@ -313,11 +316,18 @@ private
   # 富文本
   def _create_richtext(input_opts)
     form_state = _form_states('textarea textarea-resizable',input_opts[:node_attr])
-    str = %Q|
+    style = input_opts[:style].presence || "width:100%;height:200px;"
+    str = include_umeditor + %Q|
     <label class='#{form_state}'>
-      <textarea rows='2' #{input_opts[:node_attr].join(" ")}>#{input_opts[:value]}</textarea>
+    <script #{input_opts[:node_attr].join(" ")} type='text/plain' style='#{style}' ></script>
+    <script type='text/javascript'>
+      $(function(){
+        window.um = UM.getEditor('#{input_opts[:id]}');
+      });
+    </script>
     </label>
-    #{input_opts[:hint].blank? ? '' : "<div class='note'><strong>提示:</strong> #{input_opts[:hint]}</div>" }|
+    #{input_opts[:hint].blank? ? '' : "<div class='note'><strong>提示:</strong> #{input_opts[:hint]}</div>" }|.html_safe
+    # (include_umeditor + str).html_safe
   end
 
 

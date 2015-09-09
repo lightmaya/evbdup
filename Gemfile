@@ -6,6 +6,8 @@ gem 'rails', '4.1.7'
 
 # Use sqlite3 as the database for Active Record
 gem 'mysql2'#,'0.3.14'
+gem 'rake', "10.4.2"
+gem 'devise', '3.4.1'
 
 group :assets do
 	# Use SCSS for stylesheets
@@ -45,7 +47,7 @@ gem 'kaminari', '~> 0.15.1'
 gem "settingslogic", "~> 2.0.9"
 
 # 动态配置信息
-gem "rails-settings-cached", "~> 0.3.2"
+gem "rails-settings-cached", "0.4.1"
 
 # 验证码
 # gem 'easy_captcha'
@@ -54,7 +56,7 @@ gem "rails-settings-cached", "~> 0.3.2"
 gem "ueditor-rails", "~> 1.2.5.3"
 
 #上传组件
-gem "paperclip", "~> 3.5.2"
+gem "paperclip", "4.2.0"
 
 # 文件上传（已通过JS实现)
 # gem 'jquery-fileupload-rails', '~> 0.4.1'
@@ -107,14 +109,14 @@ gem 'rufus-scheduler', '3.0.9'
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
-
 group :development, :test do
 	# console print&debug 这个是手动，需要在代码里面写binding.pry
+	gem "thin"
 	gem "pry-rails", "~> 0.3.2"
 	# 这2个加起来是自动，报错的地方会停下来，也能写代码
   gem 'better_errors', '1.1.0'
   gem "binding_of_caller", "~> 0.7.2"
   # 开发模式加速
   gem 'rails-dev-tweaks', '~> 1.2.0'
-  gem 'rake', '~> 10.4.2'
+  gem 'quiet_assets'
 end

@@ -4,7 +4,7 @@ class SingleForm < MyForm
 	attr_accessor :options, :rules, :messages, :html_code
 	attr_reader :xml, :obj, :table_name
 
-	def initialize(xml,obj,options={})
+	def initialize(xml, obj, options = {})
 		@xml = xml
 		@obj = obj
 		@options = options

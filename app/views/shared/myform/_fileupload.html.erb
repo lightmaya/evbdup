@@ -1,6 +1,6 @@
 <%
 form_id = myform.options[:form_id]
-upload_model = myform.obj.class.upload_model
+upload_model = myform.obj.class.respond_to?(:upload_model) ? myform.obj.class.upload_model : Upload
 master_id = myform.obj.id
 min_number_of_files = myform.options[:min_number_of_files]
 rules = myform.rules

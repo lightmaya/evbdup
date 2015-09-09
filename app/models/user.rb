@@ -24,13 +24,13 @@ class User < ActiveRecord::Base
   validates_with MyValidator, on: :update
 
   # 为了在Model层使用current_user
-  def self.current
-    Thread.current[:user]
-  end
+  # def self.current
+  #   Thread.current[:user]
+  # end
   
-  def self.current=(user)
-    Thread.current[:user] = user
-  end
+  # def self.current=(user)
+  #   Thread.current[:user] = user
+  # end
 
   # 是否超级管理员,超级管理员不留操作痕迹
   def admin?
