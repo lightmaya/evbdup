@@ -8,6 +8,8 @@ gem 'rails', '4.1.7'
 gem 'mysql2'#,'0.3.14'
 gem 'rake', "10.4.2"
 gem 'devise', '3.4.1'
+# 默认值
+gem "default_value_for", "3.0.0.1"
 
 group :assets do
 	# Use SCSS for stylesheets

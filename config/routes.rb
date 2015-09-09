@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 Evbdup::Application.routes.draw do
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -7,10 +8,12 @@ Evbdup::Application.routes.draw do
    #root 'home#index'
   root :to => 'home#index'
   
-  captcha_route
+  # captcha_route
 
   get 'errors' => 'errors#index'
   get 'main' => 'kobe/main#index'
+  get 'test' => 'errors#test'
+  get 'not_found' => "home#not_found", as: :not_found
 
   resources :home, :only => :index  do 
     collection do
@@ -18,6 +21,8 @@ Evbdup::Application.routes.draw do
       post :form_test
     end
   end
+
+  resources :articles, :only => [:index, :show]
 
   resources :uploads, :only => [:index, :create, :destroy]
 
@@ -60,6 +65,12 @@ Evbdup::Application.routes.draw do
     resources :articles do 
       collection do
         post :batch_task
+        get :list
+      end
+      member do 
+        get :audit
+        get :delete
+        post :commit, :update_audit
       end
     end
     resources :menus do
@@ -77,9 +88,6 @@ Evbdup::Application.routes.draw do
       end
     end
     resources :items do
-      collection do
-        get :list
-      end
       member do 
         get :delete, :pause, :recover
         post :commit, :update_pause, :update_recover

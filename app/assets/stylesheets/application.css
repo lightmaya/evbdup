@@ -21,6 +21,7 @@
  *= require plugins/sky-forms/custom-sky-forms
  *= require plugins/jquery.fancybox
  *= require plugins/owl.carousel
+ *= require common
  *= require_self
  */
 

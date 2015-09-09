@@ -325,6 +325,7 @@ private
     <script type='text/javascript'>
       $(function(){
         window.um = UM.getEditor('#{input_opts[:id]}');
+        um.setContent('#{input_opts[:value]}');
       });
     </script>
     </label>

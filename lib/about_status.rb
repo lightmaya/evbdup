@@ -13,7 +13,7 @@ module AboutStatus
   # 拓展类方法
   module StatusClassMethods
 	  # 获取状态的属性数组 i表示状态数组的维度，0按中文查找，1按数字查找
-	  def get_status_attributes(status,i=0)
+	  def get_status_attributes(status, i = 0)
 	  	arr = self.status_array
 	  	return arr.find{|n|n[i] == status}
 	  end
@@ -94,6 +94,9 @@ module AboutStatus
 	def can_opt?(opt)
 		if self.class.attribute_method? "change_status_hash"
 			status = self.change_status_hash[opt][self.status]
+			# ["暂存", 0, "orange", 50] 获得 "暂存"
+# 			cn_status = self.class.get_status_attributes(self.status, 1)[0] # 当前状态转成中文
+# 			status = self.change_status_hash[opt][cn_status] # 获取更新后的状态
 			return status.present?
 		else
 			return false

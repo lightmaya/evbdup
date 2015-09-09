@@ -16,5 +16,4 @@ class HomeController < JamesController
 
     def form_test
     end
-
 end
