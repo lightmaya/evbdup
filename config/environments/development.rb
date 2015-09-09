@@ -54,4 +54,7 @@ Evbdup::Application.configure do
     :enable_starttls_auto => true 
   }
   config.action_mailer.raise_delivery_errors = true
+
+  ActiveSupport::Dependencies.autoload_paths << File::join( Rails.root, 'lib')
+ActiveSupport::Dependencies.explicitly_unloadable_constants << 'my_form.rb'
 end
