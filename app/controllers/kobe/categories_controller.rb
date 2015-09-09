@@ -26,10 +26,9 @@ class Kobe::CategoriesController < KobeController
   end
 
   def new
-    category = Category.new
-    category.parent_id = params[:pid] if params[:pid].present?
+    @category.parent_id = params[:pid] if params[:pid].present?
     slave_objs = create_objs_from_xml_model(CategoryParam.default_xml, CategoryParam)
-    @ms_form = MasterSlaveForm.new(Category.xml, CategoryParam.xml, category, slave_objs, { form_id: 'new_category', title: '<i class="fa fa-pencil-square-o"></i> 新增品目', action: kobe_categories_path, grid: 2 }, { title: '参数明细', grid: 4 })
+    @ms_form = MasterSlaveForm.new(Category.xml, CategoryParam.xml, @category, slave_objs, { form_id: 'new_category', title: '<i class="fa fa-pencil-square-o"></i> 新增品目', action: kobe_categories_path, grid: 2 }, { title: '参数明细', grid: 4 })
   end
 
   def edit

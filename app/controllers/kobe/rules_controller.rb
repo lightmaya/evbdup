@@ -9,9 +9,8 @@ class Kobe::RulesController < KobeController
 	end
 
   def new
-  	rule = Rule.new
-    slave_objs = rule.create_rule_objs
-    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, rule, slave_objs, { form_id: 'rule_form', action: kobe_rules_path, grid: 3 }, { title: 'Step', grid: 4 })
+    slave_objs = @rule.create_rule_objs
+    @ms_form = MasterSlaveForm.new(Rule.xml, RuleStep.xml, @rule, slave_objs, { form_id: 'rule_form', action: kobe_rules_path, grid: 3 }, { title: 'Step', grid: 4 })
   end
 
   def edit

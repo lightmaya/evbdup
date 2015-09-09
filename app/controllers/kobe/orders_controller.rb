@@ -47,7 +47,7 @@ class Kobe::OrdersController < KobeController
 
   def edit
     slave_objs = @obj.items.blank? ? [OrdersItem.new(order_id: @obj.id)] : @obj.items
-    @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@obj,slave_objs,{form_id: 'new_order', upload_files: true, title: '<i class="fa fa-wrench"></i> 修改订单',action: kobe_order_path(@obj), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@obj,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-wrench"></i> 修改订单',action: kobe_order_path(@obj), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
 
   # 提交

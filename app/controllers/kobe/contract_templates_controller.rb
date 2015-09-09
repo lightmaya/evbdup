@@ -9,8 +9,7 @@ class Kobe::ContractTemplatesController < KobeController
 	end
 
   def new
-  	contract_template = ContractTemplate.new
-    @myform = SingleForm.new(ContractTemplate.xml, contract_template, { form_id: "ct_form", action: kobe_contract_templates_path, grid: 3 })
+    @myform = SingleForm.new(ContractTemplate.xml, @contract_template, { form_id: "ct_form", action: kobe_contract_templates_path, grid: 3 })
   end
 
   def edit

@@ -10,8 +10,7 @@ class Kobe::ItemsController < KobeController
   end
 
   def new
-  	item = Item.new
-    @myform = SingleForm.new(Item.xml, item, { form_id: "item_form", action: kobe_items_path, grid: 3 })
+    @myform = SingleForm.new(Item.xml, @item, { form_id: "item_form", action: kobe_items_path, grid: 3 })
   end
 
   def edit

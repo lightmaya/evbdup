@@ -9,8 +9,7 @@ class Kobe::ToDoListsController < KobeController
 	end
 
   def new
-  	to_do_list = ToDoList.new
-    @myform = SingleForm.new(ToDoList.xml, to_do_list, { form_id: "to_do_list_form", action: kobe_to_do_lists_path, grid: 2 })
+    @myform = SingleForm.new(ToDoList.xml, @to_do_list, { form_id: "to_do_list_form", action: kobe_to_do_lists_path, grid: 2 })
   end
 
   def edit

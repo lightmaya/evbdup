@@ -13,9 +13,8 @@ class Kobe::MenusController < KobeController
 	end
 
   def new
-  	menu = Menu.new
-    menu.parent_id = params[:pid] unless params[:pid].blank?
-    @myform = SingleForm.new(Menu.xml, menu, { form_id: "menu_form", action: kobe_menus_path, grid: 2 })
+    @menu.parent_id = params[:pid] unless params[:pid].blank?
+    @myform = SingleForm.new(Menu.xml, @menu, { form_id: "menu_form", action: kobe_menus_path, grid: 2 })
   end
 
   def edit
