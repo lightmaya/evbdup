@@ -104,6 +104,14 @@ class User < ActiveRecord::Base
     Setting.send("menus_#{self.id}")
   end
 
+  def desotry_cache_menus
+    Setting.send("menus_#{self.id}=", nil)
+  end
+
+  def desotry_cache_option_hash
+    Setting.send("user_options_#{self.id}=", nil)
+  end
+
   # 返回用户的所有操作 用于cancancan {"Department"=> [:create, :read, :update, :update_destroy, :freeze, :update_freeze], "Menu"=>[:create, :read, :update]}
   # 如果是管理员增加一个admin的操作 有admin的可以对别人的订单进行操作
   # menu.can_opt_action = Department|create

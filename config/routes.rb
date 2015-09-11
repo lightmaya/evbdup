@@ -73,6 +73,15 @@ Evbdup::Application.routes.draw do
         post :commit, :update_audit
       end
     end
+    resources :article_catalogs do
+      collection do
+        get :ztree
+        post :move
+      end
+      member do 
+        get :delete
+      end
+    end
     resources :menus do
       collection do
         get :ztree

@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
     # 生成不带搜索的ztree的json 用于维护树形结构 例如单位维护 菜单维护 角色维护等
     # 如果node为空 生成树的json 取所有状态不是已删除的节点 例如 menu、category等
     # 如果node不为空 取node和他的子孙们 例如 department 
-    def ztree_nodes_json(obj_class,node='')
+    def ztree_nodes_json(obj_class, node='')
       if node.blank?
         nodes = obj_class.attribute_method?("status") ? obj_class.where.not(status: 404) : obj_class.all
       else

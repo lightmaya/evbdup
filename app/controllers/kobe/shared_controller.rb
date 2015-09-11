@@ -11,7 +11,7 @@ class Kobe::SharedController < KobeController
 
   # 表单的下拉框 树形结构 只允许menu area category 
   def ztree_json
-    if ["Menu", "Area"].include? params[:json_class]
+    if ["Menu", "Area", "ArticleCatalog"].include? params[:json_class]
     	ztree_box_json(params[:json_class].constantize)
     end
   end

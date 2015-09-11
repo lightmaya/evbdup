@@ -2,8 +2,8 @@
 class Article < ActiveRecord::Base
 	belongs_to :author, class_name: "User", foreign_key: "user_id"
   has_many :uploads
-	has_and_belongs_to_many :categories, class_name: "ArticleCatalog"
-	accepts_nested_attributes_for :categories
+	has_and_belongs_to_many :catalogs, class_name: "ArticleCatalog"
+	accepts_nested_attributes_for :catalogs
   scope :published, -> { where(status: 1) }
   has_many :task_queues, -> { where(class_name: "Article") }, foreign_key: :obj_id
   belongs_to :rule
@@ -89,6 +89,8 @@ class Article < ActiveRecord::Base
         <node name='几天内显示新' column='new_days' class='required number' hint='请填写自然数' />
         <node name='发布人' column='username' class='required' />
         <node name='内容' column='content' class='required' data_type='richtext' style='width:100%;height:300px;' />
+        <node name='公告目录' class='tree_checkbox' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"ArticleCatalog"}' partner='catalog_ids'/>
+        <node column='catalog_ids' data_type='hidden'/>
       </root>
     }
   end

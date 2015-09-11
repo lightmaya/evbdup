@@ -26,6 +26,7 @@
           <tr>
             <th class="index">序号</th>
             <th class="hidden-sm">标题</th>
+            <th class="hidden-sm">公告目录</th>
             <th class="hidden-sm">发布人</th>
             <th class="status_bar"><%= status_filter(Article) %></th>
             <th class="date"><%= date_filter %></th>
@@ -37,6 +38,7 @@
           <tr>
             <td><%= show_index(index) %></td>
             <td><%= article.title %></td>
+            <td><%= article.catalogs.map(&:name).join(", ") %></td>
             <td><%= article.author.try(:name) %></td>
             <td><%= article.status_bar %></td>
             <td><%= show_date(article.created_at) %></td>
