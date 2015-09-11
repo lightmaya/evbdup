@@ -38,8 +38,8 @@ class Kobe::ItemsController < KobeController
   # 提交
   def commit
     @item.change_status_and_write_logs("提交", stateless_logs("提交","提交成功！", false))
-    # 给已注册的入围供应商插入待办事项
-    @item.registered_departments.each { |dep| dep.create_task_queue }
+    # 给已注册的入围供应商加站内消息
+    
     tips_get("提交成功！")
     redirect_to kobe_items_path
   end

@@ -36,7 +36,7 @@ class Kobe::OrdersController < KobeController
     unless obj.id
       redirect_back_or
     else
-      redirect_to eval("#{@obj.yw_type}_list_kobe_orders_path")
+      redirect_to eval("#{obj.yw_type}_list_kobe_orders_path")
     end
   end
 

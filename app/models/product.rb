@@ -4,9 +4,7 @@ class Product < ActiveRecord::Base
 	default_scope -> {order("id desc")}
 	belongs_to :category
   belongs_to :item
-
-
-  # validates_with MyValidator
+  belongs_to :department
 
 	include AboutStatus
 

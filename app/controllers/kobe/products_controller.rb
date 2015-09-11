@@ -40,10 +40,7 @@ class Kobe::ProductsController < KobeController
 
   def update
     update_and_write_logs(@product, @product.category.params_xml)
-    #   redirect_to kobe_products_path
-    # else
-      redirect_back_or
-    # end
+    redirect_to item_list_kobe_products_path(item_id: @product.item.id) 
   end
 
   def edit
@@ -60,8 +57,6 @@ class Kobe::ProductsController < KobeController
   # 提交
   def commit
     @product.change_status_and_write_logs("提交",stateless_logs("提交","提交成功！", false))
-    # 删除录入产品的待办事项 判断需不需要维护代理商 需要的话插入待办事项
-    
     # 插入产品审核的待办事项
     
     tips_get("提交成功！")
@@ -76,7 +71,7 @@ class Kobe::ProductsController < KobeController
   def destroy
     @product.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除成功。")
-    redirect_back_or
+    redirect_back_or request.referer
   end
 
   # 冻结
@@ -87,7 +82,7 @@ class Kobe::ProductsController < KobeController
   def update_freeze
     @product.change_status_and_write_logs("冻结",stateless_logs("冻结", params[:opt_liyou], false))
     tips_get("冻结成功。")
-    redirect_back_or
+    redirect_back_or request.referer
   end
 
   # 恢复
@@ -98,7 +93,7 @@ class Kobe::ProductsController < KobeController
   def update_recover
     @product.change_status_and_write_logs("恢复", stateless_logs("恢复",params[:opt_liyou],false))
     tips_get("恢复成功。")
-    redirect_back_or
+    redirect_back_or request.referer
   end
 
   private

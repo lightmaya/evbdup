@@ -25,8 +25,11 @@
             <thead>
                 <tr>
                     <th class="index">序号</th>
-                    <th class="hidden-sm">品牌</th>
-                    <th class="hidden-sm">型号</th>
+                    <% if action_name == "index" %>
+                    <th class="hidden-sm">项目名称</th>
+                    <% end %>
+                    <th>产品名称</th>
+                    <th>中标价</th>
                     <th class="status_bar"><%= status_filter(Product) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
@@ -36,8 +39,11 @@
                 <% @products.each_with_index do |product,index| %>
                 <tr>
                     <td><%= show_index(index) %></td>
-                    <td><%= product.brand %></td>
-                    <td><%= product.model %></td>
+                    <% if action_name == "index" %>
+                    <td><%= product.item.name %></td>
+                    <% end %>
+                    <td><%= "#{product.brand} #{product.model} #{product.version}" %></td>
+                    <td class="money"><%= money product.bid_price %></td>
                     <td><%= product.status_bar %></td>
                     <td><%= show_date(product.created_at) %></td>
                     <td><%= btn_group(products_btn(product)) %></td>

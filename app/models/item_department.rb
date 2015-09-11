@@ -3,22 +3,6 @@ class ItemDepartment < ActiveRecord::Base
 	belongs_to :department
   belongs_to :item
 
-  belongs_to :rule
-  has_many :task_queues, -> { where(class_name: "ItemDepartment") }, foreign_key: :obj_id
-
-  include AboutRuleStep
-
-  before_save do 
-  	rule = Rule.find_by(yw_type: self.class.to_s)
-  	self.rule_id = rule.try(:id)
-  	self.rule_step = 'start'
-  end
-
-  # 某供应商某项目的全部产品
-  def products
-    Product.where(item_id: self.item_id, department_id: self.department_id)
-  end
-
   def self.xml(who='',options={})
 	  %Q{
 	    <?xml version='1.0' encoding='UTF-8'?>

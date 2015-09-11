@@ -3,7 +3,7 @@ class OrdersUpload < ActiveRecord::Base
   belongs_to :master, class_name: "Order", foreign_key: "master_id"
 
   has_attached_file :upload, :styles => {thumbnail: "45x45", md: "240x180#", lg: "1024x768#"}
-  # validates_attachment_content_type :upload, :content_type => ['image/jpeg','image/png','application/pdf'], :message => "文件格式有误"
+  validates_attachment_content_type :upload, :content_type => ['image/jpeg','image/png','application/pdf'], :message => "文件格式有误"
   before_post_process :allow_only_images
 
   include Rails.application.routes.url_helpers
@@ -12,7 +12,7 @@ class OrdersUpload < ActiveRecord::Base
   # 上传附件的提示 -- 需要跟下面的JS设置匹配
   def self.tips
     '<ol>
-      <li>仅支持jpg、jpeg、png、gif、doc、wps、rar、zip、pdf等格式的文件；</li>
+      <li>仅支持jpg、jpeg、png、pdf等格式的文件；</li>
       <li>单个文件大小不能超过1M；</li>
       <li>上传文件的数量不超过10个。</li>
     </ol>'
@@ -22,7 +22,7 @@ class OrdersUpload < ActiveRecord::Base
   def self.jquery_setting
     '{
       autoUpload: true,
-      acceptFileTypes: /(\.|\/)(gif|jpe?g|png|rar|docx?|zip|pdf|wps)$/i,
+      acceptFileTypes: /(\.|\/)(jpe?g|png|pdf)$/i,
       maxNumberOfFiles: 10,
       maxFileSize: 1048576
     }'
