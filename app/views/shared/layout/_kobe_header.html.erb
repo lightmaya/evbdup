@@ -26,10 +26,10 @@
                 </li> 
                 <li class="topbar-devider"></li> 
                 <li>
-                    <a href="#">
+                    <a href="/kobe/msgs/list">
                         <i class="fa fa-envelope"></i> 站内消息
                     </a>
-                    <span class="badge badge-orange rounded-x">5</span>
+                    <span class="badge badge-orange rounded-x"><%= current_user.msg_users.unread.count %></span>
                 </li> 
                 <li class="topbar-devider"></li>   
                 <li><a href="page_faq.html">内部论坛</a></li> 

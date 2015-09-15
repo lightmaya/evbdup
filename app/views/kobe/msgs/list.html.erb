@@ -1,0 +1,48 @@
+<div class="panel panel-grey margin-bottom-40">
+  <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-tasks"></i> 收到的短消息</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-4 pull-right">
+        <%= search_form_for @q, url: list_kobe_msgs_path, html: { method: :get } do |f| %>
+            <div class="margin-bottom-10">
+              <div class="input-group">
+                <%= select_tag "q[is_read_eq]", options_for_select([["不限", nil]] + MsgUser::Is_read.to_a.map(&:reverse), params[:q][:is_read_eq]), class: "fr mr3 input-sm" %>
+                <span class="input-group-btn">
+                  <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <%= modal_dialog("opt_dialog") %>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th class="index">序号</th>
+            <th class="hidden-sm">标题</th>
+            <th class="hidden-sm">发送人</th>
+            <th class="hidden-sm">发送时间</th>
+            <th class="hidden-sm">状态</th>
+            <th class="cando">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @msg_users.each_with_index do |msg_user,index| %>
+          <% msg = msg_user.msg %>
+          <tr>
+            <td><%= show_index(index) %></td>
+            <td><%= msg.title %></td>
+            <td><%= msg.author.try(:name) %></td>
+            <td><%= show_date(msg.created_at) %></td>
+            <td id="read_<%= msg.id %>"><%= MsgUser::Is_read[msg_user.is_read ? 1 : 0] %></td>
+            <td><%= btn_group(msg_users_btn(msg_user)) %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @msg_users %> 
+    </div>                     
+</div>

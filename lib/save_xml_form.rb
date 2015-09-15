@@ -48,11 +48,11 @@ module SaveXmlForm
   end
 
   #创建并写日志
-  def create_and_write_logs(model,xml,title={},other_attrs={})
-    other_attrs = set_default_column(model,other_attrs)
+  def create_and_write_logs(model, xml, title={}, other_attrs={})
+    other_attrs = set_default_column(model, other_attrs)
     title[:action] ||= "录入数据"
     title[:master_title] ||= "详细信息"
-    attribute = prepare_params_for_save(model,xml,other_attrs)
+    attribute = prepare_params_for_save(model, xml, other_attrs)
     obj = model.create(attribute)
     unless obj.id.nil?
       logs_remark = prepare_origin_logs_remark(model,xml,title[:master_title]) #主表日志
@@ -340,11 +340,11 @@ private
   end
 
   # 保存数据时设置默认字段
-  def set_default_column(model,other_attrs)
+  def set_default_column(model, other_attrs)
     if model.attribute_names.include?("user_id")
       return other_attrs.update({user_id: current_user.id}) # 当前用户
     else
-      return  other_attrs
+      return other_attrs
     end
   end
 

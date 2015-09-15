@@ -4,6 +4,7 @@ class KobeController < ApplicationController
   before_action :init_themes
   # cancancan验证 如果有before_action cancancan放最后
   load_and_authorize_resource
+  skip_before_action :verify_authenticity_token, only: ["commit", "read"]
 
   def index
     # @user = current_user
@@ -55,7 +56,7 @@ class KobeController < ApplicationController
   
   # 准备主界面的素材 ---- #未读短信息
   def init_themes
-    @unread_notifications = current_user.unread_notifications
+    # @unread_notifications = current_user.unread_notifications
     @suggestion_form = SingleForm.new(Suggestion.xml,Suggestion.new,{upload_files: true, grid: 1, form_id: "suggestion_form", action: kobe_suggestions_path})
   end
 
