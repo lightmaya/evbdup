@@ -3,14 +3,17 @@ class Kobe::ProductsController < KobeController
 
   before_action :get_item, :only => [:item_list, :new, :create]
   before_action :get_category, :only => [:new, :create]
-  before_action :get_product, :except => [:index, :item_list, :get_item_category, :new, :create]
+  before_action :get_product, :except => [:index, :item_list, :get_item_category, :new, :create, :list]
+  before_action :get_show_arr, :only => [:audit, :show]
+  before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
+  before_action :get_audit_product, :only => [:audit, :update_audit]
   skip_before_action :verify_authenticity_token, :only => [:commit]
   layout :false, :only => [:get_item_category]
   skip_authorize_resource :only => [:get_item_category]
 
   # 我的入围产品
   def index
-    params[:q][:user_id_eq] = current_user.id
+    params[:q][:user_id_eq] = current_user.id if cannot?(:admin, Product)
     @q = Product.where(get_conditions("products")).ransack(params[:q]) 
     @products = @q.result.page params[:page]
   end
@@ -48,17 +51,13 @@ class Kobe::ProductsController < KobeController
   end
 
   def show
-    @arr  = []
-    @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@product,@product.category.params_xml) }
-    @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@product,true) }
-    @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@product) }
   end
 
   # 提交
   def commit
-    @product.change_status_and_write_logs("提交",stateless_logs("提交","提交成功！", false))
+    @product.change_status_and_write_logs("提交",stateless_logs("提交","提交成功！", false),@product.commit_params)
     # 插入产品审核的待办事项
-    
+    @product.reload.create_task_queue
     tips_get("提交成功！")
     redirect_back_or
   end
@@ -96,7 +95,34 @@ class Kobe::ProductsController < KobeController
     redirect_back_or request.referer
   end
 
+  def list
+    arr = []
+    arr << ["products.status = ? ", 2]
+    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    arr << ["task_queues.dep_id = ?", current_user.department.real_dep.id]
+    @q =  Product.joins(:task_queues).where(get_conditions("products", arr)).ransack(params[:q])
+    @products = @q.result(distinct: true).page params[:page]
+  end
+
+  def audit
+
+  end
+
+  def update_audit
+    save_audit(@product)
+    redirect_to list_kobe_products_path
+  end
+
   private
+
+    def get_audit_menu_ids
+      @menu_ids = Menu.get_menu_ids("Product|list")
+    end
+
+    def get_audit_product
+      @product = Product.find_by(id: params[:id]) if params[:id].present?
+      audit_tips unless @product.present? && @product.cando(action_name,current_user) && can_audit?(@product,@menu_ids)
+    end
 
     def get_item
       @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
@@ -110,6 +136,13 @@ class Kobe::ProductsController < KobeController
 
     def get_product
       cannot_do_tips unless @product.present? && @product.cando(action_name,current_user)
+    end
+
+    def get_show_arr
+      @arr  = []
+      @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@product,@product.category.params_xml) }
+      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@product,true) }
+      @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@product) }
     end
 
 end

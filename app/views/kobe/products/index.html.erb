@@ -1,1 +1,1 @@
-<%= render :partial => 'list',:locals => { :title => "我的入围产品", :search_url => kobe_products_path } %>
+<%= render :partial => 'list',:locals => { :title => (can?(:admin, Product) ? "入围产品管理" : "我的入围产品"), :search_url => kobe_products_path } %>

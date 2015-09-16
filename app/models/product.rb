@@ -6,11 +6,19 @@ class Product < ActiveRecord::Base
   belongs_to :item
   belongs_to :department
 
+  belongs_to :rule
+  has_many :task_queues, -> { where(class_name: "Product") }, foreign_key: :obj_id
+
 	include AboutStatus
 
 	# 附件的类
   def self.upload_model
     ProductsUpload
+  end
+
+  # 产品全称 品牌+型号+版本号
+  def name
+    "#{self.brand} #{self.model} #{self.version}"
   end
 
   # 中文意思 状态值 标签颜色 进度 
@@ -44,6 +52,20 @@ class Product < ActiveRecord::Base
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
 
+  # 提交时的参数
+  def commit_params
+    arr = []
+    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
+    arr << "rule_id = #{rule_id}"
+    arr << "rule_step = 'start'"
+    return arr
+  end
+
+  # 根据品目判断审核人 插入待办事项用
+  def audit_user_ids
+    self.category.user_ids.flatten.uniq
+  end
+
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
@@ -51,7 +73,7 @@ class Product < ActiveRecord::Base
     when "update", "edit" then [0,3].include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" then self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" then self.can_opt?("通过") && self.can_opt?("不通过")
-    when "delete", "destroy" then self.can_opt?("删除")
+    when "delete", "destroy" then self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "recover", "update_recover" then self.can_opt?("恢复")
     when "freeze", "update_freeze" then self.can_opt?("冻结")
     else false

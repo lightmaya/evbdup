@@ -112,6 +112,7 @@ class Order < ActiveRecord::Base
     ht = self.items.map{ |item| item.category.ht_template }.uniq.compact.join
     return "/kobe/orders/ht/#{ht}"
   end
+  
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
     self.items.map{|e| e.category.user_ids}.flatten.uniq

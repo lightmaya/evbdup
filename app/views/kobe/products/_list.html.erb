@@ -42,11 +42,11 @@
                     <% if action_name == "index" %>
                     <td><%= product.item.name %></td>
                     <% end %>
-                    <td><%= "#{product.brand} #{product.model} #{product.version}" %></td>
+                    <td><%= product.name %></td>
                     <td class="money"><%= money product.bid_price %></td>
                     <td><%= product.status_bar %></td>
                     <td><%= show_date(product.created_at) %></td>
-                    <td><%= btn_group(products_btn(product)) %></td>
+                    <td><%= btn_group(products_btn(product,action_name == "list")) %></td>
                 </tr>
                 <% end %>
             </tbody>
