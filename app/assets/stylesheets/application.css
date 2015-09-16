@@ -22,6 +22,9 @@
  *= require plugins/jquery.fancybox
  *= require plugins/owl.carousel
  *= require common
+ *= require plugins/style-switcher
+ *= require app
+ *= require blocks
  *= require_self
  */
 
