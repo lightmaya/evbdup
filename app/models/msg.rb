@@ -103,4 +103,13 @@ class Msg < ActiveRecord::Base
     "#{self.content}".html_safe
   end
 
+  def self.f(title, content, send_type, send_tos)
+    if msg = Msg.create(title: title, content: content, send_type: send_type, send_tos: send_tos)
+      Rufus::Scheduler.new.in "1s" do
+        msg.link_users
+        ActiveRecord::Base.clear_active_connections!
+      end 
+    end
+  end
+
 end
