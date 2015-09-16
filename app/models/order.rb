@@ -57,7 +57,7 @@ class Order < ActiveRecord::Base
       "提交" => { 2 => 1 },
       "通过" => { 1 => 6 },
       "不通过" => { 1 => 2 },
-      "删除" => { 0 => 404 },
+      "删除" => { 0 => 404 }
     }
     ha["提交"][0] = self.find_step_by_rule.blank? ? 5 : 1 
     return ha

@@ -190,4 +190,15 @@ module KobeHelper
     return content_tag(:div, raw(str).html_safe, :class=>'owl-carousel-v1 owl-work-v1 margin-bottom-15')
   end
 
+  # 取实例details字段中的某个node的值 用于列表中显示没有column的字段
+  def get_details_node_value(obj,name)
+    result = ""
+    if obj.class.attribute_method?("details") && !obj.attributes["details"].blank?
+      doc = Nokogiri::XML(obj["details"])
+      tmp = doc.xpath("/root/node[@name='#{name}']").first
+      result = tmp.blank? ? "" : tmp["value"]
+    end
+    return result
+  end
+
 end

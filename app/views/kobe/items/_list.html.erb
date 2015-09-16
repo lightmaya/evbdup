@@ -37,7 +37,7 @@
                 <tr>
                     <td><%= show_index(index) %></td>
                     <td><%= obj.name %></td>
-                    <td><%= Dictionary.item.item_type.find{|e| e.first == (obj.item_type ? 1 : 0) }.try(:last) %></td>
+                    <td><%= dict_value (obj.item_type ? 1 : 0), "item_type" %></td>
                     <td><%= "#{obj.begin_time} 至 #{obj.end_time}" %></td>
                     <td><%= obj.status_bar %></td>
                     <td><%= btn_group(items_btn(obj)) %></td>

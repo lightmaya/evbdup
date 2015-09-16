@@ -39,7 +39,7 @@ Evbdup::Application.routes.draw do
   namespace :kobe do
     resources :shared, :only => :index do
       collection do
-        post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json
+        post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json
       end
     end
 
@@ -152,7 +152,10 @@ Evbdup::Application.routes.draw do
     end
     resources :agents do
       collection do
-        get :list
+        get :list, :search_dep_name
+      end
+      member do
+        get :delete
       end
     end
     # 意见反馈

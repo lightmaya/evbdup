@@ -1,0 +1,63 @@
+<% input_id ||= "" %>
+<div id="search_dep_name_div">
+  <div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+    </div>
+    <div class="panel-body">
+      <%= search_form_for @q, url: search_url, html: { method: :get, id: "search_dep_name_form" } do |f| %>
+      <div class="margin-bottom-10">
+        <div class="input-group">
+          <%= f.search_field :name_cont, class: "form-control input-sm", placeholder: "请输入单位名称..." %>
+          <span class="input-group-btn">
+            <button class="btn btn-success btn-sm" type="submit">搜索</button>
+          </span>
+        </div>
+      </div>
+      <% end %>
+      <% if deps.present? %>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th class="index">序号</th>
+            <th class="hidden-sm">名称</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% deps.each_with_index do |dep,index| %>
+          <tr>
+            <td><%= show_index(index) %></td>
+            <td class="dep_name"><%= dep.name %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <% else %>
+        <h3 class="panel-title color-red margin-top-20 heading">
+          <i class="icon-custom rounded-x fa fa-exclamation icon-sm icon-color-red"></i> <%= params[:q].present? ? "没有找到相关单位..." : "请输入单位名称..." %>
+        </h3>
+      <% end %>
+    </div>                     
+  </div>
+</div>
+<style type="text/css">
+  .dep_name{cursor: pointer;}
+</style>
+
+
+<script type="text/javascript">
+  $("#search_dep_name_form").on("submit", function () {
+    var value = $("#search_dep_name_form #q_name_cont").val();
+    ajax_get_show("<%= search_url %>", { "q[name_cont]": value }, "#search_dep_name_div", function(data){
+      $("#search_dep_name_div").html(data);
+    });
+    return false;
+  });
+
+  <% if input_id.present? %>
+  $("#search_dep_name_div .dep_name").on("click", function () {
+    $("#" + "<%= input_id %>").val($(this).text());
+    $(".modal").hide();
+  });
+  <% end %>
+</script>

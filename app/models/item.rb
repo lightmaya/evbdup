@@ -43,7 +43,7 @@ class Item < ActiveRecord::Base
       "提交" => { 0 => 1 },
       "停止" => { 1 => 2 },
       "恢复" => { 2 => 1 },
-      "删除" => { 0 => 404 },
+      "删除" => { 0 => 404 }
     }
   end
 
@@ -86,7 +86,7 @@ class Item < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='项目名称' column='name' class='required'/>
-        <node name='项目类型' column='item_type' data_type='radio' data='#{Dictionary.item.item_type}'/>
+        <node name='项目类型' column='item_type' data_type='radio' data='#{Dictionary.item_type}'/>
         <node name='品目分配' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden'/>
         <node name='有效期开始时间' column='begin_time' class='date_select required dateISO'/>
