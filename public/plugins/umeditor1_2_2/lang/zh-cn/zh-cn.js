@@ -74,7 +74,7 @@ UM.I18N['zh-cn'] = {
             'lang_input_dragTip':"支持图片拖拽上传",
             'lang_btn_add':"添加"
         },
-        'uploadError': '上传出错'
+        'uploadError': '上传出错222'
     },
     'emotion':{
         'static':{

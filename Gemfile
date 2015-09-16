@@ -10,6 +10,8 @@ gem 'rake', "10.4.2"
 gem 'devise', '3.4.1'
 # 默认值
 gem "default_value_for", "3.0.0.1"
+# 上传插件
+gem 'carrierwave', '0.8.0'
 
 group :assets do
 	# Use SCSS for stylesheets

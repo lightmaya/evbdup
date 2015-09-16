@@ -15,6 +15,10 @@ Evbdup::Application.routes.draw do
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
 
+  post 'umeditor/file', :to => 'umeditor#file'
+  post 'umeditor/image', :to => 'umeditor#image'
+  get 'umeditor/image', :to => 'umeditor#image'
+
   resources :home, :only => :index  do 
     collection do
       get :form_test, :ajax_test, :test, :json_test

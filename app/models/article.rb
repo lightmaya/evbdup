@@ -85,7 +85,7 @@ class Article < ActiveRecord::Base
         <node name='置顶' column='top_type' class='required'  data='#{Dictionary.top_type}'  data_type='select'/>
         <node name='几天内显示新' column='new_days' class='required number' hint='请填写自然数' />
         <node name='发布人' column='username' class='required' />
-        <node name='内容' column='content' class='required' data_type='richtext' style='width:100%;height:300px;' />
+        <node name='内容' column='content' data_type='richtext' style='width:100%;height:300px;' />
         <node name='公告目录' class='tree_checkbox' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"ArticleCatalog"}' partner='catalog_ids'/>
         <node column='catalog_ids' data_type='hidden'/>
       </root>

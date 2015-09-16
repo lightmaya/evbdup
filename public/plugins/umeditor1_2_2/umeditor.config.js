@@ -136,8 +136,8 @@
         UMEDITOR_HOME_URL : URL
 
         //图片上传配置区
-        ,imageUrl:URL+"jsp/imageUp.jsp"             //图片上传提交地址
-        ,imagePath:URL + "jsp/"                     //图片修正地址，引用了fixedImagePath,如有特殊需求，可自行配置
+        ,imageUrl: "/umeditor/image"             //图片上传提交地址
+        ,imagePath: ""                     //图片修正地址，引用了fixedImagePath,如有特殊需求，可自行配置
         ,imageFieldName:"upfile"                   //图片数据的key,若此处修改，需要在后台对应文件修改对应参数
 
 
@@ -147,7 +147,7 @@
             'source | undo redo | bold italic underline strikethrough | superscript subscript | forecolor backcolor | removeformat |',
             'insertorderedlist insertunorderedlist | selectall cleardoc paragraph | fontfamily fontsize' ,
             '| justifyleft justifycenter justifyright justifyjustify |',
-            'link unlink | video  | map',
+            'link unlink | image video  | map',
             '| horizontal print preview fullscreen', 'drafts', 'formula'
         ]
 
