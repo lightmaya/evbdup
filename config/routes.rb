@@ -42,6 +42,16 @@ Evbdup::Application.routes.draw do
         post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json
       end
     end
+
+    resources :msgs do 
+      member do
+        post :commit
+      end
+      collection do
+        get :list
+        get :read_msg
+      end
+    end
     resources :orders do
       collection do
         get :audit_ddcg, :ddcg_list

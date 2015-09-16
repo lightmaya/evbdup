@@ -200,5 +200,28 @@ module BtnArrayHelper
     return arr
   end
 
+  def msgs_btn(obj)
+    arr = [] 
+    # 查看详细
+    arr << [obj.class.icon_action("详细"), "javascript:read_msg(#{obj.id})"]  if can?(:show, obj)
+    if obj.status == 0
+      # 修改
+      arr << [obj.class.icon_action("修改"), edit_kobe_msg_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+      # 发布
+      arr << [obj.class.icon_action("发布"), commit_kobe_msg_path(obj), method: "post", data: { confirm: "发布后不允许再修改删除，确定发布吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
+      # 删除
+      arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_msg_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    end
+    return arr
+  end
+
+  def msg_users_btn(obj)
+    arr = [] 
+    # 查看详细
+    arr << [obj.msg.class.icon_action("查看"), "javascript:read_msg(#{obj.msg.id})"]  if obj.msg.present? && obj.user_id == current_user.id
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_msg_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    return arr
+  end
 
 end

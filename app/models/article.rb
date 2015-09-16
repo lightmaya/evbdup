@@ -4,7 +4,6 @@ class Article < ActiveRecord::Base
   has_many :uploads
 	has_and_belongs_to_many :catalogs, class_name: "ArticleCatalog"
 	accepts_nested_attributes_for :catalogs
-  scope :published, -> { where(status: 1) }
   has_many :task_queues, -> { where(class_name: "Article") }, foreign_key: :obj_id
   belongs_to :rule
 
@@ -13,16 +12,14 @@ class Article < ActiveRecord::Base
   default_value_for :hits, 0
   default_value_for :status, 0
 
+  scope :published, -> { where(status: 1) }
+
    # 列表中的状态筛选,current_status当前状态不可以点击
   def self.status_filter(action='')
   	# 列表中不允许出现的
   	# limited = [404]
     limited = []
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
-
-  def incr_hit!
-    update(hits: self.hits + 1)
   end
 
   # 中文意思 状态值 标签颜色 进度 
@@ -95,4 +92,8 @@ class Article < ActiveRecord::Base
     }
   end
 
+
+  def incr_hit!
+    update(hits: self.hits + 1)
+  end
 end

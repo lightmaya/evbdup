@@ -182,4 +182,17 @@ module ApplicationHelper
       ) + 
     stylesheets("/plugins/umeditor1_2_2/themes/default/css/umeditor.css")
   end
+
+  def dict_value(str, key)
+    values = Dictionary.send(key)
+    return "" if values.blank?
+    if values.is_a?(Array)
+      values.find{|ary| ary.first == str}.try(:last)
+    elsif values.is_a?(Hash)
+      values[str]
+    else
+      ""
+    end
+  end
+
 end

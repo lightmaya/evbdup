@@ -16,7 +16,7 @@
 //= require plugins/bootstrap.min
 //= require plugins/back-to-top
 //= require plugins/jquery.query
-//= require plugins/dialog-min
+//= require plugins/dialog-plus-min
 //= require plugins/fancybox/jquery.fancybox.pack
 //= require plugins/smoothScroll
 //= require plugins/jquery.parallax
@@ -111,6 +111,20 @@ function validate_form_rules (form_id,form_rules,form_messages) {
 	});
 };
 
+// 
+
+function read_msg(id){
+  dialog({
+    id: 'msg-dialog',
+    title: 'loading...',
+    url: '/kobe/msgs/' + id,
+    cancelValue: '关闭',
+    width: "800px",
+    cancel: function () {}
+  }).show().title("查看短消息");
+  $("#read_" + id).text("已读");
+}
+
 // 手动关闭提示弹框
 function flash_dialog (content) {
 	dialog({
@@ -119,6 +133,16 @@ function flash_dialog (content) {
     fixed: true //  开启固定定位
 	}).show();
 };
+
+function open_dialog (title, content) {
+  dialog({
+    title: title,
+    content: content,
+    quickClose: true,
+    fixed: true //  开启固定定位
+  }).show();
+};
+
 // 自动关闭提示框
 function tips_dialog (content) {
 	var d = dialog({
@@ -131,6 +155,7 @@ function tips_dialog (content) {
 	    d.close().remove();
 	}, 5000);
 };
+
 // 确认弹框
 function confirm_dialog (content,ok_function) {
 	dialog({
