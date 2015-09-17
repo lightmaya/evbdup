@@ -183,6 +183,17 @@ module ApplicationHelper
     stylesheets("/plugins/umeditor1_2_2/themes/default/css/umeditor.css")
   end
 
+  # 加载富文本框插件Ueditor
+  def include_ueditor
+    javascripts("/plugins/ueditor1_4_3/ueditor.config.js", 
+      "/plugins/ueditor1_4_3/ueditor.all.js", 
+      "/plugins/ueditor1_4_3/lang/zh-cn/zh-cn.js",
+      "/plugins/ueditor1_4_3/ueditor.parse.js"
+      )
+  end
+
+
+
   def dict_value(str, key)
     values = Dictionary.send(key)
     return "" if values.blank?

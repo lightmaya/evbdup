@@ -52,7 +52,7 @@ class Kobe::ArticlesController < KobeController
     @article.username = current_user.name 
     @article.status = 2
     @myform = SingleForm.new(Article.xml, @article, 
-      { form_id: "article_form", upload_files: true, action: kobe_articles_path,
+      { form_id: "article_form", action: kobe_articles_path,
         title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2  
       })
   end

@@ -334,4 +334,22 @@ private
   end
 
 
+  # # 富文本
+  # def _create_richtext(input_opts)
+  #   form_state = _form_states('textarea textarea-resizable',input_opts[:node_attr])
+  #   style = input_opts[:style].presence || "width:100%;height:200px;"
+  #   str = include_ueditor + %Q|
+  #   <label class='#{form_state}'>
+  #   <script #{input_opts[:node_attr].join(" ")} type='text/plain' style='#{style}' ></script>
+  #   <script type='text/javascript'>
+  #     $(function(){
+  #       window.um = UE.getEditor('#{input_opts[:id]}');
+  #       um.setContent('#{input_opts[:value]}');
+  #     });
+  #   </script>
+  #   </label>
+  #   #{input_opts[:hint].blank? ? '' : "<div class='note'><strong>提示:</strong> #{input_opts[:hint]}</div>" }|.html_safe
+  #   # (include_umeditor + str).html_safe
+  # end
+
 end
