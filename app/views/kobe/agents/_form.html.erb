@@ -1,0 +1,10 @@
+<%= modal_dialog("agent_dialog") %>
+
+<%= draw_myform(@myform) %>
+
+<script type="text/javascript">
+  $(function() {
+    $("#agent_form #agents_name").css("cursor", "pointer");
+    $("#agent_form #agents_name").attr({ "data-target":"#agent_dialog", "data-toggle":"modal", "onclick":"modal_dialog_show('请选择代理商', '<%= search_dep_name_kobe_agents_path %>', '#agent_dialog')" });
+  });
+</script>

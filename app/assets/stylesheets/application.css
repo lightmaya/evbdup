@@ -23,6 +23,9 @@
  *= require plugins/owl.carousel
  *= require plugins/style-switcher
  *= require common
+ *= require plugins/style-switcher
+ *= require app
+ *= require blocks
  *= require_self
  */
 

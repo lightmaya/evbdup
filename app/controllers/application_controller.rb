@@ -50,6 +50,11 @@ class ApplicationController < ActionController::Base
 
   protected
 
+    # 生成带搜索的ztree的json的sql
+    def ztree_box_sql(obj_class, cdt='')
+      "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{obj_class.to_s.tableize} a INNER JOIN  #{obj_class.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
+    end
+
     # 生成带搜索的ztree的json 用于下拉框选择
     def ztree_box_json(obj_class)
       name = params[:ajax_key]
@@ -57,7 +62,8 @@ class ApplicationController < ActionController::Base
         nodes = obj_class.attribute_method?("status") ? obj_class.where.not(status: 404) : obj_class.all
       else
         cdt = obj_class.attribute_method?("status") ? "and a.status != 404 and b.status != 404" : ""
-        sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{obj_class.to_s.tableize} a INNER JOIN  #{obj_class.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
+        sql = ztree_box_sql(obj_class, cdt)
+        # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{obj_class.to_s.tableize} a INNER JOIN  #{obj_class.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
         nodes = obj_class.find_by_sql([sql,"%#{name}%"])
       end
       render :json => obj_class.get_json(nodes)

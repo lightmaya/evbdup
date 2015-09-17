@@ -226,6 +226,7 @@
 		var input_id = getInputId(dialog_id);
 		var url = $("#" + input_id).attr("json_url");
 		var params = $.parseJSON($("#" + input_id).attr("json_params"))
+		if (params == undefined) {params = {}};
 		var d = dialog.get(dialog_id);
 		if (!d){
 			d = dialog({

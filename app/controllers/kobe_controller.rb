@@ -65,6 +65,8 @@ class KobeController < ApplicationController
     # 列表标题栏筛选的条件
     filter_arr = head_filter(table_name)
     arr = arr | filter_arr
+    # 取status != 404
+    arr << ["#{table_name}.status != ?", 404]
     unless arr.blank?
       keys = []
       arr.each{|a| 

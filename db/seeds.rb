@@ -31,7 +31,20 @@ if Menu.first.blank?
   [["查看项目", "Item|show"],["录入产品", "Product|item_list"],["新增产品", "Product|create"], ["修改产品", "Product|update"], ["提交产品", "Product|commit"], ["查看产品", "Product|read"],  ["删除产品", "Product|update_destroy"], ["冻结产品", "Product|freeze"], ["恢复产品", "Product|recover"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => item_list)
   end
-  product = Menu.create(:name => "我的入围产品", :route_path => "/kobe/products", :can_opt_action => "Product|read", :is_show => true, :parent => item_manage)
+  Menu.create(:name => "我的入围产品", :route_path => "/kobe/products", :can_opt_action => "Product|read", :is_show => true, :parent => item_manage)
+  agent = Menu.create(:name => "我的代理商", :route_path => "/kobe/agents", :can_opt_action => "Agent|read", :is_show => true, :parent => item_manage)
+  [["维护代理商", "Agent|list"], ["新增代理商", "Agent|create"], ["修改代理商", "Agent|update"], ["删除代理商", "Agent|update_destroy"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => agent)
+  end
+  
+  audit_product = Menu.create(:name => "审核产品", :route_path => "/kobe/products/list", :can_opt_action => "Product|list", :is_show => true, :parent => item_manage)
+  [["产品初审", "Product|first_audit"], ["产品终审", "Product|last_audit"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_product)
+  end
+  Menu.create(:name => "入围产品管理", :route_path => "/kobe/products", :can_opt_action => "Product|admin", :is_show => true, :parent => item_manage)
+  Menu.create(:name => "代理商管理", :route_path => "/kobe/agents", :can_opt_action => "Agent|admin", :is_show => true, :parent => item_manage)
+
+
 
   order = Menu.create(:name => "订单管理", :icon => "fa-tasks", :is_show => true)
   Menu.create(:name => "辖区内采购项目", :route_path => "/kobe/orders", :can_opt_action => "Order|read", :is_show => true, :parent => order)

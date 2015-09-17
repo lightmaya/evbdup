@@ -57,7 +57,7 @@ class Order < ActiveRecord::Base
       "提交" => { 2 => 1 },
       "通过" => { 1 => 6 },
       "不通过" => { 1 => 2 },
-      "删除" => { 0 => 404 },
+      "删除" => { 0 => 404 }
     }
     ha["提交"][0] = self.find_step_by_rule.blank? ? 5 : 1 
     return ha
@@ -112,6 +112,7 @@ class Order < ActiveRecord::Base
     ht = self.items.map{ |item| item.category.ht_template }.uniq.compact.join
     return "/kobe/orders/ht/#{ht}"
   end
+  
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
     self.items.map{|e| e.category.user_ids}.flatten.uniq

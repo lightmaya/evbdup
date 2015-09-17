@@ -48,7 +48,7 @@ class Msg < ActiveRecord::Base
   def self.status_array
     [
       ["暂存", 0, "orange", 50],
-      ["已发布", 2, "u", 100],
+      ["已发布", 2, "u", 100]
     ]
   end
 
@@ -56,7 +56,7 @@ class Msg < ActiveRecord::Base
   def change_status_hash
     {
       "发布" => { 0 => 2 },
-      "删除" => { 0 => 404 },
+      "删除" => { 0 => 404 }
     }
   end
 
