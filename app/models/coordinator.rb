@@ -1,14 +1,10 @@
-class Agent < ActiveRecord::Base
+class Coordinator < ActiveRecord::Base
 
   default_scope -> {order("id desc")}
   belongs_to :item
   belongs_to :department
 
   include AboutStatus
-
-  before_save do 
-    self.agent_id = Department.find_by(name: self.name).try(:id)
-  end
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
@@ -46,9 +42,12 @@ class Agent < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='代理商名称' column='name' class='required'/>
-        <node name='代理地区' class='box_checkbox required' json_url='/kobe/shared/province_area_ztree_json' partner='area_id'/>
-        <node column='area_id' data_type='hidden'/>
+        <node name='姓名' column='name' class='required'/>
+        <node name='电话' column='tel'/>
+        <node name='手机' column='mobile' class='required'/>
+        <node name='传真' column='fax'/>
+        <node name='电子邮件' column='email' class='email'/>
+        <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
       </root>
     }
   end

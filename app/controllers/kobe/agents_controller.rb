@@ -63,7 +63,7 @@ class Kobe::AgentsController < KobeController
 
     def get_item
       @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
-      cannot_do_tips unless @item.present? && @item.finalist?(current_user.department.id) && @item.item_type
+      cannot_do_tips unless @item.present? && @item.cando("add_agent", current_user)
     end
 
 end

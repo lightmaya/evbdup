@@ -126,7 +126,7 @@ class Kobe::ProductsController < KobeController
 
     def get_item
       @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
-      cannot_do_tips unless @item.present? && @item.finalist?(current_user.department.id)
+      cannot_do_tips unless @item.present? && @item.cando("add_product", current_user)
     end
 
     def get_category

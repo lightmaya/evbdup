@@ -158,6 +158,15 @@ Evbdup::Application.routes.draw do
         get :delete
       end
     end
+    # 总协调人
+    resources :coordinators do
+      collection do
+        get :list
+      end
+      member do
+        get :delete
+      end
+    end
     # 意见反馈
     resources :suggestions do
       post :mark_as_read, :mark_as_unread, on: :member

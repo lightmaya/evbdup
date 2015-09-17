@@ -1,0 +1,1 @@
+<%= render :partial => 'list',:locals => { :title => (can?(:admin, Coordinator) ? "管理总协调人" : "我的总协调人"), :search_url => kobe_coordinators_path } %>

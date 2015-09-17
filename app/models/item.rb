@@ -31,8 +31,8 @@ class Item < ActiveRecord::Base
 	def self.status_array
 		[
 	    ["暂存",0,"orange",10],
-	    ["有效",1,"blue",50],
-      ["停止申请",2,"red",0],
+	    ["有效",1,"blue",100],
+      ["停止申请",2,"red",50],
 	    ["已删除",404,"light",0]
     ]
   end
@@ -54,13 +54,16 @@ class Item < ActiveRecord::Base
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
 
-  def cando(act='')
+  def cando(act='',current_u=nil)
     case act
     when "update", "edit" then [0].include?(self.status)
     when "commit" then self.can_opt?("提交")
     when "delete", "destroy" then self.can_opt?("删除")
     when "recover", "update_recover" then self.can_opt?("恢复")
     when "pause", "update_pause" then self.can_opt?("停止")
+    when "add_product" then self.finalist?(current_u.department.id) && self.status == 1
+    when "add_agent" then self.finalist?(current_u.department.id) && self.status == 1 && self.item_type
+    when "add_coordinator" then self.finalist?(current_u.department.id) && self.status == 1 && self.item_type      
     else false
     end
   end

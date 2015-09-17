@@ -131,21 +131,21 @@ module BtnArrayHelper
     # 查看
     arr << [obj.class.icon_action("详细"), kobe_item_path(obj), target: "_blank"]  if can?(:show, obj)
     # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_item_path(obj)] if can?(:update, obj) && obj.cando("edit")
+    arr << [obj.class.icon_action("修改"), edit_kobe_item_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 提交
-    arr << [obj.class.icon_action("提交"), commit_kobe_item_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
+    arr << [obj.class.icon_action("提交"), commit_kobe_item_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
     # 停止
-    arr << [obj.class.icon_action("停止"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('停止')}",'#{pause_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:pause, obj) && obj.cando("pause")
+    arr << [obj.class.icon_action("停止"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('停止')}",'#{pause_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:pause, obj) && obj.cando("pause", current_user)
     # 恢复
-    arr << [obj.class.icon_action("恢复"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('恢复')}",'#{recover_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:recover, obj) && obj.cando("recover")
+    arr << [obj.class.icon_action("恢复"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('恢复')}",'#{recover_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:recover, obj) && obj.cando("recover", current_user)
     # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete")
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_item_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 录入产品
-    arr << [obj.class.icon_action("录入产品"), item_list_kobe_products_path(item_id: obj.id)] if can?(:item_list, Product) && obj.finalist?(current_user.department.id)
+    arr << [obj.class.icon_action("录入产品"), item_list_kobe_products_path(item_id: obj.id)] if can?(:item_list, Product) && obj.cando("add_product", current_user)
     # 维护代理商
-    arr << [obj.class.icon_action("维护代理商"), list_kobe_agents_path(item_id: obj.id)] if can?(:list, Agent) && obj.item_type
+    arr << [obj.class.icon_action("维护代理商"), list_kobe_agents_path(item_id: obj.id)] if can?(:list, Agent) && obj.cando("add_agent", current_user)
     # 维护总协调人
-    arr << [obj.class.icon_action("维护总协调人"), list_kobe_products_path(item_id: obj.id)] if can?(:item_list, Product) && obj.item_type
+    arr << [obj.class.icon_action("维护总协调人"), list_kobe_coordinators_path(item_id: obj.id)] if can?(:list, Coordinator) && obj.cando("add_coordinator", current_user)
     return arr
   end
 
@@ -179,6 +179,18 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("修改"), edit_kobe_agent_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 删除
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_agent_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    return arr
+  end
+
+  # 总协调人
+  def coordinators_btn(obj)
+    arr = [] 
+    # 查看详细
+    arr << [obj.class.icon_action("详细"), kobe_coordinator_path(obj), target: "_blank"]  if can?(:show, obj)
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_coordinator_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_coordinator_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     return arr
   end
 
