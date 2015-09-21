@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RemoveRuleIdFromItemDepartments < ActiveRecord::Migration
   def change
     remove_column :item_departments, :rule_id, :integer

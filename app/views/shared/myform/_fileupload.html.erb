@@ -5,12 +5,13 @@ master_id = myform.obj.id
 min_number_of_files = myform.options[:min_number_of_files]
 rules = myform.rules
 messages = myform.messages
+jquery_setting = myform.options[:upload_files_name].present? ? upload_model.send("#{myform.options[:upload_files_name]}_jquery_setting") : upload_model.jquery_setting
 %>
 <div class="headline"><h2><strong><i class="fa fa-paperclip"></i> 上传附件</strong></h2></div>
 <%= form_tag(uploads_path(master_id: master_id, upload_model: upload_model), multipart: true, id: "#{form_id}_fileupload", class: "sky-form fileupload_form no-border" ) %>
   <div class="fileupload-buttonbar">
     <div class="alert alert-warning  fade in">
-      <%= raw upload_model.tips.html_safe %>
+      <%= raw myform.options[:upload_files_name].present? ? upload_model.send(myform.options[:upload_files_name] + "_tips") : upload_model.tips.html_safe %>
     </div>
     <div class="span7">
       <span class="pull-left btn btn-xs btn-success fileinput-button">
@@ -45,7 +46,7 @@ messages = myform.messages
 </form>
 <script type="text/javascript">
   jQuery(document).ready(function() {
-    $("#<%= form_id %>_fileupload").fileupload(<%= upload_model.jquery_setting %>);
+    $("#<%= form_id %>_fileupload").fileupload(<%= jquery_setting %>);
     $('#<%= form_id %>_submit').on('click',function(){
       var ids = $('form#<%= form_id %>_fileupload tr.template-download .preview[file_id]').map(function() {
         return $(this).attr('file_id');

@@ -56,6 +56,18 @@ Evbdup::Application.routes.draw do
         get :read_msg
       end
     end
+
+    resources :bid_projects do
+      collection do
+        get :list
+      end
+      member do 
+        get :audit
+        get :delete
+        post :commit, :update_audit
+      end
+    end
+
     resources :orders do
       collection do
         get :audit_ddcg, :ddcg_list

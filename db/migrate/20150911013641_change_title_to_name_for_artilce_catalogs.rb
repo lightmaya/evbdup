@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeTitleToNameForArtilceCatalogs < ActiveRecord::Migration
   def change
   	rename_column :article_catalogs, :title, :name 

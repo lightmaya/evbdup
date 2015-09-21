@@ -26,6 +26,9 @@
  *= require plugins/style-switcher
  *= require app
  *= require blocks
+  = require my97/datepicker
+  = require my97/WdatePicker
+  = require select2/select2
  *= require_self
  */
 

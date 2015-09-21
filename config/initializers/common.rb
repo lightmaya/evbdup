@@ -143,3 +143,7 @@ end
 def week_range_w(num, need_year=false)
   "#{num.to_i + 1}(#{week_range(num, need_year)})"
 end
+
+# 通用日志记录
+ActiveRecord::Base.send(:include, LvUp)
+

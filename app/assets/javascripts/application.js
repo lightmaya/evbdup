@@ -22,12 +22,16 @@
 //= require plugins/jquery.parallax
 //= require app
 //= require form
+//= require common
 //= require plugins/jquery.dragsort-0.5.2.min
 //= require plugins/fancybox/fancy-box
 //= require plugins/style-switcher
 //= require plugins/owl.carousel
 //= require plugins/owl-carousel
 //= require plugins/owl-recent-works
+//= require select2/select2.min
+//= require select2/select2_locale_zh-CN
+//= require my97/WdatePicker
 
 $(function() {
 

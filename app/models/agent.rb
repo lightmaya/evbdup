@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Agent < ActiveRecord::Base
 
   default_scope -> {order("id desc")}

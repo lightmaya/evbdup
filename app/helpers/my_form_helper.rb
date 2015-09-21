@@ -28,6 +28,7 @@ module MyFormHelper
 	end
 
 	def set_upload_part(myform)
+    opts ||= {}
 		myform.html_code << %Q|
 		<input id='#{myform.options[:form_id]}_uploaded_file_ids' name='uploaded_file_ids' type='hidden' />
 		</form>|

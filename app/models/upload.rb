@@ -32,4 +32,22 @@ class Upload < ActiveRecord::Base
       maxFileSize: 1024000
     }'
   end
+
+  # 网上竞价doc、docx、xls、xlsx、ppt、pptx、jpg、png、pdf、rar、zip
+  def self.bid_project_tips
+    '<ol>
+      <li>上传的文件仅限doc、docx、xls、xlsx、ppt、pptx、jpg、png、pdf、rar、zip格式</li>
+      <li>单个文件大小不能超过10M；</li>
+      <li>上传文件个数不超过5个。</li>
+    </ol>'
+  end
+
+  def self.bid_project_jquery_setting
+     '{
+      autoUpload: true,
+      acceptFileTypes: /(\.|\/)(gif|jpe?g|png|zip|rar|pdf|pptx|ppt|xlsx|xls|docx|doc)$/i,
+      maxNumberOfFiles: 7,
+      maxFileSize: 10240000
+    }'
+  end
 end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateArticleCatalogsArticles < ActiveRecord::Migration
   def change
     create_table :article_catalogs_articles, id: false do |t|
