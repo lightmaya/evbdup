@@ -10,7 +10,6 @@ def self.xml
       </root>
     }
 end
-```
 
 # name: label名称
 # column: 对应字段
@@ -18,7 +17,7 @@ end
 # data='#{Dictionary.top_type}':application.yml中定义的参数 data_type='select'： 下拉选择
 # data_type='richtext' style='width:100%;height:300px;': 富文本框um和宽度高度
 # class='tree_checkbox'： 多选树形结构 json_url='/kobe/shared/ztree_json' ，json_params='{"json_class":"ArticleCatalog"}'：具体树的方法和类 partner='catalog_ids'：存入的input的id
-
+```
 
 * action new方法中，使用SingleForm生成表单对象（范例：kobe/articles_controller.rb）
 ```ruby
@@ -69,7 +68,7 @@ article = create_and_write_logs(Article, Article.xml)
  <td><%= btn_group(articles_btn(article)) %></td>
 ```
 
-# status字段及审核相关，范例：article.rb
+## status字段及审核相关，范例：article.rb
 ```ruby
 # 有status字段的需要加载AboutStatus
   include AboutStatus
