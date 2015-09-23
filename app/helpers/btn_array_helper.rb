@@ -253,5 +253,21 @@ module BtnArrayHelper
     end
     return arr
   end
+
+  # 采购计划
+  def plan_items_btn(obj)
+    arr = [] 
+    # 查看
+    arr << [obj.class.icon_action("详细"), kobe_plan_item_path(obj), target: "_blank"]  if can?(:show, obj)
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_plan_item_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 提交
+    arr << [obj.class.icon_action("提交"), commit_kobe_plan_item_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_plan_item_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    # 录入采购计划
+    arr << [obj.class.icon_action("录入采购计划"), plan_item_list_kobe_products_path(plan_item_id: obj.id)] if can?(:item_list, Plan) && obj.cando("add_product", current_user)
+    return arr
+  end
   
 end
