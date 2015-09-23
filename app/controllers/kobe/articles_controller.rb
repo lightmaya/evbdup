@@ -51,6 +51,7 @@ class Kobe::ArticlesController < KobeController
   def new
     @article.username = current_user.name 
     @article.status = 2
+    # grid表示生成的表单一行显示几个字段
     @myform = SingleForm.new(Article.xml, @article, 
       { form_id: "article_form", action: kobe_articles_path,
         title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2  
@@ -76,7 +77,7 @@ class Kobe::ArticlesController < KobeController
     render :text => params[:grid].to_s
   end
 
-    # 删除
+  # 删除
   def delete
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_article_form', action: kobe_article_path(@article), method: 'delete' }
   end
