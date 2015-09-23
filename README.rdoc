@@ -1,6 +1,6 @@
-## 字段及表单
+##字段及表单
 * 在model中定义xml方法，每个dom的类型，样式等（范例：article.rb）
-```ruby
+```javascript
 def self.xml
   %Q{
     <?xml version='1.0' encoding='UTF-8'?>
@@ -18,18 +18,18 @@ end
 ```
 
 * action new方法中，使用SingleForm生成表单对象（范例：kobe/articles_controller.rb）
-```ruby
+```
 @myform = SingleForm.new(Article.xml, @article, 
-      { form_id: "article_form", action: kobe_articles_path,
-        title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2  
-      })
+{ form_id: "article_form", action: kobe_articles_path,
+title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2  
+})
 # grid表示每行显示的字段标签td数量
 ```
 
 * new.html.erb 生成表单
-```ruby
+`
   <%= draw_myform(@myform) %>
-```
+`
 
 * create方法中, 保存并记录日志
 ```ruby
