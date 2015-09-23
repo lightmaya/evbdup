@@ -5,24 +5,26 @@ class Article < ActiveRecord::Base
 	has_and_belongs_to_many :catalogs, class_name: "ArticleCatalog"
 	accepts_nested_attributes_for :catalogs
   has_many :task_queues, -> { where(class_name: "Article") }, foreign_key: :obj_id
-  belongs_to :rule
-
-  include AboutStatus
-
+  
   default_value_for :hits, 0
   default_value_for :status, 0
 
   scope :published, -> { where(status: 1) }
 
-   # 列表中的状态筛选,current_status当前状态不可以点击
+  ####### status及审核相关 ############
+  # 有status字段的需要加载AboutStatus
+  include AboutStatus
+  # 列表中的状态筛选, current_status当前状态不可以点击
   def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	# limited = [404]
+  	# 列表中不允许出现的， 404表示已删除， 系统中默认都是软删除
+  	# limited = [404] 
     limited = []
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+    # a[1] : 0
+    # 返回 [["暂存", 0], ["等待审核", 2]]，形成页面筛选条件
+  	arr = self.status_array.delete_if{|a| limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # status各状态的中文意思 状态值 标签颜色 进度 
 	def self.status_array
 		[
 	    ["暂存", 0, "orange", 50],
@@ -33,32 +35,33 @@ class Article < ActiveRecord::Base
     ]
   end
 
-   # 根据不同操作 改变状态
+  # 根据不同操作 改变状态
+  # "提交审核"与action中obj.change_status_and_write_logs一致
   def change_status_hash
     {
       "提交审核" => { 0 => 1 },
       "删除" => { 0 => 404 },
       "通过" => { 1 => 2 },
       "不通过" => { 1 => 3 }
-      # "提交审核" => { "暂存" => "等待审核" },
-      # "删除" => { "暂存" => "已删除" },
-      # "通过" => { "等待审核" => "已发布" },
-      # "不通过" => { "等待审核" => "审核拒绝" }
     }
   end
+  ####### status及审核相关 END ############
 
   # 根据action_name 判断obj有没有操作
+  # 用于前台的操作按钮，在BtnArrayHelper.rb中配置，与cancancan结合使用
   def cando(act='')
     case act
     when "commit" 
+      # 必须是0状态并且没有数据合法才能commit
       [0].include?(self.status) && self.get_tips.blank?
     when "update_audit", "audit" 
+      # change_status_hash中是否有此操作
       self.can_opt?("通过") && self.can_opt?("不通过")
     else false
     end
   end
 
-    # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
+  # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
   def get_tips
     msg = []
     if [0].include?(self.status)
@@ -68,15 +71,20 @@ class Article < ActiveRecord::Base
     return msg
   end
 
+  # 审核流程必须有rule
+  belongs_to :rule
   def commit_params
     arr = []
-    # rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
     arr << "rule_id = 3"
+    # 起始状态
     arr << "rule_step = 'start'"
     return arr
   end
 
-
+  # 定义form表单
+  # name: label名称
+  # column: 对应字段
+  # class: 样式及效验. [required]必须填写
   def self.xml(who='',options={})
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
