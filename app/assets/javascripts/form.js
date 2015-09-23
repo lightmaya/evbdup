@@ -4,6 +4,7 @@
 //= require plugins/sky-forms/jquery-ui.min
 //= require plugins/masking
 //= require plugins/datepicker
+//= require plugins/timepicker
 //= require plugins/dialog-select
 //= require jquery-fileupload
 //
@@ -31,6 +32,15 @@ $(function() {
   $('form.fileupload_form').each(function(){
   	upload_files($(this).attr("id"));
 	});
+
+  // 验证时间类型
+  $.validator.addMethod("time", function (value, element) {
+      return this.optional(element) || /^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$/i.test(value);
+  }, "请输入有效的时间");
+
+  $.validator.addMethod("datetime", function (value, element) {
+      return this.optional(element) || /^\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2} (([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$/i.test(value);
+  }, "请输入有效的时间(YYYY-MM-DD HH:mm:ss)");
 
   // 验证 通过类来验证
   jQuery.validator.addClassRules({
