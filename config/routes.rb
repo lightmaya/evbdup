@@ -11,6 +11,7 @@ Evbdup::Application.routes.draw do
   # captcha_route
 
   get 'errors' => 'errors#index'
+  get 'help' => "home#help"
   get 'main' => 'kobe/main#index'
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
