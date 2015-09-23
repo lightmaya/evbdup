@@ -1,4 +1,5 @@
-##字段及表单
+### 字段及表单
+
 * 在model中定义xml方法，每个dom的类型，样式等（范例：article.rb）
 ```javascript
 def self.xml
@@ -27,14 +28,14 @@ title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2
 ```
 
 * new.html.erb 生成表单
-`
-  <%= draw_myform(@myform) %>
-`
+
+<%= draw_myform(@myform) %>
+
 
 * create方法中, 保存并记录日志
-```ruby
+
  article = create_and_write_logs(Article, Article.xml)
-```
+
 
 * update方法中
 ```ruby
