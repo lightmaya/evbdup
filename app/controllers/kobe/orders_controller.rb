@@ -96,25 +96,11 @@ class Kobe::OrdersController < KobeController
   private
 
     def get_order
-      # if params[:id].present?
-      #   # if can? :admin, Order
-      #   #   @obj = Order.find_by(id: params[:id]) 
-      #   # else
-      #     if current_user.is_admin
-      #       @obj = Order.find_all_by_buyer_code(current_user.department.real_ancestry).find_by(id: params[:id]) 
-      #     else
-      #       @obj = current_user.orders.find_by(id: params[:id]) 
-      #     end
-      #   # end
-      # end
       cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     end
 
     # 审核时获取order
     def get_audit_order
-      # if params[:id].present?
-      #   @order = Order.find_by(id: params[:id])
-      # end
       menu_ids = Menu.get_menu_ids("Order|audit_#{@order.yw_type}") if @order.present?
       audit_tips unless @order.present? && @order.cando(action_name,current_user) && can_audit?(@order,menu_ids)
     end
