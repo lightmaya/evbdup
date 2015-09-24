@@ -118,14 +118,18 @@ class Order < ActiveRecord::Base
     self.items.map{|e| e.category.user_ids}.flatten.uniq
   end
 
+  def is_ancestors?(current_u=nil)
+    current_u.present? ? current_u.department.subtree_ids.include?(self.buyer.try(:id)) : false
+  end
+
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show" then true
+    when "show" then is_ancestors?(current_u)
     when "update", "edit" then [0,2].include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" then self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" then self.status == 1
-    when "print" then [3,5,6].include?(self.status)
+    when "print" then [3,5,6].include?(self.status) && is_ancestors?(current_u)
     else false
     end
   end

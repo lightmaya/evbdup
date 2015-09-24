@@ -266,7 +266,7 @@ module BtnArrayHelper
     # 删除
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_plan_item_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 录入采购计划
-    arr << [obj.class.icon_action("录入采购计划"), plan_item_list_kobe_products_path(plan_item_id: obj.id)] if can?(:item_list, Plan) && obj.cando("add_product", current_user)
+    arr << [obj.class.icon_action("录入采购计划"), item_list_kobe_plans_path(item_id: obj.id)] if can?(:item_list, Plan) && obj.cando("add_plan", current_user)
     return arr
   end
   

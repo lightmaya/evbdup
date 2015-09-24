@@ -28,8 +28,33 @@ if Menu.first.blank?
     Menu.create(:name => option[0], :icon => option[1], :is_show => true)
   end
 
-
-  item_manage = Menu.create(:name => "入围产品管理", :is_show => true)
+  yw = Menu.create(:name => "业务管理", :icon => "fa-tasks", :is_auto => true, :is_show => true)
+# ----订单中心-----------------------------------------------------------------------------------------
+  Menu.create(:name => "订单中心", :route_path => "/kobe/orders", :can_opt_action => "Order|read", :is_show => true, :parent => yw)
+# ----品目管理-----------------------------------------------------------------------------------------
+  category = Menu.create(:name => "品目管理", :route_path => "/kobe/categories", :can_opt_action => "Category|read", :is_show => true, :parent => yw)
+  [ ["增加品目", "Category|create"], 
+    ["修改品目", "Category|update"], 
+    ["删除品目", "Category|update_destroy"],
+    ["冻结品目", "Category|freeze"],
+    ["恢复品目", "Category|recover"], 
+    ["移动品目", "Category|move"]
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => category)
+  end
+# ----入围项目管理-------------------------------------------------------------------------------------
+  item = Menu.create(:name => "入围项目管理", :route_path => "/kobe/items", :can_opt_action => "Item|read", :is_show => true, :parent => yw)
+  [ ["增加项目", "Item|create"], 
+    ["修改项目", "Item|update"], 
+    ["提交项目", "Item|commit"], 
+    ["停止项目", "Item|pause"], 
+    ["恢复项目", "Item|recover"], 
+    ["删除项目", "Item|update_destroy"]
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => item)
+  end
+# ----入围产品管理-------------------------------------------------------------------------------------
+  item_manage = Menu.create(:name => "入围产品管理", :is_show => true, :parent => yw)
   Menu.create(:name => "我的入围项目", :route_path => "/kobe/items/list", :can_opt_action => "Item|list", :is_show => true, :parent => item_manage)
   item_list = Menu.create(:name => "我的入围产品", :route_path => "/kobe/products", :can_opt_action => "Product|read", :is_show => true, :parent => item_manage)
   [ ["查看项目", "Item|show"],
@@ -64,14 +89,38 @@ if Menu.first.blank?
   [["产品初审", "Product|first_audit"], ["产品终审", "Product|last_audit"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_product)
   end
+
   Menu.create(:name => "入围产品管理", :route_path => "/kobe/products", :can_opt_action => "Product|admin", :is_show => true, :parent => item_manage)
   Menu.create(:name => "代理商管理", :route_path => "/kobe/agents", :can_opt_action => "Agent|admin", :is_show => true, :parent => item_manage)
   Menu.create(:name => "总协调人管理", :route_path => "/kobe/coordinators", :can_opt_action => "Coordinator|admin", :is_show => true, :parent => item_manage)
-
-
-  order = Menu.create(:name => "订单管理", :icon => "fa-tasks", :is_show => true)
-  Menu.create(:name => "辖区内采购项目", :route_path => "/kobe/orders", :can_opt_action => "Order|read", :is_show => true, :parent => order)
-  ddcg = Menu.create(:name => "定点采购", :is_show => true, :parent => order)
+# ----采购计划项目管理---------------------------------------------------------------------------------
+  plan_item = Menu.create(:name => "采购计划项目管理", :route_path => "/kobe/plan_items", :can_opt_action => "PlanItem|read", :is_show => true, :parent => yw)
+  [ ["增加采购计划项目", "PlanItem|create"], 
+    ["修改采购计划项目", "PlanItem|update"], 
+    ["提交采购计划项目", "PlanItem|commit"], 
+    ["删除采购计划项目", "PlanItem|update_destroy"]
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => plan_item)
+  end
+# ----采购计划管理-------------------------------------------------------------------------------------
+  plan = Menu.create(:name => "采购计划管理", :is_show => true, :parent => yw)
+  Menu.create(:name => "可上报的采购计划", :route_path => "/kobe/plan_items/list", :can_opt_action => "PlanItem|list", :is_show => true, :parent => plan)
+  plan_list = Menu.create(:name => "辖区内采购计划", :route_path => "/kobe/plans", :can_opt_action => "Plan|read", :is_show => true, :parent => plan)
+  [ ["查看采购计划项目", "PlanItem|show"],
+    ["录入采购计划", "Plan|item_list"],
+    ["新增采购计划", "Plan|create"], 
+    ["修改采购计划", "Plan|update"], 
+    ["提交采购计划", "Plan|commit"], 
+    ["删除采购计划", "Plan|update_destroy"] 
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => plan_list)
+  end
+  audit_plan = Menu.create(:name => "审核采购计划", :route_path => "/kobe/plans/list", :can_opt_action => "Plan|list", :is_show => true, :parent => plan)
+  [["采购计划初审", "Plan|first_audit"], ["采购计划终审", "Plan|last_audit"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_plan)
+  end
+# ----定点采购-----------------------------------------------------------------------------------------
+  ddcg = Menu.create(:name => "定点采购", :is_show => true, :parent => yw)
   ddcg_list = Menu.create(:name => "我的定点采购项目", :route_path => "/kobe/orders/ddcg_list", :can_opt_action => "Order|ddcg_list", :is_show => true, :parent => ddcg)
   [ ["查看定点采购", "Order|read"],
     ["增加定点采购", "Order|create"], 
@@ -86,7 +135,7 @@ if Menu.first.blank?
   [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_ddcg)
   end
-
+# ----单位及用户管理-----------------------------------------------------------------------------------
   dep = Menu.create(:name => "单位及用户管理", :icon => "fa-users", :is_auto => true, :is_show => true)
   dep_p = Menu.create(:name => "单位管理", :route_path => "/kobe/departments", :can_opt_action => "Department|read", :is_show => true, :is_auto => true, :parent => dep)
   [ ["增加下属单位", "Department|create", false], 
@@ -119,28 +168,8 @@ if Menu.first.blank?
   ].each do |u|
     Menu.create(:name => u[0], :can_opt_action => u[1], :is_auto => u[2], :parent => user)
   end
-
+# ----系统设置-----------------------------------------------------------------------------------------
   setting = Menu.find_or_create_by(:name => "系统设置", :icon => "fa-cogs", :is_show => true)
-
-  item = Menu.create(:name => "入围项目管理", :route_path => "/kobe/items", :can_opt_action => "Item|read", :is_show => true, :parent => setting)
-  [ ["增加项目", "Item|create"], 
-    ["修改项目", "Item|update"], 
-    ["提交项目", "Item|commit"], 
-    ["停止项目", "Item|pause"], 
-    ["恢复项目", "Item|recover"], 
-    ["删除项目", "Item|update_destroy"]
-  ].each do |m|
-    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => item)
-  end
-
-  plan_item = Menu.create(:name => "采购计划项目管理", :route_path => "/kobe/plan_items", :can_opt_action => "PlanItem|read", :is_show => true, :parent => setting)
-  [ ["增加采购计划项目", "PlanItem|create"], 
-    ["修改采购计划项目", "PlanItem|update"], 
-    ["提交采购计划项目", "PlanItem|commit"], 
-    ["删除采购计划项目", "PlanItem|update_destroy"]
-  ].each do |m|
-    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => plan_item)
-  end
 
   menu = Menu.create(:name => "菜单管理", :route_path => "/kobe/menus", :can_opt_action => "Menu|read", :is_show => true, :parent => setting)
   [ ["增加菜单", "Menu|create"], 
@@ -149,17 +178,6 @@ if Menu.first.blank?
     ["移动菜单", "Menu|move"]
   ].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => menu)
-  end
-
-  category = Menu.create(:name => "品目管理", :route_path => "/kobe/categories", :can_opt_action => "Category|read", :is_show => true, :parent => setting)
-  [ ["增加品目", "Category|create"], 
-    ["修改品目", "Category|update"], 
-    ["删除品目", "Category|update_destroy"],
-    ["冻结品目", "Category|freeze"],
-    ["恢复品目", "Category|recover"], 
-    ["移动品目", "Category|move"]
-  ].each do |m|
-    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => category)
   end
 
   contract_template = Menu.create(:name => "合同模板", :route_path => "/kobe/contract_templates", :can_opt_action => "ContractTemplate|read", :is_show => true, :parent => setting)
@@ -187,13 +205,12 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => rule)
   end
 
- 
-end
+ end
 
-
-  setting = Menu.find_or_create_by(:name => "系统设置", :icon => "fa-cogs", :is_show => true)
+# ----网上竞价-----------------------------------------------------------------------------------------
+  yw = Menu.find_or_create_by(:name => "业务管理", :icon => "fa-tasks", :is_auto => true, :is_show => true)
   ra_project = Menu.find_or_initialize_by(:name => "网上竞价", :is_show => true)
-  ra_project.parent = setting
+  ra_project.parent = yw
   ra_project.save
 
   [ ["我的项目", "BidProject|read", "/kobe/bid_projects", true], 

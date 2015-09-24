@@ -141,6 +141,15 @@ Evbdup::Application.routes.draw do
         post :commit
       end
     end
+    resources :plans do
+      collection do
+        get :item_list, :get_item_category, :list
+      end
+      member do
+        get :delete, :audit
+        post :commit, :update_audit
+      end
+    end
     resources :to_do_lists do
       member do 
         get :delete
