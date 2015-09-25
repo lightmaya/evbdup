@@ -46,7 +46,7 @@
             <td><%= bid_project.name %></td>
             <td><%= bid_project.dict_value("lod") %></td>
             <td><%= bid_project.end_time %></td>
-            <td><%= number_to_currency bid_project.budget %></td>
+            <td><%= money bid_project.budget %></td>
             <td></td>
             <td><%= bid_project.status_bar %></td>
             <td><%= show_date(bid_project.created_at) %></td>

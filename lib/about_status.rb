@@ -4,14 +4,33 @@ module AboutStatus
 	include AboutRuleStep
 
 	def self.included(base)
-		base.extend(StatusClassMethods)
+		base.extend ClassMethods
 		base.class_eval do 
 			scope :status_not_in, lambda { |status| where(["status not in (?) ", status]) }
 		end
 	end
 
   # 拓展类方法
-  module StatusClassMethods
+ 	module ClassMethods
+
+ 		# 列表中的状态筛选, 默认404不显示
+	  def status_filter(action='')
+	  	# 列表中不允许出现的
+	    limited = [404]
+	  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+	  end
+
+	  # status各状态的中文意思 状态值 标签颜色 进度 
+		def status_array
+			[
+		    ["暂存", 0, "orange", 50],
+	      ["等待审核", 1, "orange", 90],
+		    ["已发布", 2, "u", 100],
+	      ["审核拒绝",3,"red",0],
+		    ["已删除", 404, "red", 0]
+	    ]
+	  end
+
 	  # 获取状态的属性数组 i表示状态数组的维度，0按中文查找，1按数字查找
 	  def get_status_attributes(status, i = 0)
 	  	arr = self.status_array
@@ -43,6 +62,17 @@ module AboutStatus
 	  	return left ? "<i class='fa #{icon}'></i> #{action}" : "#{action} <i class='fa #{icon}'></i>"
 	  end
 	end
+
+	# 根据不同操作 改变状态
+  # "提交审核"与action中obj.change_status_and_write_logs一致
+  def change_status_hash
+    {
+      "提交审核" => { 0 => 1 },
+      "删除" => { 0 => 404 },
+      "通过" => { 1 => 2 },
+      "不通过" => { 1 => 3 }
+    }
+  end
 
 	# 状态标签
 	def status_badge(status=self.status)

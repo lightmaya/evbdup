@@ -14,20 +14,13 @@ class Order < ActiveRecord::Base
 	include AboutStatus
 
   before_create do
-    rule = Rule.find_by(yw_type: self.yw_type)
-    # 生成sn、contract_sn
-    maxid = Order.maximum('id').to_i + 1
-    if maxid.to_s.length > 4
-      uniq_id = maxid.to_s[-4..maxid.to_s.length]
-    else
-      uniq_id = "%04d" % maxid
-    end
-    timestamps = Time.new.strftime('%Y%m%d%H')
-    self.sn = "#{rule.code}-#{timestamps}#{uniq_id}"
-    self.contract_sn = "ZCL-#{timestamps}#{uniq_id}"
-
     # 设置rule_id
-    self.rule_id = rule.id
+    self.rule_id = Rule.find_by(yw_type: self.yw_type).try(:id)
+  end
+
+  after_create do 
+    create_no("ZCL", "contract_sn")
+    create_no(rule.code, "sn")
   end
 
 	# 附件的类

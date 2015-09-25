@@ -206,4 +206,9 @@ module ApplicationHelper
     end
   end
 
+   #  显示金额 允许带单位显示 pre 前缀 ￥
+  def money(number, pre="", precision=2)
+    return 0 if number.to_f == 0
+    return pre << number_to_currency(number, {:unit=>"", :delimiter=>",", :precision =>precision})
+  end
 end

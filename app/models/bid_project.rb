@@ -2,22 +2,27 @@
 class BidProject < ActiveRecord::Base
   has_many :uploads
   has_many :items, class_name: "BidItem"
+
+  before_save do 
+    # 单位名称+品目
+    # 中央储备粮龙嘉直属库台式机电脑采购项目
+    self.name = "#{self.buyer_dep_name}#{self.items.map(&:category).map(&:name).join("、")}竞价项目"
+  end
+
+  after_create do 
+    create_no
+  end
   
   include AboutStatus
-   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	# limited = [404]
-    limited = []
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  
+ 
   # 中文意思 状态值 标签颜色 进度 
 	def self.status_array
 		[
 	    ["暂存", 0, "orange", 50],
-      ["等待审核", 1, "orange", 90],
-	    ["已发布", 2, "u", 100],
-      ["审核拒绝",3,"red",0],
+      ["等待审核", 1, "orange", 60],
+	    ["已发布", 2, "u", 70],
+      ["审核拒绝",3,"red", 0],
 	    ["已删除", 404, "red", 0]
     ]
   end
@@ -61,7 +66,6 @@ class BidProject < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='采购类别' column='buy_type' class='required' data='#{Dictionary.buy_type}'  data_type='select'/>
         <node name='上级单位' column='top_dep_name' class='required' display= "readonly" />
         <node name='采购单位' column='buyer_dep_name' class='required' display= "readonly" />
         <node name='发票单位' column='invoice_title' />

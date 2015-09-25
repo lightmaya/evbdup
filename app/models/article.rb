@@ -13,39 +13,9 @@ class Article < ActiveRecord::Base
 
   ####### status及审核相关 ############
   # 有status字段的需要加载AboutStatus
-  include AboutStatus
-  # 列表中的状态筛选, current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的， 404表示已删除， 系统中默认都是软删除
-  	# limited = [404] 
-    limited = []
-    # a[1] : 0
-    # 返回 [["暂存", 0], ["等待审核", 2]]，形成页面筛选条件
-  	arr = self.status_array.delete_if{|a| limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  include AboutStatus  
 
-  # status各状态的中文意思 状态值 标签颜色 进度 
-	def self.status_array
-		[
-	    ["暂存", 0, "orange", 50],
-      ["等待审核", 1, "orange", 90],
-	    ["已发布", 2, "u", 100],
-      ["审核拒绝",3,"red",0],
-	    ["已删除", 404, "red", 0]
-    ]
-  end
-
-  # 根据不同操作 改变状态
-  # "提交审核"与action中obj.change_status_and_write_logs一致
-  def change_status_hash
-    {
-      "提交审核" => { 0 => 1 },
-      "删除" => { 0 => 404 },
-      "通过" => { 1 => 2 },
-      "不通过" => { 1 => 3 }
-    }
-  end
-  ####### status及审核相关 END ############
+  
 
   # 根据action_name 判断obj有没有操作
   # 用于前台的操作按钮，在BtnArrayHelper.rb中配置，与cancancan结合使用
@@ -70,6 +40,8 @@ class Article < ActiveRecord::Base
     end
     return msg
   end
+
+  ####### status及审核相关 END ############
 
   # 审核流程必须有rule
   belongs_to :rule

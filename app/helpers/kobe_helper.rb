@@ -1,12 +1,6 @@
 # -*- encoding : utf-8 -*-
 module KobeHelper
 
-  #  显示金额 允许带单位显示 pre 前缀 ￥
-  def money(number,pre="",precision=2)
-    return 0 if number.to_f == 0
-    return pre << number_to_currency(number,{:unit=>"",:delimiter=>",",:precision =>precision})
-  end
-
   # 日期筛选,用于list列表页面
   def date_filter(arr=[])
     if arr.blank?
@@ -22,7 +16,7 @@ module KobeHelper
   end
 
   # 状态筛选,用于list列表页面
-  def status_filter(model,action='')
+  def status_filter(model, action='')
     arr = model.status_filter(action).push(["全部状态","all"])
     return head_filter("status_filter",arr)
   end
