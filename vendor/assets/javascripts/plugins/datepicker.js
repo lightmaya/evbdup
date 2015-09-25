@@ -2,8 +2,8 @@ jQuery(function($){
 	$.datepicker.regional['zh-CN'] =  {
 		clearText: '清除', clearStatus: '清除已选日期',  
 		closeText: '关闭', closeStatus: '不改变当前选择',
-   	prevText: '<i class="fa fa-angle-left"></i>',
-   	nextText: '<i class="fa fa-angle-right"></i>',
+		prevText: '<i class="fa fa-angle-left"></i>',
+		nextText: '<i class="fa fa-angle-right"></i>',
 		prevStatus: '显示上月', nextStatus: '显示下月',  
 		currentText: '今天', currentStatus: '显示本月',  
 		monthNames: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],  
@@ -37,21 +37,26 @@ var Datepicker = function () {
 	  //Datepickers
 	  initDatepicker: function () {
 	    // Regular datepicker
-	    $('.date_select').datepicker();
+	    $("body").delegate(".date_select", "focusin", function(){ $(this).datepicker(); });
 	    
-	    $('.datetime_select').datetimepicker();
+	    $("body").delegate(".datetime_select", "focusin", function(){ $(this).datetimepicker(); });
 	    // Date range
-	    $('.start_date').datepicker({
-	    	onSelect: function( selectedDate )
-	    	{
-	    		$('.finish_date').datepicker('option', 'minDate', selectedDate);
-	    	}
+	    $("body").delegate(".start_date", "focusin", function(){ 
+	    	$(this).datepicker({
+	    		onSelect: function( selectedDate )
+	    		{
+	    			$('.finish_date').datepicker('option', 'minDate', selectedDate);
+	    		}
+	    	}); 
 	    });
-	    $('.finish_date').datepicker({
-	    	onSelect: function( selectedDate )
-	    	{
-	    		$('.start_date').datepicker('option', 'maxDate', selectedDate);
-	    	}
+
+	    $("body").delegate(".finish_date", "focusin", function(){ 
+	    	$(this).datepicker({
+	    		onSelect: function( selectedDate )
+	    		{
+	    			$('.start_date').datepicker('option', 'maxDate', selectedDate);
+	    		}
+	    	}); 
 	    });
 	  }
 	};

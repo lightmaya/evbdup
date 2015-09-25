@@ -166,7 +166,7 @@ class KobeController < ApplicationController
 
   # 是否有审核权限
   def can_audit?(obj,menu_ids=[])
-    return false unless obj.get_rule_dep.present? && obj.get_rule_dep.id == current_user.department.real_dep.id
+    return false unless obj.get_rule_dep.present? && obj.get_rule_dep.id == current_user.real_department.id
     if obj.task_queues.present?
       tq = obj.task_queues
       # user_id 不为空时 取当前用户的id

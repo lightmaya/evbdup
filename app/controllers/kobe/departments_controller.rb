@@ -163,7 +163,7 @@ class Kobe::DepartmentsController < KobeController
     arr = []
     arr << ["departments.status = ? ", 2]
     arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.department.real_dep.id]
+    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
     cdt = get_conditions("departments", arr)
     @q =  Department.joins(:task_queues).where(cdt).ransack(params[:q]) 
     @deps = @q.result(distinct: true).page params[:page]

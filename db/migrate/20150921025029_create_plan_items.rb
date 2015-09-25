@@ -42,7 +42,8 @@ class CreatePlanItems < ActiveRecord::Migration
     end
 
     create_table :plan_products do |t|
-      t.belongs_to :plan       , :comment => "订单ID", :null => false, :default => 0
+      t.belongs_to :plan        , :comment => "订单ID", :null => false, :default => 0
+      t.date :deliver_at        , :comment => "要求到货日期"
       t.integer :quantity       , :comment => "数量", :default => 0 ,:null => false
       t.string :unit            , :comment => "计量单位"
       t.decimal :price          , :comment => "预算单价（元）", :precision => 13, :scale => 2, :null => false, :default => 0

@@ -36,9 +36,13 @@ class Agent < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show", "index" then true
-    when "update", "edit" then [0].include?(self.status) && current_u.try(:id) == self.user_id
-    when "delete", "destroy" then self.can_opt?("删除") && current_u.try(:id) == self.user_id
+    when "show"
+      # 上级单位或者总公司人
+      current_u.department.is_ancestors?(self.department_id) || current_u.department.real_ancestry_level(1)
+    when "update", "edit" 
+      [0].include?(self.status) && current_u.try(:id) == self.user_id
+    when "delete", "destroy" 
+      self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false
     end
   end

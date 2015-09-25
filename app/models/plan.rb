@@ -19,16 +19,11 @@ class Plan < ActiveRecord::Base
     PlanUpload
   end
 
-  # 产品全称 品牌+型号+版本号
-  def name
-    "#{self.brand} #{self.model} #{self.version}"
-  end
-
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
     [
       ["未提交",0,"orange",10],
-      ["正常",1,"u",100],
+      ["审核通过",1,"u",100],
       ["等待审核",2,"blue",50],
       ["审核拒绝",3,"red",0],
       ["已删除",404,"light",0]
@@ -57,7 +52,7 @@ class Plan < ActiveRecord::Base
   def commit_params
     arr = []
     rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = #{rule_id}"
+    arr << "rule_id = '#{rule_id}'"
     arr << "rule_step = 'start'"
     return arr
   end
@@ -70,11 +65,16 @@ class Plan < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show", "index" then true
-    when "update", "edit" then [0,3].include?(self.status) && current_u.try(:id) == self.user_id
-    when "commit" then self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "update_audit", "audit" then self.can_opt?("通过") && self.can_opt?("不通过")
-    when "delete", "destroy" then self.can_opt?("删除") && current_u.try(:id) == self.user_id
+    when "show" 
+      current_u.department.is_ancestors?(self.department_id)
+    when "update", "edit" 
+      [0,3].include?(self.status) && current_u.try(:id) == self.user_id
+    when "commit" 
+      self.can_opt?("提交") && current_u.try(:id) == self.user_id
+    when "update_audit", "audit" 
+      self.can_opt?("通过") && self.can_opt?("不通过")
+    when "delete", "destroy" 
+      self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false
     end
   end
@@ -83,6 +83,7 @@ class Plan < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
+        <node name='计划名称' column='name' class='required'/>
         <node name='采购单位' column='dep_name' class='required' display='readonly'/>
         <node name='采购单位联系人' column='dep_man' class='required'/>
         <node name='采购单位联系人座机' column='dep_tel' class='required'/>

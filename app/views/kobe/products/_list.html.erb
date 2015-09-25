@@ -5,7 +5,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-8 pull-left padding-top-5">
-                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增产品的品目', '#{get_item_category_kobe_products_path(item_id: @item.id)}', '#opt_dialog') }) if action_name == 'item_list' %>
+                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增产品的品目', '#{get_item_category_kobe_shared_index_path(item_id: @item.id, url: "new_kobe_product_path", model_name: "Item")}', '#opt_dialog') }) if action_name == 'item_list' %>
             </div>
             <div class="col-md-4 pull-right">
                 <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
@@ -28,6 +28,9 @@
                     <% if action_name == "index" %>
                     <th class="hidden-sm">项目名称</th>
                     <% end %>
+                    <% if can?(:admin, Product) %>
+                    <th>单位名称</th>
+                    <% end %>
                     <th>产品名称</th>
                     <th>中标价</th>
                     <th class="status_bar"><%= status_filter(Product) %></th>
@@ -41,6 +44,9 @@
                     <td><%= show_index(index) %></td>
                     <% if action_name == "index" %>
                     <td><%= product.item.name %></td>
+                    <% end %>
+                    <% if can?(:admin, Product) %>
+                    <td><%= product.department.present? ?  product.department.real_dep.name : "" %></td>
                     <% end %>
                     <td><%= product.name %></td>
                     <td class="money"><%= money product.bid_price %></td>

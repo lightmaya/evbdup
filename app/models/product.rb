@@ -56,7 +56,7 @@ class Product < ActiveRecord::Base
   def commit_params
     arr = []
     rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = #{rule_id}"
+    arr << "rule_id = '#{rule_id}'"
     arr << "rule_step = 'start'"
     return arr
   end
@@ -69,13 +69,21 @@ class Product < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show", "index" then true
-    when "update", "edit" then [0,3].include?(self.status) && current_u.try(:id) == self.user_id
-    when "commit" then self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "update_audit", "audit" then self.can_opt?("通过") && self.can_opt?("不通过")
-    when "delete", "destroy" then self.can_opt?("删除") && current_u.try(:id) == self.user_id
-    when "recover", "update_recover" then self.can_opt?("恢复")
-    when "freeze", "update_freeze" then self.can_opt?("冻结")
+    when "show"
+      # 上级单位或者总公司人
+      current_u.department.is_ancestors?(self.department_id) || current_u.department.real_ancestry_level(1)
+    when "update", "edit" 
+      [0,3].include?(self.status) && current_u.try(:id) == self.user_id
+    when "commit" 
+      self.can_opt?("提交") && current_u.try(:id) == self.user_id
+    when "update_audit", "audit" 
+      self.can_opt?("通过") && self.can_opt?("不通过")
+    when "delete", "destroy" 
+      self.can_opt?("删除") && current_u.try(:id) == self.user_id
+    when "recover", "update_recover" 
+      self.can_opt?("恢复") && current_u.department.real_ancestry_level(1)
+    when "freeze", "update_freeze" 
+      self.can_opt?("冻结") && current_u.department.real_ancestry_level(1)
     else false
     end
   end

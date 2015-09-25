@@ -40,10 +40,14 @@ class PlanItem < ActiveRecord::Base
 
   def cando(act='',current_u=nil)
     case act
-    when "update", "edit" then [0].include?(self.status)
-    when "commit" then self.can_opt?("提交")
-    when "delete", "destroy" then self.can_opt?("删除")
-    when "add_plan" then self.status == 1 && self.end_time > Time.now
+    when "update", "edit" 
+      [0].include?(self.status)
+    when "commit" 
+      self.can_opt?("提交")
+    when "delete", "destroy" 
+      self.can_opt?("删除")
+    when "add_plan" 
+      self.status == 1 && self.end_time > Time.now
     else false
     end
   end

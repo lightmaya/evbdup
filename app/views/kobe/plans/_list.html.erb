@@ -5,7 +5,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-8 pull-left padding-top-5">
-                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增采购计划的品目', '#{get_item_category_kobe_plans_path(item_id: @item.id)}', '#opt_dialog') }) if action_name == 'item_list' %>
+                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增采购计划的品目', '#{get_item_category_kobe_shared_index_path(item_id: @item.id, url: "new_kobe_plan_path", model_name: "PlanItem")}', '#opt_dialog') }) if action_name == 'item_list' %>
             </div>
             <div class="col-md-4 pull-right">
                 <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
@@ -27,9 +27,10 @@
                     <th class="index">序号</th>
                     <% if action_name == "index" %>
                     <th class="hidden-sm">项目名称</th>
+                    <th>单位名称</th>
                     <% end %>
                     <th>计划编号</th>
-                    <th>名称</th>
+                    <th>计划名称</th>
                     <th class="status_bar"><%= status_filter(Plan) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
@@ -41,6 +42,7 @@
                     <td><%= show_index(index) %></td>
                     <% if action_name == "index" %>
                     <td><%= plan.plan_item.name %></td>
+                    <td><%= plan.department.present? ? plan.department.real_dep.name : "" %></td>
                     <% end %>
                     <td><%= plan.sn %></td>
                     <td><%= plan.name %></td>

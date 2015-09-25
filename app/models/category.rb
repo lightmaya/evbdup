@@ -39,9 +39,12 @@ class Category < ActiveRecord::Base
   # :index, :delete, :destroy, :freeze, :update_freeze, :recover, :update_recover
   def cando(act='')
     case act
-    when "delete", "destroy" then self.can_opt?("删除")
-    when "recover", "update_recover" then self.can_opt?("恢复")
-    when "freeze", "update_freeze" then self.can_opt?("冻结")
+    when "delete", "destroy" 
+      self.can_opt?("删除")
+    when "recover", "update_recover" 
+      self.can_opt?("恢复")
+    when "freeze", "update_freeze" 
+      self.can_opt?("冻结")
     else false
     end
   end
@@ -149,6 +152,11 @@ class Category < ActiveRecord::Base
     self.class.cache_lj_ids(true)
     self.class.cache_gz_ids(true)
     self.class.cache_bg_ids(true)
+  end
+
+  # 获取关键参数的node is_key="是"
+  def get_key_params_nodes
+    Nokogiri::XML(self.params_xml).xpath("/root/node[@is_key='是']").to_s
   end
 
 end
