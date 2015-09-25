@@ -63,18 +63,22 @@ $(function() {
   var add_html = "";
 
   function init_add_content(){
+    alert(2);
     add_max = $("#add_content").siblings(".details_part").length;
+    alert("add_max=" + add_max);
     add_html = $("#add_content").html();
+    alert("add_html:::" + add_html);
     $("#add_content").empty();
     return add_max;
   }
 
   $('body').on("click","#add_button",function(){
+    alert("add_html:" +add_html );
     if (add_html == ""){
       init_add_content();
     }
     add_max += 1;
-    $("#add_content").before(add_html.replaceAll("_orz_",add_max));
+    $("#add_content").before(add_html.replaceAll("_orz_", add_max));
   });
 
   // 折叠/展开明细
@@ -88,7 +92,25 @@ $(function() {
     $("div.details_part span i.fa-chevron-circle-right").each(ToggleDetails);
   });
 
+
+  // 删除明细
+  $(document).on("click", ".tag-box .close", function(){
+    var t = $(this);
+    art_confirm("你确定删除吗？", function(){t.parent().remove();});
+  });
 });
+
+function art_confirm(msg, SuccFn){
+  var d = dialog({
+    title: '请确认',
+    content: msg,
+    okValue: '确定',
+    ok: SuccFn, 
+    cancelValue: '取消',
+    cancel: function () { }
+  });
+  d.show();
+}
 
 // 折叠/展开明细
 function ToggleDetails(){

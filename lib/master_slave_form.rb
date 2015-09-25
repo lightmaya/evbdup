@@ -51,13 +51,13 @@ class MasterSlaveForm < MyForm
 
  	private
 
- 	def get_input_content(slave_obj,index)
+ 	def get_input_content(slave_obj, index)
   	%Q|
 			<div class="tag-box tag-box-v4 details_part">
 			  <button data-dismiss="alert" class="close" type="button">×</button>
-			  <span rel="box-shadow-outset" class="btn-u btn-u-sm rounded-2x btn-u-default margin-bottom-20"><i class="fa  fa-chevron-circle-down"></i> #{slave_options[:title]} ##{index}</span>
+			  <span rel="box-shadow-outset" class="btn-u btn-u-sm rounded-2x btn-u-default margin-bottom-20"><i class="fa fa-chevron-circle-down"></i> #{slave_options[:title]} ##{index}</span>
 			  <div class="input_part">
-			  #{self.get_input_str(slave_xml,slave_obj,slave_table_name,slave_options[:grid],index)}
+			  #{self.get_input_str(slave_xml, slave_obj, slave_table_name, slave_options[:grid],index)}
 			  </div>
 			</div>|
   end

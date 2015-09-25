@@ -54,6 +54,7 @@ class Kobe::BidProjectsController < KobeController
     @bid_project.buyer_phone = current_user.tel
     @bid_project.buyer_mobile = current_user.mobile
     @bid_project.buyer_email = current_user.email
+    @bid_project.buyer_add = current_user.department.address
 
     slave_objs = [@bid_project.items.build]
     @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project, slave_objs,

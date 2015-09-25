@@ -61,7 +61,7 @@ class KobeController < ApplicationController
   end
 
   # 获取列表的查询条件,arr应该是一个二维数组,类似于[["name = ? ", "xxx"],["user_id = ? ",11]]
-  def get_conditions(table_name,arr=[])
+  def get_conditions(table_name, arr=[])
     # 列表标题栏筛选的条件
     filter_arr = head_filter(table_name)
     arr = arr | filter_arr

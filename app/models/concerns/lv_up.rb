@@ -12,6 +12,15 @@ module LvUp
      "foo"
   end
 
+  # 通用生成编号 prefix + 8位日期 + 4位ID
+  def create_no(prefix = "WSJJ", column_name = "code")
+    # 当前id格式化为4位
+    uniq_id = ('%04d' % self.id)[0...4]
+    if send(column_name).blank?
+      update(column_name => "#{prefix}-#{Date.today.to_s(:number)}#{uniq_id}") 
+    end
+  end
+
   # Application.yml top_type: [[0, "不置顶"], [1, "普通置顶"], [2, "标红置顶"]]
   def dict_value(method_name, key = nil)
     key ||= method_name
@@ -95,7 +104,6 @@ module LvUp
     def bar
       "bar"
     end
-
 
     def log_p(msg, log_path = "log_p.log")
       @logger ||= Logger.new(Rails.root.join('log', "log_p.log"))
