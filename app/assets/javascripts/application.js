@@ -63,17 +63,17 @@ $(function() {
   var add_html = "";
 
   function init_add_content(){
-    alert(2);
+    // alert(2);
     add_max = $("#add_content").siblings(".details_part").length;
-    alert("add_max=" + add_max);
+    // alert("add_max=" + add_max);
     add_html = $("#add_content").html();
-    alert("add_html:::" + add_html);
+    // alert("add_html:::" + add_html);
     $("#add_content").empty();
     return add_max;
   }
 
   $('body').on("click","#add_button",function(){
-    alert("add_html:" +add_html );
+    // alert("add_html:" +add_html );
     if (add_html == ""){
       init_add_content();
     }
@@ -94,7 +94,7 @@ $(function() {
 
 
   // 删除明细
-  $(document).on("click", ".tag-box .close", function(){
+  $(document).on("click", "form .tag-box .close", function(){
     var t = $(this);
     art_confirm("你确定删除吗？", function(){t.parent().remove();});
   });

@@ -40,7 +40,7 @@ class Kobe::UsersController < KobeController
         @user.cache_menus(true)
         @user.cache_option_hash(true)
       end
-      @user.category_ids = @user.categoryids.split(",") if @user.categoryids.present?
+      @user.category_ids = @user.categoryids.split(",") if @user.previous_changes["categoryids"].present?
       redirect_to kobe_departments_path(id: @user.department.id)
     else
       redirect_back_or

@@ -14,6 +14,16 @@ class Plan < ActiveRecord::Base
 
 	include AboutStatus
 
+  before_create do
+    # 设置rule_id
+    self.rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
+    self.rule_step = 'start'
+  end
+
+  after_create do 
+    create_no(rule.code, "sn")
+  end
+
 	# 附件的类
   def self.upload_model
     PlanUpload
@@ -46,15 +56,6 @@ class Plan < ActiveRecord::Base
   	# 列表中不允许出现的
   	limited = [404]
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
-
-  # 提交时的参数
-  def commit_params
-    arr = []
-    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = '#{rule_id}'"
-    arr << "rule_step = 'start'"
-    return arr
   end
 
   # 根据品目判断审核人 插入待办事项用
