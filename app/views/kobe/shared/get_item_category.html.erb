@@ -1,0 +1,3 @@
+<div class="tag-box tag-box-v3">
+	<%= @categories.map{ |ca| link_to("<i class='fa fa-gift '></i> #{ca.name}".html_safe, eval("#{@url}(category_id: ca.id, item_id: @item.id)"), class: 'margin-10 btn-u pulse-grow', rel:'pulse-grow') }.join(" ").html_safe %>
+</div>

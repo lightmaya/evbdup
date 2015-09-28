@@ -3,13 +3,11 @@ class Kobe::ProductsController < KobeController
 
   before_action :get_item, :only => [:item_list, :new, :create]
   before_action :get_category, :only => [:new, :create]
-  before_action :get_product, :except => [:index, :item_list, :get_item_category, :new, :create, :list]
+  before_action :get_product, :except => [:index, :item_list, :new, :create, :list]
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
   before_action :get_audit_product, :only => [:audit, :update_audit]
   skip_before_action :verify_authenticity_token, :only => [:commit]
-  layout :false, :only => [:get_item_category]
-  skip_authorize_resource :only => [:get_item_category]
 
   # 我的入围产品
   def index
@@ -24,11 +22,6 @@ class Kobe::ProductsController < KobeController
     params[:q][:item_id_eq] = @item.id
     @q = Product.where(get_conditions("products")).ransack(params[:q]) 
     @products = @q.result.page params[:page]
-  end
-
-  # 新增产品前选择要新增产品的品目
-  def get_item_category
-    @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
   end
 
   def new
@@ -99,7 +92,7 @@ class Kobe::ProductsController < KobeController
     arr = []
     arr << ["products.status = ? ", 2]
     arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.department.real_dep.id]
+    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
     @q =  Product.joins(:task_queues).where(get_conditions("products", arr)).ransack(params[:q])
     @products = @q.result(distinct: true).page params[:page]
   end

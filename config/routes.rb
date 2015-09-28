@@ -45,6 +45,7 @@ Evbdup::Application.routes.draw do
     resources :shared, :only => :index do
       collection do
         post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json
+        get :get_item_category
       end
     end
 
@@ -135,6 +136,24 @@ Evbdup::Application.routes.draw do
         post :commit, :update_pause, :update_recover
       end
     end
+    resources :plan_items do
+      collection do
+        get :list
+      end
+      member do 
+        get :delete
+        post :commit
+      end
+    end
+    resources :plans do
+      collection do
+        get :item_list, :list
+      end
+      member do
+        get :delete, :audit
+        post :commit, :update_audit
+      end
+    end
     resources :to_do_lists do
       member do 
         get :delete
@@ -163,7 +182,7 @@ Evbdup::Application.routes.draw do
     end
     resources :products do
       collection do
-        get :item_list, :get_item_category, :list
+        get :item_list, :list
       end
       member do
         get :freeze, :delete, :recover, :audit

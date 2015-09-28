@@ -1,34 +1,41 @@
 # -*- encoding : utf-8 -*-
-class Product < ActiveRecord::Base
-	has_many :uploads, class_name: :ProductsUpload, foreign_key: :master_id
+class Plan < ActiveRecord::Base
+	has_many :uploads, class_name: :PlanUpload, foreign_key: :master_id
+  has_many :products, class_name: :PlanProduct
 	default_scope -> {order("id desc")}
 	belongs_to :category
-  belongs_to :item
+  belongs_to :plan_item
   belongs_to :department
 
   belongs_to :rule
-  has_many :task_queues, -> { where(class_name: "Product") }, foreign_key: :obj_id
+  has_many :task_queues, -> { where(class_name: "Plan") }, foreign_key: :obj_id
+
+  scope :find_all_by_dep_code, ->(dep_real_ancestry) { where("dep_code like '#{dep_real_ancestry}/%' or dep_code = '#{dep_real_ancestry}'") }
 
 	include AboutStatus
 
-	# 附件的类
-  def self.upload_model
-    ProductsUpload
+  before_create do
+    # 设置rule_id
+    self.rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
+    self.rule_step = 'start'
   end
 
-  # 产品全称 品牌+型号+版本号
-  def name
-    "#{self.brand} #{self.model} #{self.version}"
+  after_create do 
+    create_no(rule.code, "sn")
+  end
+
+	# 附件的类
+  def self.upload_model
+    PlanUpload
   end
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
     [
       ["未提交",0,"orange",10],
-      ["正常",1,"u",100],
+      ["审核通过",1,"u",100],
       ["等待审核",2,"blue",50],
       ["审核拒绝",3,"red",0],
-      ["冻结",4,"yellow",20],
       ["已删除",404,"light",0]
     ]
   end
@@ -40,7 +47,6 @@ class Product < ActiveRecord::Base
       "通过" => { 2 => 1 },
       "不通过" => { 2 => 3 },
       "删除" => { 0 => 404 },
-      "冻结" => { 1 => 4 },
       "恢复" => { 4 => 1 }
     }
   end
@@ -52,15 +58,6 @@ class Product < ActiveRecord::Base
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
 
-  # 提交时的参数
-  def commit_params
-    arr = []
-    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = '#{rule_id}'"
-    arr << "rule_step = 'start'"
-    return arr
-  end
-
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
     self.category.user_ids.flatten.uniq
@@ -69,9 +66,8 @@ class Product < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show"
-      # 上级单位或者总公司人
-      current_u.department.is_ancestors?(self.department_id) || current_u.department.real_ancestry_level(1)
+    when "show" 
+      current_u.department.is_ancestors?(self.department_id)
     when "update", "edit" 
       [0,3].include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" 
@@ -80,12 +76,23 @@ class Product < ActiveRecord::Base
       self.can_opt?("通过") && self.can_opt?("不通过")
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
-    when "recover", "update_recover" 
-      self.can_opt?("恢复") && current_u.department.real_ancestry_level(1)
-    when "freeze", "update_freeze" 
-      self.can_opt?("冻结") && current_u.department.real_ancestry_level(1)
     else false
     end
+  end
+
+  def self.xml(who='',options={})
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='计划名称' column='name' class='required'/>
+        <node name='采购单位' column='dep_name' class='required' display='readonly'/>
+        <node name='采购单位联系人' column='dep_man' class='required'/>
+        <node name='采购单位联系人座机' column='dep_tel' class='required'/>
+        <node name='采购单位联系人手机' column='dep_mobile' class='required'/>
+        <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
+        <node column='total' data_type='hidden'/>
+      </root>
+    }
   end
 
 end

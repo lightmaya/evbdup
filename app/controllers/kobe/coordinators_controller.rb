@@ -2,6 +2,7 @@
 class Kobe::CoordinatorsController < KobeController
 
   before_action :get_item, :only => [:list, :new, :create]
+  before_action :get_coordinator, :except => [:index, :list, :new, :create]
 
   def index
     params[:q][:user_id_eq] = current_user.id if cannot?(:admin, Coordinator)
@@ -56,6 +57,10 @@ class Kobe::CoordinatorsController < KobeController
     def get_item
       @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
       cannot_do_tips unless @item.present? && @item.cando("add_coordinator", current_user)
+    end
+
+    def get_coordinator
+      cannot_do_tips unless @coordinator.present? && @coordinator.cando(action_name,current_user)
     end
 
 end

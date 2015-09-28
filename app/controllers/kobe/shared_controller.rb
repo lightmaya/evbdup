@@ -95,6 +95,17 @@ class Kobe::SharedController < KobeController
      
   end
 
+  # 根据项目选择要新增的品目
+  def get_item_category
+    if params[:model_name].blank? || params[:item_id].blank? || params[:url].blank?
+      @categories = []
+    else
+      @item = eval(params[:model_name]).find_by(id: params[:item_id])
+      @categories = @item.class.attribute_method?("categories") ? @item.categories : []
+      @url = params[:url]
+    end
+  end
+
   private
 
 end

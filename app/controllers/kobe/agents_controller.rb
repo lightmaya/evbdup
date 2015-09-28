@@ -2,6 +2,7 @@
 class Kobe::AgentsController < KobeController
 
   before_action :get_item, :only => [:list, :new, :create]
+  before_action :get_agent, :except => [:index, :list, :new, :create, :search_dep_name]
 
   skip_authorize_resource :only => [:search_dep_name]
 
@@ -64,6 +65,10 @@ class Kobe::AgentsController < KobeController
     def get_item
       @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
       cannot_do_tips unless @item.present? && @item.cando("add_agent", current_user)
+    end
+
+    def get_agent
+      cannot_do_tips unless @agent.present? && @agent.cando(action_name,current_user)
     end
 
 end

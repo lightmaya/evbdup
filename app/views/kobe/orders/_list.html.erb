@@ -39,25 +39,25 @@
                 </tr>
             </thead>
             <tbody>
-                <% @objs.each_with_index do |obj,index| %>
+                <% @orders.each_with_index do |order,index| %>
                 <tr>
                     <td>
                         <label class="">
-                            <input type="checkbox" name="check[]" value="<%= obj.id %>" onclick="setSelectAll();"><i></i>
+                            <input type="checkbox" name="check[]" value="<%= order.id %>" onclick="setSelectAll();"><i></i>
                         </label>
                     </td>
                     <td><%= show_index(index) %></td>
-                    <td><%= obj.sn %></td>
-                    <td><%= obj.name %></td>
-                    <td class="money"><%= money obj.total %></td>
-                    <td><%= show_last_user(obj) %></td>
-                    <td><%= obj.status_bar %></td>
-                    <td><%= show_date(obj.created_at) %></td>
-                    <td><%= btn_group(orders_btn(obj, action_name.include?('audit'))) %></td>
+                    <td><%= order.sn %></td>
+                    <td><%= order.name %></td>
+                    <td class="money"><%= money order.total %></td>
+                    <td><%= show_last_user(order) %></td>
+                    <td><%= order.status_bar %></td>
+                    <td><%= show_date(order.created_at) %></td>
+                    <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
                 </tr>
                 <% end %>
             </tbody>
         </table>
-        <%= paginate @objs %> 
+        <%= paginate @orders %> 
     </div>                     
 </div>

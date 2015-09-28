@@ -103,17 +103,30 @@ class Department < ActiveRecord::Base
     Department.find_by(id: 3)
   end
 
+  # 本单位是不是某单位ID的上级单位
+  def is_ancestors?(dep_id)
+    dep_id.present? ? self.subtree_ids.include?(dep_id) : false
+  end
+
   # 根据action_name 判断obj有没有操作
   def cando(act='')
     case act
-    when "show", "index" then true
-    when "update", "edit", "upload", "update_upload", "show_bank", "edit_bank", "update_bank" then [0,1,3].include?(self.status)
-    when "commit" then [0,3].include?(self.status) && self.get_tips.blank? && self.can_opt?("提交")
-    when "add_user", "update_add_user", "new", "create" then self.status == 1
-    when "update_audit", "audit" then self.can_opt?("通过") && self.can_opt?("不通过")
-    when "delete", "destroy" then self.can_opt?("删除")
-    when "recover", "update_recover" then self.can_opt?("恢复")
-    when "freeze", "update_freeze" then self.can_opt?("冻结")
+    when "show", "index" 
+      true
+    when "update", "edit", "upload", "update_upload", "show_bank", "edit_bank", "update_bank" 
+      [0,1,3].include?(self.status)
+    when "commit" 
+      [0,3].include?(self.status) && self.get_tips.blank? && self.can_opt?("提交")
+    when "add_user", "update_add_user", "new", "create" 
+      self.status == 1
+    when "update_audit", "audit" 
+      self.can_opt?("通过") && self.can_opt?("不通过")
+    when "delete", "destroy" 
+      self.can_opt?("删除")
+    when "recover", "update_recover" 
+      self.can_opt?("恢复")
+    when "freeze", "update_freeze" 
+      self.can_opt?("冻结")
     else false
     end
   end
@@ -145,7 +158,7 @@ class Department < ActiveRecord::Base
   def commit_params
     arr = []
     rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = #{rule_id}"
+    arr << "rule_id = '#{rule_id}'"
     arr << "rule_step = 'start'"
     return arr
   end
@@ -153,9 +166,12 @@ class Department < ActiveRecord::Base
   # 根据单位的祖先节点判断单位是采购单位还是供应商
   def get_xml
     case self.try(:root_id)
-    when Department.purchaser.try(:id) then Department.purchaser_xml
-    when Department.supplier.try(:id) then Department.supplier_xml
-    else Department.other_xml
+    when Department.purchaser.try(:id) 
+      Department.purchaser_xml
+    when Department.supplier.try(:id) 
+      Department.supplier_xml
+    else 
+      Department.other_xml
     end
   end
 

@@ -152,7 +152,7 @@ module BtnArrayHelper
   def products_btn(obj,only_audit=false)
     arr = [] 
     # 查看详细
-    arr << [obj.class.icon_action("详细"), kobe_product_path(obj), target: "_blank"]  if can?(:show, obj)
+    arr << [obj.class.icon_action("详细"), kobe_product_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_product_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 提交
@@ -174,7 +174,7 @@ module BtnArrayHelper
   def agents_btn(obj)
     arr = [] 
     # 查看详细
-    arr << [obj.class.icon_action("详细"), kobe_agent_path(obj), target: "_blank"]  if can?(:show, obj)
+    arr << [obj.class.icon_action("详细"), kobe_agent_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_agent_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 删除
@@ -186,7 +186,7 @@ module BtnArrayHelper
   def coordinators_btn(obj)
     arr = [] 
     # 查看详细
-    arr << [obj.class.icon_action("详细"), kobe_coordinator_path(obj), target: "_blank"]  if can?(:show, obj)
+    arr << [obj.class.icon_action("详细"), kobe_coordinator_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_coordinator_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 删除
@@ -248,6 +248,40 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_bid_project_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj)
      # 审核
     audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_bid_project_path(obj)}"] if can?(:audit, obj) && obj.cando("audit")
+    if audit_opt.present?
+      return [audit_opt] if only_audit
+    end
+    return arr
+  end
+
+  # 采购计划
+  def plan_items_btn(obj)
+    arr = [] 
+    # 查看
+    arr << [obj.class.icon_action("详细"), kobe_plan_item_path(obj), target: "_blank"]  if can?(:show, obj)
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_plan_item_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 提交
+    arr << [obj.class.icon_action("提交"), commit_kobe_plan_item_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_plan_item_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    # 录入采购计划
+    arr << [obj.class.icon_action("录入采购计划"), item_list_kobe_plans_path(item_id: obj.id)] if can?(:item_list, Plan) && obj.cando("add_plan", current_user)
+    return arr
+  end
+
+  def plans_btn(obj,only_audit=false)
+    arr = [] 
+    # 查看详细
+    arr << [obj.class.icon_action("详细"), kobe_plan_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_plan_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 提交
+    arr << [obj.class.icon_action("提交"), commit_kobe_plan_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_plan_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    # 审核
+    audit_opt = [obj.class.icon_action("审核"), audit_kobe_plan_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
     if audit_opt.present?
       return [audit_opt] if only_audit
     end

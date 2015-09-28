@@ -56,14 +56,22 @@ class Item < ActiveRecord::Base
 
   def cando(act='',current_u=nil)
     case act
-    when "update", "edit" then [0].include?(self.status)
-    when "commit" then self.can_opt?("提交")
-    when "delete", "destroy" then self.can_opt?("删除")
-    when "recover", "update_recover" then self.can_opt?("恢复")
-    when "pause", "update_pause" then self.can_opt?("停止")
-    when "add_product" then self.finalist?(current_u.department.id) && self.status == 1
-    when "add_agent" then self.finalist?(current_u.department.id) && self.status == 1 && self.item_type
-    when "add_coordinator" then self.finalist?(current_u.department.id) && self.status == 1 && self.item_type      
+    when "update", "edit" 
+      [0].include?(self.status)
+    when "commit" 
+      self.can_opt?("提交")
+    when "delete", "destroy" 
+      self.can_opt?("删除")
+    when "recover", "update_recover" 
+      self.can_opt?("恢复")
+    when "pause", "update_pause" 
+      self.can_opt?("停止")
+    when "add_product" 
+      self.finalist?(current_u.department.id) && self.status == 1
+    when "add_agent" 
+      self.finalist?(current_u.department.id) && self.status == 1 && self.item_type
+    when "add_coordinator" 
+      self.finalist?(current_u.department.id) && self.status == 1 && self.item_type      
     else false
     end
   end
@@ -92,8 +100,8 @@ class Item < ActiveRecord::Base
         <node name='项目类型' column='item_type' data_type='radio' data='#{Dictionary.item_type}'/>
         <node name='品目分配' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden'/>
-        <node name='有效期开始时间' column='begin_time' class='date_select required dateISO'/>
-        <node name='有效期截止时间' column='end_time' class='date_select required dateISO'/>
+        <node name='有效期开始时间' column='begin_time' class='start_date required dateISO'/>
+        <node name='有效期截止时间' column='end_time' class='finish_date required dateISO'/>
         <node name='入围供应商' column='dep_names' data_type='textarea' class='required' hint='请用回车作为分隔符'/>
       </root>
     }

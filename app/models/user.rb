@@ -164,7 +164,7 @@ class User < ActiveRecord::Base
 
   # 待办事项的条件
   def to_do_condition
-    ["(user_id = ? or (user_id is null and menu_id in (?))) and dep_id = ?", self.id, self.menu_ids, self.department.real_dep.id]
+    ["(user_id = ? or (user_id is null and menu_id in (?))) and dep_id = ?", self.id, self.menu_ids, self.real_department.id]
   end
 
   # 待办事项 每一个待办事项有多少个 用于列表显示
@@ -186,12 +186,21 @@ class User < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='')
     case act
-    when "show", "index", "only_show_info", "only_show_logs" then true
-    when "edit", "update", "reset_password", "update_reset_password" then [0,1,3].include?(self.department.status) && self.status == 0
-    when "recover", "update_recover" then [0,1,3].include?(self.department.status) && self.can_opt?("恢复")
-    when "freeze", "update_freeze" then [0,1,3].include?(self.department.status) && self.can_opt?("冻结")
+    when "show", "index", "only_show_info", "only_show_logs" 
+      true
+    when "edit", "update", "reset_password", "update_reset_password" 
+      [0,1,3].include?(self.department.status) && self.status == 0
+    when "recover", "update_recover" 
+      [0,1,3].include?(self.department.status) && self.can_opt?("恢复")
+    when "freeze", "update_freeze" 
+      [0,1,3].include?(self.department.status) && self.can_opt?("冻结")
     else false
     end
+  end
+
+  # 用户的真实单位
+  def real_department
+    self.department.real_dep
   end
 
   private

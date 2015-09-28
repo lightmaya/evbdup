@@ -96,8 +96,8 @@ module AboutRuleStep
 				rs["junior"].each do |m|
 					# 没有指定user_id时，判断当前审核用户有没有关联品目（判断有没有audit_user_ids和current_step_users交集）
 					current_step_users = dep.real_users.map(&:id)
-					if self.class.attribute_method?("audit_user_ids") && ( current_step_users & self.audit_user_ids).present?
-						self.audit_user_ids.each do |u_id|
+					if self.class.attribute_method?("audit_user_ids") && (current_step_users & self.audit_user_ids).present?
+						(current_step_users & self.audit_user_ids).each do |u_id|
 							tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m, user_id: u_id, to_do_list_id: to_do_id, dep_id: dep.id)
 						end
 					else
