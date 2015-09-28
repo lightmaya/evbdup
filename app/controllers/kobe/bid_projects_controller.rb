@@ -10,6 +10,17 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def show
+    obj_contents = info_html(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
+    @arr  = []
+    @bid_project.items.each_with_index do |item, index|
+      obj_contents << info_html(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
+    end
+    @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
+    @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project) }
+  end
+
+  def bid
+    
   end
 
   def audit

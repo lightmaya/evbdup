@@ -64,10 +64,13 @@ Evbdup::Application.routes.draw do
       end
       member do 
         get :audit
+        get :bid
         get :delete
         post :commit, :update_audit
       end
     end
+
+    resources :bid_project_bids
 
     resources :orders do
       collection do

@@ -74,39 +74,48 @@ module BaseFunction
   	end
   end
 
-  # 显示obj记录的信息
-  def show_obj_info(obj,xml,options={})
-    grid = options.has_key?(:grid) ? options[:grid] : 2
-    str = ""
-    tbody = ""
-    if options.has_key?(:title) && !options[:title].blank?
-      str << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
-    # else
-      # str << "<br />"
+
+  # 显示obj记录的信息 show页面
+  def show_obj_info(obj, xml, options = {})
+    # td列数
+    grid = options[:grid] || 2
+    
+    # 标题
+    if options[:title].present?
+      html << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
     end 
+
+    html = ""
+    tbody = ""
+    
+    # 根据xml生成table
     doc = Nokogiri::XML(xml)
+    
     # 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'的
     tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')]")
-    tds.each_slice(grid).with_index do |node,i|
+    tds.each_slice(grid).with_index do |node, i|
       tbody << "<tr>"
-      node.each_with_index{|n,ii|
-        tbody << "<td>#{n.attributes["name"]}</td><td>#{get_node_value(obj,n)}</td>"
+      node.each_with_index{|n, ii|
+        tbody << "<td>#{n.attributes["name"]}：</td><td>#{get_node_value(obj,n)}</td>"
         tbody << "<td></td><td></td>" * (grid-ii-1) if (n == node.last) && (ii != grid -1)
       }
       tbody << "</tr>"
     end
     # 再生成文本框和富文本框--针对大文本或者富文本
-    doc.xpath("/root/node[contains(@data_type,'text')]").each_slice(1) do |node|
+    doc.xpath("/root/node[contains(@data_type, 'text')]").each_slice(1) do |node|
       node.each{|n|
         tbody << "<tr>"
-          tbody << "<td>#{n.attributes["name"]}</td><td colspan='#{grid*2-1}'>#{get_node_value(obj,n)}</td>"
+          tbody << "<td>#{n.attributes["name"]}：</td><td colspan='#{grid*2-1}'>#{get_node_value(obj, n)}</td>"
         tbody << "</tr>"
       }
     end
 
-    str << "<div class='show_obj'><table class='table table-striped table-bordered'><tbody>#{tbody}</tbody></table></div>"
-    return str.html_safe
+    html << "<div class='show_obj'><table class='table table-striped table-bordered'><tbody>#{tbody}</tbody></table></div>"
+    return html.html_safe
   end
+
+  alias_method :info_html, :show_obj_info
+
 
   # 显示评价记录 -- 订单或产品 
   def show_estimates(obj)

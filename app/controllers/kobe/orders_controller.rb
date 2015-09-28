@@ -134,7 +134,7 @@ class Kobe::OrdersController < KobeController
 
     # show页面的数组
     def get_show_arr
-      obj_contents = show_obj_info(@obj,Order.xml,{title: "基本信息"})
+      obj_contents = show_obj_info(@obj, Order.xml, {title: "基本信息"})
       @obj.items.each_with_index do |item, index|
         obj_contents << show_obj_info(item,OrdersItem.xml,{title: "产品明细 ##{index+1}"})
       end

@@ -14,6 +14,7 @@ class Ability
       user.cache_option_hash.each do |k,v|
         can v.map{ |e| e.to_sym }, k.constantize
       end
+      can :manage, :all
       # if user.admin?
       #   can :manage, :all
       # else

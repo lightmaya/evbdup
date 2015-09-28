@@ -16,6 +16,8 @@ end
 # class: 样式及效验. [required]必须填写
 # data='#{Dictionary.top_type}':application.yml中定义的参数 data_type='select'： 下拉选择
 # data_type='richtext' style='width:100%;height:300px;': 富文本框um和宽度高度
+# data_type: 'hidden', 'richtext', 'textarea', 'select', 'radio'
+# display: 'skip'
 # class='tree_checkbox'： 多选树形结构 json_url='/kobe/shared/ztree_json' ，json_params='{"json_class":"ArticleCatalog"}'：具体树的方法和类 partner='catalog_ids'：存入的input的id
 ```
 
