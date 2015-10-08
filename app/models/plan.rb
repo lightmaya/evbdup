@@ -84,11 +84,13 @@ class Plan < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='计划名称' column='name' class='required'/>
+        <node name='计划名称' column='name' class='required' hint='例如：****直属库2015年输送机采购计划'/>
         <node name='采购单位' column='dep_name' class='required' display='readonly'/>
-        <node name='采购单位联系人' column='dep_man' class='required'/>
-        <node name='采购单位联系人座机' column='dep_tel' class='required'/>
-        <node name='采购单位联系人手机' column='dep_mobile' class='required'/>
+        <node name='联系人' column='dep_man' class='required'/>
+        <node name='联系人座机' column='dep_tel' class='required'/>
+        <node name='联系人手机' column='dep_mobile' class='required'/>
+        <node name='所在地区' class='tree_radio required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Area"}' partner='area_id'/>
+        <node column='area_id' data_type='hidden'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>
       </root>
