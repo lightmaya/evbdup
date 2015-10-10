@@ -70,7 +70,9 @@ module MyFormHelper
         //影响小计的输入框有变动
         $("input[name^='"+slave_table_names+"[price]']").live('change blur',function(){input_blur($(this),master_table_names,slave_table_names)});
         $("input[name^='"+slave_table_names+"[quantity]']").live('change blur',function(){input_blur($(this),master_table_names,slave_table_names)});
+        $("input[name^='"+slave_table_names+"[total]']").live('change blur',function(){calc_total(master_table_names,slave_table_names);});
         calc_total(master_table_names,slave_table_names);
+
       });
       </script>
     |

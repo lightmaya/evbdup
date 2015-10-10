@@ -151,6 +151,15 @@ Evbdup::Application.routes.draw do
         post :commit, :update_audit
       end
     end
+    resources :daily_costs do
+      collection do
+        get :list
+      end
+      member do
+        get :delete, :audit
+        post :commit, :update_audit
+      end
+    end
     resources :to_do_lists do
       member do 
         get :delete
@@ -175,6 +184,15 @@ Evbdup::Application.routes.draw do
       member do 
         get :freeze, :delete, :recover
         post :update_freeze, :update_recover
+      end
+    end
+    resources :daily_categories do
+      collection do
+        get :ztree
+        post :move, :valid_name
+      end
+      member do 
+        get :delete
       end
     end
     resources :products do

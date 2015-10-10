@@ -3,10 +3,9 @@ class Kobe::ProductsController < KobeController
 
   before_action :get_item, :only => [:item_list, :new, :create]
   before_action :get_category, :only => [:new, :create]
-  before_action :get_product, :except => [:index, :item_list, :new, :create, :list]
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_action :get_audit_product, :only => [:audit, :update_audit]
+  before_action :get_product, :except => [:index, :item_list, :new, :create, :list]
   skip_before_action :verify_authenticity_token, :only => [:commit]
 
   # 我的入围产品
@@ -112,11 +111,6 @@ class Kobe::ProductsController < KobeController
       @menu_ids = Menu.get_menu_ids("Product|list")
     end
 
-    def get_audit_product
-      @product = Product.find_by(id: params[:id]) if params[:id].present?
-      audit_tips unless @product.present? && @product.cando(action_name,current_user) && can_audit?(@product,@menu_ids)
-    end
-
     def get_item
       @item = Item.find_by(id: params[:item_id]) if params[:item_id].present?
       cannot_do_tips unless @item.present? && @item.cando("add_product", current_user)
@@ -129,6 +123,7 @@ class Kobe::ProductsController < KobeController
 
     def get_product
       cannot_do_tips unless @product.present? && @product.cando(action_name,current_user)
+      audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@product,@menu_ids)
     end
 
     def get_show_arr

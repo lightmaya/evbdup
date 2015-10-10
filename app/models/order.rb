@@ -46,14 +46,13 @@ class Order < ActiveRecord::Base
 
   # 根据不同操作 改变状态
   def change_status_hash
-    ha = {
-      "提交" => { 2 => 1 },
+    status_ha = self.find_step_by_rule.blank? ? 5 : 1 
+    return {
+      "提交" => { 2 => status_ha, 0 => status_ha },
       "通过" => { 1 => 6 },
       "不通过" => { 1 => 2 },
       "删除" => { 0 => 404 }
     }
-    ha["提交"][0] = self.find_step_by_rule.blank? ? 5 : 1 
-    return ha
   end
 
   # 提交时需更新的参数 主要用于更新rule_step
