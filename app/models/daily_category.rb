@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class DailyCategory < ActiveRecord::Base
   validates_with MyValidator
 

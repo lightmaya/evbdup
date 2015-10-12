@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class DailyCostItem < ActiveRecord::Base
 	belongs_to :daily_cost
 	belongs_to :daily_categroy

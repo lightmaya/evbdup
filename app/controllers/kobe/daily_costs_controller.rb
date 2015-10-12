@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Kobe::DailyCostsController < KobeController
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]

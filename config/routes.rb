@@ -15,6 +15,8 @@ Evbdup::Application.routes.draw do
   get 'main' => 'kobe/main#index'
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
+  # 产品列表
+  get 'channel/(:combo)' => "home#channel", :as => :channel
 
   post 'umeditor/file', :to => 'umeditor#file'
   post 'umeditor/image', :to => 'umeditor#image'

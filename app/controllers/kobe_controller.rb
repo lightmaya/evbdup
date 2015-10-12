@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
+# 后台布局
 class KobeController < ApplicationController
   before_action :request_signed_in!
   before_action :init_themes
   # cancancan验证 如果有before_action cancancan放最后
-  load_and_authorize_resource
+  load_and_authorize_resource # 方便开发暂时注释
   skip_before_action :verify_authenticity_token, only: ["commit", "read"]
 
   def index

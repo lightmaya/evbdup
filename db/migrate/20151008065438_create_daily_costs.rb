@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateDailyCosts < ActiveRecord::Migration
 	def change
 		create_table :daily_costs do |t|

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class DailyCost < ActiveRecord::Base
 	default_scope -> {order("id desc")}
   belongs_to :department

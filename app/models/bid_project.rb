@@ -2,6 +2,7 @@
 class BidProject < ActiveRecord::Base
   has_many :uploads
   has_many :items, class_name: "BidItem"
+  has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
 
   before_save do 
     # 单位名称+品目
@@ -68,13 +69,13 @@ class BidProject < ActiveRecord::Base
       <root>
         <node name='上级单位' column='top_dep_name' class='required' display= "readonly" />
         <node name='采购单位' column='buyer_dep_name' class='required' display= "readonly" />
-        <node name='发票单位' column='invoice_title' />
+        <node name='发票抬头' column='invoice_title' />
         <node name='采购人姓名' column='buyer_name' class='required' />
         <node name='采购人电话' class='buyer_phone' class='required' />
         <node name='采购人手机' column='buyer_mobile' class='required' />
         <node name='采购人电子邮箱' column='buyer_email' class='required' />
         <node name='采购人地址' column='buyer_add' class='required' />
-        <node name='明标或暗标' column='lod' class='required' data='#{Dictionary.lod}'  data_type='select' />
+        <node name='明标或暗标' column='lod' class='required' data='#{Dictionary.lod}'  data_type='radio' />
         <node name='投标截止时间' column='end_time' class='required my97_time' />
         <node name='预算金额（元）' column='budget' class='required number' />
         <node name='资质要求' column='req' data_type='textarea' class='required' />

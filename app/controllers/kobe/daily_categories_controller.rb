@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Kobe::DailyCategoriesController < KobeController
 
 	skip_before_action :verify_authenticity_token, :only => [:move, :valid_name]

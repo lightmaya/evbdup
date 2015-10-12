@@ -17,6 +17,9 @@ class HomeController < JamesController
     def form_test
     end
 
+    def channel
+    end
+
     def help
     end
 end
