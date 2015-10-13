@@ -1,0 +1,106 @@
+# -*- encoding : utf-8 -*-
+defaults: &defaults
+  image_types: ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/x-png', 'image/pjpeg']
+  encodes: ["UTF-8", "GBK"]
+  web_site_name: "中储粮服务网"
+  web_site_domain: "http://fwgs.sinograin.com.cn"
+  web_site_founded_year: 2011 
+  web_site_key_words: "中储粮 服务网 集中采购 电子化平台 中国储备粮管理总公司 粮机"
+  company_name: "中国储备粮管理总公司"
+  company_short_name: "中储粮总公司"
+  # 服务电话 办公类
+  service_bg_tel: "(010)88016617"
+  # 粮机类
+  service_lj_tel: "(010)88016801、88016802"
+  # 地址
+  company_addr: "北京市西直门外大街甲143号凯旋大厦A座"
+  # 技术支持
+  technical_support: "(010)88016617、88016623" 
+  # 传真
+  fax: "(010)88016623"
+  # 网站邮箱
+  web_email: "cgzx@sinograin.com.cn"
+  # 快速通道
+  friendly_link: 
+    "中储粮网上商城": "http://mall.sinograin.com.cn/"
+    "中储粮服务网": "http://fwgs.sinograin.com.cn"
+
+  # 颜色样式
+  colors: [["u", "草绿"],["blue", "浅蓝"],["red", "红色"],["green", "绿色"],["sea", "蓝绿色"],["orange", "橙色"],["yellow", "黄色"],["purple", "紫色"],["aqua", "浅蓝色"],["brown", "棕色"],["dark-blue", "深蓝色"],["light-green", "浅绿"],["dark", "黑色"],["light", "灰色"]]
+  # 文章置顶类型
+  top_type: [["不置顶",0], ["普通置顶",1], ["标红置顶",2]]
+  # 信息公开类别
+  lod: [[1, "明标"], [0, "暗标"]]
+  yes_or_no: [[1, "是"], [0, "否"]]
+  buy_type: [[1, "办公物资"], [2, "粮机物资"]]
+  access_permission: [["完全公开",0], ["普通用户",1], ["单位管理员",2]]
+  # 状态约定，对6求模，0待定(等待审核)，1有效(纳入统计)，2无效（已作废、已撤销）,3重要（审核不通过），4警告提醒（未提交、 未完成、等待评论、等待发货、等待确认），5其他
+  # '已删除'统一定为98，除了管理员外一般情况列表不显示
+  # 状态为数组形式，分别代表 中文含义 状态值 颜色 进度条
+  # status: 
+  #   users: [["资料未填写",0,"light",10], ["正常",1,"u",100], ["冻结",2,"yellow",100], ["未审核",3,"orange",20],["已删除",98,"red",100]]
+  #   articles: [["暂存",0,"light",10], ["已发布",1,"u",100], ["审核不通过",2,"purple",100], ["已删除",98,"light",100]]
+  #   suggestions: [
+  #   ["未读",0,"orange",10,[1,4,101],[1,0]],
+  #   ["已读",1,"blue",50,[0,4],[3,4]],
+  #   ["已处理",3,"u",100,[1,4],[3,4]],
+  #   ["不需处理",4,"purple",100,[0,1,101],[3,4]],
+  #   ["已删除",101,"red",100,[0,1,3,4],nil]
+  #   ]
+  category:
+    notification: [["待办任务",1], ["系统消息",2], ["好友短信",3]]
+  # 标签
+  tags:
+    articles: ['党建','人才','档案','办公']
+  icons:
+    "详细": "fa-search-plus"
+    "录入": "fa-pencil-square-o"
+    "填写": "fa-pencil"
+    "修改": "fa-wrench"
+    "审核": "fa-gavel"
+    "授权": "fa-unlock"
+    "确认": "fa-check-square-o"
+    "退回": "fa-times"
+    "评价": "fa-thumbs-o-up"
+    "删除": "fa-trash-o"
+    "移动": "fa-arrows-v"
+    "邮件": "fa-envelope"
+    "提交": "fa-paper-plane-o"
+    "下单": "fa-shopping-cart"
+    "打印": "fa-print"
+    "上传": "fa-paperclip"
+    "未读": "fa-eye-slash"
+    "已读": "fa-eye"
+    "标记": "fa-flag"
+    "增加": "fa-plus"
+    "冻结": "fa-minus-circle"
+    "密码": "fa-lock"
+    "日志": "fa-clock-o"
+    "其他": "fa-tag"
+
+  # 用于Category配置参数 生成XML
+  inputs:
+    rule: [["text","字符类型"],["email","电子邮件类型"],["url","网址类型"],["date","日期类型"],["dateISO","日期类型(YYYY-MM-DD)"],["number","数字类型"],["digits","整数类型"]]
+    data_type: [["text","文本类型"],["radio","单选"],["checkbox","多选"],["select","下拉单选"],["multiple_select","下拉多选"],["textarea","大文本类型"],["richtext","富文本类型"],["hidden","隐藏类型"]]
+
+  # 提示信息
+  tips:
+    bank: ["请输入开户银行关键字，例如：开户银行是[招商银行股份有限公司北京西直门支行]，可输入“招商 北京 西直门”", "请尽量细化搜索的关键字，搜索结果最多20个", "如需修改开户银行，请点击开户银行的银行名称"]
+    rule: ["所有实例请用 self 代替。"]
+    custom_default_cannot: "抱歉，您没有相关操作权限！"
+    audit_default_cannot: "抱歉，您没有审核权限或者本项目已被其他用户审核过了！"
+
+  # 项目类型
+  item_type: [[0,"厂家直销"],[1,"代理商供货"]]
+
+
+development:
+  <<: *defaults
+  env_tye: '开发模式'
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
+  env_tye: '生产模式'

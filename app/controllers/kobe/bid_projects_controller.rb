@@ -10,10 +10,10 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def show
-    obj_contents = info_html(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
+    obj_contents = show_obj_info(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
     @arr  = []
     @bid_project.items.each_with_index do |item, index|
-      obj_contents << info_html(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
+      obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
     end
     @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
     @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project) }
@@ -82,7 +82,8 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def create
-    obj = create_msform_and_write_logs(BidProject, BidProject.xml, BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"})
+    other_attrs = { department_id: current_user.department.id, department_code: current_user.department.real_ancestry, name: get_project_name }
+    obj = create_msform_and_write_logs(BidProject, BidProject.xml, BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     redirect_to kobe_bid_projects_path
   end
 
@@ -113,5 +114,10 @@ class Kobe::BidProjectsController < KobeController
     def my_params  
       params.require(:bid_projects).permit(:title, :new_days, :top_type, 
         :access_permission, :content)  
+    end
+
+    def get_project_name
+      category_names = params[:bid_items][:category_name].values.uniq.join("、")
+      "#{params[:bid_projects][:buyer_dep_name]}#{category_names}竞价项目"
     end
 end

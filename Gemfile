@@ -32,7 +32,7 @@ end
 gem 'ancestry', '~> 2.1.0'
 
 # 数据库字段备注
-gem 'migration_comments', '0.3.1'
+gem 'migration_comments', '0.3.2'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '3.0.4'

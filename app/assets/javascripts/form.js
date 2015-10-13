@@ -76,6 +76,9 @@ function input_blur(me,master_table_names,slave_table_names){
     var id = me.attr("id").split("_").pop();
     var price = $("#"+slave_table_names+"_price_" + id).val();
     var quantity = $("#"+slave_table_names+"_quantity_" + id).val();
+    if (isEmpty(quantity)){
+      var quantity = $("#"+slave_table_names+"_num_" + id).val();
+    }
     if ( !isNaN(price) && (price != '') && (quantity != '') && !isNaN(quantity) ) {
         $("#"+slave_table_names+"_total_" + id).val(parseFloat(price) * parseFloat(quantity));
     }

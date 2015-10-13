@@ -170,3 +170,6 @@ table .money {width:120px; text-align: right;}
     left: -.5em;
     border-left-color: #fa8072;             
 }
+
+.time-item strong{vertical-align: middle;background:#C71C60;color:#fff;line-height:49px;font-size:36px;font-family:Arial;padding:0 10px;margin-right:10px;border-radius:5px;box-shadow:1px 1px 3px rgba(0,0,0,0.2);}
+.time-item-small strong{background:rgb(119, 180, 234);color:#fff;line-height:49px;font-size:18px;font-family:Arial;padding:0 10px;margin-right:10px;border-radius:5px;box-shadow:1px 1px 3px rgba(0,0,0,0.2);}

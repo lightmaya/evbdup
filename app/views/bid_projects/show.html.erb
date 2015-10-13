@@ -1,14 +1,32 @@
-<%= title( Dictionary.web_site_name + " - " + @bid_proejct.name) %>
+<%= title( Dictionary.web_site_name + " - " + @bid_project.name) %>
 
-<div class="container content-sm">
-  <div class="headline-center margin-bottom-60">
-    <h2><%= @article.title %>
+<div class="container">
+  <div class="headline-center">
+    <h2><%= @bid_project.name %>
       <div class="service-block-v5">
-				<p> 时间：<%= @article.publish_time %> 发布：<%= @article.username %>点击：<%= @article.hits %></p>
+				<p> 时间：<%= @bid_project.created_at %></p>
 		  </div>
     </h2>
   </div>
 </div>
 <div class="container">
-	<%= @article.content.to_s.html_safe %>
+	<%= @obj_contents %>
+	<%= uploads_html(@bid_project, {title: true}).html_safe %>
+	<% if @before_end > 0 %>
+		<div class='bid_project_time tc'>
+	    <span class='seconds hide'><%= @before_end %></span>
+	    <h4>据截止：</h4>
+	    <div class='time_str'></div>
+	    <hr>
+	    <%= link_to "我要报价", bid_kobe_bid_project_bids_path(bid_project_id: @bid_project), class: "btn-u btn-lg" if current_user %>
+	  </div>
+  <% end %>
 </div>
+
+<script type="text/javascript">
+	$(function(){
+		$('.bid_project_time').each(function(index, item){
+	    item_count_down($(item), parseInt($(item).children('.seconds').text()));
+	  });
+	})
+</script>

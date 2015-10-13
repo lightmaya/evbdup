@@ -368,3 +368,67 @@ else{ //该位是万亿，亿，万，元位等关键位
   }
   return str5;
 }
+
+
+
+// 网上竞价倒计时
+function timer(intDiff){
+  window.setInterval(function(){
+    var day=0,
+    hour=0,
+    minute=0,
+    second=0;//时间默认值
+    if(intDiff > 0){
+      day = Math.floor(intDiff / (60 * 60 * 24));
+      hour = Math.floor(intDiff / (60 * 60)) - (day * 24);
+      minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
+      second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+    }
+    if (minute <= 9) minute = '0' + minute;
+    if (second <= 9) second = '0' + second;
+    $('#day_show').html(day+"天");
+    $('#hour_show').html('<s id="h"></s>'+hour+'时');
+    $('#minute_show').html('<s></s>'+minute+'分');
+    $('#second_show').html('<s></s>'+second+'秒');
+    intDiff--;
+  }, 1000);
+}
+
+
+function item_count_down(timer_item, seconds){
+  var pathname = window.location.pathname; 
+  // 页面原始时间
+
+  // 网上竞价尚未开始
+  // if(origin_before_begin >= 0){
+  if(seconds <= 0 ){
+    // 报价页面刷新
+    timer_item.children('.time_str').html('<span class="red b">正在进入竞价环节......</span>');
+    window.location.reload();
+  }else{
+    seconds -= 1;
+    timer_item.children('.time_str').html('<div class="time-item">' + get_time_str(seconds) + '</div>');
+    setTimeout(function(){item_count_down(timer_item, seconds)}, 1000);
+  }
+}
+
+// 把时间转换成时分秒格式
+function get_time_str(intDiff){
+  msg = ''
+  if(intDiff > 0){
+    days = Math.floor(intDiff / (60 * 60 * 24));
+    hours = Math.floor(intDiff / (60 * 60)) - (days * 24);
+    minutes = Math.floor(intDiff / 60) - (days * 24 * 60) - (hours * 60);
+    seconds = Math.floor(intDiff) - (days * 24 * 60 * 60) - (hours * 60 * 60) - (minutes * 60);
+
+    if (minutes <= 9) minutes = '0' + minutes;
+    if (seconds <= 9) seconds = '0' + seconds;
+
+  //  var days = Math.floor((time_value / 3600)/ 24);
+  if(days > 0){
+    msg += '<strong class="day_show">' + days + '天</strong>';
+  }
+  msg += '<strong class="hour_show">' + hours + '时</strong><strong class="minute_show">' + minutes + '分</strong><strong class="second_show">' + seconds + '秒</strong>';
+}
+return msg
+}

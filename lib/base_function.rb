@@ -79,14 +79,14 @@ module BaseFunction
   def show_obj_info(obj, xml, options = {})
     # td列数
     grid = options[:grid] || 2
+
+    html = ""
+    tbody = ""
     
     # 标题
     if options[:title].present?
       html << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
     end 
-
-    html = ""
-    tbody = ""
     
     # 根据xml生成table
     doc = Nokogiri::XML(xml)
@@ -115,6 +115,7 @@ module BaseFunction
   end
 
   alias_method :info_html, :show_obj_info
+ 
 
 
   # 显示评价记录 -- 订单或产品 
@@ -151,11 +152,20 @@ module BaseFunction
   end
 
   # 显示附件
-  def show_uploads(obj,picture=false,grid=4)
-    return something_not_found if obj.uploads.blank?
+  def show_uploads(obj, options = {})
+    options[:is_picture] ||= false
+    options[:grid] ||= 4
     result = ""
+    # 标题
+    if options[:title].present?
+      if options[:title] == true
+        options[:title] = "附件信息"
+      end
+      result << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
+    end 
+    return result + something_not_found if obj.uploads.blank?
     # 图片类型
-    if picture
+    if is_picture
       tmp = obj.uploads.map do |file|
         %Q|<div class="col-md-#{12/grid}">
             <div class="thumbnails thumbnail-style thumbnail-kenburn">
@@ -190,6 +200,8 @@ module BaseFunction
     end
     return result.html_safe
   end
+
+  alias_method :uploads_html, :show_uploads
 
   # 生成随机数
   def create_random_chars(len)

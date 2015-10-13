@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 class Upload < ActiveRecord::Base
-  validates :master_id, :presence => true, :presence => { message: "master_id不能为空" }
-  validates :master_type, :presence => true, :presence => { message: "模型不能为空" }
 
   has_attached_file :upload, :styles => {thumbnail: "45x45", md: "240x180", lg: "1024x768"}
   validates_attachment_content_type :upload, :content_type => /\Aimage\/.*\Z/, :message => "只能上传图片文件" 
 
+  validates :master_id, :presence => { message: "master_id不能为空" }
+  validates :master_type, :presence => { message: "模型不能为空" }
   belongs_to :master, polymorphic: true
 
   before_post_process :allow_only_images

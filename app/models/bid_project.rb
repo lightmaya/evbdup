@@ -1,14 +1,9 @@
 # -*- encoding : utf-8 -*-
 class BidProject < ActiveRecord::Base
-  has_many :uploads
+  has_many :uploads, as: :master
   has_many :items, class_name: "BidItem"
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
-
-  before_save do 
-    # 单位名称+品目
-    # 中央储备粮龙嘉直属库台式机电脑采购项目
-    self.name = "#{self.buyer_dep_name}#{self.items.map(&:category).map(&:name).join("、")}竞价项目"
-  end
+  belongs_to :user
 
   # 模型名称
   Mname = "网上竞价项目"
@@ -52,7 +47,15 @@ class BidProject < ActiveRecord::Base
     end
   end
 
-    # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
+  def is_end?
+    Time.now - self.end_time > 0
+  end
+  
+  def can_bid?
+    self.status == 2 && !is_end?
+  end
+
+  # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
   def get_tips
     msg = []
     return msg
@@ -78,9 +81,9 @@ class BidProject < ActiveRecord::Base
         <node name='采购人手机' column='buyer_mobile' class='required' />
         <node name='采购人电子邮箱' column='buyer_email' class='required' />
         <node name='采购人地址' column='buyer_add' class='required' />
-        <node name='明标或暗标' column='lod' class='required' data='#{Dictionary.lod}'  data_type='radio' />
-        <node name='投标截止时间' column='end_time' class='required my97_time' />
-        <node name='预算金额（元）' column='budget' class='required number' />
+        <node name='明标或暗标' column='lod' class='required' data='#{Dictionary.lod}' data_type='radio' />
+        <node name='投标截止时间' column='end_time' class='required datetime_select datetime' />
+        <node name='预算金额（元）' column='budget' class='required number' display="skip" />
         <node name='资质要求' column='req' data_type='textarea' class='required' />
         <node name='备注信息' column='remark' data_type='textarea' />
       </root>

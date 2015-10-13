@@ -203,11 +203,22 @@ class User < ActiveRecord::Base
     self.department.real_dep
   end
 
+  # 参与的竞价报价
+  def bid_project_bid(bid_project)
+    BidProjectBid.find_or_initialize_by(user_id: self.id, bid_project_id: bid_project.id)
+  end
+
+  # 参与的竞价产品明细报价
+  def bid_item_bids(bid_project)
+    BidItemBid.where(user_id: self.id, bid_project_id: bid_project.id)
+  end
+
+
   private
 
-  def create_remember_token
-    self.remember_token=User.encrypt(User.new_remember_token)
-  end
+    def create_remember_token
+      self.remember_token=User.encrypt(User.new_remember_token)
+    end
 
   # 在layout中展开菜单menu
   # def menus_ul(mymenus = [])
@@ -237,5 +248,6 @@ class User < ActiveRecord::Base
   #   end
   #   return str
   # end
+
 
 end

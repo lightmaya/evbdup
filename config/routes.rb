@@ -42,6 +42,8 @@ Evbdup::Application.routes.draw do
 
   resources :sessions, :only => [:new, :create, :destroy]
 
+  resources :bid_projects
+
 # 后台begin
   namespace :kobe do
     resources :shared, :only => :index do
@@ -73,7 +75,11 @@ Evbdup::Application.routes.draw do
       end
     end
 
-    resources :bid_project_bids
+    resources :bid_project_bids do 
+      collection do 
+        get :bid
+      end
+    end
 
     resources :orders do
       collection do

@@ -17,7 +17,6 @@
 /tmp
 
 /config/database.yml
-/config/application.yml
 /public/assets
 /public/test
 /public/system
