@@ -51,11 +51,15 @@ class Kobe::ArticlesController < KobeController
   def new
     @article.username = current_user.name 
     @article.status = 2
-    # grid表示生成的表单一行显示几个字段
     @myform = SingleForm.new(Article.xml, @article, 
       { form_id: "article_form", action: kobe_articles_path,
         title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2  
       })
+
+    # xml默认调用obj.class.xml
+    # title根据obj.new_record?和model中定义的Mname自动生成
+    # action根据obj.new_record?自动生成
+    @myform = OneForm.new(@article)
   end
 
   def edit

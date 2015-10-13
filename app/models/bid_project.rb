@@ -9,6 +9,9 @@ class BidProject < ActiveRecord::Base
     self.name = "#{self.buyer_dep_name}#{self.items.map(&:category).map(&:name).join("、")}竞价项目"
   end
 
+  # 模型名称
+  Mname = "网上竞价项目"
+
   after_create do 
     create_no
   end

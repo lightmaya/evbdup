@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreatePlanItems < ActiveRecord::Migration
   def change
     create_table :plan_items do |t|

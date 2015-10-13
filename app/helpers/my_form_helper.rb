@@ -17,10 +17,25 @@ module MyFormHelper
   end
 
 	def set_top_part(myform)
-    myform.html_code << form_tag(myform.options[:action], method: myform.options[:method], class: 'sky-form no-border', id: myform.options[:form_id]).to_str
-    unless myform.options[:title].blank?
+    # kobe_articles_path
+    obj = myform.obj
+    form_action = myform.options[:action].present? ? myform.options[:action] : (obj.new_record? ? send("kobe_#{obj.class.to_s.tableize}_path") : send("kobe_#{obj.class.to_s.tableize}_path", obj) )
+    form_method = myform.obj.new_record? ? "post" : "patch"
+    myform.html_code << form_tag(form_action, method: myform.options[:method], class: 'sky-form no-border', id: myform.options[:form_id]).to_str
+    
+    # 自动生成标题，根据model中的Mname
+    if myform.options[:title].blank?
+      # {title: false} 表示不需要标题
+      if myform.options[:title]!= false
+        t = myform.obj.new_record? ? "新增" : "修改"
+        t = t + myform.obj.class.const_get(:Mname) if myform.obj.class.const_defined?(:Mname)
+        myform.html_code << "<div class='headline'><h2><strong>#{t}</strong></h2></div>"
+      end
+    else
+      # 自定义标题
       myform.html_code << "<div class='headline'><h2><strong>#{myform.options[:title]}</strong></h2></div>"
     end
+
 	end
 
 	def set_input_part(myform)

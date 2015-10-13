@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Article < ActiveRecord::Base
+  # 模型名称
+  Mname = "文章"
+
 	belongs_to :author, class_name: "User", foreign_key: "user_id"
   has_many :uploads
 	has_and_belongs_to_many :catalogs, class_name: "ArticleCatalog"
