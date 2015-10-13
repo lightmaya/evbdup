@@ -276,7 +276,13 @@ function confirm_and_write_reason (action_name,title,no_children_msg,has_childre
 // 右键菜单函数end
 // ajax加载右侧展示页面 title和content分开加载
 function show_ztree_content (url,node) {
-	$.post("/kobe/shared/get_ztree_title", { id: node.id, model_name: get_ztree_params("model_name") }, function( data ) {
+	if (node) {
+  	var nodeid = node.id
+	}
+	else{
+		var nodeid = 0
+	}
+	$.post("/kobe/shared/get_ztree_title", { id: nodeid, model_name: get_ztree_params("model_name") }, function( data ) {
 		$("#show_ztree_content #ztree_title").html( data );
 	});
 	show_content(url,"#show_ztree_content #ztree_content");

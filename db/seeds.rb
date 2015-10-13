@@ -135,6 +135,32 @@ if Menu.first.blank?
   [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_ddcg)
   end
+# ----日常费用报销类别-----------------------------------------------------------------------------------------
+  daily_cost = Menu.create(:name => "日常费用报销", :is_show => true, :parent => yw)
+  daily_cost_category = Menu.create(:name => "维护费用类别",:route_path => "/kobe/daily_categories", :can_opt_action => "DailyCategory|read", :is_show => true, :parent => daily_cost)
+  [ ["增加费用类别", "DailyCategory|create"], 
+    ["修改费用类别", "DailyCategory|update"], 
+    ["删除费用类别", "DailyCategory|update_destroy"], 
+    ["移动费用类别", "DailyCategory|move"]
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => daily_cost_category)
+  end
+
+#----日常费用报销-------------------------------------------------------------------------------------
+  cost_index = Menu.create(:name => "日常报销清单", :route_path => "/kobe/daily_costs", :can_opt_action => "DailyCost|read", :is_show => true, :parent => daily_cost)
+  [  
+    ["新增日常报销", "DailyCost|create"], 
+    ["修改日常报销", "DailyCost|update"], 
+    ["提交日常报销", "DailyCost|commit"], 
+    ["删除日常报销", "DailyCost|update_destroy"] 
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => cost_index)
+  end
+  audit_cost = Menu.create(:name => "审核日常报销", :route_path => "/kobe/daily_costs/list", :can_opt_action => "DailyCost|list", :is_show => true, :parent => daily_cost)
+  [["日常报销初审", "DailyCost|first_audit"], ["日常报销终审", "DailyCost|last_audit"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_cost)
+  end
+
 # ----单位及用户管理-----------------------------------------------------------------------------------
   dep = Menu.create(:name => "单位及用户管理", :icon => "fa-users", :is_auto => true, :is_show => true)
   dep_p = Menu.create(:name => "单位管理", :route_path => "/kobe/departments", :can_opt_action => "Department|read", :is_show => true, :is_auto => true, :parent => dep)

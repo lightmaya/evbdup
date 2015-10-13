@@ -2,7 +2,6 @@
 class Kobe::OrdersController < KobeController
 
   before_action :get_order, :only => [:show, :edit, :update, :destroy, :commit, :print]
-  before_action :get_audit_order, :only => [:audit, :update_audit]
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
@@ -97,17 +96,14 @@ class Kobe::OrdersController < KobeController
 
     def get_order
       cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+      menu_ids = Menu.get_menu_ids("Order|audit_#{@order.yw_type}") if @order.present?
+      audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@order, menu_ids)
     end
 
-    # 审核时获取order
-    def get_audit_order
-      menu_ids = Menu.get_menu_ids("Order|audit_#{@order.yw_type}") if @order.present?
-      audit_tips unless @order.present? && @order.cando(action_name,current_user) && can_audit?(@order,menu_ids)
-    end
 
     # 根据品目创建项目名称
     def get_project_name(order=nil)
-      category_names = params[:orders_items][:category_name].values.join("、")
+      category_names = params[:orders_items][:category_name].values.uniq.join("、")
       if order.present?
         project_name = order.name.split(" ")
         project_name[2] = category_names

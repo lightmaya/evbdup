@@ -1,5 +1,19 @@
 # -*- encoding : utf-8 -*-
 module ApplicationHelper
+  # 网页title
+  def title(page_title)
+    content_for :title, page_title.to_s
+  end
+
+  # 加载css: <%= stylesheets 'my1','my2' %>
+  def stylesheets(*args)
+    stylesheet_link_tag(*args)
+  end
+
+  # 加载js: <%= javascripts 'my1','my2' %>
+  def javascripts(*args)
+    javascript_include_tag(*args)
+  end
 
   # 格式化日期
   def show_date(d)

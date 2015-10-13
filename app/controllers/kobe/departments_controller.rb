@@ -1,9 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Kobe::DepartmentsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:move, :valid_dep_name, :commit, :edit_bank, :search_bank]
-  before_action :get_dep, :except => [:valid_dep_name, :search_bank, :move, :new, :create, :search, :list, :audit, :update_audit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_action :get_audit_dep, :only => [:audit, :update_audit]
+  before_action :get_dep, :except => [:valid_dep_name, :search_bank, :move, :new, :create, :search, :list]
   layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank]
 
   # cancancan验证 如果有before_action cancancan放最后
@@ -190,14 +189,8 @@ class Kobe::DepartmentsController < KobeController
       end
       unless action_name == "ztree"
         cannot_do_tips unless @dep.present? && @dep.cando(action_name)
+        audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@dep,@menu_ids)
       end
-    end
-
-    def get_audit_dep
-      if params[:id].present?
-        @dep = Department.find_by(id: params[:id])
-      end
-      audit_tips unless @dep.present? && @dep.cando(action_name) && can_audit?(@dep,@menu_ids)
     end
 
     # 获取审核的menu_ids

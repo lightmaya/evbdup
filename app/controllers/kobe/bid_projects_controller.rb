@@ -71,13 +71,14 @@ class Kobe::BidProjectsController < KobeController
     @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project, slave_objs,
       { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true, 
         upload_files_name: "bid_project", 
-        title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 4},
+        title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 4},
         {title: '产品明细', grid: 4}
       )
   end
 
   def edit
-    @myform = SingleForm.new(BidProject.xml, @bid_project, { form_id: "bid_project_form", action: kobe_bid_project_path(@bid_project), method: "patch", grid: 2 })
+    slave_objs = @bid_project.items.blank? ? [@bid_project.items.build] : @bid_project.items
+    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project,slave_objs,{upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@order), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
 
   def create

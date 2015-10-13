@@ -1,0 +1,121 @@
+<div class="content container">
+  <div class="row">
+    <!-- 左侧 -->
+    <div class="col-md-3 filter-by-block md-margin-bottom-60">
+      <h1>汽车采购</h1>
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+          <div id="collapseOne" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <h4>公务用车</h4>
+                <a href="">轿车</a> 越野车 面包车 客车
+                <h4>生产用车</h4>
+                皮卡 货车 叉车 客货两用车 清洁车 洒水车 散粮运输汽车 装载车 特种车 公铁两用车
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <h1>热卖产品</h1>
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+          <div id="collapseOne" class="panel-collapse collapse in">
+              <div class="panel-body">
+                
+                <div class="product_pic_brand">
+                  <div class="tc">
+                    <a href="http://fwgs.sinograin.com.cn/zcl_mall/product/217_1_448" cid="product/217" class="mall_url" target="_blank" title="大众 新帕萨特1.8T政采版 SVW7181oFJ" ut="448"><img alt="Grey" class="lazy" data-original="http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/000/880/thumb_8.jpg?1343198451" height="75" src="http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/000/880/thumb_8.jpg?1343198451" style="border: 0px; display: inline;" width="100"></a>
+                  </div>
+                  <div class="center">
+                    <a href="/zcl_mall/product/217_1_448" cid="product/217" class="mall_url no_break" target="_blank" title="大众 新帕萨特1.8T政采版 SVW7181oFJ" ut="448">大众 新帕萨特1.8T政采版 SVW7181oFJ</a></div><div class="span_price">
+                  </div>
+                </div>
+
+
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 左侧END -->
+
+    <!-- 右侧产品列表 -->
+    <div class="col-md-9">
+      <!-- 右侧上部 -->
+      <div class="row margin-bottom-5">
+        <div class="col-sm-4 result-category">
+          <h2>轿车</h2>
+          <small class="shop-bg-red badge-results">共45个商品</small>
+        </div>
+        <div class="col-sm-8">
+          <ul class="list-inline clear-both">
+            <li class="grid-list-icons">
+              <a href="shop-ui-filter-list.html"><i class="fa fa-th-list"></i></a>
+              <a href="shop-ui-filter-grid.html"><i class="fa fa-th"></i></a>
+            </li>
+            <li class="sort-list-btn">
+              <h3>排序:</h3>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  默认排序 <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">价格</a></li>
+                  <li><a href="#">销量</a></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <%= render "search" %>
+      </div>
+      <!-- 右侧上部END -->
+
+        <div class="filter-results">
+          <div class="row illustration-v2 margin-bottom-30">
+            <% 18.times do |i| %>
+              <!-- 一个产品 -->
+              <div class="col-md-4">
+                  <div class="product-img product-img-brd">
+                    <a href="#"><img class="full-width img-responsive" src="http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/001/298/small_C30.JPG?1344929134" alt=""></a>
+                    <a class="add-to-cart" href="#"><i class="fa fa-shopping-cart"></i>加入购物车</a>
+                    <div class="shop-rgba-dark-green rgba-banner">新产品</div>
+                  </div> 
+                  <div class="product-description product-description-brd margin-bottom-30">
+                    <div class="overflow-h margin-bottom-5">
+                      <div class="pull-left">
+                        <h4 class="title-price"><a href="shop-ui-inner.html">长城 长城C30汽油1.5手动豪华型 CC7150CE0C...</a></h4>
+                        <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
+                        <span class="title-price line-through fl">市场价：$95.00</span>
+                        <span class="title-price fl">协议价：$60.00</span>
+                      </div>    
+                    </div>    
+                    <ul class="list-inline product-ratings">
+                        <li><i class="rating-selected fa fa-star"></i></li>
+                        <li><i class="rating-selected fa fa-star"></i></li>
+                        <li><i class="rating-selected fa fa-star"></i></li>
+                        <li><i class="rating fa fa-star"></i></li>
+                        <li><i class="rating fa fa-star"></i></li>
+                        <li class="like-icon"><a data-original-title="收藏" data-toggle="tooltip" data-placement="left" class="tooltips" href="#"><i class="fa fa-heart"></i></a></li>
+                    </ul>    
+                  </div>
+              </div>
+              <!-- 一个产品END -->
+            <% end -%>
+          </div>
+        </div><!--/end filter resilts-->
+
+        <div class="text-center">
+            <ul class="pagination pagination-v2">
+                <li><a href="#"><i class="fa fa-angle-left"></i></a></li>
+                <li><a href="#">1</a></li>
+                <li class="active"><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
+            </ul>                                                            
+        </div><!--/end pagination-->
+    <!-- 右侧产品列表END -->
+  </div><!--/end row-->
+</div><!--/end container-->    
+
