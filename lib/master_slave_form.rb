@@ -23,6 +23,7 @@ class MasterSlaveForm < MyForm
     @options[:button] ||= true
     @slave_options[:title] ||= "明细"
 		@slave_options[:grid] ||= 4 
+		@slave_options[:modify] = true if @slave_options[:modify].nil?
 	end
 
 	def get_input_part
@@ -30,19 +31,19 @@ class MasterSlaveForm < MyForm
 		# tmp << "<div class='headline'><h2 class='heading'>#{slave_options[:title]}</h2></div>"
 		tmp << "<div class='headline'><h2><strong><i class='fa fa-cubes'></i> #{slave_options[:title]}</strong></h2></div>"
 		tmp << self.get_slave_input_part
-		tmp << get_add_content
+		tmp << get_add_content if @slave_options[:modify]
 		return tmp
 	end
 
 	def get_slave_input_part
-		self.add_content = get_add_content
+		# self.add_content = get_add_content
   	tmp = ""
   	slave_objs.each_with_index{|o,i|tmp << get_input_content(o,i+1)}
   	return tmp
   end
 
   def get_add_content
-  	"<div id='add_content'>#{get_input_content(slave_objs[0].class.new,'_orz_')}</div>"
+  	"<div id='add_content'>#{get_input_content(slave_objs[0].class.new, '_orz_')}</div>"
   end
 
 
@@ -52,9 +53,10 @@ class MasterSlaveForm < MyForm
  	private
 
  	def get_input_content(slave_obj, index)
+ 		close_btn = @slave_options[:modify] == true ? '<button data-dismiss="alert" class="close" type="button">×</button>' : ""
   	%Q|
 			<div class="tag-box tag-box-v4 details_part">
-			  <button data-dismiss="alert" class="close" type="button">×</button>
+			  #{close_btn}
 			  <span rel="box-shadow-outset" class="btn-u btn-u-sm rounded-2x btn-u-default margin-bottom-20"><i class="fa fa-chevron-circle-down"></i> #{slave_options[:title]} ##{index}</span>
 			  <div class="input_part">
 			  #{self.get_input_str(slave_xml, slave_obj, slave_table_name, slave_options[:grid],index)}

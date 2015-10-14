@@ -1,14 +1,11 @@
 <div class="panel panel-grey margin-bottom-40">
   <div class="panel-heading">
-      <h3 class="panel-title"><i class="fa fa-tasks"></i> 我的竞价项目</h3>
+      <h3 class="panel-title"><i class="fa fa-tasks"></i> 可报价的竞价项目</h3>
   </div>
   <div class="panel-body">
     <div class="row">
-      <div class="col-md-8 pull-left padding-top-5">
-          <%= link_to '<i class="fa fa-plus"></i> 新增</a>'.html_safe, new_kobe_bid_project_path %>
-      </div>
       <div class="col-md-4 pull-right">
-        <%= search_form_for @q, url: kobe_bid_projects_path, html: { method: :get } do |f| %>
+        <%= search_form_for @q, url: kobe_bid_project_bids_path, html: { method: :get } do |f| %>
             <div class="margin-bottom-10">
               <div class="input-group">
                 <%= f.search_field :name_or_code_cont, class: "form-control input-sm", placeholder: "请输入项目编号或项目名称..." %>
@@ -20,7 +17,6 @@
           <% end %>
         </div>
       </div>
-      <%= modal_dialog("opt_dialog") %>
       <table class="table table-bordered table-hover">
         <thead>
           <tr>
@@ -29,10 +25,6 @@
             <th class="hidden-sm">项目名称</th>
             <th class="hidden-sm">明标/暗标</th>
             <th class="hidden-sm">投标截止时间</th>
-            <th class="hidden-sm">预算金额</th>
-            <th class="hidden-sm">报价人数</th>
-            <th class="status_bar"><%= status_filter(BidProject) %></th>
-            <th class="date"><%= date_filter %></th>
             <th class="cando">操作</th>
           </tr>
         </thead>
@@ -44,11 +36,7 @@
             <td><%= bid_project.name %></td>
             <td><%= bid_project.dict_value("lod") %></td>
             <td><%= bid_project.end_time %></td>
-            <td><%= money bid_project.budget %></td>
-            <td></td>
-            <td><%= bid_project.status_bar %></td>
-            <td><%= show_date(bid_project.created_at) %></td>
-            <td><%= btn_group(bid_projects_btn(bid_project)) %></td>
+            <td><%= btn_group(bid_project_bids_btn(bid_project)) %></td>
           </tr>
         <% end %>
         </tbody>

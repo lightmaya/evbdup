@@ -288,7 +288,7 @@ module BtnArrayHelper
     return arr
   end
 
-   def daily_costs_btn(obj,only_audit=false)
+  def daily_costs_btn(obj, only_audit=false)
     arr = [] 
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_daily_cost_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
@@ -304,6 +304,13 @@ module BtnArrayHelper
       return [audit_opt] if only_audit
     end
     return arr
+  end
+
+  def bid_project_bids_btn(obj)
+    arr = [] 
+    # 查看详细
+    arr << [obj.class.icon_action("详细"), pre_bid_project_path(obj), target: "_blank"] if can?(:show, obj)
+
   end
   
 end

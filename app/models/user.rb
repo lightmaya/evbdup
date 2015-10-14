@@ -205,7 +205,15 @@ class User < ActiveRecord::Base
 
   # 参与的竞价报价
   def bid_project_bid(bid_project)
-    BidProjectBid.find_or_initialize_by(user_id: self.id, bid_project_id: bid_project.id)
+    bpb = BidProjectBid.find_or_initialize_by(user_id: self.id, bid_project_id: bid_project.id)
+    if bpb.new_record?
+      bpb.com_name = self.department.name
+      bpb.add = self.department.address
+      bpb.username = self.name
+      bpb.tel = self.tel
+      bpb.mobile = self.mobile
+    end
+    bpb
   end
 
   # 参与的竞价产品明细报价

@@ -27,10 +27,12 @@ class CreateBidProjectBids < ActiveRecord::Migration
     	t.string :brand_name
     	t.string :xh
     	t.integer :user_id
+      t.integer :bid_project_bid_id
     	t.decimal :price, :comment => "单价", :precision => 20, :scale => 2, :null => false, :default => 0
     end
 
     add_index :bid_item_bids, :bid_project_id
+    add_index :bid_item_bids, :bid_project_bid_id
     add_index :bid_item_bids, :bid_item_id
     add_index :bid_item_bids, [:bid_item_id, :user_id], :unique => true
 

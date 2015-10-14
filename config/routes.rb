@@ -77,7 +77,8 @@ Evbdup::Application.routes.draw do
 
     resources :bid_project_bids do 
       collection do 
-        get :bid
+        get :pre_bid
+        post :bid
       end
     end
 

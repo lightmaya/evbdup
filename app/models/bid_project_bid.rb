@@ -8,8 +8,11 @@ class BidProjectBid < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='供应商单位' column='com_name' class='required' display= "readonly" />
-        <node name='供应商姓名' column='username' class='required' display= "readonly" />
+        <node name='项目名称' column='name' class='required' delegate='bid_project'  display="show" />
+        <node name='采购单位' column='buyer_dep_name' class='required' delegate='bid_project'  display="show" />
+        <node name='发票抬头' column='invoice_title' class='required' delegate='bid_project'  display="show" />
+        <node name='供应商单位' column='com_name' class='required' display="show" />
+        <node name='供应商姓名' column='username' class='required' />
         <node name='供应商电话' column='tel' />
         <node name='供应商手机' column='mobile' class='required' />
         <node name='供应商地址' class='add' class='required' />

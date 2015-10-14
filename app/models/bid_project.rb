@@ -5,6 +5,8 @@ class BidProject < ActiveRecord::Base
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :user
 
+  scope :can_bid, -> { where("bid_projects.status = 2 and now() < bid_projects.end_time") }
+
   # 模型名称
   Mname = "网上竞价项目"
 
@@ -73,7 +75,6 @@ class BidProject < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='上级单位' column='top_dep_name' class='required' display= "readonly" />
         <node name='采购单位' column='buyer_dep_name' class='required' display= "readonly" />
         <node name='发票抬头' column='invoice_title' />
         <node name='采购人姓名' column='buyer_name' class='required' />

@@ -2,7 +2,7 @@
 module BaseFunction
 
   # 获取某实例的字段值
-  def get_node_value(obj,node,for_form=false)
+  def get_node_value(obj, node, for_form=false)
     # 父节点特殊处理
     if obj.attributes.include?("ancestry")
     	return obj.parent_id if node["name"] == "parent_id" 
@@ -10,7 +10,10 @@ module BaseFunction
     end
     # 一般情况
     result = ""
-    if node.attributes.has_key?("column") && obj.class.attribute_method?(node["column"])
+    if node.attributes.has_key?("delegate")
+      # obj.bid_item.
+      result = obj.send(node.attributes["delegate"].to_s).attributes[node["column"]]
+    elsif node.attributes.has_key?("column") && obj.class.attribute_method?(node["column"])
     	result = obj.attributes[node["column"]]
     else
     	if obj.class.attribute_method?("details") && !obj.attributes["details"].blank?
@@ -19,6 +22,7 @@ module BaseFunction
     		result = tmp.blank? ? "" : tmp["value"]
     	end
     end
+    result = "%g" % result if result.is_a?(Float)
     return transform_node_value(node,result,for_form)
   end
 

@@ -19,7 +19,24 @@ class MyForm
     tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')]")
     tds.each_slice(grid).with_index do |node, i|
       tmp = ""
-      node.each{|n| tmp << _create_text_field(n, obj, table_name, grid, index)}
+      #column='brand_name'
+
+      node.each do |n| 
+        if n.attributes.has_key?("if")
+          n.attributes["if"].to_s.split.each do |condition|
+            if_case = condition.split("|")[0]
+            result = condition.split("|")[1]
+            # display='readonly'
+            if eval(if_case)
+              result.split("__").each do |att|
+                n[att.split("=")[0]] = att.split("=")[1]
+              end
+            end
+          end
+        end
+        #dasd if obj.id == 4 && n.attributes["column"].to_s == "brand_name"
+        tmp << _create_text_field(n, obj, table_name, grid, index)
+      end
       input_str << content_tag(:div, raw(tmp).html_safe, :class=>'row')
     end
     # 再生成文本框和富文本框--针对大文本、富文本或者隐藏域
@@ -36,7 +53,7 @@ class MyForm
   # 生成提交按钮
   def get_form_button(self_form=true)
     if self.options[:button]
-      tmp = self_form ? self_form_button(self.class==MasterSlaveForm) : upload_form_button(self.class==MasterSlaveForm)
+      tmp = self_form ? self_form_button(self.class==MasterSlaveForm && self.slave_options[:modify]) : upload_form_button(self.class==MasterSlaveForm && self.slave_options[:modify])
       return "<hr/><div>#{tmp}</div>"
     else
       return ""
@@ -94,7 +111,8 @@ private
     end 
     input_opts[:id] = index.nil? ? "#{table_name}_#{column}" : "#{table_name}_#{column}_#{index}"
     input_opts[:style] = node_options["style"].to_s
-    input_opts[:node_attr] = get_node_attr(table_name,node_options,column,index)
+    input_opts[:display] = node_options["display"].to_s
+    input_opts[:node_attr] = get_node_attr(table_name, node_options, column, index)
     # 主表有个性化规则
     if index.nil?
       # 校验规则
@@ -215,32 +233,46 @@ private
   end
   # 普通文本
   def _create_text(input_opts)
-    str = %Q|
+    if input_opts[:display] == "show"
+      %Q|<b>#{input_opts[:value]}</b>|
+    else
+      %Q|
     <label class='#{_form_states('input',input_opts[:node_attr])}'>
         <i class="icon-append fa fa-#{input_opts[:icon]}"></i>
         <input type='text' value='#{input_opts[:value]}' #{input_opts[:node_attr].join(" ")}>
         #{input_opts[:hint].blank? ? "" : "<b class='tooltip tooltip-bottom-right'>#{input_opts[:hint]}</b>"}
     </label>|
+    end
   end
   # 单选
   def _create_radio(input_opts)
-    data_str = ""
-    form_state = _form_states('radio',input_opts[:node_attr]) 
+    data_str = v = ""
+    form_state = _form_states('radio', input_opts[:node_attr]) 
     input_opts[:data].each do |d|
       options = input_opts[:node_attr].clone
       if d.is_a?(Array) 
-        options << "checked" if (input_opts[:value] && input_opts[:value] == d[0])
+        if (input_opts[:value] && input_opts[:value] == d[0])
+          options << "checked" 
+          v = d[1]
+        end
         data_str << "<label class='#{form_state}'><input type='radio' value='#{d[0]}' #{options.join(" ")}><i class='rounded-x'></i>#{d[1]}</label>\n"
       else
-        options << "checked" if (input_opts[:value] && input_opts[:value] == d)
+        if (input_opts[:value] && input_opts[:value] == d)
+          options << "checked" 
+           v = d
+        end
         data_str << "<label class='#{form_state}'><input type='radio' value='#{d}' #{options.join(" ")}><i class='rounded-x'></i>#{d}</label>\n"
       end
     end
-    str = %Q|
-    <div class="inline-group">
-        #{data_str}
-    </div>
-    #{input_opts[:hint].blank? ? '' : "<div class='note'><strong>提示:</strong> #{input_opts[:hint]}</div>" }|
+    if input_opts[:display] == "show"
+      %Q|<b>#{v}</b>|
+    else
+      str = %Q|
+      <div class="inline-group">
+          #{data_str}
+      </div>
+      #{input_opts[:hint].blank? ? '' : "<div class='note'><strong>提示:</strong> #{input_opts[:hint]}</div>" }|
+    end
   end
   # 多选
   def _create_checkbox(input_opts)
