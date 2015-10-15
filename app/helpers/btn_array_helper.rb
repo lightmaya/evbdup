@@ -240,12 +240,13 @@ module BtnArrayHelper
     arr = [] 
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_bid_project_path(obj), target: "_blank"]  if can?(:show, obj)
+    arr << [obj.class.icon_action("选择中标人"), pre_choose_kobe_bid_project_path(obj)] if obj.status == 2
     # 提交
     arr << [obj.class.icon_action("提交审核"), "#{commit_kobe_bid_project_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
     # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_bid_project_path(obj)] if can?(:update, obj)
+    arr << [obj.class.icon_action("修改"), edit_kobe_bid_project_path(obj)] if can?(:update, obj) && obj.cando("edit")
     # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_bid_project_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj)
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_bid_project_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("edit")
      # 审核
     audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_bid_project_path(obj)}"] if can?(:audit, obj) && obj.cando("audit")
     if audit_opt.present?
@@ -309,7 +310,8 @@ module BtnArrayHelper
   def bid_project_bids_btn(obj)
     arr = [] 
     # 查看详细
-    arr << [obj.class.icon_action("详细"), pre_bid_project_path(obj), target: "_blank"] if can?(:show, obj)
+    title = current_user.bid_item_bids(obj).present? ? "我要修改" : "我要报价"
+    arr << [obj.class.icon_action(title), pre_bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:show, obj)
 
   end
   

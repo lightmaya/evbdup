@@ -53,7 +53,7 @@ module ApplicationHelper
   end
 
   # 按钮组,一般应用与操作列表和状态、时间筛选
-  def btn_group(arr,dropdown=true)
+  def btn_group(arr, dropdown=true)
     return "" if arr.blank?
     unless dropdown || arr.length > 10
       return raw arr.map{|a|arr_to_link(a)}.join(" ").html_safe
@@ -188,6 +188,23 @@ module ApplicationHelper
     javascript_include_tag(*args)
   end
 
+  def link_to_blank(*args, &block)
+    if block_given?
+      options      = args.first || {}
+      html_options = args.second || {}
+      link_to_blank(capture(&block), options, html_options)
+    else
+      name         = args[0]
+      options      = args[1] || {}
+      html_options = args[2] || {}
+
+      # override
+      html_options.reverse_merge! target: '_blank'
+
+      link_to(name, options, html_options)
+    end
+  end
+
   # 加载富文本框插件UMeditor
   def include_umeditor
     javascripts("/plugins/umeditor1_2_2/umeditor.config.js", 
@@ -206,7 +223,9 @@ module ApplicationHelper
       )
   end
 
-
+  def link_to_void(*args, &block)
+    link_to(*args.insert((block_given? ? 0 : 1), "javascript:void(0)"), &block)
+  end
 
   def dict_value(str, key)
     values = Dictionary.send(key)
@@ -223,6 +242,11 @@ module ApplicationHelper
    #  显示金额 允许带单位显示 pre 前缀 ￥
   def money(number, pre="", precision=2)
     return 0 if number.to_f == 0
-    return pre << number_to_currency(number, {:unit=>"", :delimiter=>",", :precision =>precision})
+    return pre << number_to_currency(number, {:unit=>"¥", :delimiter=>",", :precision =>precision})
+  end
+
+  def label_tag(text, style = 'info', options = {})
+    options[:title] ||= text
+    "<span title='#{options[:title]}' class='label label-#{style}'>#{text}</span>".html_safe
   end
 end

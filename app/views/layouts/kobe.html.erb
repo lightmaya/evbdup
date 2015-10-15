@@ -3,8 +3,7 @@
 <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
 <!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
 <head>
-    <title><%= Dictionary.web_site_name %></title>
-
+    <title><%= Dictionary.web_site_name %> <%= yield(:title).presence %></title>
     <!-- Meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +36,7 @@
         <!--=== Breadcrumbs ===-->
         <div class="breadcrumbs">
             <div class="container">
-                <h1 class="pull-left"> 查看单位信息</h1>
+                <h1 class="pull-left"> <%= yield(:title) %></h1>
                 <ul class="pull-right breadcrumb">
                     <li><a href="index-2.html">首页</a></li>
                     <li><a href="#">单位及人员管理</a></li>

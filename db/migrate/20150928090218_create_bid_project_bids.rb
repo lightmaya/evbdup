@@ -8,6 +8,7 @@ class CreateBidProjectBids < ActiveRecord::Migration
       t.string :username, :comment => "供应商姓名"
       t.string :tel
       t.string :mobile
+      t.text :details
       t.string :add
       t.integer :user_id
       t.decimal :total, :comment => "总金额", :precision => 20, :scale => 2, :null => false, :default => 0
@@ -27,8 +28,10 @@ class CreateBidProjectBids < ActiveRecord::Migration
     	t.string :brand_name
     	t.string :xh
     	t.integer :user_id
+      t.text :details
       t.integer :bid_project_bid_id
     	t.decimal :price, :comment => "单价", :precision => 20, :scale => 2, :null => false, :default => 0
+      t.decimal :total, :comment => "总价", :precision => 20, :scale => 2, :null => false, :default => 0
     end
 
     add_index :bid_item_bids, :bid_project_id

@@ -1,0 +1,78 @@
+<%= title "选择中标人" %>
+<%= @obj_contents %>
+
+<div class="panel panel-grey margin-bottom-40">
+  <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-tasks"></i> 报价信息</h3>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+      	<th>中标人</th>
+        <th class="index">序号</th>
+        <th>报价单位</th>
+        <th>联系人</th>
+        <th>联系电话</th>
+        <th>报价总金额</th>
+        <th>报价时间</th>
+        <th>操作</th>
+      </tr>
+     </thead>
+    <tbody>
+    	<% @bpbs.each_with_index do |bid_project_bid, index| %>
+    		<tr>
+    			<td class="tc"><%= radio_button_tag "bid_project_bid", bid_project_bid.id, index == 0, name: "bid_project_bid_radios" %></td>
+    			<td><%= show_index(index) %></td>
+    			<td><%= bid_project_bid.com_name %></td>
+    			<td><%= bid_project_bid.username %></td>
+    			<td><%= bid_project_bid.lx %></td>
+    			<td><%= money bid_project_bid.total %></td>
+    			<td><%= bid_project_bid.updated_at %></td>
+    			<td><%= link_to_blank "查看报价详情", "" %></td>
+    		</tr>
+    	<% end -%>
+    </tbody>
+  </table>
+  <%= form_for @bid_project, as: :bid_projects, :url => choose_kobe_bid_project_path(@bid_project), :html => {id: "choose_form"} do |f| %>
+    <%= f.text_field :bid_project_bid_id %>
+    <table class="table table-bordered table-hover">
+      <tr>
+      	<th>操作理由</th>
+      	<td><%= f.text_area :reason, class: "w90p" %></td>
+      </tr>
+    </table> 
+  <% end -%>
+</div> 
+
+<%= link_to_void "选择中标人", onclick: "choose_who(1);", class: "btn-u btn-u-large" %>
+<%= link_to_void "选择废标", onclick: "choose_who(2);", class: "btn-u btn-u-large btn-u-red" %>
+
+<script type="text/javascript">
+  function choose_who(i){
+    if(i==1){
+      var bid_id = $("input:radio[name='bid_project_bid_radios']:checked").val();
+      $("#bid_project_bid_project_bid_id").val(bid_id);
+      if (isEmpty(bid_id)){
+        art_alert("请选择中标人！");
+        return false;
+      } 
+      if (bid_id != '<%= @bpbs.first.id %>'){
+        if(isEmpty($("#bid_project_reason").val())){
+          art_alert("请填写废标操作理由！");
+          $("#bid_project_reason").focus();
+          return false;
+        }
+      }  
+    }else{
+      $("#bid_project_bid_project_bid_id").val("");
+      if(isEmpty($("#bid_project_reason").val())){
+        art_alert("请填写废标操作理由！");
+        $("#bid_project_reason").focus();
+        return false;
+      }
+    }
+    // alert("submit");
+    $("#choose_form").submit();
+  }
+</script>                    

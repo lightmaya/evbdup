@@ -22,18 +22,6 @@ class MyForm
       #column='brand_name'
 
       node.each do |n| 
-        if n.attributes.has_key?("if")
-          n.attributes["if"].to_s.split.each do |condition|
-            if_case = condition.split("|")[0]
-            result = condition.split("|")[1]
-            # display='readonly'
-            if eval(if_case)
-              result.split("__").each do |att|
-                n[att.split("=")[0]] = att.split("=")[1]
-              end
-            end
-          end
-        end
         #dasd if obj.id == 4 && n.attributes["column"].to_s == "brand_name"
         tmp << _create_text_field(n, obj, table_name, grid, index)
       end
@@ -93,6 +81,21 @@ private
   #   
   # # */
   def _create_text_field(node, obj, table_name, grid, index)
+
+    # if 条件
+    if node.attributes.has_key?("if")
+      node.attributes["if"].to_s.split.each do |condition|
+        if_case = condition.split("|")[0]
+        result = condition.split("|")[1]
+        # display='readonly'
+        if eval(if_case)
+          result.split("__").each do |att|
+            node[att.split("=")[0]] = att.split("=")[1]
+          end
+        end
+      end
+    end
+
     node_options = node.attributes
     # display=skip的直接跳过
     return "" if node_options.has_key?("display") && node_options["display"].to_s == "skip"

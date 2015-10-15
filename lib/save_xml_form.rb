@@ -3,18 +3,27 @@ module SaveXmlForm
   include BaseFunction
   include ActionView::Helpers::NumberHelper # number_to_human_size 函数
 
+  def create_or_update_msform_and_write_logs(master_obj, master_xml, slave, slave_xml, title={}, other_attrs={})
+    master = master_obj.class
+    if master_obj.new_record?
+      create_msform_and_write_logs(master, master_xml, slave, slave_xml,title,other_attrs)
+    else
+      update_msform_and_write_logs(master_obj, master_xml, slave, slave_xml, title, other_attrs)
+    end
+  end
+
   # 创建主从表并写日志
-  def create_msform_and_write_logs(master,master_xml,slave,slave_xml,title={},other_attrs={})
-    other_attrs = set_default_column(master,other_attrs)
+  def create_msform_and_write_logs(master, master_xml, slave, slave_xml,title={},other_attrs={})
+    other_attrs = set_default_column(master, other_attrs)
     title[:action] ||= "录入数据"
     title[:master_title] ||= "基本信息"
     title[:slave_title] ||= "明细信息"
-    attribute = prepare_params_for_save(master,master_xml,other_attrs) # 获取并整合主表参数信息
+    attribute = prepare_params_for_save(master, master_xml, other_attrs) # 获取并整合主表参数信息
     master_obj = master.create(attribute) #保存主表
     unless master_obj.id.nil?
-      logs_remark = prepare_origin_logs_remark(master,master_xml,title[:master_title]) #主表日志
+      logs_remark = prepare_origin_logs_remark(master, master_xml, title[:master_title]) #主表日志
       logs_remark << save_uploads(master_obj) # 保存附件并将日志添加到主表日志
-      logs_remark << save_slaves(master_obj,slave,slave_xml,title[:slave_title]) # 保存从表并将日志添加到主表日志
+      logs_remark << save_slaves(master_obj, slave, slave_xml, title[:slave_title]) # 保存从表并将日志添加到主表日志
       unless logs_remark.blank?
         write_logs(master_obj,title[:action],logs_remark) # 写日志
       end
@@ -27,7 +36,7 @@ module SaveXmlForm
   end
 
   # 更新主从表并写日志
-  def update_msform_and_write_logs(master_obj,master_xml,slave,slave_xml,title={},other_attrs={})
+  def update_msform_and_write_logs(master_obj, master_xml, slave, slave_xml, title={}, other_attrs={})
     title[:action] ||= "修改数据"
     title[:master_title] ||= "基本信息"
     title[:slave_title] ||= "明细信息"
@@ -178,7 +187,7 @@ private
 
   #XML_FORM表单提交后生成的参数，返回二维数组，第一维是存入数据库的column参数，第二维是拼成details的name参数
   def get_xmlform_params(model,xml)
-    tmp = get_column_and_name_array(model,xml)
+    tmp = get_column_and_name_array(model, xml)
     return [params.require(model.to_s.tableize.to_sym).permit(tmp[0]) ,params.require(model.to_s.tableize.to_sym).permit(tmp[1])]
   end
 
@@ -188,13 +197,14 @@ private
     name_params = []
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
+      next if node.attributes.has_key?("delegate") 
       if node.attributes.has_key?("column")
         column_params << node.attributes["column"].to_s
       else
         name_params << node.attributes["name"].to_s
       end
     }
-    return [column_params,name_params]
+    return [column_params, name_params]
   end
 
   #根据XML_FORM表单提交后的参数准备好details的XML文档
@@ -286,7 +296,7 @@ private
   end
 
   # 保存从表数据
-  def save_slaves(master_obj,slave,slave_xml,slave_title="数据")
+  def save_slaves(master_obj, slave, slave_xml, slave_title="数据")
     logs_remark = "" # 从表不纪录日志,日志纪录到主表中去
     slave_params = params.require(slave.to_s.tableize.to_sym)
     foreign_key = "#{master_obj.class.to_s.underscore}_id"
@@ -301,6 +311,10 @@ private
       column_name[1].each{|name| details[name] = slave_params[name][i]}
       all_params = attribute.merge details # 分析日志用的参数
       attribute["details"] = prepare_details(details)
+
+      if slave.attribute_names.include?("user_id")
+        attribute["user_id"] = current_user.id
+      end
       if attribute["id"].blank?
         attribute[foreign_key] = master_obj.id #主键
         attribute.delete("id")
@@ -312,6 +326,7 @@ private
         obj.update_attributes(attribute)
       end
     end
+    master_obj.after_slaves_save if master_obj.respond_to? "after_slaves_save"
     # 参数中存在的ID，即原数据库中没有被删除的
     exists_ids = slave_params["id"].values.delete_if{|x|x == ""}.map{|x|x.to_i}
     delete_ids = tables_ids - exists_ids

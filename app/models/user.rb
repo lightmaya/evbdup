@@ -1,29 +1,27 @@
 # -*- encoding : utf-8 -*-
 class User < ActiveRecord::Base
-  # before_save {self.email = email.downcase}
-  before_create :create_remember_token
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   # validates :email, presence: true, format: { with:VALID_EMAIL_REGEX }#, uniqueness: { case_sensitive: false }
   has_secure_password
   validates :password, presence: true, length: { in: 6..20 }, :on => :create
   validates :login, presence: true, length: { in: 6..20 }, uniqueness: { case_sensitive: false }
+  include AboutStatus
+  validates_with MyValidator, on: :update
 
   belongs_to :department
   has_many :user_menus, :dependent => :destroy
   has_many :menus, through: :user_menus
-
   has_many :user_categories, :dependent => :destroy
   has_many :categories, through: :user_categories
-
   has_many :orders
   # 收到的消息
   has_many :msg_users
   # has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  
+  has_many :bid_projects
 
-  include AboutStatus
-  validates_with MyValidator, on: :update
-
+  # before_save {self.email = email.downcase}
+  before_create :create_remember_token
   # 为了在Model层使用current_user
   # def self.current
   #   Thread.current[:user]
@@ -207,7 +205,7 @@ class User < ActiveRecord::Base
   def bid_project_bid(bid_project)
     bpb = BidProjectBid.find_or_initialize_by(user_id: self.id, bid_project_id: bid_project.id)
     if bpb.new_record?
-      bpb.com_name = self.department.name
+      bpb.com_name = self.department.real_dep.name
       bpb.add = self.department.address
       bpb.username = self.name
       bpb.tel = self.tel

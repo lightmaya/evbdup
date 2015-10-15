@@ -2,11 +2,12 @@
 class Kobe::BidProjectsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
+  before_filter :check_bid_project, only: [:choose, :pre_choose]
 
   def index
     params[:q][:user_id_eq] = current_user.id unless current_user.admin?
     @q = BidProject.where(get_conditions("bid_projects")).ransack(params[:q]) 
-    @bid_projects = @q.result.page params[:page]
+    @bid_projects = @q.result.includes([:bid_project_bids]).page params[:page]
   end
 
   def show
@@ -20,11 +21,26 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def bid
-    
   end
 
   def audit
+  end
 
+  def pre_choose
+    @obj_contents = show_obj_info(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
+    @bid_project.items.each_with_index do |item, index|
+      @obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
+    end
+    @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC")
+    # 默认第一中标人
+    @bid_project.bid_project_bid_id = @bpbs.first.id
+  end
+
+  def choose
+    other_attrs = {status: 12}
+    update_and_write_logs(@bid_project, BidProject.xml, other_attrs)
+    redirect_to action: :index
+    # @bid_project.update(params[:bid_project].permit(:bid_project_bid_id, :reason))
   end
 
   def update_audit
@@ -118,5 +134,11 @@ class Kobe::BidProjectsController < KobeController
     def get_project_name
       category_names = params[:bid_items][:category_name].values.uniq.join("、")
       "#{params[:bid_projects][:buyer_dep_name]}#{category_names}竞价项目"
+    end
+
+    # 只允许自己操作自己的项目
+    def check_bid_project
+      @bid_project = current_user.admin? ? BidProject.find_by_id(params[:id]) : current_user.bid_projects.find_by_id(params[:id])
+      return redirect_to not_fount_path unless @bid_project
     end
 end

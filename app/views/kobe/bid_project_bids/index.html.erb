@@ -9,8 +9,9 @@
             <div class="margin-bottom-10">
               <div class="input-group">
                 <%= f.search_field :name_or_code_cont, class: "form-control input-sm", placeholder: "请输入项目编号或项目名称..." %>
-                <span class="input-group-btn">
-                  <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                <span class="input-group-btn ml8">
+                  <button class="btn btn-success btn-sm mr8" type="submit">搜索</button>
+                  <%= link_to "全部", kobe_bid_project_bids_path, class: "btn btn-success btn-sm" %>
                 </span>
               </div>
             </div>
@@ -21,10 +22,11 @@
         <thead>
           <tr>
             <th class="index">序号</th>
-            <th class="hidden-sm">项目编号</th>
-            <th class="hidden-sm">项目名称</th>
-            <th class="hidden-sm">明标/暗标</th>
-            <th class="hidden-sm">投标截止时间</th>
+            <th>项目编号</th>
+            <th>项目名称</th>
+            <th>明标/暗标</th>
+            <th>投标截止时间</th>
+            <th>投标状态</th>
             <th class="cando">操作</th>
           </tr>
         </thead>
@@ -34,8 +36,9 @@
             <td><%= show_index(index) %></td>
             <td><%= bid_project.code %></td>
             <td><%= bid_project.name %></td>
-            <td><%= bid_project.dict_value("lod") %></td>
-            <td><%= bid_project.end_time %></td>
+            <td class="tc"><%= bid_project.dict_value("lod") %></td>
+            <td class="tc"><%= bid_project.end_time %></td>
+            <td class="tc"><%= bid_project.bid_item_bids.map(&:user_id).include?(current_user.id) ? label_tag("已投标") : label_tag("未投标", "warning") %></td>
             <td><%= btn_group(bid_project_bids_btn(bid_project)) %></td>
           </tr>
         <% end %>

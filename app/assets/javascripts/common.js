@@ -309,3 +309,13 @@ function cutstr(str, len) {
     return str + "&nbsp;&nbsp;&nbsp;&nbsp;";
   }
 }
+
+function art_alert(msg){
+  var d = dialog({
+    title: "提示",
+    content: msg,
+    quickClose: true
+  });
+  d.show();
+}
+

@@ -68,6 +68,8 @@ Evbdup::Application.routes.draw do
         get :list
       end
       member do 
+        get :pre_choose
+        patch :choose
         get :audit
         get :bid
         get :delete

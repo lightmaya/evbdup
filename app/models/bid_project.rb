@@ -2,6 +2,8 @@
 class BidProject < ActiveRecord::Base
   has_many :uploads, as: :master
   has_many :items, class_name: "BidItem"
+  has_many :bid_item_bids
+  has_many :bid_project_bids
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :user
 
@@ -23,6 +25,7 @@ class BidProject < ActiveRecord::Base
 	    ["暂存", 0, "orange", 50],
       ["等待审核", 1, "orange", 60],
 	    ["已发布", 2, "u", 70],
+      ["确定中标人", 12, "u", 70],
       ["审核拒绝",3,"red", 0],
 	    ["已删除", 404, "red", 0]
     ]
@@ -33,6 +36,7 @@ class BidProject < ActiveRecord::Base
       "提交审核" => { 0 => 1 },
       "删除" => { 0 => 404 },
       "通过" => { 1 => 2 },
+      "确定中标人" => {2 => 12},
       "不通过" => { 1 => 3 }
     }
   end
@@ -41,8 +45,8 @@ class BidProject < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='')
     case act
-    when "commit" 
-      [0].include?(self.status) && self.get_tips.blank?
+    when "edit" 
+      [0, 3].include?(self.status) && self.get_tips.blank?
     when "update_audit", "audit" 
       self.can_opt?("通过") && self.can_opt?("不通过")
     else false
@@ -87,6 +91,9 @@ class BidProject < ActiveRecord::Base
         <node name='预算金额（元）' column='budget' class='required number' display="skip" />
         <node name='资质要求' column='req' data_type='textarea' class='required' />
         <node name='备注信息' column='remark' data_type='textarea' />
+
+        <node name='中标投标' column='bid_project_bid_id' display='skip' />
+        <node name='理由' column='reason' display='skip' />
       </root>
     }
   end
