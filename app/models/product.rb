@@ -8,6 +8,7 @@ class Product < ActiveRecord::Base
 
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Product") }, foreign_key: :obj_id
+  scope :show, -> {where("products.status = 1")}
 
 	include AboutStatus
 

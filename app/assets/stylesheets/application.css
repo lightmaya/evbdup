@@ -34,7 +34,8 @@
  *= require shop/shop.style.css
  *= require shop/headers/header-v5.css
  *= require shop/footers/footer-v4.css
- * require shop/plugins/font-awesome/css/font-awesome.min
+ *= require shop/master-slider/quick-start/masterslider/skins/default/style
+ *= require shop/master-slider/quick-start/masterslider/style/masterslider
  */
 
 .text-red{color:#ff0000;}

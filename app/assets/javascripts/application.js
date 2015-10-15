@@ -29,6 +29,14 @@
 //= require plugins/owl.carousel
 //= require plugins/owl-carousel
 //= require plugins/owl-recent-works
+//= require plugins/jquery.mCustomScrollbar.concat.min
+
+
+//= require shop/forms/product-quantity
+//= require shop/plugins/master-slider
+//= require shop/shop.app
+//= require shop/master-slider/quick-start/masterslider/masterslider.min
+//= require shop/master-slider/quick-start/masterslider/jquery.easing.min
 //= require select2/select2.min
 //= require select2/select2_locale_zh-CN
 //= require my97/WdatePicker

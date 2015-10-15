@@ -22,6 +22,8 @@ Evbdup::Application.routes.draw do
   post 'umeditor/image', :to => 'umeditor#image'
   get 'umeditor/image', :to => 'umeditor#image'
 
+  resources :products
+
   resources :home, :only => :index  do 
     collection do
       get :form_test, :ajax_test, :test, :json_test
