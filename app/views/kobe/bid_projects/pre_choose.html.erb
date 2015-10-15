@@ -36,6 +36,7 @@
   </table>
   <%= form_for @bid_project, as: :bid_projects, :url => choose_kobe_bid_project_path(@bid_project), :html => {id: "choose_form"} do |f| %>
     <%= f.text_field :bid_project_bid_id %>
+    <%= f.text_field :status %>
     <table class="table table-bordered table-hover">
       <tr>
       	<th>操作理由</th>
@@ -63,7 +64,8 @@
           $("#bid_project_reason").focus();
           return false;
         }
-      }  
+      } 
+      $("#bid_project_status").val(12); 
     }else{
       $("#bid_project_bid_project_bid_id").val("");
       if(isEmpty($("#bid_project_reason").val())){
@@ -71,6 +73,7 @@
         $("#bid_project_reason").focus();
         return false;
       }
+      $("#bid_project_status").val(-1); 
     }
     // alert("submit");
     $("#choose_form").submit();

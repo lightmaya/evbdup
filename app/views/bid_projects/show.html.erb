@@ -12,15 +12,40 @@
 <div class="container">
 	<%= @obj_contents %>
 	<%= uploads_html(@bid_project, {title: true}).html_safe %>
-	<% if @before_end > 0 %>
-		<div class='bid_project_time tc'>
-	    <span class='seconds hide'><%= @before_end %></span>
-	    <h4>据截止：</h4>
-	    <div class='time_str'></div>
-	    <hr>
-	    <%= link_to "我要报价", pre_bid_kobe_bid_project_bids_path(bid_project_id: @bid_project), class: "btn-u btn-u-lg btn-u-purple" if current_user %>
-	  </div>
-  <% end %>
+	<% if @bid_project.status == 2 %>
+		<% if @before_end > 0 %>
+			<div class='bid_project_time tc'>
+		    <span class='seconds hide'><%= @before_end %></span>
+		    <h4>据截止：</h4>
+		    <div class='time_str'></div>
+		    <hr>
+		    <%= link_to "我要报价", pre_bid_kobe_bid_project_bids_path(bid_project_id: @bid_project), class: "btn-u btn-u-lg btn-u-purple" if current_user %>
+		  </div>
+		<% else %>
+	  	<div class="alert alert-danger fade in tc center">
+			  <strong>抱歉!</strong>投标已截止!
+			</div>
+	  <% end %>
+	<% elsif @bid_project.status == 12 %>
+		<div>
+			<h5><i class="fa fa-chevron-circle-down"></i> 中标单位报价信息</h5>
+			<table class="table table-bordered table-hover">
+		    <tr>
+		    	<th>单位名称</th>
+		    	<th>报价总金额</th>
+		    </tr>
+		    <tr>
+		    	<td><%= @bid_project.bid_project_bid.com_name %></td>
+		    	<td><%= money @bid_project.bid_project_bid.total %></td>
+		    </tr>
+		  </table>
+		  <ol>
+		  	<li>未成交单位名称和报价等信息不再显示；</li>
+		  	<li>请交易双方在规定的期限内签订书面采购合同，时间最晚不得超过成交公告发布之日起30日；</li>
+		  	<li>感谢各方的积极参与。如有问题请联系服务热线010-88016801/88016802/88016607。</li>
+		  </ol> 
+		</div>
+	<% end -%>
 </div>
 
 <script type="text/javascript">

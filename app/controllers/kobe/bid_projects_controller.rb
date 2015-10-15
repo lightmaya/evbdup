@@ -18,6 +18,7 @@ class Kobe::BidProjectsController < KobeController
     end
     @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
     @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project) }
+    @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC")
   end
 
   def bid
@@ -37,8 +38,7 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def choose
-    other_attrs = {status: 12}
-    update_and_write_logs(@bid_project, BidProject.xml, other_attrs)
+    update_and_write_logs(@bid_project, BidProject.xml, {action: "确定中标人"}, other_attrs)
     redirect_to action: :index
     # @bid_project.update(params[:bid_project].permit(:bid_project_bid_id, :reason))
   end

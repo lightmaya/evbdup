@@ -4,6 +4,7 @@ class BidProject < ActiveRecord::Base
   has_many :items, class_name: "BidItem"
   has_many :bid_item_bids
   has_many :bid_project_bids
+  has_one :bid_project_bid
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :user
 
@@ -25,7 +26,8 @@ class BidProject < ActiveRecord::Base
 	    ["暂存", 0, "orange", 50],
       ["等待审核", 1, "orange", 60],
 	    ["已发布", 2, "u", 70],
-      ["确定中标人", 12, "u", 70],
+      ["确定中标人", 12, "u", 100],
+      ["废标", -1, "u", 100],
       ["审核拒绝",3,"red", 0],
 	    ["已删除", 404, "red", 0]
     ]
@@ -37,6 +39,7 @@ class BidProject < ActiveRecord::Base
       "删除" => { 0 => 404 },
       "通过" => { 1 => 2 },
       "确定中标人" => {2 => 12},
+      "废标" => {2 => -1},
       "不通过" => { 1 => 3 }
     }
   end
