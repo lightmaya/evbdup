@@ -83,7 +83,8 @@ module SaveXmlForm
     title[:master_title] ||= "详细信息"
     attribute = prepare_params_for_save(obj.class,xml,other_attrs)
     logs_remark = prepare_edit_logs_remark(obj,xml,"修改#{title[:master_title]}") #主表日志--修改痕迹 先取日志再更新主表，否则无法判断修改前后的变化情况
-    save_uploads(obj) # 保存附件，附件日志已经上文件上传时记录了
+    save_uploads(obj) # 保存附件，附件日志已经上文件上传时记录了\
+    dasd
     if obj.update_attributes(attribute) #更新主表
       unless logs_remark.blank?
         write_logs(obj,title[:action],logs_remark) # 写日志
@@ -98,7 +99,7 @@ module SaveXmlForm
 
   #  手动写入日志 确保表里面有logs和status字段才能用这个函数
   def write_logs(obj,action,remark='')
-    doc = prepare_logs_content(obj,action,remark)
+    doc = prepare_logs_content(obj, action, remark)
     obj.update_columns("logs" => doc)
   end
 

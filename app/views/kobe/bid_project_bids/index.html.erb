@@ -1,20 +1,29 @@
 <div class="panel panel-grey margin-bottom-40">
   <div class="panel-heading">
-      <h3 class="panel-title"><i class="fa fa-tasks"></i> 可报价的竞价项目</h3>
+      <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= @panel_title %></h3>
   </div>
   <div class="panel-body">
     <div class="row">
+      <div class="col-md-8">
+        <div class="pt10">
+          <%= link_to label_tag("可投标", "#{'warning' if params[:flag] == '1'}"), kobe_bid_project_bids_path(flag: 1) %>
+          <%= link_to label_tag("已投标", "#{'warning' if params[:flag] == '2'}"), kobe_bid_project_bids_path(flag: 2) %>
+          <%= link_to label_tag("已中标", "#{'warning' if params[:flag] == '3'}"), kobe_bid_project_bids_path(flag: 3) %>
+        </div>
+      </div>
       <div class="col-md-4 pull-right">
+        
         <%= search_form_for @q, url: kobe_bid_project_bids_path, html: { method: :get } do |f| %>
-            <div class="margin-bottom-10">
-              <div class="input-group">
-                <%= f.search_field :name_or_code_cont, class: "form-control input-sm", placeholder: "请输入项目编号或项目名称..." %>
-                <span class="input-group-btn ml8">
-                  <button class="btn btn-success btn-sm mr8" type="submit">搜索</button>
-                  <%= link_to "全部", kobe_bid_project_bids_path, class: "btn btn-success btn-sm" %>
-                </span>
-              </div>
+          <div class="margin-bottom-10">
+            <div class="input-group">
+              <%= hidden_field_tag "flag", params[:flag] %>
+              <%= f.search_field :name_or_code_cont, class: "form-control input-sm", placeholder: "请输入项目编号或项目名称..." %>
+              <span class="input-group-btn ml8">
+                <button class="btn btn-success btn-sm mr8" type="submit">搜索</button>
+                <%= link_to "全部", kobe_bid_project_bids_path(flag: params[:flag]), class: "btn btn-success btn-sm" %>
+              </span>
             </div>
+          </div>
           <% end %>
         </div>
       </div>
@@ -26,6 +35,7 @@
             <th>项目名称</th>
             <th>明标/暗标</th>
             <th>投标截止时间</th>
+            <th>项目状态</th>
             <th>投标状态</th>
             <th class="cando">操作</th>
           </tr>
@@ -38,8 +48,9 @@
             <td><%= bid_project.name %></td>
             <td class="tc"><%= bid_project.dict_value("lod") %></td>
             <td class="tc"><%= bid_project.end_time %></td>
+            <td class="tc"><%= bid_project.status_badge %></td>
             <td class="tc"><%= bid_project.bid_item_bids.map(&:user_id).include?(current_user.id) ? label_tag("已投标") : label_tag("未投标", "warning") %></td>
-            <td><%= btn_group(bid_project_bids_btn(bid_project)) %></td>
+            <td class="tc"><%= btn_group(bid_project_bids_btn(bid_project)) %></td>
           </tr>
         <% end %>
         </tbody>

@@ -12,14 +12,29 @@ class Kobe::BidProjectBidsController < KobeController
 
 	def bid
 		other_attrs = {com_name: current_user.department.real_dep.name}
+		info = @bid_project_bid.new_record? ? "报价成功！" : "修改报价成功！"
     @bid_project_bid = create_or_update_msform_and_write_logs(@bid_project_bid, BidProjectBid.xml, BidItemBid, BidItemBid.xml, {:action => "报价", :master_title => "基本信息", :slave_title => "产品信息"}, other_attrs)
-
+    write_logs(@bid_project, "报价", "[#{current_user.department.real_dep.name}]#{info}")
 		redirect_to action: :index
 	end
 
 
 	def index
-    @q = BidProject.can_bid.ransack(params[:q]) 
+		params[:flag] ||= "1"
+		clazz = case params[:flag]
+			when "1" # 可报价
+				@panel_title = "可报价的竞价项目"
+				BidProject.can_bid
+			when "2" # 已投标
+				@panel_title = "已投标的竞价项目"
+				params[:q][:bid_project_bid_user_id_eq] = current_user.id
+				BidProject
+			when "3" # 已中标
+				@panel_title = "已中标的竞价项目"
+				params[:q][:bid_project_bid_id_in] = current_user.bid_project_bids.map(&:id)
+				BidProject
+			end
+    @q = clazz.ransack(params[:q]) 
     @bid_projects = @q.result.includes(:bid_item_bids).page params[:page]
 	end
 

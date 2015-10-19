@@ -310,9 +310,12 @@ module BtnArrayHelper
   def bid_project_bids_btn(obj)
     arr = [] 
     # 查看详细
+    arr << [obj.class.icon_action("详细"), obj, target: "_blank"]
+    
+    # 报价
     title = current_user.bid_item_bids(obj).present? ? "我要修改" : "我要报价"
-    arr << [obj.class.icon_action(title), pre_bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:show, obj)
-
+    arr << [obj.class.icon_action(title), pre_bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:show, obj) && obj.can_bid?
+    return arr
   end
   
 end

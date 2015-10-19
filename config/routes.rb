@@ -50,7 +50,7 @@ Evbdup::Application.routes.draw do
   namespace :kobe do
     resources :shared, :only => :index do
       collection do
-        post :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json
+        post :item_ztree_json, :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json
         get :get_item_category
       end
     end

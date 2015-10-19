@@ -25,7 +25,7 @@ class BidProject < ActiveRecord::Base
 		[
 	    ["暂存", 0, "orange", 50],
       ["等待审核", 1, "orange", 60],
-	    ["已发布", 2, "u", 70],
+	    ["已发布", 2, "orange", 70],
       ["确定中标人", 12, "u", 100],
       ["废标", -1, "u", 100],
       ["审核拒绝",3,"red", 0],
@@ -64,6 +64,19 @@ class BidProject < ActiveRecord::Base
     self.status == 2 && !is_end?
   end
 
+  def show_logs
+    if can_bid?
+      doc = Nokogiri::XML(self.logs)
+      note = doc.search("/root/node[(@操作内容='报价')]") # find all tags with the node_name "note"
+      note.remove
+      doc
+    else
+      Nokogiri::XML(self.logs)
+    end
+  end
+
+
+
   # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
   def get_tips
     msg = []
@@ -93,10 +106,8 @@ class BidProject < ActiveRecord::Base
         <node name='投标截止时间' column='end_time' class='required datetime_select datetime' />
         <node name='预算金额（元）' column='budget' class='required number' display="skip" />
         <node name='资质要求' column='req' data_type='textarea' class='required' />
+        <node name='指定入围供应商' hint='粮机设备必须从入围项目中选择' class='box_radio required' json_url='/kobe/shared/item_ztree_json' partner='item_id'/>
         <node name='备注信息' column='remark' data_type='textarea' />
-
-        <node name='中标投标' column='bid_project_bid_id' display='skip' />
-        <node name='理由' column='reason' display='skip' />
       </root>
     }
   end

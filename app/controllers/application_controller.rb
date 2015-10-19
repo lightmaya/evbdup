@@ -46,6 +46,7 @@ class ApplicationController < ActionController::Base
   # 查询初始化参数 
   def init_params_search
     params[:q] ||= {}
+    params[:q][:s] ||= "id desc"
   end
 
   protected

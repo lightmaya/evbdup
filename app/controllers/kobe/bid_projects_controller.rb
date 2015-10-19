@@ -17,7 +17,7 @@ class Kobe::BidProjectsController < KobeController
       obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
     end
     @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
-    @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project) }
+    @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
     @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC")
   end
 
@@ -38,7 +38,9 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def choose
-    update_and_write_logs(@bid_project, BidProject.xml, {action: "确定中标人"}, other_attrs)
+    #W status id reason
+    @bid_project.update(params.require(:bid_project).permit!)
+    write_logs(@bid_project, BidProject.get_status_attributes(@bid_project.status, 1)[0], @bid_project.reason)
     redirect_to action: :index
     # @bid_project.update(params[:bid_project].permit(:bid_project_bid_id, :reason))
   end
@@ -75,7 +77,7 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def new
-    @bid_project.buyer_dep_name = current_user.department.name
+    @bid_project.buyer_dep_name = @bid_project.invoice_title = current_user.department.real_dep.name
     @bid_project.buyer_name = current_user.name
     @bid_project.buyer_phone = current_user.tel
     @bid_project.buyer_mobile = current_user.mobile

@@ -246,6 +246,7 @@ module ApplicationHelper
   end
 
   def label_tag(text, style = 'info', options = {})
+    style = 'info' if style.blank?
     options[:title] ||= text
     "<span title='#{options[:title]}' class='label label-#{style}'>#{text}</span>".html_safe
   end

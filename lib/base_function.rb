@@ -128,10 +128,10 @@ module BaseFunction
   end
 
   # 显示记录的操作日志
-  def show_logs(obj)
+  def show_logs(obj, doc = nil)
     return "暂无记录" if obj.logs.blank?
     str = []
-    doc = Nokogiri::XML(obj.logs)
+    doc ||= obj.logs
     doc.xpath("/root/node").each do |n|
       opt_time = n.attributes["操作时间"].to_s.split(" ")
       # act = n.attributes["操作内容"].to_s[0,2]

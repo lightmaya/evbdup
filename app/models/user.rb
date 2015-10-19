@@ -19,6 +19,7 @@ class User < ActiveRecord::Base
   has_many :msg_users
   # has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  
   has_many :bid_projects
+  has_many :bid_project_bids
 
   # before_save {self.email = email.downcase}
   before_create :create_remember_token
