@@ -8,6 +8,8 @@ class Category < ActiveRecord::Base
 
   default_scope -> {order(:ancestry, :sort, :id)}
 
+  scope :usable, -> {where("categories.status = 0")}
+
   include AboutStatus
   include AboutAncestry
 

@@ -250,4 +250,14 @@ module ApplicationHelper
     options[:title] ||= text
     "<span title='#{options[:title]}' class='label label-#{style}'>#{text}</span>".html_safe
   end
+
+  def link_to_channel(h = {}, options = {})
+    return "" if h[:title].blank?
+    combos = params[:combo].split("_")
+    combos[Product::QS.index(h[:q])] = h[:id]
+    combos.each_with_index{|o, i| combos[i] = 0 if o.nil?}
+    title = h[:title]
+    title += '<span style="color: red;"> X</span>' if options[:del]
+    link_to title.html_safe, channel_path(combos.join("_"))
+  end
 end

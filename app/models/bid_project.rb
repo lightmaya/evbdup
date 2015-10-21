@@ -7,6 +7,7 @@ class BidProject < ActiveRecord::Base
   has_one :bid_project_bid
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :user
+  has_one :item
 
   scope :can_bid, -> { where("bid_projects.status = 2 and now() < bid_projects.end_time") }
 
@@ -59,9 +60,14 @@ class BidProject < ActiveRecord::Base
   def is_end?
     Time.now - self.end_time > 0
   end
-  
+    
   def can_bid?
     self.status == 2 && !is_end?
+  end
+
+  # 判断是否是指定供应商
+  def is_assigned?(user)
+    item.blank? || item.departments.include?(user.department)
   end
 
   def show_logs
@@ -106,7 +112,8 @@ class BidProject < ActiveRecord::Base
         <node name='投标截止时间' column='end_time' class='required datetime_select datetime' />
         <node name='预算金额（元）' column='budget' class='required number' display="skip" />
         <node name='资质要求' column='req' data_type='textarea' class='required' />
-        <node name='指定入围供应商' hint='粮机设备必须从入围项目中选择' class='box_radio required' json_url='/kobe/shared/item_ztree_json' partner='item_id'/>
+        <node column='item_id' data_type='hidden'/>
+        <node name='指定入围供应商' hint='粮机设备必须从入围项目中选择' class='box_radio' json_url='/kobe/shared/item_ztree_json' partner='item_id'/>
         <node name='备注信息' column='remark' data_type='textarea' />
       </root>
     }

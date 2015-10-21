@@ -1,0 +1,18 @@
+<%# Link to the "First" page
+  - available local variables
+    url:           url to the first page
+    current_page:  a page object for the currently displayed page
+    total_pages:   total number of pages
+    per_page:      number of items to fetch per page
+    remote:        data-remote
+-%>
+<li class="first">
+	<% url = url.split("?").first -%>
+	<% 
+		combos = params[:combo].split("_")
+    combos[Product::QS.index("page")] = 1
+    combos.each_with_index{|o, i| combos[i] = 0 if o.nil?}
+    url = url.gsub(/\/[\d_]+\.html/, "/#{combos.join('_')}.html")
+	 %>
+  <%= link_to_unless current_page.first?, "首页", url, :remote => remote %>
+</li>

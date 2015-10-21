@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   # reset captcha code after each request for security
   # after_action :reset_last_captcha_code!
 
-
+  before_filter :find_cart
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
   before_action :store_location
 
   before_action :init_params_search
+
+  def default_url_options(options = nil)
+    {:format => "html"}
+  end
 
   # cancan 权限校验
   rescue_from CanCan::AccessDenied do |exception|
@@ -42,6 +46,50 @@ class ApplicationController < ActionController::Base
     redirect_to(default || session[:return_to] || root_path)
     session.delete(:return_to)
   end
+
+  
+  def find_cart
+    Cart # cache_classes
+    if current_user
+      # 把cookie中的cart添加到user的cart中
+      cookie_cart = YAML.load(cookies[:cart].to_s)
+      user_cart = YAML.load(current_user.cart.to_s)
+      if cookie_cart.is_a?(Cart) && current_user.cart.blank?
+        current_user.update(cart: cookies[:cart].to_s)
+      end
+
+      if cookie_cart.is_a?(Cart) && user_cart.is_a?(Cart)
+        cookie_cart.items.each do |citem|
+          if product = Product.find_by_id(citem.product_id)
+            user_cart.change(product, citem.num)
+          end
+        end
+        current_user.update(cart: user_cart.to_yaml)
+      end
+      
+      @cart = YAML.load(current_user.cart.to_s)
+      cookies.delete :cart
+    else
+      @cart = YAML.load(cookies[:cart].to_s)
+    end
+
+    unless @cart.is_a?(Cart)
+      @cart = Cart.new 
+      cookies.delete :cart
+    end
+
+    @cart.refine
+  end
+  
+  def save_cart
+    if current_user
+      current_user.update(cart: @cart.to_yaml)
+      cookies.delete :cart
+    else
+      cookies[:cart] = { :value => @cart.to_yaml, :expires => 1.year.from_now }
+    end
+  end
+
 
   # 查询初始化参数 
   def init_params_search

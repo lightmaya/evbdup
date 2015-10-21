@@ -12,6 +12,8 @@ class Product < ActiveRecord::Base
 
 	include AboutStatus
 
+  QS = ["category_id_eq", "brand_eq", "sort", "page"]
+
 	# 附件的类
   def self.upload_model
     ProductsUpload

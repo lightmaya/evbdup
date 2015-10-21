@@ -22,6 +22,16 @@ Evbdup::Application.routes.draw do
   post 'umeditor/image', :to => 'umeditor#image'
   get 'umeditor/image', :to => 'umeditor#image'
 
+  # 购物车
+  resource :cart, :controller => 'cart', :only => [:show, :destroy] do
+    collection do
+      post :order, :to => 'cart#order'
+      get 'change/:id', :to => 'cart#change', :as => :change
+      post 'dynamic', :to => 'cart#dynamic', :as => :dynamic
+      delete 'rm/:id', :to => 'cart#rm', :as => :rm
+    end
+  end
+
   resources :products
 
   resources :home, :only => :index  do 

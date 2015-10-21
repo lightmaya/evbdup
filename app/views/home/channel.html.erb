@@ -1,122 +1,39 @@
-<div class="container">
-        <div class="heading heading-v1 margin-bottom-20">
-            <h2>Product you may like</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed odio elit, ultrices vel cursus sed, placerat ut leo. Phasellus in magna erat. Etiam gravida convallis augue non tincidunt. Nunc lobortis dapibus neque quis lacinia. Nam dapibus tellus sit amet odio venenatis</p>
+<div class="owl-carousel-v1 owl-work-v1 margin-bottom-40">
+  <div class="headline"><h2 class="pull-left">推荐产品</h2>
+    <div class="owl-navigation">
+      <div class="customNavigation">
+        <a class="owl-btn prev-v2"><i class="fa fa-angle-left"></i></a>
+        <a class="owl-btn next-v2"><i class="fa fa-angle-right"></i></a>
+      </div>
+    </div><!--/navigation-->
+  </div>
+
+  <div id= "owl-carousel" class="owl-recent-works-v1 owl-carousel owl-theme">
+    <% 12.times do |i| %>
+      <!-- 畅销产品 -->
+      <div class="owl-item" style="width: 380px;">
+        <div class="item">
+          <a href="#">
+            <em class="overflow-hidden">
+              <img class="img-responsive" src="http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/001/298/small_C30.JPG" alt="">
+            </em>    
+            <span>
+              <strong>H<%= i + 1 %></strong>
+              <i>Anim pariatur cliche reprehenderit</i>
+            </span>
+          </a>    
         </div>
+      </div>
+      <!-- 畅销产品END -->
+    <% end -%>
+  </div>
+</div>
 
-        <div class="illustration-v2 margin-bottom-60">
-            <div class="customNavigation margin-bottom-25">
-                <a class="owl-btn prev rounded-x"><i class="fa fa-angle-left"></i></a>
-                <a class="owl-btn next rounded-x"><i class="fa fa-angle-right"></i></a>
-            </div>
-
-            <ul class="list-inline owl-slider-v4 owl-carousel owl-theme" style="opacity: 1; display: block;">
-                <div class="owl-wrapper-outer"><div class="owl-wrapper" style="width: 2736px; left: -228px; display: block;"><div class="owl-item" style="width: 228px;"><li class="item">
-                    <a href="#"><img class="img-responsive" src="assets/img/thumb/09.jpg" alt=""></a>
-                    <div class="product-description-v2">
-                        <div class="margin-bottom-5">
-                            <h4 class="title-price"><a href="#">Double-breasted</a></h4>
-                            <span class="title-price">$95.00</span>
-                        </div>    
-                        <ul class="list-inline product-ratings">
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                        </ul>    
-                    </div>
-                </li></div><div class="owl-item" style="width: 228px;"><li class="item">
-                    <a href="#"><img class="img-responsive" src="assets/img/thumb/07.jpg" alt=""></a>
-                    <div class="product-description-v2">
-                        <div class="margin-bottom-5">
-                            <h4 class="title-price"><a href="#">Double-breasted</a></h4>
-                            <span class="title-price">$60.00</span>
-                            <span class="title-price line-through">$95.00</span>
-                        </div>    
-                        <ul class="list-inline product-ratings">
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                        </ul>    
-                    </div>
-                </li></div><div class="owl-item" style="width: 228px;"><li class="item">
-                    <a href="#"><img class="img-responsive" src="assets/img/thumb/08.jpg" alt=""></a>
-                    <div class="product-description-v2">
-                        <div class="margin-bottom-5">
-                            <h4 class="title-price"><a href="#">Double-breasted</a></h4>
-                            <span class="title-price">$95.00</span>
-                        </div>    
-                        <ul class="list-inline product-ratings">
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                        </ul>    
-                    </div>
-                </li></div><div class="owl-item" style="width: 228px;"><li class="item">
-                    <a href="#"><img class="img-responsive" src="assets/img/thumb/06.jpg" alt=""></a>
-                    <div class="product-description-v2">
-                        <div class="margin-bottom-5">
-                            <h4 class="title-price"><a href="#">Double-breasted</a></h4>
-                            <span class="title-price">$95.00</span>
-                        </div>    
-                        <ul class="list-inline product-ratings">
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                        </ul>    
-                    </div>
-                </li></div><div class="owl-item" style="width: 228px;"><li class="item">
-                    <a href="#"><img class="img-responsive" src="assets/img/thumb/04.jpg" alt=""></a>
-                    <div class="product-description-v2">
-                        <div class="margin-bottom-5">
-                            <h4 class="title-price"><a href="#">Double-breasted</a></h4>
-                            <span class="title-price">$95.00</span>
-                        </div>    
-                        <ul class="list-inline product-ratings">
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                        </ul>    
-                    </div>
-                </li></div><div class="owl-item" style="width: 228px;"><li class="item">
-                    <a href="#"><img class="img-responsive" src="assets/img/thumb/03.jpg" alt=""></a>
-                    <div class="product-description-v2">
-                        <div class="margin-bottom-5">
-                            <h4 class="title-price"><a href="#">Double-breasted</a></h4>
-                            <span class="title-price">$95.00</span>
-                        </div>    
-                        <ul class="list-inline product-ratings">
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating-selected fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                            <li><i class="rating fa fa-star"></i></li>
-                        </ul>    
-                    </div>
-                </li></div></div></div>
-                
-                
-                
-                
-                    
-            <div class="owl-controls clickable"><div class="owl-pagination"><div class="owl-page"><span class=""></span></div><div class="owl-page active"><span class=""></span></div></div></div></ul>
-        </div> 
-    </div>
 
 <div class="content container">
   <div class="row">
-    <!-- 右侧产品列表 -->
     <div class="col-md-12">
-      <!-- 右侧上部 -->
+      <!-- 上部筛选 -->
       <div class="row margin-bottom-5">
         <div class="col-sm-4 result-category">
           <h2>轿车</h2>
@@ -129,68 +46,61 @@
               <a href="shop-ui-filter-grid.html"><i class="fa fa-th"></i></a>
             </li>
             <li class="sort-list-btn">
-              <h3>排序:</h3>
-              <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                  默认排序 <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="#">价格</a></li>
-                  <li><a href="#">销量</a></li>
-                </ul>
-              </div>
+              <h3><%= link_to label_tag("默认排序") %></h3>
+              <h3><%= link_to label_tag("价格") %></h3>
+              <h3><%= link_to label_tag("销量") %></h3>
             </li>
           </ul>
         </div>
 
         <%= render "search" %>
       </div>
-      <!-- 右侧上部END -->
+      <!-- 上部筛选END -->
 
-        <div class="filter-results">
-          <div class="row illustration-v2 margin-bottom-30">
-            <% 18.times do |i| %>
-              <!-- 一个产品 -->
-              <div class="col-md-3">
-                  <div class="product-img product-img-brd">
-                    <a href="#"><img class="full-width img-responsive" src="http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/001/298/small_C30.JPG?1344929134" alt=""></a>
-                    <a class="add-to-cart" href="#"><i class="fa fa-shopping-cart"></i>加入购物车</a>
-                    <div class="shop-rgba-dark-green rgba-banner">新产品</div>
-                  </div> 
-                  <div class="product-description product-description-brd margin-bottom-30">
-                    <div class="overflow-h margin-bottom-5">
-                      <div class="pull-left">
-                        <h4 class="title-price"><a href="shop-ui-inner.html">长城 长城C30汽油1.5手动豪华型 CC7150CE0C...</a></h4>
-                        <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
-                        <span class="title-price line-through fl">市场价：$95.00</span>
-                        <span class="title-price fl">协议价：$60.00</span>
-                      </div>    
+      <div class="filter-results">
+        <div class="row illustration-v2 margin-bottom-30">
+          <% @products.each_with_index do |product, i| %>
+            <!-- 产品 -->
+            <div class="col-md-3">
+                <div class="product-img product-img-brd">
+                  <%= link_to_blank image_tag("http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/001/298/small_C30.JPG", class: "full-width img-responsive"), product %>
+                  <%= link_to "加入购物车", "javascript:void(0);", id: "add_to_cart", class: "add-to-cart" %>
+                  <div class="shop-rgba-dark-green rgba-banner">新产品</div>
+                </div> 
+                <div class="product-description product-description-brd margin-bottom-30">
+                  <div class="overflow-h margin-bottom-5">
+                    <div class="pull-left">
+                      <h4 class="title-price">
+                        <%= link_to_blank truncate(product.name, length: 20), product, class: "shop-ui-inner.html" %>
+                      </h4>
+                      <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
+                      <span class="title-price line-through fl">市场价：<%= money product.market_price %></span>
+                      <span class="title-price fl">协议价：<%= money product.bid_price %></span>
                     </div>    
-                    <ul class="list-inline product-ratings">
-                        <li><i class="rating-selected fa fa-star"></i></li>
-                        <li><i class="rating-selected fa fa-star"></i></li>
-                        <li><i class="rating-selected fa fa-star"></i></li>
-                        <li><i class="rating fa fa-star"></i></li>
-                        <li><i class="rating fa fa-star"></i></li>
-                        <li class="like-icon"><a data-original-title="收藏" data-toggle="tooltip" data-placement="left" class="tooltips" href="#"><i class="fa fa-heart"></i></a></li>
-                    </ul>    
-                  </div>
-              </div>
-              <!-- 一个产品END -->
-            <% end -%>
-          </div>
-        </div><!--/end filter resilts-->
-
-        <div class="text-center">
-            <ul class="pagination pagination-v2">
-                <li><a href="#"><i class="fa fa-angle-left"></i></a></li>
-                <li><a href="#">1</a></li>
-                <li class="active"><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
-            </ul>                                                            
-        </div><!--/end pagination-->
-    <!-- 右侧产品列表END -->
+                  </div>    
+                  <ul class="list-inline product-ratings">
+                      <li><i class="rating-selected fa fa-star"></i></li>
+                      <li><i class="rating-selected fa fa-star"></i></li>
+                      <li><i class="rating-selected fa fa-star"></i></li>
+                      <li><i class="rating fa fa-star"></i></li>
+                      <li><i class="rating fa fa-star"></i></li>
+                     <!--  <li class="like-icon"><a data-original-title="收藏" data-toggle="tooltip" data-placement="left" class="tooltips" href="#"><i class="fa fa-heart"></i></a></li> -->
+                  </ul>    
+                </div>
+            </div>
+            <!-- 产品END -->
+          <% end -%>
+        </div>
+      </div><!--/end filter resilts-->
+      <%= paginate @products, :theme => 'channel' %>
+      <!-- 产品列表END -->
+    </div>
   </div><!--/end row-->
 </div><!--/end container-->    
 
+
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    $("#owl-carousel").owlCarousel();
+  });
+</script>

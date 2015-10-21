@@ -6,8 +6,8 @@
     <div class="row">
       <div class="col-md-8">
         <div class="pt10">
-          <%= link_to label_tag("可投标", "#{'warning' if params[:flag] == '1'}"), kobe_bid_project_bids_path(flag: 1) %>
-          <%= link_to label_tag("已投标", "#{'warning' if params[:flag] == '2'}"), kobe_bid_project_bids_path(flag: 2) %>
+          <%= link_to label_tag("正在进行", "#{'warning' if params[:flag] == '1'}"), kobe_bid_project_bids_path(flag: 1) %>
+          <%= link_to label_tag("已报价", "#{'warning' if params[:flag] == '2'}"), kobe_bid_project_bids_path(flag: 2) %>
           <%= link_to label_tag("已中标", "#{'warning' if params[:flag] == '3'}"), kobe_bid_project_bids_path(flag: 3) %>
         </div>
       </div>

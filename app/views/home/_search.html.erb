@@ -1,52 +1,51 @@
 <div class="filter">
-  <!-- 电商筛选 -->
-  <div class="filterminlist">
-    <div class="filtername" style="border: 0px">电商：</div>
-    <dl>
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11112_0_0">国美销售网</a>
-        </dd> 
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11111_0_0">京东商城</a>
-        </dd> 
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11110_0_0">史泰博</a>
-        </dd> 
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11118_0_0">苏宁易购</a>
-        </dd> 
-    </dl>
-    <div style="clear:both"></div>
-  </div>
-  <!-- 电商筛选END -->
 
-  <!-- 电商筛选 -->
-  <div class="filterminlist">
-    <div class="filtername">电商：</div>
-    <dl>
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11112_0_0">国美销售网</a>
-        </dd> 
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11111_0_0">京东商城</a>
-        </dd> 
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11110_0_0">史泰博</a>
-        </dd> 
-        <dd class="w120">
-          <a href="/channel/102_0_0_0_0_11118_0_0">苏宁易购</a>
-        </dd> 
-    </dl>
-    <div style="clear:both"></div>
-  </div>
-  <!-- 电商筛选END -->
+  <!-- 已选条件 -->
+  <% if @qs.present? %>
+    <div class="filterminlist">
+      <div class="filtername tr">已选条件：</div>
+      <div class="a-values">
+        <ul class="f-list">
+          <% @qs.each do |h| %>
+            <%# h[:title] = h[:title] + image_tag("dota/close_06.gif") %>
+            <li><%= link_to_channel h, {del: true} %></li>
+          <% end -%>
+        </ul>
+      </div>
+      <div class="v-option">
+        <%= link_to "全部撤消", channel_path(@category.id) %>   
+      </div>
+      <div style="clear:both"></div>
+    </div>
+  <% end-%>
+  <!-- 已选条件END -->
+
+  <!-- 品牌筛选 -->
+  <% if @brands.present? %>
+    <div class="filterminlist">
+      <div class="filtername tr" style="border: 0px">品牌：</div>
+      <dl>
+        <% @brands.each do |brand_hash| %>
+          <dd class="w120">
+            <%= link_to_channel brand_hash %>
+          </dd> 
+        <% end -%>
+      </dl>
+      <div style="clear:both"></div>
+    </div>
+  <% end -%>
+  <!-- 品牌筛选END -->
 </div>
 
 <style type="text/css">
+  ul.f-list {
+    list-style: none;
+  }
   .filter {
     clear: both;
     padding-top:5px;
-    margin-left: 20px;
+    margin-left: 13px;
+    margin-right: 13px;
   }
   .filterminlist dl{
     margin-bottom: 0px;
@@ -122,6 +121,7 @@
   display:block;
   float:left;
   width:720px;  
+  margin-left: 40px;
 }
 .filter dd {
   display:inline-block;

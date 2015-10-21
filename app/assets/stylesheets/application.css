@@ -21,6 +21,7 @@
  *= require plugins/sky-forms/custom-sky-forms
  *= require plugins/jquery.fancybox
  *= require plugins/owl.carousel
+ *= require plugins/owl.theme
  *= require plugins/style-switcher
  *= require common
  *= require plugins/style-switcher

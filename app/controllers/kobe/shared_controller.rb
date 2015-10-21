@@ -16,11 +16,12 @@ class Kobe::SharedController < KobeController
   def ztree_json
     if ["Menu", "Area", "ArticleCatalog", "DailyCategory"].include? params[:json_class]
     	ztree_box_json(params[:json_class].constantize)
-    end
+  end
   end
 
   def item_ztree_json
-    render :json => "[{\"id\":1, \"pId\":0, \"name\":\"办公类\"}, {\"id\":2, \"pId\":0, \"name\":\"粮机类\"}]"
+    json = Item.all.map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}|}
+    render :json => "[#{json.join(", ")}]" 
   end
 
   # 只显示省级地区
@@ -47,7 +48,6 @@ class Kobe::SharedController < KobeController
       # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
       nodes = Category.find_by_sql([sql,"%#{name}%"])
     end
-    dsad
     render :json => Category.get_json(nodes)
   end
 
