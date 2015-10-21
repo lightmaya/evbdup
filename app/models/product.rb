@@ -19,6 +19,10 @@ class Product < ActiveRecord::Base
     ProductsUpload
   end
 
+  def show
+    self.status == 1
+  end
+
   # 产品全称 品牌+型号+版本号
   def name
     "#{self.brand} #{self.model} #{self.version}"

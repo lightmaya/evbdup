@@ -1,12 +1,12 @@
 # -*- encoding : utf-8 -*-
 
-class CartController < ApplicationController
+class CartController < JamesController
   before_filter :find_product, :only => [:change]
   skip_filter :find_cart, :only => [:destroy]
 
   # 加入购物车
   def change
-    @cart.change(@product, params[:num], params[:set].present?)
+    @cart.change(@product, params[:num], @agent, params[:set].present?)
     save_cart
     redirect_to cart_path
   end
@@ -38,8 +38,10 @@ class CartController < ApplicationController
   private
 
   def find_product
-    @product = Product.find_by_id(params[:id])
-    return render_404 if @product.blank? || !@product.sellable?(params[:area_id])
+    @product = Product.show.find_by_id(params[:id])
+    return render_404 if @product.blank?
+    @agent = @product.item.agents.find_by_id(params[:agent_id])
+    return render_404 if @agent.blank?
   end
  
 end

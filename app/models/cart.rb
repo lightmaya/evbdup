@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class Cart 
+class Cart
   
   attr_accessor :items
 
@@ -18,20 +18,22 @@ class Cart
   end
 
   # 购物车中保存product(商品)的id
-  def change(product, num, set = false)
+  def change(product, num, dep, set = false)
     num = num.to_i
     if current_item = self.items.find { |item| item.product_id.to_s == product.id.to_s }
       set ? current_item.num = num : current_item.cr(num)
       destroy(product) if current_item.num <= 0
     else
-      current_item = CartItem.new({:market_price => product.market_price, :ready => true, :sku => product.sku, :price => product.price, :product_id => product.id, :num => [num, 1].max, :name => product.name})
+      current_item = CartItem.new({:market_price => product.market_price, :ready => true, 
+      :price => product.bid_price, :my_price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
+      :name => product.name, :agent_id => dep.id, :agent_name => dep.name})
       self.items = [current_item] + self.items
     end
     self
   end
 
   def refine
-    self.items.delete_if { |item| item.product.blank? || !item.product.sell  }
+    self.items.delete_if { |item| item.product.blank? || !item.product.show  }
     self
   end
 
@@ -59,13 +61,16 @@ end
 
 class CartItem
 
-  attr_accessor :product_id, :num, :price, :name, :sku, :ready, :market_price, :old_price
+  attr_accessor :product_id, :num, :price, :name, :sku, :ready, :market_price, :old_price, :my_price, :agent_id, :agent_name
 
   def initialize(attributes = {})
     self.product_id = attributes[:product_id]
     attributes[:num] = [attributes[:num].to_i, 1].max
     self.num = attributes[:num].to_i
     self.price = attributes[:price].to_f
+    self.my_price = attributes[:my_price].to_f
+    self.agent_id = attributes[:agent_id].to_i
+    self.agent_name = attributes[:agent_name].to_s
     self.old_price = self.price
     self.name = attributes[:name].to_s
     self.sku = attributes[:sku].to_s
@@ -80,7 +85,7 @@ class CartItem
   # 增加或减少购买数量
   def cr(n)
     self.num += n
-    self.num = [Setting.cart_item_max_num, self.num].min
+    self.num = [9999, self.num].min
     self.num = 0 if self.num < 1
   end
 
