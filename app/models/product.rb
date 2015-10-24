@@ -35,7 +35,7 @@ class Product < ActiveRecord::Base
       ["正常",1,"u",100],
       ["等待审核",2,"blue",50],
       ["审核拒绝",3,"red",0],
-      ["冻结",4,"yellow",20],
+      ["下架",4,"yellow",20],
       ["已删除",404,"light",0]
     ]
   end
