@@ -13,6 +13,11 @@ class Department < ActiveRecord::Base
   has_many :item_departments, dependent: :destroy
   has_many :items, through: :item_departments
 
+  default_value_for :is_secret, true
+  default_value_for :comment_total, 0
+  default_value_for :is_blacklist, false
+  
+
   include AboutAncestry
   include AboutStatus
 

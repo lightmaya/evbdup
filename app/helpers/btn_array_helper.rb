@@ -158,7 +158,7 @@ module BtnArrayHelper
     # 提交
     arr << [obj.class.icon_action("提交"), commit_kobe_product_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
     # 冻结
-    arr << [obj.class.icon_action("冻结"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('冻结')}",'#{freeze_kobe_product_path(obj)}', "#opt_dialog") }] if can?(:freeze, obj) && obj.cando("freeze", current_user)
+    arr << [obj.class.icon_action("下架"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('下架')}",'#{freeze_kobe_product_path(obj)}', "#opt_dialog") }] if can?(:freeze, obj) && obj.cando("freeze", current_user)
     # 恢复
     arr << [obj.class.icon_action("恢复"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('恢复')}",'#{recover_kobe_product_path(obj)}', "#opt_dialog") }] if can?(:recover, obj) && obj.cando("recover", current_user)
     # 删除
