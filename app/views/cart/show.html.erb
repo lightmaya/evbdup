@@ -1,32 +1,11 @@
 <div class="content-md margin-bottom-30">
-        <div class="container">
-            <form class="shopping-cart" action="#" novalidate="novalidate">
-                <div role="application" class="wizard clearfix" id="steps-uid-0"><div class="steps clearfix"><ul role="tablist"><li role="tab" class="first current" aria-disabled="false" aria-selected="true"><a id="steps-uid-0-t-0" href="#steps-uid-0-h-0" aria-controls="steps-uid-0-p-0"><span class="current-info audible">current step: </span><span class="number">1.</span>             
-                        <div class="overflow-h">
-                            <h2>Shopping Cart</h2>
-                            <p>Review &amp; edit your product</p>
-                            <i class="rounded-x fa fa-check"></i>
-                        </div>    
-                    </a></li><li role="tab" class="disabled" aria-disabled="true"><a id="steps-uid-0-t-1" href="#steps-uid-0-h-1" aria-controls="steps-uid-0-p-1"><span class="number">2.</span> 
-                        <div class="overflow-h">
-                            <h2>Billing info</h2>
-                            <p>Shipping and address infot</p>
-                            <i class="rounded-x fa fa-home"></i>
-                        </div>    
-                    </a></li><li role="tab" class="disabled last" aria-disabled="true"><a id="steps-uid-0-t-2" href="#steps-uid-0-h-2" aria-controls="steps-uid-0-p-2"><span class="number">3.</span> 
-                        <div class="overflow-h">
-                            <h2>Payment</h2>
-                            <p>Select Payment method</p>
-                            <i class="rounded-x fa fa-credit-card"></i>
-                        </div>    
-                    </a></li></ul></div><div class="content clearfix">
-                    <div class="header-tags title current" id="steps-uid-0-h-0" tabindex="-1">            
-                        <div class="overflow-h">
-                            <h2>Shopping Cart</h2>
-                            <p>Review &amp; edit your product</p>
-                            <i class="rounded-x fa fa-check"></i>
-                        </div>    
-                    </div>
+  <div class="container">
+    <form class="shopping-cart" action="#" novalidate="novalidate">
+      <div role="application" class="wizard clearfix" id="steps-uid-0">
+        <%= render "steps" %>
+
+        <div class="content clearfix">
+
                     <section id="steps-uid-0-p-0" role="tabpanel" aria-labelledby="steps-uid-0-h-0" class="body current" aria-hidden="false">
                         <div class="table-responsive">
                             <table class="table table-striped">
