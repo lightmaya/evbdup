@@ -4,7 +4,7 @@ class PlanItem < ActiveRecord::Base
   has_many :plan_item_categories, dependent: :destroy
   has_many :categories, through: :plan_item_categories
 
-  default_scope -> {order("id desc")}
+  # default_scope -> {order("id desc")}
 
   before_save do 
     self.category_ids = self.categoryids.split(",")

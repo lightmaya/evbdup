@@ -10,7 +10,7 @@ class Item < ActiveRecord::Base
   # 已注册的入围供应商
   has_many :registered_departments, -> { where.not(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
 
-	default_scope -> {order("id desc")}
+	# default_scope -> {order("id desc")}
 
 	before_save do 
 		self.category_ids = self.categoryids.split(",") - ["734"]

@@ -2,7 +2,7 @@
 class DailyCategory < ActiveRecord::Base
   validates_with MyValidator
 
-  default_scope -> {order(:ancestry, :sort, :id)}
+  # default_scope -> {order(:ancestry, :sort, :id)}
 
   include AboutStatus
   include AboutAncestry

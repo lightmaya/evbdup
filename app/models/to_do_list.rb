@@ -2,7 +2,7 @@
 class ToDoList < ActiveRecord::Base
 
   has_many :task_queues
-	default_scope -> {order(:sort, :id)}
+	# default_scope -> {order(:sort, :id)}
 	include AboutStatus
 
 	# 中文意思 状态值 标签颜色 进度 
