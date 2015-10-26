@@ -171,7 +171,7 @@ module BaseFunction
     # 图片类型
     if options[:is_picture] 
       tmp = obj.uploads.map do |file|
-        %Q|<div class="col-md-#{12/grid}">
+        %Q|<div class="col-md-#{12/options[:grid]}">
             <div class="thumbnails thumbnail-style thumbnail-kenburn">
               <div class="thumbnail-img">
                 <div class="overflow-hidden">
