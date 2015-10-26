@@ -129,7 +129,7 @@ class Kobe::ProductsController < KobeController
     def get_show_arr
       @arr  = []
       @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@product,@product.category.params_xml) }
-      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@product,true) }
+      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@product, { is_pictrue: true }) }
       @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@product) }
     end
 

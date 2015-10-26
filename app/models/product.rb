@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Product < ActiveRecord::Base
 	has_many :uploads, class_name: :ProductsUpload, foreign_key: :master_id
-	default_scope -> {order("id desc")}
 	belongs_to :category
   belongs_to :item
   belongs_to :department
@@ -10,13 +9,17 @@ class Product < ActiveRecord::Base
   has_many :task_queues, -> { where(class_name: "Product") }, foreign_key: :obj_id
   scope :show, -> {where("products.status = 1")}
 
-	include AboutStatus
+  include AboutStatus
 
   QS = ["category_id_eq", "brand_eq", "sort", "page"]
 
 	# 附件的类
   def self.upload_model
     ProductsUpload
+  end
+
+  def agents
+    item.try(:agents)
   end
 
   def show
@@ -80,7 +83,7 @@ class Product < ActiveRecord::Base
       # 上级单位或者总公司人
       current_u.department.is_ancestors?(self.department_id) || current_u.department.real_ancestry_level(1)
     when "update", "edit" 
-      [0,3].include?(self.status) && current_u.try(:id) == self.user_id
+      [0,3].include?(self.status) #&& current_u.try(:id) == self.user_id
     when "commit" 
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 

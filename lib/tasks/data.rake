@@ -3,11 +3,12 @@ namespace :data do
   task :products => :environment do
     Dragon.table_name = "zcl_product"
     max = 1000 ; succ = i = 0
+    total = Dragon.count
     Dragon.find_each do |zcl_product|
       i += 1
       pr = Product.find_or_initialize_by(id: zcl_product.id)
       pr.category_id = zcl_product.zcl_category_id
-      pr.category_code = pr.category.ancestry
+      pr.category_code = pr.category.try(:ancestry)
       pr.item_id = zcl_product.item_id
       pr.brand = zcl_product.brand
       pr.model = zcl_product.name
@@ -16,7 +17,8 @@ namespace :data do
       pr.market_price = zcl_product.market_price
       pr.bid_price = zcl_product.bid_price
       pr.user_id = zcl_product.user_id
-      pr.department_id = zcl_product.user_dep
+      new_dep = Department.find_by(old_id: zcl_product.user_dep, old_table: "dep_supplier")
+      pr.department_id = new_dep.id if new_dep.present?
       # "未提交",0,"orange",10],
       # ["正常",1,"u",100],
       # ["等待审核",2,"blue",50],
@@ -43,11 +45,11 @@ namespace :data do
       pr.updated_at = zcl_product.updated_at
       if pr.save
         succ += 1
-        p "succ: #{succ} zcl_product_id: #{zcl_product.id}"
+        p "succ: #{succ}/#{total} zcl_product_id: #{zcl_product.id}"
       else
         log_p "[error]zcl_product_id: #{zcl_product.id} | #{pr.errors.full_messages}" ,"data_products.log"
       end
-      break if i > max
+      # break if i > max
     end
   end
 
@@ -190,12 +192,114 @@ namespace :data do
     end
   end
 
+  desc '导入协议供货项目'
+  task :items => :environment do
+    Dragon.table_name = "zcl_item"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      i += 1
+      n = Item.find_or_initialize_by(id: old.id)
+      n.name = old.item_name
+      n.begin_time = old.begin_time
+      n.end_time = old.end_time 
+      n.categoryids = old.category_id
+
+
+      n.status = case old.status
+      when "停止申请"
+        2
+      when "已停止"
+        3
+      when "已删除"
+        404
+      when "有效"
+        1
+      else
+        404
+      end
+
+
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        succ += 1
+        p ".items succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"data_items.log"
+      end
+
+    end
+
+    old_table_name = "zcl_item_factory" 
+    Dragon.table_name = old_table_name
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = ItemDepartment.find_or_initialize_by(id: old.id)
+      n.item_id = old.zcl_item_id
+      new_dep = Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
+      next if new_dep.blank?
+      n.department_id = new_dep.id
+      n.name = new_dep.name
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        succ += 1
+        p ".zcl_item_factory succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]zcl_item_factory_old_id: #{old.id} | #{n.errors.full_messages}" ,"data_items.log"
+      end
+
+    end
+
+    Item.fix_dep_names
+    
+  end
+
   desc '导入代理商'
   task :agents => :environment do
     Dragon.table_name = "zcl_agents"
     max = 1000 ; succ = i = 0
+    total = Dragon.count
     Dragon.find_each do |old|
+      n = Agent.find_or_initialize_by(id: old.id)
+      new_dep = Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
+      next if new_dep.blank?
+      n.department_id = new_dep.id
+      n.name = old.agent_name
+      new_dep = Department.find_by(old_id: old.agent_id, old_table: "dep_supplier")
+      next if new_dep.blank?
+      n.agent_id = new_dep.id
+      n.name = a.agent.
+      n.area_id = old.city
+      # ["正常",0,"u",100],
+      # ["已删除",404,"light",0]
+      n.status = case old.status
+      when "自动生效", "新增审核通过"
+        0
+      when "已暂停", "新增审核拒绝", "未提交", "新增等待审核"
+        404
+      else
+        404
+      end
 
+      n.category_id = old.category_id
+      n.user_id = old.user_id
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        succ += 1
+        p ".zcl_item_factory succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]zcl_item_factory_old_id: #{old.id} | #{n.errors.full_messages}" ,"data_items.log"
+      end
     end
   end
 
