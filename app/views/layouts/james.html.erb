@@ -3,7 +3,7 @@
 <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
 <!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
 <head>
-    <title><%= Dictionary.web_site_name %></title>
+    <title><%= yield(:title).presence || Dictionary.web_site_name %></title>
 
     <!-- Meta -->
     <meta charset="utf-8">

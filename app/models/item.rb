@@ -4,6 +4,7 @@ class Item < ActiveRecord::Base
   has_many :categories, through: :item_categories
 	has_many :item_departments, dependent: :destroy
   has_many :departments, through: :item_departments
+  has_many :coordinators
   has_many :agents
   # 未注册的入围供应商
   has_many :unregistered_departments, -> { where(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
