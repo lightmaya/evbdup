@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class DailyCost < ActiveRecord::Base
-	default_scope -> {order("id desc")}
+	# default_scope -> {order("id desc")}
   belongs_to :department
 	has_many :items, class_name: :DailyCostItem
 

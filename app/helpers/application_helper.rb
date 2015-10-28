@@ -15,6 +15,12 @@ module ApplicationHelper
     javascript_include_tag(*args)
   end
 
+  
+  # 必须项，红星
+  def require_span
+    "<span class='red'>* </span>".html_safe
+  end
+
   # 格式化日期
   def show_date(d)
     (d.is_a?(Date) || d.is_a?(Time)) ? d.strftime("%Y-%m-%d") : d
@@ -137,6 +143,14 @@ module ApplicationHelper
     return msg
   end
 
+  def log_rs(doc, node = 'node')
+    begin
+      Nokogiri::XML(doc).xpath("//#{node}")
+    rescue Exception => e
+      []
+    end
+  end
+
   # modal弹框 
   # 按钮要有href="#div_id" data-toggle="modal"
   # 例如<a class="btn btn-sm btn-default" href="#div_id" data-toggle="modal">
@@ -242,7 +256,7 @@ module ApplicationHelper
    #  显示金额 允许带单位显示 pre 前缀 ￥
   def money(number, pre="", precision=2)
     return 0 if number.to_f == 0
-    return pre << number_to_currency(number, {:unit=>"¥", :delimiter=>",", :precision =>precision})
+    return pre << number_to_currency(number, {:unit => "¥", :delimiter => ",", :precision => precision, format: "%u%n"})
   end
 
   def label_tag(text, style = 'info', options = {})

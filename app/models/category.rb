@@ -6,7 +6,7 @@ class Category < ActiveRecord::Base
   has_many :user_categories, :dependent => :destroy
   has_many :users, through: :user_categories
 
-  default_scope -> {order(:ancestry, :sort, :id)}
+  # default_scope -> {order(:ancestry, :sort, :id)}
 
   scope :usable, -> {where("categories.status = 0")}
 

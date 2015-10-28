@@ -2,7 +2,7 @@
 class Order < ActiveRecord::Base
 	has_many :items, class_name: :OrdersItem
 	has_many :uploads, class_name: :OrdersUpload, foreign_key: :master_id
-  default_scope -> {order("id desc")}
+  # default_scope -> {order("id desc")}
 
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id

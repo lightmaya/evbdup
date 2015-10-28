@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Coordinator < ActiveRecord::Base
 
-  default_scope -> {order("id desc")}
+  # default_scope -> {order("id desc")}
   belongs_to :item
   belongs_to :department
 

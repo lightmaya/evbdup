@@ -2,7 +2,7 @@
 class Plan < ActiveRecord::Base
 	has_many :uploads, class_name: :PlanUpload, foreign_key: :master_id
   has_many :products, class_name: :PlanProduct
-	default_scope -> {order("id desc")}
+	# default_scope -> {order("id desc")}
 	belongs_to :category
   belongs_to :plan_item
   belongs_to :department

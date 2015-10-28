@@ -1,9 +1,10 @@
 # -*- encoding : utf-8 -*-
 class Agent < ActiveRecord::Base
 
-  default_scope -> {order("id desc")}
+  # default_scope -> {order("id desc")}
   belongs_to :item
   belongs_to :department
+  belongs_to :agent_dep, class_name: "Department", foreign_key: "agent_id"
 
   include AboutStatus
 
@@ -24,6 +25,16 @@ class Agent < ActiveRecord::Base
     {
       "删除" => { 0 => 404 }
     }
+  end
+
+  def fix_item_id
+    Item.all.each do |item|
+      if item.department_ids.include?(self.department_id) && (item.categoryids.split(",") | self.category_id.split(",")).size == item.categoryids.split(",").size
+        self.item_id = item.id
+        save
+        break
+      end
+    end
   end
 
   # 列表中的状态筛选,current_status当前状态不可以点击

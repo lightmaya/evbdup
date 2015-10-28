@@ -377,6 +377,7 @@ li:first-child {
 .product-description {
 	padding: 10px;
 	overflow: hidden;
+	min-height: 185px;
 }
 
 .product-description-brd {

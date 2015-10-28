@@ -1,0 +1,22 @@
+<script type="text/javascript">
+  $(function(){
+    // 锚点
+    var thisId = window.location.hash;
+    if (thisId != ''){
+      $(thisId).click();
+    }
+
+    $.ajax({
+      type: "get",
+      dataType: "json",
+      url: "/check_login",
+      success: function(data) {
+        if(data.success){
+          $(".gs .price_report").html("（价格有误？请举报）")
+          $(".gs .price_report").attr("onclick","price_report(<%= @product.id %>);")
+        }
+      }
+    })
+
+  });
+</script>

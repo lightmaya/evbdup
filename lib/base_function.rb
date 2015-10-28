@@ -131,7 +131,7 @@ module BaseFunction
   def show_logs(obj, doc = nil)
     return "暂无记录" if obj.logs.blank?
     str = []
-    doc ||= obj.logs
+    doc ||= Nokogiri::XML(obj.logs)
     doc.xpath("/root/node").each do |n|
       opt_time = n.attributes["操作时间"].to_s.split(" ")
       # act = n.attributes["操作内容"].to_s[0,2]
@@ -169,9 +169,9 @@ module BaseFunction
     end 
     return result + something_not_found if obj.uploads.blank?
     # 图片类型
-    if is_picture
+    if options[:is_picture] 
       tmp = obj.uploads.map do |file|
-        %Q|<div class="col-md-#{12/grid}">
+        %Q|<div class="col-md-#{12/options[:grid]}">
             <div class="thumbnails thumbnail-style thumbnail-kenburn">
               <div class="thumbnail-img">
                 <div class="overflow-hidden">
@@ -189,7 +189,7 @@ module BaseFunction
     # 非图片类型
     else
       tmp = obj.uploads.map do |file|
-        %Q|<div class="col-md-#{12/grid}">
+        %Q|<div class="col-md-#{12/options[:grid]}">
           <div class="servive-block servive-block-default">
             <a href="#{file.upload.url(:original)}" title="#{file.upload_file_name}" target="_blank">
               <img alt="" src="#{file.to_jq_upload["thumbnail_url"]}">
@@ -199,7 +199,7 @@ module BaseFunction
         </div>|.html_safe
       end
     end
-    tmp.each_slice(grid) do |t|
+    tmp.each_slice(options[:grid]) do |t|
       result << "<div class='row'>#{t.join}</div>"
     end
     return result.html_safe

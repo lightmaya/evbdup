@@ -4,27 +4,36 @@ class Item < ActiveRecord::Base
   has_many :categories, through: :item_categories
 	has_many :item_departments, dependent: :destroy
   has_many :departments, through: :item_departments
+  has_many :coordinators
   has_many :agents
   # 未注册的入围供应商
   has_many :unregistered_departments, -> { where(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
   # 已注册的入围供应商
   has_many :registered_departments, -> { where.not(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
 
-	default_scope -> {order("id desc")}
+	# default_scope -> {order("id desc")}
 
 	before_save do 
-		self.category_ids = self.categoryids.split(",")
+		self.category_ids = self.categoryids.split(",") - ["734"]
 	end
 
 	after_save do 
-		self.item_departments.destroy_all if self.item_departments.present?
 		arr = []
-		self.dep_names.split("\r\n").each do |name|
-			dep = Department.find_by(name: name)
-			arr << (dep.present? ? { name: name, department_id: dep.id } : { name: name })
-		end
-		self.item_departments.create(arr)
+    if self.dep_names.present?
+  		self.dep_names.split("\r\n").each do |name|
+  			dep = Department.find_by(name: name)
+  			arr << (dep.present? ? { name: name, department_id: dep.id } : { name: name })
+  		end
+  		self.item_departments.find_or_create_by(arr)
+    end
 	end
+
+  def self.fix_dep_names
+    Item.all.each do |item|
+      dns = item.item_departments.map(&:name).join("\r\n")
+      item.update(dep_names: dns)
+    end
+  end
 
 	include AboutStatus
 
@@ -34,7 +43,8 @@ class Item < ActiveRecord::Base
 	    ["暂存",0,"orange",10],
 	    ["有效",1,"blue",100],
       ["停止申请",2,"red",50],
-	    ["已删除",404,"light",0]
+	    ["已删除",404,"light",0],
+      ["已停止", 3, "red", 60]
     ]
   end
 
