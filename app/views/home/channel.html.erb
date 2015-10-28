@@ -1,3 +1,4 @@
+<%= render "js" %>
 <div class="owl-carousel-v1 owl-work-v1 margin-bottom-40">
   <div class="headline"><h2 class="pull-left">推荐产品</h2>
     <div class="owl-navigation">
@@ -37,7 +38,7 @@
       <div class="row margin-bottom-5">
         <div class="col-sm-4 result-category">
           <h2>轿车</h2>
-          <small class="shop-bg-red badge-results">共45个商品</small>
+          <small class="shop-bg-red badge-results">共<%= @q.result.count %>个商品</small>
         </div>
         <div class="col-sm-8">
           <ul class="list-inline clear-both">
@@ -73,8 +74,10 @@
                         <%= link_to_blank truncate(product.name, length: 30), product, class: "shop-ui-inner.html" %>
                       </h4>
                       <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
-                      <span class="title-price line-through fl">市场价：<%= money product.market_price %></span>
-                      <span class="title-price fl">协议价：<%= money product.bid_price %></span>
+                      <div class="price_div" id="price_div_<%= product.id %>">
+                        <span class="title-price line-through fl clear">市场价：<b class="b_m hide">请登录查看</b></span>
+                        <span class="title-price fl clear">协议价：<b class="b_b hide">请登录查看</b></span>
+                      </div>
                     </div>    
                   </div>    
                   <!--<ul class="list-inline product-ratings">

@@ -7,7 +7,8 @@
  *
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
- *
+ 
+ *= require common
  *= require plugins/bootstrap.min
  *= require style
  *= require plugins/animate
@@ -23,7 +24,6 @@
  *= require plugins/owl.carousel
  *= require plugins/owl.theme
  *= require plugins/style-switcher
- *= require common
  *= require plugins/style-switcher
  *= require app
  *= require blocks

@@ -10,10 +10,15 @@
       type: "get",
       dataType: "json",
       url: "/check_login",
+      data: "pids=" + $("#product_id").val(),
       success: function(data) {
         if(data.success){
-          $(".gs .price_report").html("（价格有误？请举报）")
-          $(".gs .price_report").attr("onclick","price_report(<%= @product.id %>);")
+          $.each(data.rs, function(i, d){
+            $("#bid_price_li").html(d.bid_price).show();
+            $("#market_price_li").html(d.market_price).show();
+          });
+        }else{
+          $("#login_tip").show();
         }
       }
     })

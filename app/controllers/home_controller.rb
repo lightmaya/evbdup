@@ -17,6 +17,23 @@ class HomeController < JamesController
   def form_test
   end
 
+  def check_login
+    @rs = []
+    if current_user
+      login = true
+      # 如果有product_id, 返回价格
+      if params[:pids].present?
+        @products = Product.where("id in (?)", params[:pids].split(","))
+        @products.each do |pr| 
+          @rs << {"id" => pr.id, "bid_price" => ApplicationController.helpers.money(pr.bid_price), "market_price" => ApplicationController.helpers.money(pr.market_price)}
+        end
+      end
+    else
+      login = false
+    end
+    render :json => {"success" => login, "rs" => @rs}
+  end
+
   def channel
     if @category = Category.usable.find_by_id(params[:combo].to_s.split("_").first)
       ult(@category)

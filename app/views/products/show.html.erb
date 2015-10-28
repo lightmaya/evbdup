@@ -1,4 +1,6 @@
 <%= title @product.name %>
+<%= render "js" %>
+<%= hidden_field_tag "product_id", @product.id %>
 <div class="wrapper">
   <!--=== Header v5 ===-->   
   <!--=== Shop Product ===-->
@@ -54,8 +56,9 @@
           </ul>
 
           <ul class="list-inline shop-product-prices margin-bottom-30">
-            <li class="shop-red" title="协议价"><%= money @product.bid_price %></li>
-            <li class="line-through" title="市场价"><%= money @product.market_price %></li>
+            <li class="shop-red" id="login_tip" style="display:none;">请登录后查看价格</li>
+            <li class="shop-red hide" id="bid_price_li" title="协议价"></li>
+            <li class="line-through hide" id="market_price_li" title="市场价"></li>
           </ul>
 
           <h3 class="shop-product-title">购买数量</h3>
@@ -209,47 +212,47 @@
           <fieldset>                  
             <div class="row">
               <section class="col col-6">
-                  <label class="label"><%= require_span %>您的价格：</label>
-                  <label class="input">
-                      <i class="icon-append fa fa-user"></i>
-                      <input type="text" name="name" id="name">
-                  </label>
+                <label class="label"><%= require_span %>您的价格：</label>
+                <label class="input">
+                    <i class="icon-append fa fa-user"></i>
+                    <input type="text" name="name" id="name">
+                </label>
               </section>
               <section class="col col-6">
-                  <label class="label"><%= require_span %>询价地址或网址：</label>
-                  <label class="input">
-                      <i class="icon-append fa fa-envelope-o"></i>
-                      <input type="email" name="email2" id="email2">
-                  </label>
+                <label class="label"><%= require_span %>询价地址或网址：</label>
+                <label class="input">
+                    <i class="icon-append fa fa-envelope-o"></i>
+                    <input type="email" name="email2" id="email2">
+                </label>
               </section>
             </div>
             <div class="row">
               <section class="col col-6">
-                  <label class="label"><%= require_span %>询价时间：</label>
-                  <label class="input">
-                      <i class="icon-append fa fa-user"></i>
-                      <input type="text" name="name" id="name">
-                  </label>
+                <label class="label"><%= require_span %>询价时间：</label>
+                <label class="input">
+                    <i class="icon-append fa fa-user"></i>
+                    <input type="text" name="name" id="name">
+                </label>
               </section>
               <section class="col col-6">
-                  <label class="label"><%= require_span %>是否同等配置和服务：</label>
-                  <label class="input">
-                      <i class="icon-append fa fa-envelope-o"></i>
-                      <input type="email" name="email2" id="email2">
-                  </label>
+                <label class="label"><%= require_span %>是否同等配置和服务：</label>
+                <label class="input">
+                    <i class="icon-append fa fa-envelope-o"></i>
+                    <input type="email" name="email2" id="email2">
+                </label>
               </section>
             </div>
                         
             <section>
-                <label class="label">备注：</label>
-                <label class="textarea">
-                    <i class="icon-append fa fa-comment"></i>
-                    <textarea rows="4" name="message" id="message"></textarea>
-                </label>
+              <label class="label">备注：</label>
+              <label class="textarea">
+                  <i class="icon-append fa fa-comment"></i>
+                  <textarea rows="4" name="message" id="message"></textarea>
+              </label>
             </section>
           </fieldset>    
           <footer>
-              <button type="submit" class="button">提交</button>
+            <button type="submit" class="button">提交</button>
           </footer>
         </form>
       </div>               

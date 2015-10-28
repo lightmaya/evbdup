@@ -14,6 +14,7 @@ Evbdup::Application.routes.draw do
   get 'help' => "home#help"
   get 'main' => 'kobe/main#index'
   get 'test' => 'errors#test'
+  get 'check_login' => 'home#check_login'
   get 'not_found' => "home#not_found", as: :not_found
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
@@ -32,7 +33,11 @@ Evbdup::Application.routes.draw do
     end
   end
 
-  resources :products
+  resources :products, only: [:show] do 
+    collection do 
+      get :get_prices
+    end
+  end
 
   resources :home, :only => :index  do 
     collection do
