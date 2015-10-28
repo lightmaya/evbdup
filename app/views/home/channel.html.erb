@@ -61,9 +61,9 @@
         <div class="row illustration-v2 margin-bottom-30">
           <% @products.each_with_index do |product, i| %>
             <!-- 产品 -->
-            <div class="col-md-3">
+            <div class="col-md-3 h412">
                 <div class="product-img product-img-brd">
-                  <%= link_to_blank image_tag("http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/001/298/small_C30.JPG", class: "full-width img-responsive"), product %>
+                  <%= link_to_blank image_tag(product.cover_url, class: "full-width img-responsive lazy", onerror: "$(this).attr('src', '/assets/no_pic_small.gif')"), product %>
                   <div class="shop-rgba-dark-green rgba-banner">新产品</div>
                 </div> 
                 <div class="product-description product-description-brd margin-bottom-30">
@@ -77,14 +77,14 @@
                       <span class="title-price fl">协议价：<%= money product.bid_price %></span>
                     </div>    
                   </div>    
-                  <ul class="list-inline product-ratings">
+                  <!--<ul class="list-inline product-ratings">
                       <li><i class="rating-selected fa fa-star"></i></li>
                       <li><i class="rating-selected fa fa-star"></i></li>
                       <li><i class="rating-selected fa fa-star"></i></li>
                       <li><i class="rating fa fa-star"></i></li>
                       <li><i class="rating fa fa-star"></i></li>
-                     <!--  <li class="like-icon"><a data-original-title="收藏" data-toggle="tooltip" data-placement="left" class="tooltips" href="#"><i class="fa fa-heart"></i></a></li> -->
-                  </ul>    
+                       <li class="like-icon"><a data-original-title="收藏" data-toggle="tooltip" data-placement="left" class="tooltips" href="#"><i class="fa fa-heart"></i></a></li>
+                  </ul>     -->
                 </div>
             </div>
             <!-- 产品END -->

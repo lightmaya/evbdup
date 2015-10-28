@@ -83,7 +83,7 @@ class HomeController < JamesController
       end
 
       @q = clazz.ransack(params[:q])
-      @products = @q.result.includes([:category]).page(params[:page]).per(20)
+      @products = @q.result.includes([:category, :uploads]).page(params[:page]).per(20)
       # 推荐产品
       @rec_products = source.products.show.order("id DESC").limit(3)
       # 清理params

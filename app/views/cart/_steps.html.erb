@@ -1,8 +1,8 @@
 <% 
   i ||= 1
   steps = [
-      ["我的购物车", "只能选择同一供应商产品"],
-      ["下单", "填写核对订单信息"],
+      ["我的购物车", ""],
+      ["下单", ""],
       ["供应商确认", ""],
       ["打印合同及凭证", ""],
       ["商品及服务评价"]
@@ -16,7 +16,7 @@
         <a id="steps-uid-0-t-0" href="#steps-uid-0-h-0" aria-controls="steps-uid-0-p-0">
           <span class="number"><%= index + 1 %>.</span>             
           <div class="overflow-h">
-              <h2><%= step[0] %></h2>
+              <h2><%= step[0] %>&nbsp;</h2>
               <p><%= step[1] %></p>
               <i class="rounded-x fa fa-check"></i>
            </div>    

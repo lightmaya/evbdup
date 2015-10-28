@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 namespace :data do
   desc '导入协议供货产品'
   task :products => :environment do

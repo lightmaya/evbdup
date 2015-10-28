@@ -68,6 +68,10 @@ class Product < ActiveRecord::Base
     return arr
   end
 
+  def cover_url(style = :md)
+    uploads.first.upload.url(style.to_sym) if uploads.present?
+  end
+
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
     self.category.user_ids.flatten.uniq

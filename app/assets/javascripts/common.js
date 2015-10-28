@@ -174,6 +174,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
     return true;
   }
   else{
+    value = value.toString();
     value = value.replace(/\s/g,"");
     if(value == ""){
       return true;

@@ -106,6 +106,32 @@ $(function() {
     var t = $(this);
     art_confirm("你确定删除吗？", function(){t.parent().remove();});
   });
+
+
+  // 购物车数量
+  $(document).on('keyup', '.quantity-field', function(){
+    var num = parseInt($(this).val());
+    if (isEmpty(num)){
+      num = 1;
+    }else{
+      if (num <= 1){
+        num = 1;
+      }
+      if (num >= 9999){
+        num = 9999;
+      }
+    }
+    $(this).val(num);
+    price = $('#item-buy-price-' + $(this).prop('id'));
+    total = $('#item-buy-total-' + $(this).prop('id'));
+    sum_total = $('#item-buy-sum_total');
+    
+    // 计算总价
+    // total.text((parseInt($(this).val())*parseFloat(price.text())).toFixed(2));
+    // 计算购物车总价
+    // calc_total();
+    // $.get("/cart/change/" + $(this).prop('id').split("cart_item_")[1] + "?set=1&num=" + $(this).val());
+  });
 });
 
 function art_confirm(msg, SuccFn){
