@@ -29,7 +29,7 @@ class Kobe::OrdersController < KobeController
   end
 
   def create
-    other_attrs = { buyer_id: current_user.department.id, buyer_code: current_user.department.real_ancestry, user_id: current_user.id, name: get_project_name }
+    other_attrs = { buyer_id: current_user.department.id, buyer_code: current_user.department.real_ancestry, name: get_project_name }
     @order = create_msform_and_write_logs(Order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "下单", :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     unless @order.id
       redirect_back_or

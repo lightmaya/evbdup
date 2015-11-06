@@ -1,0 +1,37 @@
+<%= draw_myform(myform) %>
+<script type="text/javascript">
+function input_blur(me,table_names){
+    var id = me.attr("id").split("_").pop();
+    var quantity = $("#"+table_names+"_加油数量（升）_" + id).val();
+    var price = $("#"+table_names+"_油费合计（元）_" + id).val();
+    if ( !isNaN(price) && (price != '') && (quantity != '') && !isNaN(quantity) ) {
+        $("#"+table_names+"_油费单价_" + id).val(parseFloat(price) / parseFloat(quantity));
+    }
+    hj_total(me,table_names)
+}
+ function hj_total(me,table_names) {
+    var id = me.attr("id").split("_").pop();
+    var total = 0;
+    $('input[name$="['+id+']"].amount_total').each(function () {
+        var thisValue = $(this).val();
+        if ( (thisValue != '') ) {
+            total += formatFloat(parseFloat(thisValue),2);
+            $(this).val(formatFloat(parseFloat(thisValue),2));
+        };
+    });
+    total = formatFloat(total,2);
+    $("#"+table_names+"_total_" + id).val(total);
+    calc_total('asset_projects','asset_project_items');
+};
+
+ $(function() {
+	$("input[name^='"+'asset_project_items'+"[加油数量（升）]']").live('change blur',function(){input_blur($(this),'asset_project_items')});
+  $("input[name^='"+'asset_project_items'+"[油费合计（元）]']").live('change blur',function(){input_blur($(this),'asset_project_items')});
+  $("input[name^='"+'asset_project_items'+"[路桥费合计（元）]']").live('change blur',function(){hj_total($(this),'asset_project_items')});
+  $("input[name^='"+'asset_project_items'+"[停车费合计（元）]']").live('change blur',function(){hj_total($(this),'asset_project_items')});
+  $("input[name^='"+'asset_project_items'+"[其他费用合计（元）]']").live('change blur',function(){hj_total($(this),'asset_project_items')});
+
+  });
+
+ </script>
+ 
