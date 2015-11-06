@@ -6,15 +6,14 @@ Evbdup::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
    #root 'home#index'
-  root :to => 'home#index'
-  
+   root :to => 'home#index'
+   
   # captcha_route
 
   get 'errors' => 'errors#index'
   get 'help' => "home#help"
   get 'main' => 'kobe/main#index'
   get 'test' => 'errors#test'
-  get 'check_login' => 'home#check_login'
   get 'not_found' => "home#not_found", as: :not_found
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
@@ -23,21 +22,7 @@ Evbdup::Application.routes.draw do
   post 'umeditor/image', :to => 'umeditor#image'
   get 'umeditor/image', :to => 'umeditor#image'
 
-  # 购物车
-  resource :cart, :controller => 'cart', :only => [:show, :destroy] do
-    collection do
-      post :order, :to => 'cart#order'
-      get 'change/:id', :to => 'cart#change', :as => :change
-      post 'dynamic', :to => 'cart#dynamic', :as => :dynamic
-      delete 'rm/:id', :to => 'cart#rm', :as => :rm
-    end
-  end
-
-  resources :products, only: [:show] do 
-    collection do 
-      get :get_prices
-    end
-  end
+  resources :products
 
   resources :home, :only => :index  do 
     collection do
@@ -62,187 +47,212 @@ Evbdup::Application.routes.draw do
   resources :bid_projects
 
 # 后台begin
-  namespace :kobe do
-    resources :shared, :only => :index do
-      collection do
-        post :item_ztree_json, :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json
-        get :get_item_category
-      end
+namespace :kobe do
+  resources :shared, :only => :index do
+    collection do
+      post :item_ztree_json, :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json, :department_ztree_json
+      get :get_item_category
     end
+  end
 
-    resources :msgs do 
-      member do
-        post :commit
-      end
-      collection do
-        get :list
-        get :read_msg
-      end
+  resources :msgs do 
+    member do
+      post :commit
     end
+    collection do
+      get :list
+      get :read_msg
+    end
+  end
 
-    resources :bid_projects do
-      collection do
-        get :list
-      end
-      member do 
-        get :pre_choose
-        patch :choose
-        get :audit
-        get :bid
-        get :delete
-        post :commit, :update_audit
-      end
+  resources :bid_projects do
+    collection do
+      get :list
     end
+    member do 
+      get :pre_choose
+      patch :choose
+      get :audit
+      get :bid
+      get :delete
+      post :commit, :update_audit
+    end
+  end
 
-    resources :bid_project_bids do 
-      collection do 
-        get :pre_bid
-        post :bid
-      end
+  resources :bid_project_bids do 
+    collection do 
+      get :pre_bid
+      post :bid
     end
+  end
 
-    resources :orders do
-      collection do
-        get :audit_ddcg, :ddcg_list
-        post :same_template
-      end
-      member do
-        get :audit, :print
-        post :commit, :update_audit
-      end
+  resources :orders do
+    collection do
+      get :audit_ddcg, :ddcg_list
+      post :same_template
     end
-    resources :departments do 
-      collection do
-        get :search, :list
-        post :move, :valid_dep_name, :search_bank
-      end
-      member do 
-        get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank, :audit
-        post :update_add_user, :update_freeze, :update_upload, :commit, :update_recover, :edit_bank, :update_bank, :update_audit
-      end
+    member do
+      get :audit, :print
+      post :commit, :update_audit
     end
-    resources :articles do 
-      collection do
-        post :batch_task
-        get :list
-      end
-      member do 
-        get :audit
-        get :delete
-        post :commit, :update_audit
-      end
+  end
+  resources :departments do 
+    collection do
+      get :search, :list
+      post :move, :valid_dep_name, :search_bank
     end
-    resources :article_catalogs do
-      collection do
-        get :ztree
-        post :move
-      end
-      member do 
-        get :delete
-      end
+    member do 
+      get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank, :audit
+      post :update_add_user, :update_freeze, :update_upload, :commit, :update_recover, :edit_bank, :update_bank, :update_audit
     end
-    resources :menus do
-      collection do
-        get :ztree
-        post :move
-      end
-      member do 
-        get :delete
-      end
+  end
+  resources :articles do 
+    collection do
+      post :batch_task
+      get :list
     end
-    resources :contract_templates do
-      member do 
-        get :delete
-      end
+    member do 
+      get :audit
+      get :delete
+      post :commit, :update_audit
     end
-    resources :items do
-      collection do
-        get :list
-      end
-      member do 
-        get :delete, :pause, :recover
-        post :commit, :update_pause, :update_recover
-      end
+  end
+  resources :article_catalogs do
+    collection do
+      get :ztree
+      post :move
     end
-    resources :plan_items do
-      collection do
-        get :list
-      end
-      member do 
-        get :delete
-        post :commit
-      end
+    member do 
+      get :delete
     end
-    resources :plans do
-      collection do
-        get :item_list, :list
-      end
-      member do
-        get :delete, :audit
-        post :commit, :update_audit
-      end
+  end
+  resources :menus do
+    collection do
+      get :ztree
+      post :move
     end
-    resources :daily_costs do
-      collection do
-        get :list
-      end
-      member do
-        get :delete, :audit
-        post :commit, :update_audit
-      end
+    member do 
+      get :delete
     end
-    resources :to_do_lists do
-      member do 
-        get :delete
-      end
+  end
+  resources :contract_templates do
+    member do 
+      get :delete
     end
-    resources :rules do
-      member do 
-        get :delete, :audit_reason
-      end
+  end
+  resources :items do
+    collection do
+      get :list
     end
-    resources :users do 
-      member do
-        get :reset_password, :freeze, :recover, :only_show_info, :only_show_logs
-        post :update_reset_password, :update_freeze, :update_recover
-      end
+    member do 
+      get :delete, :pause, :recover
+      post :commit, :update_pause, :update_recover
     end
-    resources :categories do
-      collection do
-        get :ztree
-        post :move, :valid_name
-      end
-      member do 
-        get :freeze, :delete, :recover
-        post :update_freeze, :update_recover
-      end
+  end
+  resources :plan_items do
+    collection do
+      get :list
     end
-    resources :daily_categories do
-      collection do
-        get :ztree
-        post :move, :valid_name
-      end
-      member do 
-        get :delete
-      end
+    member do 
+      get :delete
+      post :commit
     end
-    resources :products do
-      collection do
-        get :item_list, :list
-      end
-      member do
-        get :freeze, :delete, :recover, :audit
-        post :commit, :update_freeze, :update_recover, :update_audit
-      end
+  end
+  resources :plans do
+    collection do
+      get :item_list, :list
     end
-    resources :agents do
-      collection do
-        get :list, :search_dep_name
-      end
-      member do
-        get :delete
-      end
+    member do
+      get :delete, :audit
+      post :commit, :update_audit
     end
+  end
+  resources :daily_costs do
+    collection do
+      get :list
+    end
+    member do
+      get :delete, :audit
+      post :commit, :update_audit
+    end
+  end
+  resources :to_do_lists do
+    member do 
+      get :delete
+    end
+  end
+  resources :rules do
+    member do 
+      get :delete, :audit_reason
+    end
+  end
+  resources :users do 
+    member do
+      get :reset_password, :freeze, :recover, :only_show_info, :only_show_logs
+      post :update_reset_password, :update_freeze, :update_recover
+    end
+  end
+  resources :categories do
+    collection do
+      get :ztree
+      post :move, :valid_name
+    end
+    member do 
+      get :freeze, :delete, :recover
+      post :update_freeze, :update_recover
+    end
+  end
+  resources :daily_categories do
+    collection do
+      get :ztree
+      post :move, :valid_name
+    end
+    member do 
+      get :delete
+    end
+  end
+
+  resources :fixed_assets do
+    member do
+      get :delete
+    end
+  end  
+  
+  resources :asset_projects do 
+    collection do
+      get :list
+      post :get_fixed_asset_json
+    end
+    member do
+      get :delete, :audit
+      post :commit, :update_audit
+    end
+  end 
+
+  resources :tongji, only: :index do 
+     collection do 
+       get :item_dep_sales
+     end
+  end
+  
+
+ resources :products do
+  collection do
+    get :item_list, :list
+  end
+  member do
+    get :freeze, :delete, :recover, :audit
+    post :commit, :update_freeze, :update_recover, :update_audit
+  end
+end
+resources :agents do
+  collection do
+    get :list, :search_dep_name
+  end
+  member do
+    get :delete
+  end
+end
     # 总协调人
     resources :coordinators do
       collection do
@@ -264,11 +274,11 @@ Evbdup::Application.routes.draw do
   end
 # 后台end
 
-  resources :kobe, :only => :index do
-    collection do
-      get :search, :obj_class_json
-    end
+resources :kobe, :only => :index do
+  collection do
+    get :search, :obj_class_json
   end
+end
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

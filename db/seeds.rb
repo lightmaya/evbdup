@@ -161,6 +161,31 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_cost)
   end
 
+  # ----车辆信息维护-----------------------------------------------------------------------------------------
+  fixed_asset = Menu.create(:name => "车辆信息维护", :is_show => true, :parent => yw)
+  fixed_asset_list = Menu.create(:name => "车辆信息维护",:route_path => "/kobe/fixed_assets", :can_opt_action => "FixedAsset|read", :is_show => true, :parent => fixed_asset)
+  [ ["增加车辆信息", "FixedAsset|create"], 
+    ["修改车辆信息", "FixedAsset|update"], 
+    ["删除车辆信息", "FixedAsset|update_destroy"] 
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => fixed_asset_list)
+  end
+
+#----车辆费用报销-------------------------------------------------------------------------------------
+  asset_index = Menu.create(:name => "车辆费用报销", :route_path => "/kobe/asset_projects", :can_opt_action => "AssetProject|read", :is_show => true, :parent => fixed_asset)
+  [  
+    ["新增车辆报销", "AssetProject|create"], 
+    ["修改车辆报销", "AssetProject|update"], 
+    ["提交车辆报销", "AssetProject|commit"], 
+    ["删除车辆报销", "AssetProject|update_destroy"] 
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => asset_index)
+  end
+  audit_asset = Menu.create(:name => "审核车辆报销", :route_path => "/kobe/asset_projects/list", :can_opt_action => "AssetProject|list", :is_show => true, :parent => fixed_asset)
+  [["车辆报销初审", "AssetProject|first_audit"], ["车辆报销终审", "AssetProject|last_audit"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_asset)
+  end
+
 # ----单位及用户管理-----------------------------------------------------------------------------------
   dep = Menu.create(:name => "单位及用户管理", :icon => "fa-users", :is_auto => true, :is_show => true)
   dep_p = Menu.create(:name => "单位管理", :route_path => "/kobe/departments", :can_opt_action => "Department|read", :is_show => true, :is_auto => true, :parent => dep)

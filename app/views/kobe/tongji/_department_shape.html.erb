@@ -1,0 +1,9 @@
+<div id="container_dep" class='highcharts_container'>
+</div>
+<script type="text/javascript">
+    $(function () {
+        var data = <%=raw (@departments.present? ? @departments : [[@dep.try(:name),@department_total.to_f]]) %>;  
+        get_column('container_dep','单位明细统计',data);
+    });
+
+</script>

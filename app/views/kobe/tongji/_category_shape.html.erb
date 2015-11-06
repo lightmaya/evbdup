@@ -1,0 +1,11 @@
+<div id="container_category" class='highcharts_container'>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var data = <%=raw (@categories.present? ? @categories : [[@ca.try(:name),@category_total.to_f]]) %>;  
+         get_column('container_category','品目统计',data);
+   
+});
+
+</script>

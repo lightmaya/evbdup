@@ -10,7 +10,9 @@ class Item < ActiveRecord::Base
   has_many :unregistered_departments, -> { where(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
   # 已注册的入围供应商
   has_many :registered_departments, -> { where.not(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
-
+  # 项目订单
+  has_many :orders_items 
+  has_many :orders, -> { distinct }, through: :orders_items
 	# default_scope -> {order("id desc")}
 
 	before_save do 

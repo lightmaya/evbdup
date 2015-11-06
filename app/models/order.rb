@@ -44,6 +44,10 @@ class Order < ActiveRecord::Base
     ]
   end
 
+  def self.effective_status
+     [3,5,6]
+  end
+
   # 根据不同操作 改变状态
   def change_status_hash
     status_ha = self.find_step_by_rule.blank? ? 5 : 1 

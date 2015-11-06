@@ -1,0 +1,5 @@
+<%if params[:search_btn].blank?%>
+	<%= render :partial=> 'search_item_dep' ,:locals=>{url: item_dep_sales_kobe_tongji_index_path}%>
+<%else%>
+	<%= render :partial=> "dep_supplier_#{params[:show_type]}" %>
+<%end%>

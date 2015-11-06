@@ -1,0 +1,6 @@
+<%if params[:search_btn].blank?%>
+	<%= render :partial=> 'search' ,:locals=>{url: kobe_tongji_index_path}%>
+<%else%>
+	<%= render :partial=> params[:show_type] %>
+<%end%>
+

@@ -13,6 +13,7 @@ class Department < ActiveRecord::Base
   has_many :item_departments, dependent: :destroy
   has_many :items, through: :item_departments
 
+  scope :find_real_dep,  ->{ where(dep_type: false) }
   default_value_for :is_secret, true
   default_value_for :comment_total, 0
   default_value_for :is_blacklist, false

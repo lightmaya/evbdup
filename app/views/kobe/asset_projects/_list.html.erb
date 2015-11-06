@@ -5,13 +5,13 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-8 pull-left padding-top-5">
-                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_daily_cost_path) if action_name == 'index' %>
+                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_asset_project_path) if action_name=='index' %>
             </div>
             <div class="col-md-4 pull-right">
                 <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
                 <div class="margin-bottom-10">
                     <div class="input-group">
-                        <%= f.search_field :name_or_sn_cont, class: "form-control input-sm", placeholder: "请输入日常费用的名称或编号..." %>
+                        <%= f.search_field :name_or_sn_cont, class: "form-control input-sm", placeholder: "请输入车辆费用的名称或编号..." %>
                         <span class="input-group-btn">
                             <button class="btn btn-success btn-sm" type="submit">搜索</button>
                         </span>
@@ -25,30 +25,32 @@
             <thead>
                 <tr>
                     <th class="index">序号</th>
-                    <th>编号</th>
-                    <th>类别</th>
+                    <th>项目编号</th>
+                    <th>项目名称</th>
+                    <th>采购单位</th>
                     <th>录入人</th>
                     <th>金额</th>
-                    <th class="status_bar"><%= status_filter(DailyCost) %></th>
+                    <th class="status_bar"><%= status_filter(AssetProject) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
                 </tr>
             </thead>
             <tbody>
-                <% @daily_costs.each_with_index do |daily_cost,index| %>
+                <% @asset_projects.each_with_index do |asset_project,index| %>
                 <tr>
                     <td><%= show_index(index) %></td>
-                    <td><%= daily_cost.sn %></td>
-                    <td><%= daily_cost.name %></td>
-                    <td><%= daily_cost.dep_man %></td>
-                    <td class="money"><%= money daily_cost.total %></td>
-                    <td><%= daily_cost.status_bar %></td>
-                    <td><%= show_date(daily_cost.created_at) %></td>
-                    <td><%= btn_group(daily_costs_btn(daily_cost,action_name == "list")) %></td>
+                    <td><%= asset_project.sn %></td>
+                    <td><%= asset_project.name %></td>
+                    <td><%= asset_project.dep_name %></td>
+                    <td><%= asset_project.dep_man %></td>
+                    <td class="money"><%= money asset_project.total %></td>
+                    <td><%= asset_project.status_bar %></td>
+                    <td><%= show_date(asset_project.created_at) %></td>
+                    <td><%= btn_group(asset_projects_btn(asset_project,action_name == "list")) %></td>
                 </tr>
                 <% end %>
             </tbody>
         </table>
-        <%= paginate @daily_costs %> 
+        <%= paginate @asset_projects %> 
     </div>                     
 </div>
