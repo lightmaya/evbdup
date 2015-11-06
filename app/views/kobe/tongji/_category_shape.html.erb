@@ -1,5 +1,6 @@
 <div id="container_category" class='highcharts_container'>
 </div>
+
 <script type="text/javascript">
     $(function () {
         var data = <%=raw (@categories.present? ? @categories : [[@ca.try(:name),@category_total.to_f]]) %>;  
