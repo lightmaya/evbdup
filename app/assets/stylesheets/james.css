@@ -9,4 +9,14 @@
  *= require pages/page_job
  *= require pages/page_log_reg_v1
  *
+ *= require shop/shop.style.css
+ *= require shop/headers/header-v5.css
+ *= require shop/footers/footer-v4.css
+ *= require shop/master-slider/quick-start/masterslider/skins/default/style
+ *= require shop/master-slider/quick-start/masterslider/style/masterslider
+ *
 */
+
+.mega-menu-content .category_header { border-bottom: 1px solid #dedede;color: #555;font-size: 16px; font-weight: 500; margin: 0 100px 0 15px; padding: 5px 0; }
+
+.category_grey { padding: 5px 10px 5px 15px; color: #c9c9c9; }

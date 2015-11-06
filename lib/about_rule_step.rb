@@ -3,6 +3,7 @@ module AboutRuleStep
 
 	# 审核下一步的hash
 	def audit_next_hash
+    # 确认并结束当前流程（如需上级单位审核则自动转向上级单位。）
 		{ "next" => (self.get_next_step.is_a?(Hash) ? "确认并转向上级单位审核" : "确认并结束审核流程"), "return" => "退回发起人", "turn" => "转向本单位下一位审核人" }
 	end
 

@@ -31,12 +31,6 @@
   = require my97/WdatePicker
   = require select2/select2
  *= require_self
-
- *= require shop/shop.style.css
- *= require shop/headers/header-v5.css
- *= require shop/footers/footer-v4.css
- *= require shop/master-slider/quick-start/masterslider/skins/default/style
- *= require shop/master-slider/quick-start/masterslider/style/masterslider
  */
 
 .text-red{color:#ff0000;}

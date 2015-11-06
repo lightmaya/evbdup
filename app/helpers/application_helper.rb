@@ -274,4 +274,28 @@ module ApplicationHelper
     title += '<span style="color: red;"> X</span>' if options[:del]
     link_to title.html_safe, channel_path(combos.join("_"))
   end
+
+  # 给某字符串加icon标签 icon_location 表示icon的位置是在字符串的左边还是右边
+  def get_name_with_icon(name, icon, icon_location = 'left')
+    return name if icon.blank?
+    icon_location == 'left' ? "<i class='fa #{icon}'></i> #{name}" : "#{name} <i class='fa #{icon}'></i>"
+  end
+
+  # 首页品目标签 品目共三级 
+  # 第一级显示在首页上 鼠标悬浮显示二三级 第二级用li_header_tag显示 第三级跳转到channel页面
+  def li_header_tag(name, icon = '')
+    "<li><div class='category_header'>#{get_name_with_icon(name, icon)}</div></li>".html_safe
+  end
+
+  # 首页第三级品目的跳转的li
+  def li_link_to_tag(name, id, icon = '')
+    "<li><a href='/channel/#{id}'>#{get_name_with_icon(name, icon)}</a></li>".html_safe
+  end
+
+  # 首页第三级品目没有产品不用跳转，需加 * 标记
+  def li_no_link_tag(name,icon = '')
+    "<li><div class='category_grey'>#{get_name_with_icon(name, icon)}</div></li>".html_safe
+  end
+
+
 end

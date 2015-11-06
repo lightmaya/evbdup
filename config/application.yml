@@ -8,6 +8,8 @@ defaults: &defaults
   web_site_key_words: "中储粮 服务网 集中采购 电子化平台 中国储备粮管理总公司 粮机"
   company_name: "中国储备粮管理总公司"
   company_short_name: "中储粮总公司"
+  # 网上商城
+  mall_web_site: "http://mall.sinograin.com.cn/"
   # 服务电话 办公类
   service_bg_tel: "(010)88016617"
   # 粮机类
@@ -24,6 +26,8 @@ defaults: &defaults
   friendly_link: 
     "中储粮网上商城": "http://mall.sinograin.com.cn/"
     "中储粮服务网": "http://fwgs.sinograin.com.cn"
+  # 首页品目分类 没有产品的提示
+  category_no_product_tips: "带*标记的品目是没有入围产品的，请通过其他方式采购"
 
   # 颜色样式
   colors: [["u", "草绿"],["blue", "浅蓝"],["red", "红色"],["green", "绿色"],["sea", "蓝绿色"],["orange", "橙色"],["yellow", "黄色"],["purple", "紫色"],["aqua", "浅蓝色"],["brown", "棕色"],["dark-blue", "深蓝色"],["light-green", "浅绿"],["dark", "黑色"],["light", "灰色"]]
