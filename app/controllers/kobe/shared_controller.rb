@@ -41,15 +41,31 @@ class Kobe::SharedController < KobeController
   def category_ztree_json
     name = params[:ajax_key]
     if name.blank?
-      nodes = Category.attribute_method?("status") ? Category.where(status: 0) : Category.all
+      nodes = Category.where(status: 0)
     else
-      cdt = Category.attribute_method?("status") ? "and a.status = 0 and b.status = 0" : ""
+      cdt = "and a.status = 0 and b.status = 0" 
       sql = ztree_box_sql(Category, cdt)
       # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
       nodes = Category.find_by_sql([sql,"%#{name}%"])
     end
     render :json => Category.get_json(nodes)
   end
+
+    # 状态是正常的品目
+  def department_ztree_json
+    name = params[:ajax_key]
+    dep_p = Department.purchaser
+    if name.blank?
+      nodes = dep_p.descendants.where(status: 1) 
+    else
+      cdt = "and a.status = 1 and b.status = 1  and (b.ancestry like '#{dep_p.id}/%' or  b.ancestry = #{dep_p.id})" 
+      sql = ztree_box_sql(Department, cdt)
+      # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
+      nodes = Department.find_by_sql([sql,"%#{name}%"])
+    end
+    render :json => Department.get_json(nodes)
+  end
+
 
   # 转向下一个审核人
   def audit_next_user

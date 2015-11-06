@@ -1,0 +1,66 @@
+<div class="tab-content">
+	<div class="tab-pane fade in active" id="home-1">
+		<%=form_tag  url , method: "get" , id: 'sky-form' , class: "sky-form" do %>
+		<header>统计日期：</header>         
+		<fieldset>
+			<label class="label">日期区间</label>  
+			<div class="row">   
+				<section class="col col-3">
+					<label class="input">
+						<i class="icon-append fa fa-calendar"></i>
+						<input type="text" name="begin" class="start_date"  placeholder="开始日期" value="<%=params[:begin] %>">
+					</label>
+				</section>
+				<section class="col col-3">
+					<label class="input">
+						<i class="icon-append fa fa-calendar"></i>
+						<input type="text" name="end" class='finish_date'  placeholder="结束日期" value="<%=params[:end]%>">
+					</label>
+				</section>
+			</div>
+			<div class="row">
+				<section class="col col-3">
+					<label class="label">供应商单位</label>
+					<label class="input">
+						<i class="icon-append fa fa-chevron-down"></i>
+						<input type="text"  name="dep_s_name" id="dep_s_name">                       
+					</label>
+				</section>
+				<section class="col col-3">
+					<label class="label">入围项目名称</label>
+					<label class="input">
+						<i class="icon-append fa fa-chevron-down"></i>
+						<input type="text"  name="project_name" id="project_name" class="tree_radio required" json_url="/kobe/shared/item_ztree_json" partner='item_id'>
+					</label>
+				</section>
+			</div>
+			<label class="label">统计方式</label>
+			<div class="row">
+				<section class="col col-3">
+					<label class="radio state-success"><input type="radio" name="show_type" value="table" checked="<%=params[:show_type]=='table'%>"><i class="rounded-x"></i>图表</label>
+				</section>
+				<section class="col col-3">
+					<label class="radio state-success"><input type="radio" name="show_type" value="shape" checked="<%=params[:show_type]=='shape'%>"><i class="rounded-x"></i>图形</label> 
+				</section>
+			</div>
+			<input type="hidden" name="item_id" id="item_id"> 
+		</fieldset>
+		<footer>
+			<input type="submit" name="search_btn" id= "search_btn" class="btn-u btn-u-blue" value="搜索">
+		</footer> 
+	</div>
+	<%end%>        
+</div>
+
+<script type="text/javascript">
+   $('#search_btn').on('click',function(){
+   	var dep_s_name =$("#dep_s_name").val();
+   	var item = $("#item_id").val();
+   	if (dep_s_name == '' && item == ''){
+   		alert('请至少选择供应商单位和入围项目名称中的一项');
+   		return false;
+   	}
+   })
+	
+</script>               
+

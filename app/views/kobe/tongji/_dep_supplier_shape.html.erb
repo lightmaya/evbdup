@@ -1,0 +1,9 @@
+<div id="container_supplier" style='width:100%;height:500px'>
+</div>
+<script type="text/javascript">
+    $(function () {
+        var data = <%=raw  @dep_infos %>;  
+        get_column('container_supplier','供应商明细统计',data);
+    });
+
+</script>
