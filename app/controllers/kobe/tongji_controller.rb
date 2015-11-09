@@ -61,8 +61,8 @@ class Kobe::TongjiController < KobeController
     dep_p = Department.purchaser
     # 只显示采购单位的条件
     department_sql = %Q{
-      select id,name,concat_ws('/',real_ancestry,'') as code from departments 
-      where find_in_set(#{dep_p.id},replace(real_ancestry,'/',','))>0 and dep_type=0
+      select id,name,concat_ws('/',real_ancestry,'0') as code from departments 
+      where  dep_type=0 and find_in_set(#{dep_p.id},replace(real_ancestry,'/',',')) > 0 
     }
     # 求合计
     if params[:category_id].present?
@@ -71,22 +71,22 @@ class Kobe::TongjiController < KobeController
     @department_total = Order.where(@cdt).sum("orders.total")
     end
     if params[:department_id].blank?
-      department_sql << " and ancestry_depth = 2"
+      department_sql << " and ancestry_depth <= 2"
       rs = Order.joins(get_department_joins(department_sql)).select(@select).where(@cdt).group('c.code')
       @departments = rs.map{|x| [x.name,x.total.to_f]}
     else
       @dep = Department.find_by(id: params[:department_id])
       if @dep.present?
         if @dep.has_children?
-          department_sql << " and find_in_set(#{@dep.id},replace(real_ancestry,'/',',')) > 0 "
+          department_sql << " and find_in_set(#{@dep.id},replace(real_ancestry,'/',',')) > 0 and ancestry_depth <= #{@dep.ancestry_depth+1} "
           rs = Order.joins(get_department_joins(department_sql)).select(@select).where(@cdt).group('c.code')
           @departments = rs.map{|x| [x.name,x.total.to_f]}
-          (@dep.subtree.find_real_dep.map(&:name)-rs.map(&:name)).each {|x| @departments << [x,0]}
-          dep_other = @department_total- rs.map(&:total).sum
-          @departments << ['其他',dep_other.to_f]  unless dep_other == 0
+          (@dep.children.find_real_dep.map(&:name)-rs.map(&:name)).each {|x| @departments << [x,0]}
         end
       end
     end
+    dep_other = @department_total- rs.map(&:total).sum
+    @departments << ['其他',dep_other.to_f]  unless dep_other == 0
   end
 
 
@@ -145,7 +145,7 @@ class Kobe::TongjiController < KobeController
   def get_department_joins(sql)
     %Q{
       #{'inner join orders_items on orders.id = orders_items.order_id' if params[:category_id].present? }
-      inner join (#{sql}) c on c.id = orders.buyer_id 
+      inner join (#{sql}) c on c.code = left(concat_ws('/',orders.buyer_code,'0'), length(c.code))
     }
   end
 
