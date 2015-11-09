@@ -276,7 +276,6 @@ namespace :data do
       new_dep = Department.find_by(old_id: old.agent_id, old_table: "dep_supplier")
       next if new_dep.blank?
       n.agent_id = new_dep.id
-      n.name = a.agent.
       n.area_id = old.city
       # ["正常",0,"u",100],
       # ["已删除",404,"light",0]
