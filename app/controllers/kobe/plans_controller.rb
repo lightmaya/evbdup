@@ -95,14 +95,11 @@ class Kobe::PlansController < KobeController
       @menu_ids = Menu.get_menu_ids("Plan|list")
     end
 
-<<<<<<< HEAD
     def get_audit_plan
       @plan = Plan.find_by(id: params[:id]) if params[:id].present?
       audit_tips unless @plan.present? && @plan.cando(action_name,current_user) && can_audit?(@plan,@menu_ids)
     end
 
-=======
->>>>>>> 0e0351fd957487fdd29cba82a96f5fdd1ad74612
     def get_item
       @item = PlanItem.find_by(id: params[:item_id]) if params[:item_id].present?
       cannot_do_tips unless @item.present? && @item.cando("add_plan", current_user)
@@ -115,10 +112,7 @@ class Kobe::PlansController < KobeController
 
     def get_plan
       cannot_do_tips unless @plan.present? && @plan.cando(action_name,current_user)
-<<<<<<< HEAD
-=======
       audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@plan,@menu_ids)
->>>>>>> 0e0351fd957487fdd29cba82a96f5fdd1ad74612
     end
 
     def get_show_arr
