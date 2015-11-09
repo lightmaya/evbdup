@@ -288,7 +288,6 @@ namespace :data do
         404
       end
 
-      n.category_id = old.category_id
       n.user_id = old.user_id
       n.logs = old.logs.to_s.gsub("param", "node")
       n.created_at = old.created_at
