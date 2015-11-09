@@ -24,9 +24,6 @@ if Department.first.blank?
 end
 
 if Menu.first.blank?
-  [["数据统计与分析",  "fa-bar-chart-o"], ["公告管理", "fa-tag"]].each do |option|
-    Menu.create(:name => option[0], :icon => option[1], :is_show => true)
-  end
 
   yw = Menu.create(:name => "业务管理", :icon => "fa-tasks", :is_auto => true, :is_show => true)
 # ----订单中心-----------------------------------------------------------------------------------------
@@ -42,6 +39,7 @@ if Menu.first.blank?
   ].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => category)
   end
+
 # ----入围项目管理-------------------------------------------------------------------------------------
   item = Menu.create(:name => "入围项目管理", :route_path => "/kobe/items", :can_opt_action => "Item|read", :is_show => true, :parent => yw)
   [ ["增加项目", "Item|create"], 
@@ -53,6 +51,7 @@ if Menu.first.blank?
   ].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => item)
   end
+
 # ----入围产品管理-------------------------------------------------------------------------------------
   item_manage = Menu.create(:name => "入围产品管理", :is_show => true, :parent => yw)
   Menu.create(:name => "我的入围项目", :route_path => "/kobe/items/list", :can_opt_action => "Item|list", :is_show => true, :parent => item_manage)
@@ -93,6 +92,7 @@ if Menu.first.blank?
   Menu.create(:name => "入围产品管理", :route_path => "/kobe/products", :can_opt_action => "Product|admin", :is_show => true, :parent => item_manage)
   Menu.create(:name => "代理商管理", :route_path => "/kobe/agents", :can_opt_action => "Agent|admin", :is_show => true, :parent => item_manage)
   Menu.create(:name => "总协调人管理", :route_path => "/kobe/coordinators", :can_opt_action => "Coordinator|admin", :is_show => true, :parent => item_manage)
+
 # ----采购计划项目管理---------------------------------------------------------------------------------
   plan_item = Menu.create(:name => "采购计划项目管理", :route_path => "/kobe/plan_items", :can_opt_action => "PlanItem|read", :is_show => true, :parent => yw)
   [ ["增加采购计划项目", "PlanItem|create"], 
@@ -102,6 +102,7 @@ if Menu.first.blank?
   ].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => plan_item)
   end
+
 # ----采购计划管理-------------------------------------------------------------------------------------
   plan = Menu.create(:name => "采购计划管理", :is_show => true, :parent => yw)
   Menu.create(:name => "可上报的采购计划", :route_path => "/kobe/plan_items/list", :can_opt_action => "PlanItem|list", :is_show => true, :parent => plan)
@@ -119,6 +120,7 @@ if Menu.first.blank?
   [["采购计划初审", "Plan|first_audit"], ["采购计划终审", "Plan|last_audit"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_plan)
   end
+
 # ----定点采购-----------------------------------------------------------------------------------------
   ddcg = Menu.create(:name => "定点采购", :is_show => true, :parent => yw)
   ddcg_list = Menu.create(:name => "我的定点采购项目", :route_path => "/kobe/orders/ddcg_list", :can_opt_action => "Order|ddcg_list", :is_show => true, :parent => ddcg)
@@ -135,7 +137,8 @@ if Menu.first.blank?
   [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"]].each do |m|
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_ddcg)
   end
-# ----日常费用报销类别-----------------------------------------------------------------------------------------
+
+# ----日常费用报销类别---------------------------------------------------------------------------------
   daily_cost = Menu.create(:name => "日常费用报销", :is_show => true, :parent => yw)
   daily_cost_category = Menu.create(:name => "维护费用类别",:route_path => "/kobe/daily_categories", :can_opt_action => "DailyCategory|read", :is_show => true, :parent => daily_cost)
   [ ["增加费用类别", "DailyCategory|create"], 
@@ -146,7 +149,7 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => daily_cost_category)
   end
 
-#----日常费用报销-------------------------------------------------------------------------------------
+# ---日常费用报销--------------------------------------------------------------------------------------
   cost_index = Menu.create(:name => "日常报销清单", :route_path => "/kobe/daily_costs", :can_opt_action => "DailyCost|read", :is_show => true, :parent => daily_cost)
   [  
     ["新增日常报销", "DailyCost|create"], 
@@ -161,7 +164,7 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_cost)
   end
 
-  # ----车辆信息维护-----------------------------------------------------------------------------------------
+# ----车辆信息维护-------------------------------------------------------------------------------------
   fixed_asset = Menu.create(:name => "车辆信息维护", :is_show => true, :parent => yw)
   fixed_asset_list = Menu.create(:name => "车辆信息维护",:route_path => "/kobe/fixed_assets", :can_opt_action => "FixedAsset|read", :is_show => true, :parent => fixed_asset)
   [ ["增加车辆信息", "FixedAsset|create"], 
@@ -171,7 +174,7 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => fixed_asset_list)
   end
 
-#----车辆费用报销-------------------------------------------------------------------------------------
+# ---车辆费用报销--------------------------------------------------------------------------------------
   asset_index = Menu.create(:name => "车辆费用报销", :route_path => "/kobe/asset_projects", :can_opt_action => "AssetProject|read", :is_show => true, :parent => fixed_asset)
   [  
     ["新增车辆报销", "AssetProject|create"], 
@@ -219,6 +222,57 @@ if Menu.first.blank?
   ].each do |u|
     Menu.create(:name => u[0], :can_opt_action => u[1], :is_auto => u[2], :parent => user)
   end
+
+# ----公告管理-----------------------------------------------------------------------------------------
+  article = Menu.find_or_create_by(:name => "公告管理", :icon => "fa-tag", :is_show => true)
+
+  article_list = Menu.find_or_initialize_by(:name => "公告列表", :route_path => "/kobe/articles", :can_opt_action => "Article|read", :is_show => true)
+  article_list.parent = article
+  article_list.save
+  [ ["增加公告", "Article|create"], 
+    ["修改公告", "Article|update"], 
+    ["删除公告", "Article|update_destroy"],
+    ["提交公告", "Article|commit"]
+  ].each do |m|
+    ac = Menu.find_or_initialize_by(:name => m[0], :can_opt_action => m[1])
+    ac.parent = article_list
+    ac.save
+  end
+
+  audit_article = Menu.find_or_initialize_by(:name => "审核公告", :route_path => "/kobe/articles/audit_article", :can_opt_action => "Article|audit_article", :is_show => true)
+  audit_article.parent = article
+  audit_article.save
+  [["公告初审", "Article|first_audit"], ["公告终审", "Article|last_audit"]].each do |m|
+    a = Menu.find_or_initialize_by(:name => m[0], :can_opt_action => m[1])
+    a.parent = audit_article
+    a.save
+  end
+
+  article_catalog = Menu.find_or_initialize_by(:name => "公告目录管理", :route_path => "/kobe/article_catalogs", :can_opt_action => "ArticleCatalog|read", :is_show => true)
+  article_catalog.parent = article
+  article_catalog.save
+  [ ["增加公告目录", "ArticleCatalog|create"], 
+    ["修改公告目录", "ArticleCatalog|update"], 
+    ["删除公告目录", "ArticleCatalog|update_destroy"],
+    ["移动公告目录", "ArticleCatalog|move"]
+  ].each do |m|
+    ac = Menu.find_or_initialize_by(:name => m[0], :can_opt_action => m[1])
+    ac.parent = article_catalog
+    ac.save
+  end
+
+# ----数据统计与分析-----------------------------------------------------------------------------------
+  tongji = Menu.find_or_create_by(:name => "数据统计与分析", :icon => "fa-bar-chart-o", :is_show => true)
+
+  all_tj = Menu.find_or_initialize_by(:name => "整体采购统计", :route_path => "/kobe/tongji", :can_opt_action => "Tongji|read", :is_show => true)
+  all_tj.parent = tongji
+  all_tj.save
+
+  item_dep_tj = Menu.find_or_initialize_by(:name => "入围供应商销量统计", :route_path => "/kobe/tongji/item_dep_sales", :can_opt_action => "Tongji|read", :is_show => true)
+  item_dep_tj.parent = tongji
+  item_dep_tj.save
+
+
 # ----系统设置-----------------------------------------------------------------------------------------
   setting = Menu.find_or_create_by(:name => "系统设置", :icon => "fa-cogs", :is_show => true)
 

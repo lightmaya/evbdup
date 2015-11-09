@@ -1,0 +1,221 @@
+<div style="height: 0px;" aria-expanded="false" class="navbar-collapse navbar-responsive-collapse collapse">
+  <div class="container">
+    <ul class="nav navbar-nav">
+      <!-- Home -->
+      <li class="active">
+        <a href="/">首页</a>
+      </li>
+      <!-- End Home -->
+
+      <!-- 公务用车 -->
+      <li class="dropdown">
+        <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:void(0);">公务用车</a>
+        <ul class="dropdown-menu">
+          <%= li_link_to_tag("轿车", 7) %>
+          <%= li_link_to_tag("越野车", 8) %>
+          <%= li_link_to_tag("面包车", 9) %>
+          <%= li_link_to_tag("客车", 10) %>
+        </ul>
+      </li>
+      <!-- End 公务用车 -->
+
+      <!-- 办公用品 -->
+      <li class="dropdown">
+        <a aria-expanded="false" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">办公用品</a>
+        <ul class="dropdown-menu">
+          <li><%= link_to_blank "网上商城", Dictionary.mall_web_site %></li>
+          <li class="dropdown-submenu">
+            <%= link_to_void "协议供货" %>
+            <ul class="dropdown-menu">
+              <%= li_link_to_tag("台式机", 221) %>
+              <%= li_link_to_tag("笔记本", 230) %>
+              <%= li_link_to_tag("电脑配件", 934) %>
+              <%= li_link_to_tag("打印机", 29) %>
+              <%= li_link_to_tag("复印机", 30) %>
+              <%= li_link_to_tag("服务器", 19) %>
+            </ul>                                
+          </li>
+        </ul>
+      </li>
+      <!-- End 办公用品 -->
+
+      <!-- 粮食物资设备采购 -->
+      <li class="dropdown mega-menu-fullwidth">
+        <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:void(0);">粮油设施设备</a>
+        <ul class="dropdown-menu">
+          <li>
+            <div class="mega-menu-content disable-icons">
+              <div class="container">
+                <div class="row equal-height">
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("清理设备") %>
+                      <%= li_link_to_tag("圆筒清理筛", 95) %>
+                      <%= li_link_to_tag("振动清理筛", 96) %>
+                      <li>&nbsp;</li>
+                      <%= li_header_tag("输送设备") %>
+                      <%= li_link_to_tag("移动输送设备", 848) %>
+                      <li>&nbsp;</li>
+                      <%= li_header_tag("装卸设备") %>
+                      <%= li_link_to_tag("扒谷机", 94) %>
+                      <%= li_link_to_tag("装仓机", 647) %>
+                      <%= li_link_to_tag("补仓机", 723) %>
+                      <%= li_link_to_tag("卸粮机", 648) %>
+                    </ul>
+                  </div>
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("通风设备") %>
+                      <%= li_link_to_tag("离心风机", 669) %>
+                      <%= li_link_to_tag("轴流风机", 668) %>
+                      <%= li_link_to_tag("混流风机", 670) %>
+                      <%= li_link_to_tag("罗茨风机", 88) %>
+                      <%= li_link_to_tag("单管风机", 671) %>
+                      <%= li_link_to_tag("地上通风笼", 103) %>
+                      <%= li_link_to_tag("地槽盖板", 665) %>
+                      <li>&nbsp;</li>
+                      <%= li_header_tag("粮食烘干设备") %>
+                      <%= li_no_link_tag("连续式烘干设备") %>
+                      <%= li_no_link_tag("循环式烘干设备") %>
+                    </ul>
+                  </div>
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("计量设备") %>
+                      <%= li_link_to_tag("地上、轨道衡", 871) %>
+                      <li>&nbsp;</li>
+                      <%= li_header_tag("升降设备") %>
+                      <%= li_link_to_tag("高空作业车", 136) %>
+                      <%= li_link_to_tag("剪叉式高空作业平台", 874) %>
+                      <%= li_link_to_tag("桅柱式高空作业平台", 875) %>
+                      <li>&nbsp;</li>
+                      <%= li_header_tag("生产用空调") %>
+                      <%= li_link_to_tag("分体壁挂机", 649) %>
+                      <%= li_link_to_tag("分体柜机", 650) %>
+                      <%= li_link_to_tag("风管机", 651) %>
+                    </ul>
+                  </div>
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("储粮保粮设施设备") %>
+                      <%= li_link_to_tag("智能通风系统", 635) %>
+                      <%= li_link_to_tag("粮情测控系统", 656) %>
+                      <%= li_link_to_tag("库区生产监控系统", 104) %>
+                      <%= li_link_to_tag("环流熏蒸系统", 769) %>
+                      <%= li_link_to_tag("仓房用门窗", 666) %>
+                      <%= li_link_to_tag("挡粮门", 722) %>
+                      <%= li_link_to_tag("谷物冷却机", 772) %>
+                      <%= li_link_to_tag("空气呼吸器", 109) %>
+                      <%= li_link_to_tag("充气泵", 790) %>
+                      <%= li_link_to_tag("气体检测仪", 797) %>
+                      <%= li_link_to_tag("气体报警仪", 798) %>
+                      <%= li_link_to_tag("螺杆式空气压缩机", 654) %>
+                      <%= li_link_to_tag("变压吸附式制氮设备", 655) %>
+                    </ul>
+                  </div>
+
+                </div>
+              </div>    
+            </div>    
+          </li>
+        </ul>
+      </li>
+      <!-- End 粮食物资设备采购 -->
+
+      <!-- 粮食检化验设备 -->
+      <li class="dropdown mega-menu-fullwidth">
+        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">检化验设备</a>
+        <ul class="dropdown-menu">
+          <li>
+            <div class="mega-menu-content disable-icons">
+              <div class="container">
+                <div class="row equal-height">
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("粮食取样设备") %>
+                      <%= li_no_link_tag("手动扦样器") %>
+                      <%= li_no_link_tag("自动扦样器") %>
+                      <%= li_no_link_tag("深层扦样器") %>
+                    </ul>
+                  </div>
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("卫生指标检测仪器") %>
+                      <%= li_no_link_tag("液相色谱仪") %>
+                      <%= li_no_link_tag("气相色谱仪") %>
+                      <%= li_no_link_tag("原子吸收分光光度计") %>
+                      <%= li_no_link_tag("原子荧光光度计") %>
+                      <%= li_no_link_tag("酶标仪") %>
+                      <%= li_no_link_tag("电感耦合等离子体质谱仪") %>
+                      <%= li_no_link_tag("微波介质消解仪") %>
+                    </ul>                          
+                  </div>
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("品质指标检测仪器") %>
+                      <%= li_no_link_tag("近红外分析仪") %>
+                      <%= li_no_link_tag("粮油滴定分析仪") %>
+                      <%= li_no_link_tag("面筋值测定仪") %>
+                      <%= li_no_link_tag("电子粉质仪") %>
+                      <%= li_no_link_tag("脂肪酸值测定仪") %>
+                      <%= li_no_link_tag("拉伸仪") %>
+                    </ul>
+                  </div>
+                  <div class="col-md-3 equal-height-in">
+                    <ul class="list-unstyled equal-height-list">
+                      <%= li_header_tag("质量指标检测仪器") %>
+                      <%= li_no_link_tag("罗维朋比色计") %>
+                      <%= li_no_link_tag("水分检测仪") %>
+                    </ul>
+                  </div>
+                </div>
+              </div>    
+            </div>    
+          </li>
+        </ul>
+      </li>
+      <!-- End 粮食检化验设备 -->
+
+      <!-- Search Block -->
+      <li class="dropdown">
+        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">包装物 & 职工工装</a>
+        <ul class="dropdown-menu">
+          <li class="dropdown-submenu">
+            <%= link_to_void "包装物" %>
+            <ul class="dropdown-menu">
+              <%= li_link_to_tag("贸易性粮食编织袋", 123) %>
+              <%= li_link_to_tag("油脂公司专用编织袋", 718) %>
+            </ul>                                
+          </li>
+          <li class="dropdown-submenu">
+            <%= link_to_void "职工工装" %>
+            <ul class="dropdown-menu">
+              <%= li_link_to_tag("春秋装", 255) %>
+              <%= li_link_to_tag("夏装", 256) %>
+              <%= li_link_to_tag("冬装", 257) %>
+            </ul>                                
+          </li>
+        </ul>
+      </li>
+      <!-- End Search Block -->
+      <li class="dropdown">
+        <a aria-expanded="false" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">化学药品药剂</a>
+        <ul class="dropdown-menu">
+          <%= li_link_to_tag("磷化铝药剂", 125) %>
+          <%= li_no_link_tag("防护剂") %>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">建筑工程</a>
+        <ul class="dropdown-menu">
+          <%= li_link_to_tag("施工及SBS防水卷材", 742) %>
+          <%= li_link_to_tag("施工及APP防水卷材", 743) %>
+          <%= li_link_to_tag("施工及建筑外墙涂料", 740) %>
+          <%= li_link_to_tag("施工及建筑反射隔热涂料", 741) %>
+          <%= li_link_to_tag("施工及油罐外壁防腐涂料", 57) %>          
+        </ul>
+      </li>
+      
+    </ul>
+  </div><!--/end container-->
+</div>
