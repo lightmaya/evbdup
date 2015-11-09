@@ -8,6 +8,7 @@ class BidProject < ActiveRecord::Base
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :user
   has_one :item
+  belongs_to :department  
 
   scope :can_bid, -> { where("bid_projects.status = 2 and now() < bid_projects.end_time") }
 
@@ -91,8 +92,8 @@ class BidProject < ActiveRecord::Base
 
   def commit_params
     arr = []
-    # rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = 3"
+    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
+    arr << "rule_id = #{rule_id}"
     arr << "rule_step = 'start'"
     return arr
   end

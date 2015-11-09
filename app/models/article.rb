@@ -50,7 +50,8 @@ class Article < ActiveRecord::Base
   belongs_to :rule
   def commit_params
     arr = []
-    arr << "rule_id = 3"
+    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
+    arr << "rule_id = #{rule_id}"
     # 起始状态
     arr << "rule_step = 'start'"
     return arr
