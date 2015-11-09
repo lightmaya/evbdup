@@ -239,7 +239,7 @@ if Menu.first.blank?
     ac.save
   end
 
-  audit_article = Menu.find_or_initialize_by(:name => "审核公告", :route_path => "/kobe/articles/audit_article", :can_opt_action => "Article|audit_article", :is_show => true)
+  audit_article = Menu.find_or_initialize_by(:name => "审核公告", :route_path => "/kobe/articles/list", :can_opt_action => "Article|list", :is_show => true)
   audit_article.parent = article
   audit_article.save
   [["公告初审", "Article|first_audit"], ["公告终审", "Article|last_audit"]].each do |m|
@@ -318,18 +318,40 @@ if Menu.first.blank?
   ra_project.parent = yw
   ra_project.save
 
-  [ ["我的项目", "BidProject|read", "/kobe/bid_projects", true], 
-    ["新建竞价", "BidProject|create", "/kobe/bid_projects/new", false],
-    ["修改竞价", "BidProject|update", "/kobe/bid_projects/edit", false],
-    ["删除竞价", "BidProject|update_destroy", "/kobe/bid_projects/update_destroy", false],
-    ["提交审核", "BidProject|commit", "", false],
-    ["审核竞价", "BidProject|lsit", "", true]
-  ].each_with_index do |m, i|
-    m = Menu.find_or_initialize_by(:name => m[0], :can_opt_action => m[1], route_path: m[2], is_show: m[3])
-    next if m.id.present?
-    m.parent = ra_project
-    m.save
+  wsjj_list = Menu.find_or_initialize_by(:name => "网上竞价列表", :route_path => "/kobe/bid_projects", :can_opt_action => "BidProject|read", :is_show => true)
+  wsjj_list.parent = ra_project
+  wsjj_list.save
+  [ ["增加网上竞价", "BidProject|create"], 
+    ["修改网上竞价", "BidProject|update"], 
+    ["删除网上竞价", "BidProject|update_destroy"],
+    ["提交网上竞价", "BidProject|commit"]
+  ].each do |m|
+    ac = Menu.find_or_initialize_by(:name => m[0], :can_opt_action => m[1])
+    ac.parent = wsjj_list
+    ac.save
   end
+
+  audit_wsjj = Menu.find_or_initialize_by(:name => "审核网上竞价", :route_path => "/kobe/bid_projects/list", :can_opt_action => "BidProject|list", :is_show => true)
+  audit_wsjj.parent = ra_project
+  audit_wsjj.save
+  [["网上竞价初审", "BidProject|first_audit"], ["网上竞价终审", "BidProject|last_audit"]].each do |m|
+    a = Menu.find_or_initialize_by(:name => m[0], :can_opt_action => m[1])
+    a.parent = audit_wsjj
+    a.save
+  end
+
+  # [ ["我的项目", "BidProject|read", "/kobe/bid_projects", true], 
+  #   ["新建竞价", "BidProject|create", "/kobe/bid_projects/new", false],
+  #   ["修改竞价", "BidProject|update", "/kobe/bid_projects/edit", false],
+  #   ["删除竞价", "BidProject|update_destroy", "/kobe/bid_projects/update_destroy", false],
+  #   ["提交审核", "BidProject|commit", "", false],
+  #   ["审核竞价", "BidProject|lsit", "/kobe/bid_projects/list", true]
+  # ].each_with_index do |m, i|
+  #   m = Menu.find_or_initialize_by(:name => m[0], :can_opt_action => m[1], route_path: m[2], is_show: m[3])
+  #   next if m.id.present?
+  #   m.parent = ra_project
+  #   m.save
+  # end
 
 
 if Category.first.blank?
