@@ -1,43 +1,47 @@
 <div class="content-md margin-bottom-30">
-  <div class="container">
-    <form class="shopping-cart" action="#" novalidate="novalidate">
+  <div class="container shopping-cart">
+    <% if @cart.items.present? %>
+      <%= form_tag  %>
       <div role="application" class="wizard clearfix" id="steps-uid-0">
         <%= render "steps" %>
         <div class="content clearfix">
           <section>
             <div class="table-responsive">
-              <table class="table table-striped">
+              <table class="table table-striped list_table">
                 <thead>
                   <tr>
+                    <th><input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"></th>
                     <th>产品</th>
                     <th>供应商</th>
-                    <th>供应商价格</th>
+                    <th width="120px">供应商价格</th>
                     <th>采购单价</th>
-                    <th>采购数量</th>
-                    <th>小计</th>
+                    <th width="190px">采购数量</th>
+                    <th width="120px">小计</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <% 5.times do |i| %>
+                  <% @cart.items.each do |item| %>
                     <tr>
+                      <td><input type="checkbox" name="check[]" value="<%= item.product_id %>" onclick="setSelectAll();"</td>
                       <td class="product-in-table">
                         <img class="img-responsive" src="assets/img/thumb/08.jpg" alt="">
                         <div class="product-it-in">
-                          <h3>长安沃尔沃 2014款 S80L T5 智逸版</h3>
-                          <span>汽车采购</span>
+                          <h3><%= item.name %></h3>
+                          <span><%= item.big_category_name %></span>
                         </div>    
                       </td>
-                      <td>国兴汽车服务中心</td>
-                      <td>¥ 160.00</td>
-                      <td><%= text_field_tag "xx", "¥ 150.00", class: "w80" %></td>
+                      <td><%= item.agent_name %></td>
+                      <td><%= money item.price %></td>
+                      <td><%= text_field_tag "real_price_cart_item_#{item.product_id}", item.price, class: "w80 real_price", alt: "cart_item_#{item.product_id}" %></td>
                       <td class="state-success">
-                          <button type="button" class="quantity-button" name="subtract" onclick="javascript: subtractQty1();" value="-">-</button>
-                          <input type="text" class="quantity-field valid" name="qty1" value="5" id="qty1">
-                          <button type="button" class="quantity-button" name="add" onclick="javascript: document.getElementById(&quot;qty1&quot;).value++;" value="+">+</button>
+                          <button type="button" alt="cart_item_<%= item.product_id %>" class="quantity-button decrease_num  " name="subtract" value="-">-</button>
+                          <%= text_field_tag "cart_item_#{item.product_id}", item.num, class: "quantity-field valid", maxlength: "4", maxsize: "4" %>
+                          <button type="button" alt="cart_item_<%= item.product_id %>" pid="<%= item.product_id %>" class="quantity-button increase_num" name="add" value="+">+</button>
                       </td>
-                      <td class="shop-red">$ 320.00</td>
+                      <td class="shop-red">¥<span class="cart-item-total" id="item-buy-total-cart_item_<%= item.product_id %>"><%= number_with_precision(item.total, :precision => 2) %></span></td>
                       <td>
-                          <button type="button" class="close"><span>×</span><span class="sr-only">Close</span></button>
+                          <button type="button" class="delete_from_cart_btn_<%= item.product_id %> close"><span>×</span>
+                            <span class="sr-only">Close</span></button>
                       </td>
                     </tr>
                   <% end -%>
@@ -53,9 +57,9 @@
                   <div class="col-sm-3 col-sm-offset-5">
                       <ul class="list-inline total-result">
                           <li class="total-price">
-                              <h4>总&nbsp;&nbsp;&nbsp;&nbsp;计:</h4>
+                              <h4>总&nbsp;&nbsp;计:</h4>
                               <div class="total-result-in">
-                                  <span>$ 1280.00</span>
+                                ¥<span id="item-buy-sum_total" ><%= number_with_precision(@cart.total, :precision => 2) %></span>
                               </div>
                           </li>
                       </ul>
@@ -66,15 +70,19 @@
         <div class="actions clearfix">
           <ul role="menu" aria-label="Pagination">
             <li class="disabled" aria-disabled="true">
-              <a href="#previous" role="menuitem">继续购物</a>
+              <a href="/" role="menuitem">继续购物</a>
             </li>
             <li aria-hidden="false" aria-disabled="false">
-              <a href="#next" role="menuitem">购买所选产品</a>
+              <%= link_to_void "购买所选产品", onclick: "create_order();" %>
             </li>
           </ul>
         </div>
       </div>
-    </form>
+    <% else %>
+      <div class="successorder no-login">
+        购物车空空的哦~，去看看心仪的商品吧~ <a href="/">去购物</a>！
+      </div>
+    <% end -%>
   </div><!--/end container-->
 </div>
 

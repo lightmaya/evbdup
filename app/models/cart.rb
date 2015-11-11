@@ -26,7 +26,7 @@ class Cart
     else
       current_item = CartItem.new({:market_price => product.market_price, :ready => true, 
       :price => product.bid_price, :my_price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
-      :name => product.name, :agent_id => dep.id, :agent_name => dep.name})
+      :name => product.name, :agent_id => dep.id, :agent_name => dep.name, :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
       self.items = [current_item] + self.items
     end
     self
@@ -61,7 +61,8 @@ end
 
 class CartItem
 
-  attr_accessor :product_id, :num, :price, :name, :sku, :ready, :market_price, :old_price, :my_price, :agent_id, :agent_name
+  attr_accessor :product_id, :num, :price, :name, :sku, :ready, 
+    :market_price, :old_price, :my_price, :agent_id, :agent_name, :big_category_name
 
   def initialize(attributes = {})
     self.product_id = attributes[:product_id]
@@ -76,6 +77,7 @@ class CartItem
     self.sku = attributes[:sku].to_s
     self.ready = attributes[:ready]
     self.market_price = attributes[:market_price]
+    self.big_category_name = attributes[:big_category_name]
   end
 
   def product

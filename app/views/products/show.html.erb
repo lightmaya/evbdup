@@ -66,7 +66,7 @@
               <button type='button' class="quantity-button" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
               <input type='text' class="quantity-field" name='qty' value="1" id='qty'/>
               <button type='button' class="quantity-button" name='add' onclick='javascript: document.getElementById("qty").value++;' value='+'>+</button>
-              <button type="button" class="btn-u btn-u-sea-shop btn-u-lg">选择供应商</button>
+              <button id="xzgys" type="button" class="btn-u btn-u-sea-shop btn-u-lg">选择供应商</button>
           </div><!--/end product quantity-->    
           <p class="wishlist-category"><strong>销售范围：</strong> <a href="#">全国(厂商协议供货)</a></p>
         </div>
@@ -157,7 +157,7 @@
 
         <h5><i class="fa fa-chevron-circle-down"></i> 供应商列表：</h5>
         <div class="row p0_25">
-          <table class="table table-bordered table-striped">
+          <table id="gyslb" class="table table-bordered table-striped">
             <tr>
               <th>供应商</th>
               <th>报价（元）</th>
@@ -171,7 +171,8 @@
                 <td><%= agent.name %></td>
                 <td><%= agent.name %></td>
                 <td><%= agent.name %></td>
-                <td></td>
+                <td><%= link_to_void "购买", onclick: "add_to_cart('#{agent.id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
+                </td>
               </tr>
             <% end -%>
           </table>

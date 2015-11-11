@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class CartController < JamesController
-  before_filter :find_product, :only => [:change]
+  before_filter :find_product_and_agent, :only => [:change]
   skip_filter :find_cart, :only => [:destroy]
 
   # 加入购物车
@@ -37,7 +37,7 @@ class CartController < JamesController
 
   private
 
-  def find_product
+  def find_product_and_agent
     @product = Product.show.find_by_id(params[:id])
     return render_404 if @product.blank?
     @agent = @product.item.agents.find_by_id(params[:agent_id])

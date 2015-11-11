@@ -15,6 +15,8 @@ Evbdup::Application.routes.draw do
   get 'main' => 'kobe/main#index'
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
+  get 'cart/change/:id' => "cart#change", as: :change_cart
+  get 'cart' => "cart#show", as: :cart
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
 

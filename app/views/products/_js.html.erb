@@ -6,6 +6,15 @@
       $(thisId).click();
     }
 
+    // change_cart_path(@product.id, agent_id: agent.id, num:)
+
+    $("#xzgys").click(function(){
+      $("a[href='#gysxx']").click(); //.focus();
+      // $("#gyslb_div").focus();
+
+      setTimeout('$("html,body").animate({scrollTop:$("#gysxx").offset().top},1000);', 300)
+    });
+
     $.ajax({
       type: "get",
       dataType: "json",
@@ -24,4 +33,9 @@
     })
 
   });
+
+  function add_to_cart(agent_id){
+    var url = "/cart/change/" + $("#product_id").val() + "?agent_id=" + agent_id + "&num=" + $("#qty").val();
+    window.location.href = url;
+  }
 </script>

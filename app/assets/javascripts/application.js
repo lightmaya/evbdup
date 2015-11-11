@@ -108,6 +108,46 @@ $(function() {
   });
 
 
+// 购物车页面商品增减
+  $(document).on('click', '.decrease_num', function(event) {
+    $num = $('#' + $(this).attr('alt'));
+    num = $num.val();
+    if ($.isBlank(parseInt(num))){return;}
+    if (parseInt(num) > 1){
+      $num.val(parseInt(num) - 1);
+      // 计算单个商品总价
+      calc_item($(this).attr('alt'), $num.val());
+      // 计算购物车总价
+      calc_total();
+    };
+  });
+
+  $(document).on('click', '.increase_num', function(event) {
+    $num = $('#' + $(this).attr('alt'));
+    num = $num.val();
+    if ($.isBlank(parseInt(num))){return;}
+    if ((parseInt(num) + 1) > 9999){
+      $num.val(9999);
+    }else{
+      $num.val(parseInt(num) + 1);
+    }
+    // 计算单个商品总价
+    calc_item($(this).attr('alt'), $num.val());
+    // 计算购物车总价
+    calc_total();
+  });
+
+  // 采购单价
+  $(document).on('keyup paste', '.real_price', function(){
+    $(this).val($(this).val().replace(/[^0-9.]/g,'')); 
+    if (isEmpty($(this).val()) || parseInt($(this).val()) < 0){
+      $(this).val(1);
+    }
+    $num = $('#' + $(this).attr('alt'));
+    calc_item($(this).attr('alt'), $num.val());
+    calc_total();
+  }).css("ime-mode", "disabled"); //CSS设置输入法不可用  
+
   // 购物车数量
   $(document).on('keyup', '.quantity-field', function(){
     var num = parseInt($(this).val());
@@ -132,6 +172,8 @@ $(function() {
     // calc_total();
     // $.get("/cart/change/" + $(this).prop('id').split("cart_item_")[1] + "?set=1&num=" + $(this).val());
   });
+
+
 });
 
 function art_confirm(msg, SuccFn){
@@ -171,7 +213,13 @@ function validate_form_rules (form_id,form_rules,form_messages) {
 	});
 };
 
-// 
+// 计算购物车总价
+function calc_total(){
+  sum_total = $('#item-buy-sum_total');
+  current_total = 0.0;
+  $(".cart-item-total").each(function(){current_total += parseFloat($(this).text());})
+  sum_total.text(current_total.toFixed(2)).change();
+}
 
 function read_msg(id){
   dialog({
@@ -229,8 +277,34 @@ function confirm_dialog (content,ok_function) {
 }
 
 
-
-
+function create_order(){
+  dialog({
+    title: "提交订单",
+    content: "请与供应商就“价格、数量、送货情况”等进行过电话沟通。",
+    fixed: true,
+    cancelValue: '取消',
+    cancel: function () {},
+    button: [
+      {
+        value: '单位采购',
+        callback: function () {
+          this
+          .content('你同意了');
+          return false;
+        },
+        autofocus: true
+      },
+      {
+        value: '个人采购',
+        callback: function () {
+          this
+          .content('个人');
+          return false;
+        }
+      }
+    ]
+  }).show();
+}
 
 
 
@@ -281,6 +355,14 @@ function sum_tr(i){
 		}
 	});
 	return formatFloat(sum,2);
+}
+
+// cart_item_
+function calc_item(suf, num){
+  price_input = $('#real_price_' + suf);
+  total = $('#item-buy-total-' + suf);
+  // 计算总价
+  total.text((parseInt(num)*parseFloat(price_input.val())).toFixed(2));
 }
 
 /**替换全部字符，使用方法：
