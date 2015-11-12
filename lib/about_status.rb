@@ -20,6 +20,17 @@ module AboutStatus
 	  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
 	  end
 
+	  # 根据application.yml中status_array中的状态 获取每个model不同的状态数组
+	  # arr=["正常", "已删除"]
+	  def get_status_array(arr=[])
+	  	return [] if arr.blank?
+	  	status_arr = []
+	  	arr.each do |a|
+	  		status_arr << Dictionary.status_array[a]
+	  	end
+	  	return status_arr	  	
+	  end
+
 	  # status各状态的中文意思 状态值 标签颜色 进度 
 		def status_array
 			[
