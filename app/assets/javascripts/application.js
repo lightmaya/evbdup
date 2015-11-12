@@ -107,8 +107,54 @@ $(function() {
     art_confirm("你确定删除吗？", function(){t.parent().remove();});
   });
 
+  // 勾选商品
+  $(".cart_checkbox").change(function(){
+    var pid = $(this).attr("pid");
+    var aid = $(this).attr("aid");
+    if ($(this).prop("checked") == false){
+      if ($("[name='p-" + aid + "']:checkbox:checked").length == 0){
+        $("#all-" + $(this).attr("aid")).prop("checked", false);
+      }
+      $(this).closest("div.merchandise").addClass("bg7");
+      $("#item-buy-total-cart_item_" + pid).removeClass("cart-item-total");
+    }else{
+      $("#all-" + $(this).attr("aid")).prop("checked", true);
+      $(this).closest("div.merchandise").removeClass("bg7");
+      $("#item-buy-total-cart_item_" + pid).addClass("cart-item-total");
+    }
+    // 计算购物车总价
+    calc_total();
+    $.get("/cart/dynamic?pids=" + pid + "&agent_id=" + aid + "&ready=" + $(this).prop("checked"));
+  });
 
-// 购物车页面商品增减
+  // 勾选供应商
+  $(".cart_emall_checkbox").change(function(){
+    var aid = $(this).attr("aid");
+    var pids = new Array();
+    if ($(this).prop("checked") == false){
+      $(this).closest(".merchandisetitle").addClass("bg7");
+      $("[name='p-" + aid + "']:checkbox").each(function(){
+        pids.push($(this).attr("pid"));
+        $(this).prop("checked", false);
+        $(this).closest(".merchandise").addClass("bg7");
+        $("#item-buy-total-cart_item_" + $(this).attr("pid")).removeClass("cart-item-total");
+      })
+    }else{
+      $(this).closest(".merchandisetitle").removeClass("bg7");
+      $("[name='p-" + aid + "']:checkbox").each(function(){
+        pids.push($(this).attr("pid"));
+        $(this).prop("checked", true);
+        $(this).closest(".merchandise").removeClass("bg7");
+        $("#item-buy-total-cart_item_" +  $(this).attr("pid")).addClass("cart-item-total");
+      })
+    }
+    $.get("/cart/dynamic?pids=" + pids.join("_") + "&agent_id=" + aid + "&ready=" + $(this).prop("checked"));
+    // 计算购物车总价
+    calc_total();
+  });
+  // 勾选供应商END
+
+  // 购物车页面商品增减
   $(document).on('click', '.decrease_num', function(event) {
     $num = $('#' + $(this).attr('alt'));
     num = $num.val();
@@ -119,6 +165,7 @@ $(function() {
       calc_item($(this).attr('alt'), $num.val());
       // 计算购物车总价
       calc_total();
+      $.get("/cart/change/" + $(this).attr('alt').split("cart_item_")[1] + "?agent_id=" + $(this).attr('aid') + "&set=1&num=" + $num.val());
     };
   });
 
@@ -135,6 +182,7 @@ $(function() {
     calc_item($(this).attr('alt'), $num.val());
     // 计算购物车总价
     calc_total();
+    $.get("/cart/change/" + $(this).attr('alt').split("cart_item_")[1] + "?agent_id=" + $(this).attr('aid') + "&set=1&num=" + $num.val());
   });
 
   // 采购单价
@@ -277,7 +325,7 @@ function confirm_dialog (content,ok_function) {
 }
 
 
-function create_order(){
+function cart_order(){
   dialog({
     title: "提交订单",
     content: "请与供应商就“价格、数量、送货情况”等进行过电话沟通。",
@@ -288,8 +336,8 @@ function create_order(){
       {
         value: '单位采购',
         callback: function () {
-          this
-          .content('你同意了');
+          $("#buy_type").val(0);
+          $("#cart_order_form").submit();
           return false;
         },
         autofocus: true
@@ -297,8 +345,8 @@ function create_order(){
       {
         value: '个人采购',
         callback: function () {
-          this
-          .content('个人');
+          $("#buy_type").val(0);
+          $("#cart_order_form").submit();
           return false;
         }
       }

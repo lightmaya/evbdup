@@ -15,21 +15,16 @@ class Kobe::OrdersController < KobeController
   end
 
   def new
-    @order.yw_type = 'ddcg'
-  	@order.buyer_name = @order.payer = current_user.real_department.name
-    @order.buyer_man = current_user.name
-    @order.buyer_tel = current_user.tel
-    @order.buyer_mobile = current_user.mobile
-    @order.buyer_addr = current_user.department.address
+    @order = Order.init_order(current_user)
     slave_objs = [OrdersItem.new(order_id: @order.id)]
-    @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    @ms_form = MasterSlaveForm.new(Order.xml, OrdersItem.xml, @order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
 
   def show
   end
 
   def create
-    other_attrs = { buyer_id: current_user.department.id, buyer_code: current_user.department.real_ancestry, name: get_project_name }
+    other_attrs = { buyer_id: current_user.department.id, buyer_code: current_user.department.real_ancestry, name: Order.get_project_name(nil, current_user, params[:orders_items][:category_name].values.uniq.join("、")) }
     @order = create_msform_and_write_logs(Order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "下单", :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     unless @order.id
       redirect_back_or
@@ -38,8 +33,43 @@ class Kobe::OrdersController < KobeController
     end
   end
 
+  def cart_order
+    if params[:check].blank?
+      tips_get("请勾选购买商品")
+      return redirect_to :back
+    end
+    
+    @order = Order.init_order(current_user)
+   
+    params[:check].each do |product_id|
+      if item = @cart.items.find{|item| item.product_id.to_i == product_id}
+        product = item.product
+        next unless product.show
+        order_item = @order.items.build(category_id: product.category_id, 
+          product_id: product_id, brand: product.brand, model: product.model, version: product.version,
+          unit: product.unit, market_price: product.market_price,
+          bid_price: product.bid_price,
+          price: params["real_price_cart_item_#{product_id}"].to_f,
+          quantity: [params["cart_item_#{product_id}"].to_i, 1].max
+        )
+      end
+    end
+
+    slave_objs = [@order.items]
+    @ms_form = MasterSlaveForm.new(Order.xml, OrdersItem.xml, @order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
+  
+
+    # if @order.save
+    #   redirect_to edit_kobe_order_path(@order)
+    # else
+
+    #   tips_get("下单失败，请稍后重试")
+    #   redirect_to :back
+    # end
+  end
+
   def update
-    update_msform_and_write_logs(@order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息"}, { name: get_project_name(@order) })
+    update_msform_and_write_logs(@order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息"}, { name: Order.get_project_name(@order, current_user, params[:orders_items][:category_name].values.uniq.join("、")) })
     redirect_to eval("#{@order.yw_type}_list_kobe_orders_path")
   end
 
@@ -101,18 +131,7 @@ class Kobe::OrdersController < KobeController
     end
 
 
-    # 根据品目创建项目名称
-    def get_project_name(order=nil)
-      category_names = params[:orders_items][:category_name].values.uniq.join("、")
-      if order.present?
-        project_name = order.name.split(" ")
-        project_name[2] = category_names
-        return project_name.join(" ")
-      else
-        return "#{current_user.real_department.name} #{Time.new.to_date.to_s} #{category_names} 定点采购项目"
-      end
-    end
-
+ 
     # show页面的数组
     def get_show_arr
       obj_contents = show_obj_info(@order,Order.xml,{title: "基本信息"})
