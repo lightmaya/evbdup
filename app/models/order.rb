@@ -163,4 +163,17 @@ class Order < ActiveRecord::Base
     }
   end
 
+  # 高级搜索的搜索条件数组
+  def self.advanced_search_array
+    arr = []
+    arr << { name: 'sn_or_contract_sn_or_name_cont', label: '项目名称、凭证编号、合同编号' }
+    arr << { name: 'buyer_name_cont', label: '采购单位',  json_url: "/kobe/shared/category_ztree_json", partner: "buyer_id_eq" }
+    arr << { name: 'seller_name_cont', label: '供应商单位' }
+    arr << { name: 'yw_type_cont', label: '业务类别' }
+    arr << { name: 'status_cont', label: '当前状态' }
+    arr << { name: 'created_at_start', label: '开始日期', class_name: 'start_date' }
+    arr << { name: 'created_at_end', label: '截止日期', class_name: 'finish_date' }
+    return arr 
+  end
+
 end
