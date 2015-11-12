@@ -22,9 +22,9 @@
 
 <body>
     <!--=== Style Switcher ===-->    
-    <i class="style-switcher-btn fa fa-question hidden-xs" data-toggle="modal" data-target="#suggestion"></i>
+    <!-- <i class="style-switcher-btn fa fa-question hidden-xs" data-toggle="modal" data-target="#suggestion"></i> -->
     <%#= modal_dialog('suggestion', _create_xml_form(Suggestion.xml,Suggestion.new,{"upload_files" => true,"grid"=>1,"form_id"=>"suggestion_form","action"=>kobe_suggestions_path}), raw('<i class="fa fa-question-circle"></i> 问题或意见建议')) %>
-    <%= modal_dialog('suggestion', draw_myform(@suggestion_form), raw('<i class="fa fa-question-circle"></i> 问题或意见建议')) %>
+    <%#= modal_dialog('suggestion', draw_myform(@suggestion_form), raw('<i class="fa fa-question-circle"></i> 问题或意见建议')) %>
     <!--/style-switcher-->
     <!--=== End Style Switcher ===-->    
 
