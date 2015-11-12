@@ -1,0 +1,28 @@
+<%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
+<div class="margin-bottom-10">
+  <div class="input-group">
+    <%= f.search_field :sn_or_contract_sn_or_name_cont, class: "form-control input-sm", placeholder: "请输入项目名称、凭证编号、合同编号..." %>
+    <span class="input-group-btn">
+      <button class="btn btn-success btn-sm" type="submit">搜索</button>
+    </span>
+
+    <span class="margin-left-10 pull-left">
+      <button class="btn btn-success btn-sm" data-target="#advanced_search" data-toggle="modal" type="button">高级搜索</button>
+    </span>
+  </div>
+</div>
+<% end %>
+
+<div aria-hidden="true" aria-labelledby='advanced_search_Label' role="dialog" tabindex="-1" id='advanced_search' class="modal fade" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id='advanced_search_Label'><i class='fa fa-search'></i> 高级搜索</h4>
+      </div>
+      <div class="modal-body">
+        <%= get_advanced_search_form(search_url, Order) %>
+      </div>
+    </div>
+  </div>
+</div>
