@@ -289,7 +289,7 @@ module ApplicationHelper
 
   # 首页第三级品目的跳转的li
   def li_link_to_tag(name, id, icon = '')
-    "<li><a href='/channel/#{id}'>#{get_name_with_icon(name, icon)}</a></li>".html_safe
+    "<li><a href='/channel/#{id}' target='_blank'>#{get_name_with_icon(name, icon)}</a></li>".html_safe
   end
 
   # 首页第三级品目没有产品不用跳转，需加 * 标记
