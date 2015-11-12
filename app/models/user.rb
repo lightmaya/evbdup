@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# User.first.update({"password"=>"123456", "password_confirmation"=>"123456"})
 class User < ActiveRecord::Base
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -187,7 +188,7 @@ class User < ActiveRecord::Base
     case act
     when "show", "index", "only_show_info", "only_show_logs" 
       true
-    when "edit", "update", "reset_password", "update_reset_password" 
+    when "edit", "update", "`", "update_reset_password" 
       [0,1,3].include?(self.department.status) && self.status == 0
     when "recover", "update_recover" 
       [0,1,3].include?(self.department.status) && self.can_opt?("恢复")

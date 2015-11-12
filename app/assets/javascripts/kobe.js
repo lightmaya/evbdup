@@ -3,6 +3,7 @@
 //= require plugins/counter/waypoints.min
 //= require plugins/counter/jquery.counterup.min
 //= require plugins/jquery.mCustomScrollbar.concat.min
+//= common
 
 
 

@@ -18,15 +18,15 @@ class Cart
   end
 
   # 购物车中保存product(商品)的id
-  def change(product, num, dep, set = false)
+  def change(product, agent, num, set = false)
     num = num.to_i
-    if current_item = self.items.find { |item| item.product_id.to_s == product.id.to_s }
+    if current_item = self.items.find { |item| item.product_id.to_s == product.id.to_s && item.agent_id.to_s == agent.id.to_s }
       set ? current_item.num = num : current_item.cr(num)
       destroy(product) if current_item.num <= 0
     else
       current_item = CartItem.new({:market_price => product.market_price, :ready => true, 
       :price => product.bid_price, :my_price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
-      :name => product.name, :agent_id => dep.id, :agent_name => dep.name, :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
+      :name => product.name, :agent_id => agent.id, :agent_name => agent.name, :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
       self.items = [current_item] + self.items
     end
     self
@@ -38,9 +38,9 @@ class Cart
   end
 
   # 是否准备购买
-  def dynamic(product, ready)
+  def dynamic(product, agent, ready)
     self.items.each do |item|
-      item.ready = ready if item.product_id == product.id
+      item.ready = ready if item.product_id == product.id && item.agent_id == agent.id
     end
   end
 
