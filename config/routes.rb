@@ -169,6 +169,17 @@ namespace :kobe do
       post :commit, :update_audit
     end
   end
+
+  resources :budgets do
+    collection do
+      get :list
+    end
+    member do
+      get :delete, :audit
+      post :commit, :update_audit
+    end
+  end
+
   resources :daily_costs do
     collection do
       get :list
