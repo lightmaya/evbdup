@@ -6,7 +6,7 @@ class CartController < JamesController
 
   # 加入购物车
   def change
-    @cart.change(@product, @agent, params[:num], params[:set].present?)
+    @cart.change(@product, params[:num], @agent, params[:set].present?)
     save_cart
     redirect_to cart_path
   end
@@ -18,8 +18,7 @@ class CartController < JamesController
   # 改变购买状态
   def dynamic
     Product.where("id in (?)", params[:pids].to_s.split("_")).each do |product|
-      agent = product.item.agents.find_by_id(params[:agent_id])
-      @cart.dynamic(product, agent, params[:ready] == "true")
+      @cart.dynamic(product, params[:ready] == "true")
     end
     save_cart
     render :json => {"success" => true}

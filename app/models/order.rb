@@ -73,22 +73,6 @@ class Order < ActiveRecord::Base
     return arr
   end
 
-  # 根据品目创建项目名称
-  def self.get_project_name(order, user, category_names)
-    yw_type = ''
-    if order.present?
-      project_name = order.name.split(" ")
-      project_name[2] = category_names
-      return project_name.join(" ")
-      yw_type = Dictionary.yw_type(order.yw_type)
-    else
-      name = "#{user.real_department.name} #{Time.new.to_date.to_s} #{category_names}"
-      name += " #{yw_type}" if yw_type.present?
-      return name
-    end
-  end
-
-
 	# 列表中的状态筛选,current_status当前状态不可以点击
   def self.status_filter(action='')
   	# 列表中不允许出现的
@@ -96,16 +80,6 @@ class Order < ActiveRecord::Base
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
   end
 
-  def self.init_order(user, yt = 'xygh')
-    order = Order.new
-    order.yw_type = yt
-    order.buyer_name = order.payer = user.real_department.name
-    order.buyer_man = user.name
-    order.buyer_tel = user.tel
-    order.buyer_mobile = user.mobile
-    order.buyer_addr = user.department.address
-    order
-  end
 
   def buyer_info
     [self.buyer_man, self.buyer_addr, self.buyer_tel, self.buyer_mobile].select{|i| i.present?}.join(" ")

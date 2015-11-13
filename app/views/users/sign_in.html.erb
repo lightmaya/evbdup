@@ -88,7 +88,7 @@
     $(this).css("cursor", "pointer"); 
   });
   $("img[alt='captcha']").on("click", function(){
-    // captcha_refresh();
+    captcha_refresh();
   });
 
   // 绑定form的input 1.如果用户名密码输入错误显示验证码 2.如果验证码输入错误自动刷新验证码
@@ -105,9 +105,9 @@
 
 // 验证码自动刷新
 function captcha_refresh () {
-  // var img = $("img[alt='captcha']")[0];
-  // img.src = img.src + '?';
-  // $("#user_captcha").val("");
+  var img = $("img[alt='captcha']")[0];
+  img.src = img.src + '?';
+  $("#user_captcha").val("");
 }
 
 </script>
