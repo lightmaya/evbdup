@@ -3,159 +3,23 @@
         <table class="table table-hover table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th class="hidden-sm">Description</th>
-                    <th>Headquarters</th>
-                    <th>Progress</th>
-                    <th style="width: 100px;">Status</th>
-                    <th>Contacts</th>
+                    <th>项目编号</th>
+                    <th class="hidden-sm">项目名称</th>
+                    <th>总金额（元）</th>
+                    <th>状态</th>
+                    <th class="cando">操作</th>
                 </tr>
             </thead>
             <tbody>
+                <% @orders.each do |order| %>
                 <tr>
-                    <td>
-                        <a href="#">HP Enterprise Service</a>
-                    </td>
-                    <td class="td-width">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porttitor arcu.</td>
-                    <td>
-                        <div class="m-marker">
-                            <a href="#"><i class="color-green fa fa-map-marker"></i></a>
-                            <a href="#" class="display-b">USA</a>
-                            <a href="#">Palo Alto</a>
-                        </div>    
-                    </td>
-                    <td>
-                        <div class="progress progress-u progress-xxs">
-                            <div class="progress-bar progress-bar-u" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100" style="width: 88%">
-                            </div>
-                        </div>
-                    </td>
-                    <td><button class="btn-u btn-u-red btn-block btn-u-xs"><i class="fa fa-sort-amount-desc margin-right-5"></i> Deep</button></td>
-                    <td>
-                        <span>1(123) 456</span>
-                        <span><a href="#">info@example.com</a></span>
-                    </td>
+                    <td><%= order.sn %></td>
+                    <td><%= order.name %></td>
+                    <td class="money"><%= money order.total %></td>
+                    <td><%= order.status_bar %></td>
+                    <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
                 </tr>
-                <tr>
-                    <td>
-                        <a href="#">Samsung Electronics</a>
-                    </td>
-                    <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porttitor arcu.</td>
-                    <td>
-                        <div class="m-marker">
-                            <a href="#"><i class="color-green fa fa-map-marker"></i></a>
-                            <a href="#" class="display-b">South Korea</a>
-                            <a href="#">Suwon</a>
-                        </div>
-                    </td>    
-                    <td>
-                        <div class="progress progress-u progress-xxs">
-                            <div class="progress-bar progress-bar-u" role="progressbar" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100" style="width: 76%">
-                            </div>
-                        </div>
-                    </td>
-                    <td><button class="btn-u btn-block btn-u-dark btn-u-xs"><i class="icon-graph margin-right-5"></i> High</button></td>
-                    <td>
-                        <span>1(123) 456</span>
-                        <span><a href="#">info@example.com</a></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="#">LG</a>
-                    </td>
-                    <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porttitor arcu.</td>
-                    <td>
-                        <div class="m-marker">
-                            <a href="#"><i class="color-green fa fa-map-marker"></i></a>
-                            <a href="#" class="display-b">South Korea</a>
-                            <a href="#">Seoul</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="progress progress-u progress-xxs">
-                            <div class="progress-bar progress-bar-u" role="progressbar" aria-valuenow="77" aria-valuemin="0" aria-valuemax="100" style="width: 77%">
-                            </div>
-                        </div>
-                    </td>
-                    <td><button class="btn-u btn-block btn-u-aqua btn-u-xs"><i class="fa fa-level-down margin-right-5"></i> Low</button></td>
-                    <td>
-                        <span>1(123) 456</span>
-                        <span><a href="#">info@example.com</a></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="#">Sony Corporation</a>
-                    </td>
-                    <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porttitor arcu.</td>
-                    <td>
-                        <div class="m-marker">
-                            <a href="#"><i class="color-green fa fa-map-marker"></i></a>
-                            <a href="#" class="display-b">Japan</a>
-                            <a href="#">Tokyo</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="progress progress-u progress-xxs">
-                            <div class="progress-bar progress-bar-u" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" style="width: 92%">
-                            </div>
-                        </div>
-                    </td>
-                    <td><button class="btn-u btn-block btn-u-yellow btn-u-xs"><i class="fa fa-arrows-v margin-right-5"></i> Middle</button></td>
-                    <td>
-                        <span>1(123) 456</span>
-                        <span><a href="#">info@example.com</a></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="#">Lenovo Group</a>
-                    </td>
-                    <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porttitor arcu.</td>
-                    <td>
-                        <div class="m-marker">
-                            <a href="#"><i class="color-green fa fa-map-marker"></i></a>
-                            <a href="#" class="display-b">Chinese</a>
-                            <a href="#">Beijing</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="progress progress-u progress-xxs">
-                            <div class="progress-bar progress-bar-u" role="progressbar" aria-valuenow="77" aria-valuemin="0" aria-valuemax="100" style="width: 77%">
-                            </div>
-                        </div>
-                    </td>
-                    <td><button class="btn-u btn-block btn-u-green btn-u-xs"><i class="fa fa-level-up margin-right-5"></i> High</button></td>
-                    <td>
-                        <span>1(123) 456</span>
-                        <span><a href="#">info@example.com</a></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="#">Acer</a>
-                    </td>
-                    <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec porttitor arcu.</td>
-                    <td>
-                        <div class="m-marker">
-                            <a href="#"><i class="color-green fa fa-map-marker"></i></a>
-                            <a href="#" class="display-b">Taiwan</a>
-                            <a href="#">Taipei</a>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="progress progress-u progress-xxs">
-                            <div class="progress-bar progress-bar-u" role="progressbar" aria-valuenow="77" aria-valuemin="0" aria-valuemax="100" style="width: 77%">
-                            </div>
-                        </div>
-                    </td>
-                    <td><button class="btn-u btn-block btn-u-blue btn-u-xs"><i class="icon-graph margin-right-5"></i> Stabile</button></td>
-                    <td>
-                        <span>1(123) 456</span>
-                        <span><a href="#">info@example.com</a></span>
-                    </td>
-                </tr>
+                <% end %>
             </tbody>
         </table>
     </div>    
