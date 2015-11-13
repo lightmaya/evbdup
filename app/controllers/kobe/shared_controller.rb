@@ -51,7 +51,7 @@ class Kobe::SharedController < KobeController
     render :json => Category.get_json(nodes)
   end
 
-    # 状态是正常的采购单位
+    # 状态是正常的品目
   def department_ztree_json
     name = params[:ajax_key]
     dep_p = Department.purchaser

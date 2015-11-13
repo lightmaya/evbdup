@@ -4,7 +4,7 @@ class Kobe::MainController < KobeController
 	skip_load_and_authorize_resource 
 	
   def index
-  	@ca = "#{controller_name}_#{action_name}"
+  	@orders = current_user.department.buyer_orders.limit(5)
   end
 
   def to_do
