@@ -15,14 +15,22 @@ Evbdup::Application.routes.draw do
   get 'main' => 'kobe/main#index'
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
-  get 'cart/change/:id' => "cart#change", as: :change_cart
-  get 'cart' => "cart#show", as: :cart
+  post 'cart_order' => "kobe/orders#cart_order", as: :cart_order
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
 
   post 'umeditor/file', :to => 'umeditor#file'
   post 'umeditor/image', :to => 'umeditor#image'
   get 'umeditor/image', :to => 'umeditor#image'
+
+  # 购物车
+  resource :cart, :controller => 'cart', :only => [:show, :destroy] do
+    collection do
+      get 'change/:id', :to => 'cart#change', :as => :change
+      get 'dynamic', :to => 'cart#dynamic', :as => :dynamic
+      delete 'rm/:id', :to => 'cart#rm', :as => :rm
+    end
+  end
 
   resources :products
 
@@ -169,6 +177,17 @@ namespace :kobe do
       post :commit, :update_audit
     end
   end
+
+  resources :budgets do
+    collection do
+      get :list
+    end
+    member do
+      get :delete, :audit
+      post :commit, :update_audit
+    end
+  end
+
   resources :daily_costs do
     collection do
       get :list
