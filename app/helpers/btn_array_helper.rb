@@ -318,6 +318,17 @@ module BtnArrayHelper
     return arr
   end
 
+   def faqs_btn(obj)
+    arr = [] 
+    # 查看详细
+    arr << [obj.class.icon_action("详细"), kobe_faq_path(obj), target: "_blank"] 
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_faq_path(obj)]   
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }] 
+    return arr
+  end
+
   def asset_projects_btn(obj, only_audit=false)
     arr = [] 
     # 查看详细
