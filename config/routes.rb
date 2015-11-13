@@ -237,24 +237,33 @@ namespace :kobe do
      end
   end
   
+   resources :faqs do 
+     member do 
+       get :delete
+     end
+     collection do
+      get  :get_catalog
+     end
+ 
+   end
 
- resources :products do
-  collection do
-    get :item_list, :list
-  end
-  member do
-    get :freeze, :delete, :recover, :audit
-    post :commit, :update_freeze, :update_recover, :update_audit
-  end
-end
-resources :agents do
-  collection do
-    get :list, :search_dep_name
-  end
-  member do
-    get :delete
-  end
-end
+   resources :products do
+      collection do
+        get :item_list, :list
+      end
+      member do
+        get :freeze, :delete, :recover, :audit
+        post :commit, :update_freeze, :update_recover, :update_audit
+      end
+    end
+    resources :agents do
+      collection do
+        get :list, :search_dep_name
+      end
+      member do
+        get :delete
+      end
+    end
     # 总协调人
     resources :coordinators do
       collection do

@@ -97,8 +97,8 @@ defaults: &defaults
   # 项目类型
   item_type: [[0,"厂家直销"],[1,"代理商供货"]]
   asset_status: [[1,"在用"],[2,"闲置"],[3,"转移"],[4,"报废"]]
-  yw_type:  { ddcg: "定点采购", xygh: "协议供货",  wsjj: "网上竞价" }
-
+  yw_type:  { ddcg: "定点采购", xygh: "协议供货",  wsjj: "网上竞价" , grcg: "个人采购"}
+  faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
 
 
 

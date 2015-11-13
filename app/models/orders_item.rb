@@ -10,6 +10,11 @@ class OrdersItem < ActiveRecord::Base
 		self.category_code = ca.ancestry if ca.present?
   end
 
+    # 产品全称 品牌+型号+版本号
+  def name
+    "#{self.brand} #{self.model} #{self.version}"
+  end
+
 	# 从表的XML加ID是为了修改的时候能找到记录
 	def self.xml(who='',options={})
 	  %Q{
