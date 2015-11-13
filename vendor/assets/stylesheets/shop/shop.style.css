@@ -28,12 +28,12 @@ p {
 }
 
 a {
-   color: #18ba9b;
+   color: #018b3e;
    text-decoration: none;  
 }
 
 a:hover {
-   color: #18ba9b;
+   color: #018b3e;
    text-decoration: underline;
 }
 
@@ -1947,7 +1947,7 @@ li:first-child {
 .shopping-cart .table > thead > tr > th,
 .shopping-cart .table > tbody > tr > td {
 	padding: 15px;
-	text-align: center;
+	/*text-align: center;*/
 }
 
 .shopping-cart .table > thead > tr > th {
