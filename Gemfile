@@ -91,7 +91,7 @@ gem "ipparse", "~> 0.2.0"
 gem "rails-i18n", "~> 4.0.1"
 
 # Use ActiveModel has_secure_password 密码验证 目前暂时不支持高版本3.1.5
-gem "bcrypt-ruby", "~> 3.1.2" 
+gem "bcrypt-ruby", "~> 3.0.1" 
 # gem 'bcrypt', '~> 3.1.7'
 # gem "bcrypt-ruby", "~> 3.1.5"
 

@@ -107,54 +107,8 @@ $(function() {
     art_confirm("你确定删除吗？", function(){t.parent().remove();});
   });
 
-  // 勾选商品
-  $(".cart_checkbox").change(function(){
-    var pid = $(this).attr("pid");
-    var aid = $(this).attr("aid");
-    if ($(this).prop("checked") == false){
-      if ($("[name='p-" + aid + "']:checkbox:checked").length == 0){
-        $("#all-" + $(this).attr("aid")).prop("checked", false);
-      }
-      $(this).closest("div.merchandise").addClass("bg7");
-      $("#item-buy-total-cart_item_" + pid).removeClass("cart-item-total");
-    }else{
-      $("#all-" + $(this).attr("aid")).prop("checked", true);
-      $(this).closest("div.merchandise").removeClass("bg7");
-      $("#item-buy-total-cart_item_" + pid).addClass("cart-item-total");
-    }
-    // 计算购物车总价
-    calc_total();
-    $.get("/cart/dynamic?pids=" + pid + "&agent_id=" + aid + "&ready=" + $(this).prop("checked"));
-  });
 
-  // 勾选供应商
-  $(".cart_emall_checkbox").change(function(){
-    var aid = $(this).attr("aid");
-    var pids = new Array();
-    if ($(this).prop("checked") == false){
-      $(this).closest(".merchandisetitle").addClass("bg7");
-      $("[name='p-" + aid + "']:checkbox").each(function(){
-        pids.push($(this).attr("pid"));
-        $(this).prop("checked", false);
-        $(this).closest(".merchandise").addClass("bg7");
-        $("#item-buy-total-cart_item_" + $(this).attr("pid")).removeClass("cart-item-total");
-      })
-    }else{
-      $(this).closest(".merchandisetitle").removeClass("bg7");
-      $("[name='p-" + aid + "']:checkbox").each(function(){
-        pids.push($(this).attr("pid"));
-        $(this).prop("checked", true);
-        $(this).closest(".merchandise").removeClass("bg7");
-        $("#item-buy-total-cart_item_" +  $(this).attr("pid")).addClass("cart-item-total");
-      })
-    }
-    $.get("/cart/dynamic?pids=" + pids.join("_") + "&agent_id=" + aid + "&ready=" + $(this).prop("checked"));
-    // 计算购物车总价
-    calc_total();
-  });
-  // 勾选供应商END
-
-  // 购物车页面商品增减
+// 购物车页面商品增减
   $(document).on('click', '.decrease_num', function(event) {
     $num = $('#' + $(this).attr('alt'));
     num = $num.val();
@@ -165,7 +119,6 @@ $(function() {
       calc_item($(this).attr('alt'), $num.val());
       // 计算购物车总价
       calc_total();
-      $.get("/cart/change/" + $(this).attr('alt').split("cart_item_")[1] + "?agent_id=" + $(this).attr('aid') + "&set=1&num=" + $num.val());
     };
   });
 
@@ -182,7 +135,6 @@ $(function() {
     calc_item($(this).attr('alt'), $num.val());
     // 计算购物车总价
     calc_total();
-    $.get("/cart/change/" + $(this).attr('alt').split("cart_item_")[1] + "?agent_id=" + $(this).attr('aid') + "&set=1&num=" + $num.val());
   });
 
   // 采购单价
@@ -221,8 +173,102 @@ $(function() {
     // $.get("/cart/change/" + $(this).prop('id').split("cart_item_")[1] + "?set=1&num=" + $(this).val());
   });
 
+  // 选择采购类别
+  $("input:radio[name='order\[yw_type\]']").change(function(){
+    $("#current_ptype_info").text($(this).next().text());
+    if ($(this).val() == 0){
+      $("#plans_div").show();
+      $("#step_invoice").show();
+      $("#step_invoice_current").hide();
+    }else{
+      $("#step_invoice").hide();
+      $("#step_invoice_current").hide();
+      $("#plans_div").hide();
+    }
+  });
+
 
 });
+
+// 检查收货地址
+function checkAddress(divId){
+  var errorFlag = false;
+  var errorMessage = null;
+  var value = null;
+  if (divId == "order_buyer_man_div") {
+    value = $("#order_buyer_man").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写收货人姓名";
+    }
+  }else if (divId == "order_buyer_addr_div") {
+    value = $("#order_buyer_addr").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写收货详细地址";
+    }
+  }else if (divId == "order_buyer_tel_div") {
+    value = $("#order_buyer_tel").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写座机";
+    }
+  }else if (divId == "order_buyer_mobile_div") {
+    value = $("#order_buyer_mobile").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写手机";
+    }
+  }
+
+  if (errorFlag) {
+    $("#" + divId + "_error").html(errorMessage);
+    $("#" + divId).addClass("errorinformation");
+    return false;
+  } else {
+    $("#" + divId).removeClass("errorinformation");
+    $("#" + divId + "_error").html("");
+  }
+  return true;
+}
+
+
+// 保存收货地址
+function save_address(){
+    var checkr = true;
+  // 验证收货人信息是否正确
+  if (!checkAddress("order_buyer_man_div")) {
+    checkr = false;
+  }
+  if (!checkAddress("order_buyer_addr_div")) {
+    checkr = false;
+  }
+  if (!checkAddress("order_buyer_tel_div")) {
+    checkr = false;
+  }
+  
+  $("#step_address_current .newinfo").each(function(){
+    if (!checkAddress($(this).attr("id"))) {
+      checkr = false;
+      return false;
+    }
+  });
+  if (!checkr) {
+    return;
+  }
+  
+  $("#current_address_info").text($("#order_buyer_man").val() + " " + $("#order_buyer_addr").val() + " " + $("#order_buyer_tel").val() + " " + $("#order_buyer_mobile").val());
+  $("#step_address").show();
+  $("#step_address_current").hide();
+}
+
+
+// 修改收货地址
+function choose_address(){
+
+  $("#step_address").hide();
+  $("#step_address_current").show();
+}
 
 function art_confirm(msg, SuccFn){
   var d = dialog({
@@ -325,7 +371,7 @@ function confirm_dialog (content,ok_function) {
 }
 
 
-function cart_order(){
+function create_order(){
   dialog({
     title: "提交订单",
     content: "请与供应商就“价格、数量、送货情况”等进行过电话沟通。",
@@ -336,8 +382,8 @@ function cart_order(){
       {
         value: '单位采购',
         callback: function () {
-          $("#buy_type").val(0);
-          $("#cart_order_form").submit();
+          this
+          .content('你同意了');
           return false;
         },
         autofocus: true
@@ -345,8 +391,8 @@ function cart_order(){
       {
         value: '个人采购',
         callback: function () {
-          $("#buy_type").val(0);
-          $("#cart_order_form").submit();
+          this
+          .content('个人');
           return false;
         }
       }

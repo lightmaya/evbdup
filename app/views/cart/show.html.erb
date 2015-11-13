@@ -3,56 +3,48 @@
     <% if @cart.items.present? %>
       <%= form_tag cart_order_path, id: :cart_order_form do %>
       <%= hidden_field_tag "buy_type", 0 %>
-      <div role="application" class="wizard clearfix" id="steps-uid-0">
-        <%= render "steps" %>
+      <div role="application" class="wizard clearfix">
+        <%= render "shared/steps" %>
         <div class="content clearfix">
           <section>
             <div class="table-responsive">
               <table class="table table-striped list_table">
                 <thead>
                   <tr>
-                    <th></th>
+                    <th><input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"></th>
                     <th>产品</th>
+                    <th>供应商</th>
                     <th width="120px">供应商价格</th>
+                    <th>采购单价</th>
                     <th width="190px">采购数量</th>
                     <th width="120px">小计</th>
-                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <% @cart.items.group_by{|item| item.agent_id}.each do |agent_id, items| -%>
-                    <tr class="merchandisetitle <%= 'bg7' if items.all?{|item| item.ready.blank? } %>">
-                      <td colspan="6" class="tl b">
-                        <%= check_box_tag "all-#{agent_id}", "", items.any?{|item| item.ready.present? }, class: "cart_emall_checkbox", aid: agent_id %>
-                        <%= items.first.agent_name %>
+                  <% @cart.items.each do |item| %>
+                    <tr>
+                      <td><input type="checkbox" name="check[]" value="<%= item.product_id %>" onclick="setSelectAll();"</td>
+                      <td class="product-in-table">
+                        <img class="img-responsive" src="assets/img/thumb/08.jpg" alt="">
+                        <div class="product-it-in">
+                          <h3><%= item.name %></h3>
+                          <span><%= item.big_category_name %></span>
+                        </div>    
+                      </td>
+                      <td><%= item.agent_name %></td>
+                      <td><%= money item.price %></td>
+                      <td><%= text_field_tag "real_price_cart_item_#{item.product_id}", item.price, class: "w80 real_price", alt: "cart_item_#{item.product_id}" %></td>
+                      <td class="state-success">
+                          <button type="button" alt="cart_item_<%= item.product_id %>" class="quantity-button decrease_num  " name="subtract" value="-">-</button>
+                          <%= text_field_tag "cart_item_#{item.product_id}", item.num, class: "quantity-field valid", maxlength: "4", maxsize: "4" %>
+                          <button type="button" alt="cart_item_<%= item.product_id %>" pid="<%= item.product_id %>" class="quantity-button increase_num" name="add" value="+">+</button>
+                      </td>
+                      <td class="shop-red">¥<span class="cart-item-total" id="item-buy-total-cart_item_<%= item.product_id %>"><%= number_with_precision(item.total, :precision => 2) %></span></td>
+                      <td>
+                          <button type="button" class="delete_from_cart_btn_<%= item.product_id %> close"><span>×</span>
+                            <span class="sr-only">Close</span></button>
                       </td>
                     </tr>
-                    <% items.each do |item| %>
-                      <tr class="merchandise <%= 'bg7' unless item.ready.present? %>">
-                        <td>
-                          <%= check_box_tag "p-#{agent_id}", "", item.ready.present?, class: "cart_checkbox", pid: item.product_id, aid: agent_id %>
-                        </td>
-                        <td class="product-in-table">
-                          <img class="img-responsive" src="assets/img/thumb/08.jpg" alt="">
-                          <div class="product-it-in">
-                            <h3><%= item.name %></h3>
-                            <span><%= item.big_category_name %></span>
-                          </div>    
-                        </td>
-                        <td><%= money item.price %></td>
-                        <td class="state-success">
-                            <button type="button" alt="cart_item_<%= item.product_id %>" aid="<%= agent_id %>" class="quantity-button decrease_num" name="subtract" value="-">-</button>
-                            <%= text_field_tag "cart_item_#{item.product_id}", item.num, class: "quantity-field valid", maxlength: "4", maxsize: "4", aid: agent_id %>
-                            <button type="button" alt="cart_item_<%= item.product_id %>" pid="<%= item.product_id %>"  aid="<%= agent_id %>" class="quantity-button increase_num" name="add" value="+">+</button>
-                        </td>
-                        <td class="shop-red">¥<span class="cart-item-total" id="item-buy-total-cart_item_<%= item.product_id %>"><%= number_with_precision(item.total, :precision => 2) %></span>
-                        </td>
-                        <td>
-                          <button type="button" class="delete_from_cart_btn_<%= item.product_id %> close"><span>×</span>
-                          <span class="sr-only">Close</span></button>
-                        </td>
-                      </tr>
-                    <% end -%>
                   <% end -%>
                 </tbody>
               </table>
@@ -82,12 +74,11 @@
               <a href="/" role="menuitem">继续购物</a>
             </li>
             <li aria-hidden="false" aria-disabled="false">
-              <%= link_to '', '', id: "new_order_link" %>
+              <%= link_to_void "购买所选产品", onclick: "create_order();" %>
             </li>
           </ul>
         </div>
       </div>
-      <% end -%>
     <% else %>
       <div class="successorder no-login">
         购物车空空的哦~，去看看心仪的商品吧~ <a href="/">去购物</a>！
@@ -97,22 +88,4 @@
 </div>
 
 
-<script type="text/javascript">
-  $(function(){
-    // 超过限额  
-    check_quote();
-
-    $("#item-buy-sum_total").change(function(){
-      check_quote();
-    })
-
-    function check_quote(){
-      var total = parseFloat($("#item-buy-sum_total").text());
-      if ($.isBlank(total)){
-        $("#new_order_link").text("请至少选择一款商品").attr("href", "javascript:void(0);").css("background-color", "#C0C5CA");
-        return;
-      }
-      $("#new_order_link").text("购买所选产品").attr("href", "<%= cart_order_path %>").css("background-color", "#18ba9b");
-    }
-  })
-</script>
+  

@@ -9,16 +9,16 @@ class Kobe::ContractTemplatesController < KobeController
 	end
 
   def new
-    @myform = SingleForm.new(ContractTemplate.xml, @contract_template, { form_id: "ct_form", action: kobe_contract_templates_path })
+    @myform = SingleForm.new(ContractTemplate.xml, @contract_template, { form_id: "ct_form", action: kobe_contract_templates_path, grid: 3 })
   end
 
   def edit
-    @myform = SingleForm.new(ContractTemplate.xml, @contract_template, { form_id: "ct_form", action: kobe_contract_template_path(@contract_template), method: "patch" })
+    @myform = SingleForm.new(ContractTemplate.xml, @contract_template, { form_id: "ct_form", action: kobe_contract_template_path(@contract_template), method: "patch", grid: 3 })
   end
 
   def show
     @arr  = []
-    @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@contract_template,ContractTemplate.xml) }
+    @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@contract_template,ContractTemplate.xml, grid: 3) }
     @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@contract_template) }
   end
 

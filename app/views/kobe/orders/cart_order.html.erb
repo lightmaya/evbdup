@@ -1,1 +1,52 @@
-<%= render :partial => 'form', :locals => { :myform => @ms_form } %>
+<div class="wizard">
+  <%= render "shared/steps", i: 2 %>
+</div>
+
+<div class="container content"> 
+<%= simple_form_for @order, url: create_cart_order_kobe_orders_path,html: {id: "order_create_form"} do |f| %>
+  <!-- 收货地址 -->
+  <%= render 'address', f: f %>
+  
+  <h5><i class="fa fa-chevron-circle-down"></i> 采购方式：</h5>
+  <div class="row p0_25">
+    <p>
+      <% Order::PTypes.each do |k, v| %>
+        <%= radio_button_tag "order_yw_type", "#{k}", k == @order.yw_type, name: "order[yw_type]", onchange: "checkPtype('ptype_div');" %>
+        <label for="order_ptype_<%= k %>"><%= v %></label>
+      <% end -%>
+    </p>
+    <p>发票抬头：<%= f.text_field :payer %></p>
+    <p>身份证：<%= f.text_field :sfz %></p>
+    <% if @plans.present? %>
+      <p class="publicinfo color12">有效的预算审批单：</p>
+      <% @plans.each do |plan| %>
+        <p class="publicinfo publicplan <%= 'on' if plan.id == @order.plan_id %>" id="publicplan_<%= plan.id %>">
+          <% if plan.total.to_f >= @order.total.to_f %>
+            <%= radio_button_tag "order_plan_id", "#{plan.id}", plan.id == @order.plan_id, name: "order[plan_id]", onblur: "checkPtype('ptype_div')" %>
+            <label for="order_plan_id_<%= plan.id %>"><%= plan.info %></label>
+          <% else %>
+            <span class="del"><%= plan.info %> <span class="red">超出预算</span></span>
+          <% end -%>
+        </p> 
+      <% end -%>
+    <% else %>
+      <p class="publicinfo red">单位采购需有效的预算审批单，请先到<a href="/plans/new">“我的预算审批单”</a>中申请。</p>   
+    <% end -%>
+  </div>
+
+  <h5><i class="fa fa-chevron-circle-down"></i> 购买的商品：</h5>
+  <div class="row p0_25">
+    <% @cart.items.each do |item| %>
+      <p><%= item.name %> x <%= item.num %></p>
+    <% end -%>
+  </div>
+
+  <h5><i class="fa fa-chevron-circle-down"></i> 备注：</h5>
+  <div class="row p0_25">
+    <%= f.text_field :summary %>
+  </div>
+
+  <%= f.submit '确认下单', class: 'btn-u', id: 'order_submit_btn' %>
+  
+<% end -%>
+</div> 

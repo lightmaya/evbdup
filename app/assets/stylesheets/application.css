@@ -49,7 +49,6 @@ table .money {width:120px; text-align: right;}
 .font_24px{font-size: 24px;}
 #ztree_show{overflow:auto;}
 .no-display{display:none;}
-.color-u {color: #018b3e ;}
 
 /*
 .step {border-bottom: 2px solid #eee; position: relative; z-index: 99; margin-bottom: 20px;	background: none repeat scroll 0 0 rgba(0, 0, 0, 0);}
@@ -479,3 +478,76 @@ table .money {width:120px; text-align: right;}
 }
 
 .total-result-in {color: #c9253c;font-weight: 600;font-size: 18px;}
+.headline h2 span{ font-size: 12px;padding-left: 10px;}
+.headline h2 span a:visited {
+    color: #005ea7;
+    text-decoration: none;
+}
+.headline h2 span a:link {
+    color: #005ea7;
+    text-decoration: none;
+}
+
+/*下单样式*/
+.errorinformation .error{
+  height: 24px;
+  padding-left: 6px;
+  float: left;
+  color: #c00;
+  line-height: 24px;
+}
+.fieldinfo{
+  height: 24px;
+  line-height: 24px;
+}
+
+.newobox .newinfo {
+  padding:5px 0 5px 15px;
+  height:32px;
+  line-height:24px;
+  margin-top:5px;
+  clear: both;
+}
+
+.newobox .newinfo .new-info-label {
+  width:90px;
+  height:24px;
+  float:left;
+  text-align:right;
+}
+.newobox .newinfo .new-info-label span {
+  color:#ff0000
+}
+
+.snap-div{
+  width:350px;padding:10px 15px 10px;border:1px solid #edd28b;margin-top:5px;margin-bottom:5px;background:#fffdee;font: normal 12px/1.8 verdana, '\5b8b\4f53';color:#666;
+}
+
+.newobox .newinfo .new-info-field {
+  float:left;
+}
+.newobox .newinfo .new-info-field select{
+  line-height:24px;
+  padding:0 5px;
+  height:24px;
+  margin-right:5px;
+}
+.sureorder .newinfo .new-info-label {
+  width: 90px;
+  height: 24px;
+  float: left;
+  text-align: right;
+}
+
+.fiel_inpute {
+  // width:170px;
+  height:24px;
+  line-height:24px;
+  border:1px #cccccc solid;
+  padding-left:5px;
+}
+.errorinformation {
+  border:1px solid #ffb27e;
+  background:#ffece0;
+}
+/*下单样式END */
