@@ -8,6 +8,7 @@ class OrdersItem < ActiveRecord::Base
 	before_save do
 		ca = self.category_id.present? ? Category.find_by(id: self.category_id) : Category.find_by(name: self.category_name)
 		self.category_code = ca.ancestry if ca.present?
+		self.total = self.quantity * self.price
   end
 
     # 产品全称 品牌+型号+版本号

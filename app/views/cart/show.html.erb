@@ -33,7 +33,7 @@
                       </td>
                       <td><%= item.agent_name %></td>
                       <td><%= money item.price %></td>
-                      <td><%= text_field_tag "real_price_cart_item_#{item.product_id}", item.price, class: "w80 real_price", alt: "cart_item_#{item.product_id}" %></td>
+                      <td><%= text_field_tag "real_price_cart_item_#{item.product_id}", item.price, class: "w80 real_price", alt: "cart_item_#{item.product_id}", max_price: item.bid_price %></td>
                       <td class="state-success">
                           <button type="button" alt="cart_item_<%= item.product_id %>" class="quantity-button decrease_num  " name="subtract" value="-">-</button>
                           <%= text_field_tag "cart_item_#{item.product_id}", item.num, class: "quantity-field valid", maxlength: "4", maxsize: "4" %>

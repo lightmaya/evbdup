@@ -8,20 +8,18 @@
   <%= render 'address', f: f %>
   <!-- 采购方式 -->
   <%= render 'yw_type', f: f %>
-
-  <h5><i class="fa fa-chevron-circle-down"></i> 购买的商品：</h5>
-  <div class="row p0_25">
-    <% @cart.items.each do |item| %>
-      <p><%= item.name %> x <%= item.num %></p>
-    <% end -%>
+  <!-- 送货清单 -->
+  <%= render 'items', f: f %>
+  
+  <div class="step" id="step_summary">
+    <div class="headline"><h2>备注</h2></div>
+    <div class="row p0_25">
+      <%= f.text_field :summary, class: "w350 h30" %>
+    </div>
   </div>
 
-  <h5><i class="fa fa-chevron-circle-down"></i> 备注：</h5>
-  <div class="row p0_25">
-    <%= f.text_field :summary %>
-  </div>
-
-  <%= f.submit '确认下单', class: 'btn-u', id: 'order_submit_btn' %>
+  <%= f.submit '确认下单', class: 'fr btn-u btn-u-lg btn-u-orange rounded', id: 'order_submit_btn' %>
+  <div class="ordernumber">应付金额：<span>￥</span><span id="order_total"><%= "%.2f" % @order.total.to_f %></span></div>
   
 <% end -%>
 </div> 

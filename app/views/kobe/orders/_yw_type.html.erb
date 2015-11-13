@@ -1,13 +1,13 @@
-<div class="step" id="step_yw_type">
+<div class="step hide" id="step_yw_type">
   <div class="headline"><h2>采购方式<span>[<%= link_to_void "修改", onclick: "choose_yw_type();", id: "choose_yw_type_link" %>]</span></h2>
   </div>
-  <p class="p0_25" id="current_yw_type_info"></p>
+  <p class="step_info" id="current_yw_type_info">单位采购（发票抬头：<%= @order.payer %>）</p>
 </div>
 
 <div class="step-current newobox" id="step_yw_type_current">
   <div class="headline"><h2>采购方式</h2></div>
   <div class="newinfo" id="order_yw_type_div">
-    <div class="new-info-label"><span>*</span> 开具方式：</div>
+    <div class="new-info-label"><span>*</span> 类型：</div>
     <div class="new-info-field">
       <% {"xygh" => "单位采购", "grcg" => "个人采购"}.each do |k, v| %>
         <%= f.radio_button "yw_type", "#{k}", checked: k == @order.yw_type,  onchange: "checkYw_type();" %>
@@ -32,3 +32,4 @@
 
   <%= link_to_void "保存采购方式", onclick: "save_yw_type();", id: "save_yw_type_btn", class: "btn-u w120 ml15 mt10 need_close"  %>
 </div>
+

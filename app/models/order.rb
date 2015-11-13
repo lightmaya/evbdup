@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Order < ActiveRecord::Base
 	has_many :items, class_name: :OrdersItem
+  accepts_nested_attributes_for :items
+
 	has_many :uploads, class_name: :OrdersUpload, foreign_key: :master_id
   # default_scope -> {order("id desc")}
 
@@ -103,9 +105,26 @@ class Order < ActiveRecord::Base
     order.buyer_tel = user.tel
     order.buyer_mobile = user.mobile
     order.buyer_addr = user.department.address
+    order.user_id = user.id
     order
   end
 
+  def self.from(cart, user)
+    order = init_order(user)
+    cart.items.each do |item|
+      next if item.ready.blank?
+      product = item.product
+      order.items.build(market_price: item.market_price,  
+        product_id: item.product_id, quantity: item.num, price: item.price,
+        category_id: product.category_id, category_code: product.category_code, 
+        category_name: product.category.name, brand: product.brand, model: product.model,
+        version: product.version, unit: product.unit, bid_price: product.bid_price,
+        item_id: product.item_id, total: item.num * item.price
+        )
+    end
+    order.total = order.items.map(&:total).sum
+    order
+  end
 
   def buyer_info
     [self.buyer_man, self.buyer_addr, self.buyer_tel, self.buyer_mobile].select{|i| i.present?}.join(" ")

@@ -1,7 +1,7 @@
 <div class="step" id="step_address">
   <div class="headline"><h2>收货地址<span>[<%= link_to_void "修改", onclick: "choose_address();", id: "choose_address_link" %>]</span></h2>
   </div>
-  <p class="p0_25" id="current_address_info"><%= @order.buyer_info %></p>
+  <p class="step_info" id="current_address_info"><%= @order.buyer_info %></p>
 </div>
 
 <div class="step-current newobox hide" id="step_address_current">

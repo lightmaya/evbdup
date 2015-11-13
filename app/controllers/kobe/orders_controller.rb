@@ -8,6 +8,7 @@ class Kobe::OrdersController < KobeController
 
   skip_authorize_resource :only => [:same_template]
 
+  before_filter :order_from_cart, :only => [:cart_order]
   # 辖区内采购项目
   def index
     @q = Order.find_all_by_buyer_code(current_user.department.real_ancestry).where(get_conditions("orders")).ransack(params[:q]) 
@@ -43,14 +44,6 @@ class Kobe::OrdersController < KobeController
   end
 
   def cart_order
-
-
-    # if params[:check].blank?
-    #   tips_get("请勾选购买商品")
-    #   return redirect_to :back
-    # end
-    
-    @order = Order.init_order(current_user)
     @plans = [] #current_user.budgets
     # params[:check].each do |product_id|
     #   if item = @cart.items.find{|item| item.product_id.to_i == product_id}
@@ -189,5 +182,11 @@ class Kobe::OrdersController < KobeController
       arr << ["task_queues.dep_id = ?", current_user.real_department.id]
       @q =  Order.joins(:task_queues).where(get_conditions("orders", arr)).ransack(params[:q])
       @orders = @q.result(distinct: true).page params[:page]
+    end
+
+  private
+    def order_from_cart
+      return redirect_to cart_path if @cart.items.blank?
+      @order = Order.from(@cart, current_user) 
     end
 end

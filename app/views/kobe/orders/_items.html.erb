@@ -1,0 +1,21 @@
+<div class="step" id="step_items">
+  <div class="headline"><h2>送货清单</h2></div>
+  <table class="table table-bordered table-striped">
+    <tr>    
+      <th>产品</th>
+      <th width="190px">供应商价格</th>
+      <th width="190px" class="red">采购人价格</th>
+      <th width="100px">数量</th>
+      <th width="190px">小计</th>
+    </tr>
+    <%= f.fields_for :items do |item_form| %>
+      <tr>
+        <td><%= item_form.object.name %></td>
+        <td class="tc"><%= money item_form.object.bid_price %></td>
+        <td class="tc"><%= item_form.text_field :price, class: "item_real_price", max_price: item_form.object.bid_price.to_f, num: item_form.object.quantity %></td>
+        <td class="tc"><%= item_form.object.quantity %></td>
+        <td class="tc cart-item-total"><%= money item_form.object.total %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
