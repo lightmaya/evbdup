@@ -173,22 +173,95 @@ $(function() {
     // $.get("/cart/change/" + $(this).prop('id').split("cart_item_")[1] + "?set=1&num=" + $(this).val());
   });
 
-  // 选择采购类别
+  // 选择采购方式
   $("input:radio[name='order\[yw_type\]']").change(function(){
-    $("#current_ptype_info").text($(this).next().text());
-    if ($(this).val() == 0){
-      $("#plans_div").show();
-      $("#step_invoice").show();
-      $("#step_invoice_current").hide();
+    $("#current_yw_type_info").text($(this).next().text());
+    if ($(this).val() == "xygh"){
+      $("#order_sfz_div").hide();
+      // $("#plans_div").show();
+      $("#payer_grcg").hide();
+      $("#order_payer").show();
     }else{
-      $("#step_invoice").hide();
-      $("#step_invoice_current").hide();
-      $("#plans_div").hide();
+      $("#order_sfz_div").show();
+      // $("#plans_div").show();
+      $("#payer_grcg").show();
+      $("#order_payer").hide();
     }
   });
 
 
 });
+
+
+// 检查采购方式
+function checkYw_type(){
+  var errorFlag = false;
+  var errorMessage = null;
+  var value = null;
+  $("#order_yw_type_div_error").html("");
+  $("#order_yw_type_div").removeClass("errorinformation");
+  $("#order_payer_div_error").html("");
+  $("#order_payer_div").removeClass("errorinformation");
+  $("#order_sfz_div_error").html("");
+  $("#order_sfz_div").removeClass("errorinformation");
+  value = $("input:radio[name='order\[yw_type\]']:checked").val();
+  if (isEmpty(value)) {
+    errorMessage = "请选择采购方式";
+    $("#order_yw_type_div_error").html(errorMessage);
+    $("#order_yw_type_div").addClass("errorinformation");
+  }else{
+    $("#order_yw_type_div_error").html("");
+    $("#order_yw_type_div").removeClass("errorinformation");
+  }
+
+  if ($("#budgets_div").length > 0 && value == "xygh"){
+    budget_value = $("input:radio[name='order\[budget_id\]']:checked").val();
+    if (isEmpty(budget_value)) {
+      errorFlag = true;
+      errorMessage = "单位采购请选择预算申请单";
+      $("#order_yw_type_div_error").html(errorMessage);
+      $("#order_yw_type_div").addClass("errorinformation");
+    }else{
+      $("#order_yw_type_div_error").html("");
+      $("#order_yw_type_div").removeClass("errorinformation");
+    }
+  }
+
+  if(value == "xygh"){
+    value = $("#order_payer").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请填写发票抬头";
+      $("#order_payer_div_error").html(errorMessage);
+      $("#order_payer_div").addClass("errorinformation");
+    }else{
+      $("#order_payer_div_error").html("");
+      $("#order_payer_div").removeClass("errorinformation");
+    }
+  }
+
+  if(value == "grcg"){
+    value = $("#order_sfz").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请填写身份证";
+      $("#order_sfz_div_error").html(errorMessage);
+      $("#order_sfz_div").addClass("errorinformation");
+    }else{
+      $("#order_sfz_div_error").html("");
+      $("#order_sfz_div").removeClass("errorinformation");
+    }
+  }
+  if (errorFlag) {
+    $("#" + divId + "_error").html(errorMessage);
+    $("#" + divId).addClass("errorinformation");
+    return false;
+  } else {
+    $("#" + divId).removeClass("errorinformation");
+    $("#" + divId + "_error").html("");
+  }
+  return true;
+}
 
 // 检查收货地址
 function checkAddress(divId){

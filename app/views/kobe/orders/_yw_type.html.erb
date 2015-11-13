@@ -1,0 +1,34 @@
+<div class="step" id="step_yw_type">
+  <div class="headline"><h2>采购方式<span>[<%= link_to_void "修改", onclick: "choose_yw_type();", id: "choose_yw_type_link" %>]</span></h2>
+  </div>
+  <p class="p0_25" id="current_yw_type_info"></p>
+</div>
+
+<div class="step-current newobox" id="step_yw_type_current">
+  <div class="headline"><h2>采购方式</h2></div>
+  <div class="newinfo" id="order_yw_type_div">
+    <div class="new-info-label"><span>*</span> 开具方式：</div>
+    <div class="new-info-field">
+      <% {"xygh" => "单位采购", "grcg" => "个人采购"}.each do |k, v| %>
+        <%= f.radio_button "yw_type", "#{k}", checked: k == @order.yw_type,  onchange: "checkYw_type();" %>
+        <label for="order_yw_type_<%= k %>"><%= v %></label>
+      <% end -%>
+    </div>
+    <span class="status error" id="order_yw_type_div_error"></span>
+  </div>
+
+  <% [["payer", "发票抬头"], ["sfz", "身份证"]].each do |col| %>
+    <div class="newinfo <%= 'hide' if col[0] == 'sfz' %>" id="order_<%= col[0] %>_div">
+      <div class="new-info-label"><span>*</span> <%= col[1] %>：</div>
+      <div class="new-info-field">
+        <% if col[0] == "payer" %>
+          <span id="payer_grcg" class="hide">个人</span>
+        <% end -%>
+        <%= f.text_field col[0], onblur: "checkYw_type();", class: "fiel_inpute" %>
+      </div>
+      <span class="status error" id="order_<%= col[0] %>_div_error"></span>
+    </div>
+  <% end -%>
+
+  <%= link_to_void "保存采购方式", onclick: "save_yw_type();", id: "save_yw_type_btn", class: "btn-u w120 ml15 mt10 need_close"  %>
+</div>
