@@ -1,3 +1,5 @@
+
+
 ## 字段及表单
 
 * 在model中定义xml方法，每个dom的类型，样式等（范例：article.rb）
