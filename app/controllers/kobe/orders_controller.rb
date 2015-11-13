@@ -89,7 +89,10 @@ class Kobe::OrdersController < KobeController
   end
 
   def print
-    render partial: @order.ht
+    str = "合同编号：#{@order.contract_sn}"
+    str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{@order.contract_sn}?m=#{@order.total}"
+    @qr = qrcode(str)
+    render partial: @order.ht , layout: 'print'  
   end
 
   private
