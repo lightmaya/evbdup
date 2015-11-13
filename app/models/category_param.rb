@@ -22,13 +22,13 @@ class CategoryParam < XmlColumn
 		%Q{
 			<?xml version="1.0" encoding="UTF-8"?>
 			<root>
-			  <node name="品牌" column='brand' class="required"/>
-			  <node name="型号" column='model' class="required"/>
-			  <node name="版本号" column='version'/>
-			  <node name="计量单位" column='unit' class="required" is_key="是"/>
-			  <node name="市场价格" column='market_price' class="required number"/>
-			  <node name="中标价格" column='bid_price' class="required number"/>
-			  <node name="基本描述" column='summary' class="required"  data_type='textarea'/>
+			  <node name="品牌" column='brand' class="required" is_key="否"/>
+			  <node name="型号" column='model' class="required" is_key="否"/>
+			  <node name="版本号" column='version' is_key="否"/>
+			  <node name="计量单位" column='unit' class="required" is_key="否"/>
+			  <node name="市场价格" column='market_price' class="required number" is_key="否"/>
+			  <node name="中标价格" column='bid_price' class="required number" is_key="否"/>
+			  <node name="基本描述" column='summary' class="required"  data_type='textarea' is_key="否"/>
 			</root>
 		}
 	end
