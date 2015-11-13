@@ -151,10 +151,10 @@ class Kobe::DepartmentsController < KobeController
     render :text => valid_remote(Department, ["name = ? and id <> ? and dep_type is false and status <> 404", params[:departments][:name], params[:obj_id]])
   end
 
-  # 单位查询
+  # 单位查询 供应商管理
   def search
-    @q = Department.where(get_conditions("departments")).ransack(params[:q]) 
-    @deps = @q.result.page params[:page] if params[:q].present?
+    @q = Department.supplier.subtree.where(get_conditions("departments")).ransack(params[:q]) 
+    @deps = @q.result.page params[:page] if params[:q][:name_cont].present?
   end
 
   # 审核单位
