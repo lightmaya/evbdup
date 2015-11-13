@@ -23,6 +23,8 @@ class Order < ActiveRecord::Base
     create_no(rule.code, "sn")
   end
 
+  PTypes = {"xygh" => "单位采购", "grcg" => "个人采购"}
+
 	# 附件的类
   def self.upload_model
     OrdersUpload
@@ -103,6 +105,10 @@ class Order < ActiveRecord::Base
     order.buyer_mobile = user.mobile
     order.buyer_addr = user.department.address
     order
+  end
+
+  def buyer_info
+    [self.buyer_man, self.buyer_addr, self.buyer_tel, self.buyer_mobile].select{|i| i.present?}.join(" ")
   end
 
   # 买方单位

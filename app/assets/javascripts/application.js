@@ -221,8 +221,102 @@ $(function() {
     // $.get("/cart/change/" + $(this).prop('id').split("cart_item_")[1] + "?set=1&num=" + $(this).val());
   });
 
+  // 选择采购类别
+  $("input:radio[name='order\[yw_type\]']").change(function(){
+    $("#current_ptype_info").text($(this).next().text());
+    if ($(this).val() == 0){
+      $("#plans_div").show();
+      $("#step_invoice").show();
+      $("#step_invoice_current").hide();
+    }else{
+      $("#step_invoice").hide();
+      $("#step_invoice_current").hide();
+      $("#plans_div").hide();
+    }
+  });
+
 
 });
+
+// 检查收货地址
+function checkAddress(divId){
+  var errorFlag = false;
+  var errorMessage = null;
+  var value = null;
+  if (divId == "order_buyer_man_div") {
+    value = $("#order_buyer_man").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写收货人姓名";
+    }
+  }else if (divId == "order_buyer_addr_div") {
+    value = $("#order_buyer_addr").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写收货详细地址";
+    }
+  }else if (divId == "order_buyer_tel_div") {
+    value = $("#order_buyer_tel").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写座机";
+    }
+  }else if (divId == "order_buyer_mobile_div") {
+    value = $("#order_buyer_mobile").val();
+    if (isEmpty(value)) {
+      errorFlag = true;
+      errorMessage = "请您填写手机";
+    }
+  }
+
+  if (errorFlag) {
+    $("#" + divId + "_error").html(errorMessage);
+    $("#" + divId).addClass("errorinformation");
+    return false;
+  } else {
+    $("#" + divId).removeClass("errorinformation");
+    $("#" + divId + "_error").html("");
+  }
+  return true;
+}
+
+
+// 保存收货地址
+function save_address(){
+    var checkr = true;
+  // 验证收货人信息是否正确
+  if (!checkAddress("order_buyer_man_div")) {
+    checkr = false;
+  }
+  if (!checkAddress("order_buyer_addr_div")) {
+    checkr = false;
+  }
+  if (!checkAddress("order_buyer_tel_div")) {
+    checkr = false;
+  }
+  
+  $("#step_address_current .newinfo").each(function(){
+    if (!checkAddress($(this).attr("id"))) {
+      checkr = false;
+      return false;
+    }
+  });
+  if (!checkr) {
+    return;
+  }
+  
+  $("#current_address_info").text($("#order_buyer_man").val() + " " + $("#order_buyer_addr").val() + " " + $("#order_buyer_tel").val() + " " + $("#order_buyer_mobile").val());
+  $("#step_address").show();
+  $("#step_address_current").hide();
+}
+
+
+// 修改收货地址
+function choose_address(){
+
+  $("#step_address").hide();
+  $("#step_address_current").show();
+}
 
 function art_confirm(msg, SuccFn){
   var d = dialog({

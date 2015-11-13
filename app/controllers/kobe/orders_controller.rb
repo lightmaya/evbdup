@@ -33,30 +33,37 @@ class Kobe::OrdersController < KobeController
     end
   end
 
+  def create_cart_order
+    @order = Order.from(@cart)
+    @order.prepare_attributes(params[:order].permit!)
+  end
+
   def cart_order
-    if params[:check].blank?
-      tips_get("请勾选购买商品")
-      return redirect_to :back
-    end
+
+
+    # if params[:check].blank?
+    #   tips_get("请勾选购买商品")
+    #   return redirect_to :back
+    # end
     
     @order = Order.init_order(current_user)
-   
-    params[:check].each do |product_id|
-      if item = @cart.items.find{|item| item.product_id.to_i == product_id}
-        product = item.product
-        next unless product.show
-        order_item = @order.items.build(category_id: product.category_id, 
-          product_id: product_id, brand: product.brand, model: product.model, version: product.version,
-          unit: product.unit, market_price: product.market_price,
-          bid_price: product.bid_price,
-          price: params["real_price_cart_item_#{product_id}"].to_f,
-          quantity: [params["cart_item_#{product_id}"].to_i, 1].max
-        )
-      end
-    end
+    @plans = [] #current_user.budgets
+    # params[:check].each do |product_id|
+    #   if item = @cart.items.find{|item| item.product_id.to_i == product_id}
+    #     product = item.product
+    #     next unless product.show
+    #     order_item = @order.items.build(category_id: product.category_id, 
+    #       product_id: product_id, brand: product.brand, model: product.model, version: product.version,
+    #       unit: product.unit, market_price: product.market_price,
+    #       bid_price: product.bid_price,
+    #       price: params["real_price_cart_item_#{product_id}"].to_f,
+    #       quantity: [params["cart_item_#{product_id}"].to_i, 1].max
+    #     )
+    #   end
+    # end
 
-    slave_objs = [@order.items]
-    @ms_form = MasterSlaveForm.new(Order.xml, OrdersItem.xml, @order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    # slave_objs = [@order.items]
+    # @ms_form = MasterSlaveForm.new(Order.xml, OrdersItem.xml, @order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
   
 
     # if @order.save

@@ -3,8 +3,8 @@
     <% if @cart.items.present? %>
       <%= form_tag cart_order_path, id: :cart_order_form do %>
       <%= hidden_field_tag "buy_type", 0 %>
-      <div role="application" class="wizard clearfix" id="steps-uid-0">
-        <%= render "steps" %>
+      <div role="application" class="wizard clearfix">
+        <%= render "shared/steps" %>
         <div class="content clearfix">
           <section>
             <div class="table-responsive">
