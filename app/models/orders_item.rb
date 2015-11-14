@@ -5,6 +5,8 @@ class OrdersItem < ActiveRecord::Base
 	belongs_to :product
 	belongs_to :product_item, class_name: :Item, foreign_key: :item_id
 
+	attr_accessor :vid
+
 	before_save do
 		ca = self.category_id.present? ? Category.find_by(id: self.category_id) : Category.find_by(name: self.category_name)
 		self.category_code = ca.ancestry if ca.present?

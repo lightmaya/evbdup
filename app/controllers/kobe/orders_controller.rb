@@ -40,7 +40,11 @@ class Kobe::OrdersController < KobeController
   end
 
   def create_cart_order
-    @order = Order.from(@cart)
+    @order = Order.from(@cart, current_user, params)
+    dsad
+    @order.save  
+
+    redirect_to action: :index
   end
 
   def cart_order
@@ -184,7 +188,6 @@ class Kobe::OrdersController < KobeController
       @orders = @q.result(distinct: true).page params[:page]
     end
 
-  private
     def order_from_cart
       return redirect_to cart_path if @cart.items.blank?
       @order = Order.from(@cart, current_user) 

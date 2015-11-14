@@ -109,7 +109,7 @@ class Order < ActiveRecord::Base
     order
   end
 
-  def self.from(cart, user)
+  def self.from(cart, user, params = {})
     order = init_order(user)
     cart.items.each do |item|
       next if item.ready.blank?
@@ -119,9 +119,21 @@ class Order < ActiveRecord::Base
         category_id: product.category_id, category_code: product.category_code, 
         category_name: product.category.name, brand: product.brand, model: product.model,
         version: product.version, unit: product.unit, bid_price: product.bid_price,
-        item_id: product.item_id, total: item.num * item.price
+        item_id: product.item_id, total: item.num * item.price, vid: item.id, agent_id: item.agent_id
         )
     end
+
+    # order.items.group_by{|item| item.category.ht_template && item.agent_id}.size
+
+    dep = order.items.first.agent.dep
+
+    order.seller_name = dep.name
+
+    if params.present?
+      order.attributes = params[:order].permit!
+      order.items.each_with_index{|item, index| item.price = params["item_price_#{item.vid}"].to_f}
+    end
+
     order.total = order.items.map(&:total).sum
     order
   end

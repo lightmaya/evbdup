@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   before_filter :find_cart
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  # protect_from_forgery with: :exception
 
   # 开发给view层用的方法
   helper_method :current_user, :signed_in?, :redirect_back_or, :cando_list

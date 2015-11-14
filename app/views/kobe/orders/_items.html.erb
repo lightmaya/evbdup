@@ -4,17 +4,25 @@
     <tr>    
       <th>产品</th>
       <th width="190px">供应商价格</th>
-      <th width="190px" class="red">采购人价格</th>
+      <th width="190px" class="red">采购人价格 <span class="icon-question" title="小于等于供应商报价"></span></th>
       <th width="100px">数量</th>
       <th width="190px">小计</th>
     </tr>
-    <%= f.fields_for :items do |item_form| %>
+    <% @order.items.each_with_index do |item, index| %>
       <tr>
-        <td><%= item_form.object.name %></td>
-        <td class="tc"><%= money item_form.object.bid_price %></td>
-        <td class="tc"><%= item_form.text_field :price, class: "item_real_price", max_price: item_form.object.bid_price.to_f, num: item_form.object.quantity %></td>
-        <td class="tc"><%= item_form.object.quantity %></td>
-        <td class="tc cart-item-total"><%= money item_form.object.total %></td>
+        <td><%= item.name %></td>
+        <td class="tc"><%= money item.bid_price %></td>
+        <td class="tc red">
+          ¥<span id="show-price-<%= item.vid %>"><span id="item-price-show-<%= item.vid %>"><%= item.price.round(2) %></span>
+            <%= link_to_void "[修改]", onclick: "change_real_price('#{item.vid}');" %>
+          </span>
+          <span id="edit-price-<%= item.vid %>" class="hide">
+            <%= text_field_tag "item_price_#{item.vid}", item.price, class: "w80", max_price: item.bid_price.to_f, num: item.quantity %>
+            <%= link_to_void "确定", onclick: "save_real_price('#{item.vid}')", class: 'btn-u btn-u-sm' %>
+          </span>
+        </td>
+        <td class="tc"><%= item.quantity %></td>
+        <td class="tc">¥<span class="cart-item-total" id="cart-item-total-<%= item.vid %>"><%= number_with_precision(item.total, :precision => 2) %><span></td>
       </tr>
     <% end %>
   </table>

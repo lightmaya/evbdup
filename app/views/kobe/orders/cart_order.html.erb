@@ -19,6 +19,9 @@
   </div>
 
   <%= f.submit '确认下单', class: 'fr btn-u btn-u-lg btn-u-orange rounded', id: 'order_submit_btn' %>
+
+  <button type="button" id="loading_btn" class="fr btn btn-lg rounded" disabled="disabled" style="display:none;">订单提交中...</button>
+
   <div class="ordernumber">应付金额：<span>￥</span><span id="order_total"><%= "%.2f" % @order.total.to_f %></span></div>
   
 <% end -%>

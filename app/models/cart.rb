@@ -18,15 +18,17 @@ class Cart
   end
 
   # 购物车中保存product(商品)的id
-  def change(product, num, dep, set = false)
+  def change(product, agent, num, set = false)
     num = num.to_i
-    if current_item = self.items.find { |item| item.product_id.to_s == product.id.to_s }
+    item_id = "#{agent.id}-#{product.id}"
+    if current_item = self.items.find { |item| item.id.to_s == item_id }
       set ? current_item.num = num : current_item.cr(num)
       destroy(product) if current_item.num <= 0
     else
       current_item = CartItem.new({:market_price => product.market_price, :ready => true, 
-      :price => product.bid_price, :my_price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
-      :name => product.name, :agent_id => dep.id, :agent_name => dep.name, :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
+      :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
+      :name => product.name, :agent_id => agent.id, :agent_name => agent.name, id: item_id, 
+      :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
       self.items = [current_item] + self.items
     end
     self
@@ -38,14 +40,15 @@ class Cart
   end
 
   # 是否准备购买
-  def dynamic(product, ready)
+  def dynamic(product, agent, ready)
     self.items.each do |item|
-      item.ready = ready if item.product_id == product.id
+      item_id = "#{agent.id}-#{product.id}"
+      item.ready = ready if item.id == item_id
     end
   end
 
-  def destroy(product_id)
-    self.items.delete_if { |item| item.product_id == product_id.to_i }
+  def destroy(product_id, agent_id)
+    self.items.delete_if { |item| item.id == "#{agent_id}-#{product_id}" }
     self
   end
 
@@ -61,15 +64,16 @@ end
 
 class CartItem
 
-  attr_accessor :product_id, :num, :price, :name, :sku, :ready, 
-    :market_price, :old_price, :my_price, :agent_id, :agent_name, :big_category_name
+  attr_accessor :product_id, :num, :price, :name, :sku, :ready, :id,
+    :market_price, :old_price, :bid_price, :agent_id, :agent_name, :big_category_name
 
   def initialize(attributes = {})
     self.product_id = attributes[:product_id]
     attributes[:num] = [attributes[:num].to_i, 1].max
     self.num = attributes[:num].to_i
+    self.id = attributes[:id]
+    self.bid_price = attributes[:bid_price].to_f
     self.price = attributes[:price].to_f
-    self.my_price = attributes[:my_price].to_f
     self.agent_id = attributes[:agent_id].to_i
     self.agent_name = attributes[:agent_name].to_s
     self.old_price = self.price

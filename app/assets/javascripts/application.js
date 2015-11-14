@@ -40,6 +40,7 @@
 //= require select2/select2.min
 //= require select2/select2_locale_zh-CN
 //= require my97/WdatePicker
+//= require dota
 
 $(function() {
 
@@ -107,278 +108,19 @@ $(function() {
     art_confirm("你确定删除吗？", function(){t.parent().remove();});
   });
 
-
-// 购物车页面商品增减
-  $(document).on('click', '.decrease_num', function(event) {
-    $num = $('#' + $(this).attr('alt'));
-    num = $num.val();
-    if ($.isBlank(parseInt(num))){return;}
-    if (parseInt(num) > 1){
-      $num.val(parseInt(num) - 1);
-      // 计算单个商品总价
-      calc_item($(this).attr('alt'), $num.val());
-      // 计算购物车总价
-      calc_total();
-    };
+  // 小图标提示
+  $(document).on("click", ".icon-question", function(){
+    var follow = $(this)[0];
+    var d = dialog({
+      align: 'top',
+      content: $(this).attr("title"),
+      quickClose: true
+    });
+    d.show(follow);
   });
-
-  $(document).on('click', '.increase_num', function(event) {
-    $num = $('#' + $(this).attr('alt'));
-    num = $num.val();
-    if ($.isBlank(parseInt(num))){return;}
-    if ((parseInt(num) + 1) > 9999){
-      $num.val(9999);
-    }else{
-      $num.val(parseInt(num) + 1);
-    }
-    // 计算单个商品总价
-    calc_item($(this).attr('alt'), $num.val());
-    // 计算购物车总价
-    calc_total();
-  });
-
-  // 购物车采购单价
-  // $(document).on('keyup paste', '.real_price', function(){
-  //   $(this).val($(this).val().replace(/[^0-9.]/g,''));
-  //   var max_price = $(this).attr("max_price");
-  //   if (isEmpty($(this).val()) || parseInt($(this).val()) < 0 || parseFloat($(this).val()) > parseFloat(max_price)){
-  //     $(this).val(max_price);
-  //   }
-  //   $num = $('#' + $(this).attr('alt'));
-  //   calc_item($(this).attr('alt'), $num.val());
-  //   calc_total();
-  // }).css("ime-mode", "disabled"); //CSS设置输入法不可用  
-
-
-  // 下单采购人价格
-  $(document).on('keyup paste', '.item_real_price', function(){
-    $(this).val($(this).val().replace(/[^0-9.]/g,'')); 
-    var max_price = $(this).attr("max_price");
-    if (isEmpty($(this).val()) || parseInt($(this).val()) < 0 || parseFloat($(this).val()) > parseFloat(max_price)){
-      $(this).val(max_price);
-    }
-    num = $(this).attr('num');
-    $(this).parent().siblings(".cart-item-total").text((parseInt(num) * parseFloat($(this).val())).toFixed(2));
-    current_total = 0.0;
-    $(".cart-item-total").each(function(){current_total += parseFloat($(this).text());})
-    $("#order_total").text(current_total.toFixed(2)).change();
-  }).css("ime-mode", "disabled"); //CSS设置输入法不可用  
-
-
-  // 购物车数量
-  $(document).on('keyup', '.quantity-field', function(){
-    var num = parseInt($(this).val());
-    if (isEmpty(num)){
-      num = 1;
-    }else{
-      if (num <= 1){
-        num = 1;
-      }
-      if (num >= 9999){
-        num = 9999;
-      }
-    }
-    $(this).val(num);
-    price = $('#item-buy-price-' + $(this).prop('id'));
-    total = $('#item-buy-total-' + $(this).prop('id'));
-    sum_total = $('#item-buy-sum_total');
-    
-    // 计算总价
-    // total.text((parseInt($(this).val())*parseFloat(price.text())).toFixed(2));
-    // 计算购物车总价
-    // calc_total();
-    // $.get("/cart/change/" + $(this).prop('id').split("cart_item_")[1] + "?set=1&num=" + $(this).val());
-  });
-
-  // 选择采购方式
-  $("input:radio[name='order\[yw_type\]']").change(function(){
-    var title = "";
-    if ($(this).val() == "xygh"){
-      $("#order_sfz_div").hide();
-      // $("#plans_div").show();
-      $("#payer_grcg").hide();
-      $("#order_payer").show();
-      title = $("#order_payer").val();
-    }else{
-      $("#order_sfz_div").show();
-      // $("#plans_div").show();
-      $("#payer_grcg").show();
-      $("#order_payer").hide();
-      title = "个人";
-    }
-    $("#current_yw_type_info").text($(this).next().text() + "（发票抬头：" + title + "）");
-  });
-
 
 });
 
-
-// 检查采购方式
-function checkYw_type(){
-  var errorFlag = false;
-  var errorMessage = null;
-  var value = null;
-  $("#order_yw_type_div_error").html("");
-  $("#order_yw_type_div").removeClass("errorinformation");
-  $("#order_payer_div_error").html("");
-  $("#order_payer_div").removeClass("errorinformation");
-  $("#order_sfz_div_error").html("");
-  $("#order_sfz_div").removeClass("errorinformation");
-  value = $("input:radio[name='order\[yw_type\]']:checked").val();
-  if (isEmpty(value)) {
-    errorFlag = true;
-    errorMessage = "请选择采购方式";
-    $("#order_yw_type_div_error").html(errorMessage);
-    $("#order_yw_type_div").addClass("errorinformation");
-  }else{
-    $("#order_yw_type_div_error").html("");
-    $("#order_yw_type_div").removeClass("errorinformation");
-  }
-
-  if ($("#budgets_div").length > 0 && value == "xygh"){
-    budget_value = $("input:radio[name='order\[budget_id\]']:checked").val();
-    if (isEmpty(budget_value)) {
-      errorFlag = true;
-      errorMessage = "单位采购请选择预算申请单";
-      $("#order_yw_type_div_error").html(errorMessage);
-      $("#order_yw_type_div").addClass("errorinformation");
-    }else{
-      $("#order_yw_type_div_error").html("");
-      $("#order_yw_type_div").removeClass("errorinformation");
-    }
-  }
-
-  if(value == "xygh"){
-    value = $("#order_payer").val();
-    if (isEmpty(value)) {
-      errorFlag = true;
-      errorMessage = "请填写发票抬头";
-      $("#order_payer_div_error").html(errorMessage);
-      $("#order_payer_div").addClass("errorinformation");
-    }else{
-      $("#order_payer_div_error").html("");
-      $("#order_payer_div").removeClass("errorinformation");
-    }
-  }
-
-  if(value == "grcg"){
-    value = $("#order_sfz").val();
-    if (isEmpty(value) || value.length != 18) {
-      errorFlag = true;
-      errorMessage = "请填写正确的身份证号码";
-      $("#order_sfz_div_error").html(errorMessage);
-      $("#order_sfz_div").addClass("errorinformation");
-    }else{
-      $("#order_sfz_div_error").html("");
-      $("#order_sfz_div").removeClass("errorinformation");
-    }
-  }
-  if (errorFlag) {
-    return false;
-  }
-  return true;
-}
-
-// 检查收货地址
-function checkAddress(divId){
-  var errorFlag = false;
-  var errorMessage = null;
-  var value = null;
-  if (divId == "order_buyer_man_div") {
-    value = $("#order_buyer_man").val();
-    if (isEmpty(value)) {
-      errorFlag = true;
-      errorMessage = "请您填写收货人姓名";
-    }
-  }else if (divId == "order_buyer_addr_div") {
-    value = $("#order_buyer_addr").val();
-    if (isEmpty(value)) {
-      errorFlag = true;
-      errorMessage = "请您填写收货详细地址";
-    }
-  }else if (divId == "order_buyer_tel_div") {
-    value = $("#order_buyer_tel").val();
-    if (isEmpty(value)) {
-      errorFlag = true;
-      errorMessage = "请您填写座机";
-    }
-  }else if (divId == "order_buyer_mobile_div") {
-    value = $("#order_buyer_mobile").val();
-    if (isEmpty(value)) {
-      errorFlag = true;
-      errorMessage = "请您填写手机";
-    }
-  }
-
-  if (errorFlag) {
-    $("#" + divId + "_error").html(errorMessage);
-    $("#" + divId).addClass("errorinformation");
-    return false;
-  } else {
-    $("#" + divId).removeClass("errorinformation");
-    $("#" + divId + "_error").html("");
-  }
-  return true;
-}
-
-// 保存采购方式
-function save_yw_type(){
-  var checkr = true;
-  // 验证收货人信息是否正确
-  if (!checkYw_type()) {
-    checkr = false;
-  }
-  if (!checkr) {
-    return;
-  }
-  
-  $("#step_yw_type").show();
-  $("#step_yw_type_current").hide();
-}
-
-
-// 修改采购方式
-function choose_yw_type(){
-  $("#step_yw_type").hide();
-  $("#step_yw_type_current").show();
-}
-
-// 保存收货地址
-function save_address(){
-    var checkr = true;
-  // 验证收货人信息是否正确
-  if (!checkAddress("order_buyer_man_div")) {
-    checkr = false;
-  }
-  if (!checkAddress("order_buyer_addr_div")) {
-    checkr = false;
-  }
-  if (!checkAddress("order_buyer_tel_div")) {
-    checkr = false;
-  }
-  
-  $("#step_address_current .newinfo").each(function(){
-    if (!checkAddress($(this).attr("id"))) {
-      checkr = false;
-      return false;
-    }
-  });
-  if (!checkr) {
-    return;
-  }
-  
-  $("#current_address_info").text($("#order_buyer_man").val() + " " + $("#order_buyer_addr").val() + " " + $("#order_buyer_tel").val() + " " + $("#order_buyer_mobile").val());
-  $("#step_address").show();
-  $("#step_address_current").hide();
-}
-
-
-// 修改收货地址
-function choose_address(){
-
-  $("#step_address").hide();
-  $("#step_address_current").show();
-}
 
 function art_confirm(msg, SuccFn){
   var d = dialog({
@@ -417,13 +159,6 @@ function validate_form_rules (form_id,form_rules,form_messages) {
 	});
 };
 
-// 计算购物车总价
-function calc_total(){
-  sum_total = $('#item-buy-sum_total');
-  current_total = 0.0;
-  $(".cart-item-total").each(function(){current_total += parseFloat($(this).text());})
-  sum_total.text(current_total.toFixed(2)).change();
-}
 
 function read_msg(id){
   dialog({
@@ -480,39 +215,6 @@ function confirm_dialog (content,ok_function) {
 	}).show();
 }
 
-
-function create_order(){
-  dialog({
-    title: "提交订单",
-    content: "请与供应商就“价格、数量、送货情况”等进行过电话沟通。",
-    fixed: true,
-    cancelValue: '取消',
-    cancel: function () {},
-    button: [
-      {
-        value: '单位采购',
-        callback: function () {
-          this
-          .content('你同意了');
-          return false;
-        },
-        autofocus: true
-      },
-      {
-        value: '个人采购',
-        callback: function () {
-          this
-          .content('个人');
-          return false;
-        }
-      }
-    ]
-  }).show();
-}
-
-
-
-
 // 通用函数
 
 //格式化成两位小数 如果没有小数不补0，如果要补0的话用src.toFixed(2)
@@ -559,14 +261,6 @@ function sum_tr(i){
 		}
 	});
 	return formatFloat(sum,2);
-}
-
-// cart_item_
-function calc_item(suf, num){
-  price_input = $('#real_price_' + suf);
-  total = $('#item-buy-total-' + suf);
-  // 计算总价
-  total.text((parseInt(num)*parseFloat(price_input.val())).toFixed(2));
 }
 
 /**替换全部字符，使用方法：
