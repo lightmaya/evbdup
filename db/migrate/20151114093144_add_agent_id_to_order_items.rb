@@ -1,5 +1,5 @@
 class AddAgentIdToOrderItems < ActiveRecord::Migration
   def change
-    add_column :order_items, :agent_id, :integer
+    add_column :orders_items, :agent_id, :integer
   end
 end
