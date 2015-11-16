@@ -227,16 +227,23 @@ class Order < ActiveRecord::Base
   end
 
   # 高级搜索的搜索条件数组
-  def self.advanced_search_array
-    arr = []
-    arr << { name: 'sn_or_contract_sn_or_name_cont', label: '项目名称、凭证编号、合同编号' }
-    arr << { name: 'buyer_name_cont', label: '采购单位',  json_url: "/kobe/shared/department_ztree_json", class_name: 'tree_radio' }
-    arr << { name: 'seller_name_cont', label: '供应商单位' }
-    arr << { name: 'yw_type_cont', label: '业务类别' }
-    arr << { name: 'status_cont', label: '当前状态' }
-    arr << { name: 'created_at_gt', label: '开始日期', class_name: 'start_date' }
-    arr << { name: 'created_at_lt', label: '截止日期', class_name: 'finish_date' }
-    return arr 
+  def self.search_xml
+    status_ha = {}
+    self.status_array.each{ |e| status_ha[e[1]] = e[0] unless e[1] == 404 }
+    yw_type_ha = Dictionary.yw_type
+    yw_type_ha.delete("grcg")
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='项目名称' column='sn_or_contract_sn_or_name_cont' placeholder='请输入项目名称或项目编号...'/>
+        <node name='采购单位' column='buyer_name_eq' json_url='/kobe/shared/department_ztree_json' class='tree_radio'/>
+        <node name='供应商单位' column='seller_name_cont'/>
+        <node name='业务类别' column='yw_type_eq' data_type='select' data='#{yw_type_ha}'/>
+        <node name='当前状态' column='status_in' data_type='select' data='#{status_ha}'/>
+        <node name='开始日期' column='created_at_gt' class='start_date'/>
+        <node name='截止日期' column='created_at_lt' class='finish_date'/>
+      </root>
+    }
   end
 
 end

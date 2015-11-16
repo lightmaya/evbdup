@@ -16,7 +16,7 @@ class Kobe::SharedController < KobeController
   def ztree_json
     if ["Menu", "Area", "ArticleCatalog", "DailyCategory"].include? params[:json_class]
     	ztree_box_json(params[:json_class].constantize)
-  end
+    end
   end
 
   def item_ztree_json
@@ -56,9 +56,9 @@ class Kobe::SharedController < KobeController
     name = params[:ajax_key]
     dep_p = Department.purchaser
     if name.blank?
-      nodes = dep_p.descendants.where(status: 1) 
+      nodes = dep_p.descendants.where(status: 1, dep_type: false) 
     else
-      cdt = "and a.status = 1 and b.status = 1  and (b.ancestry like '#{dep_p.id}/%' or  b.ancestry = #{dep_p.id})" 
+      cdt = "and a.status = 1 and b.status = 1 and a.dep_type is false and b.dep_type is false and (b.ancestry like '#{dep_p.id}/%' or  b.ancestry = #{dep_p.id})" 
       sql = ztree_box_sql(Department, cdt)
       # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
       nodes = Department.find_by_sql([sql,"%#{name}%"])

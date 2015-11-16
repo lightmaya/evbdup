@@ -1,55 +1,73 @@
 <div class="panel panel-grey margin-bottom-40">
-    <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-8 pull-left padding-top-5">
+        <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_order_path) if action_name.include?('list') %>
+      </div>
+      <div class="col-md-4 pull-right">
+        <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
+        <div class="margin-bottom-10">
+          <div class="input-group">
+            <%= f.search_field :sn_or_contract_sn_or_name_cont, class: "form-control input-sm", placeholder: "请输入项目名称、凭证编号、合同编号..." %>
+            <span class="input-group-btn">
+              <button class="btn btn-success btn-sm" type="submit">搜索</button>
+            </span>
+
+            <span class="margin-left-10 pull-left">
+              <button class="btn btn-success btn-sm accordion-toggle" data-target="#advanced_search" data-toggle="collapse" type="button" aria-expanded="true">高级搜索</button>
+            </span>
+          </div>
+        </div>
+        <% end %>
+      </div>
     </div>
-    <div class="panel-body">
-        <!-- <div class="row">
-            <div class="col-md-8 pull-left padding-top-5">
-                <%#= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_order_path) if action_name.include?('list') %>
-            </div>
-            <div class="col-md-4 pull-right">
-            <%#= render partial: "advanced_search", locals: { search_url: search_url } %>
-            </div>
-        </div> -->
-        <%= render partial: "advanced_search", locals: { search_url: search_url } %>
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th class="select_all">
-                        <label class="">
-                            <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
-                        </label>
-                    </th>
-                    <th class="index">序号</th>
-                    <th><%= sort_link(@q, :sn, '凭证编号', default_order: :desc) %></th>
-                    <th><%= sort_link(@q, :name, '名称', default_order: :desc) %></th>
-                    <th><%= sort_link(@q, :total, '总金额（元）', default_order: :desc) %></th>
-                    <th>最近操作</th>            
-                    <th class="status_bar"><%= action_name.include?('audit') ? "状态" : status_filter(Order) %></th>
-                    <th class="date"><%= date_filter %></th>
-                    <th class="cando">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% @orders.each_with_index do |order,index| %>
-                <tr>
-                    <td>
-                        <label class="">
-                            <input type="checkbox" name="check[]" value="<%= order.id %>" onclick="setSelectAll();"><i></i>
-                        </label>
-                    </td>
-                    <td><%= show_index(index) %></td>
-                    <td><%= order.sn %></td>
-                    <td><%= order.name %></td>
-                    <td class="money"><%= money order.total %></td>
-                    <td><%= show_last_user(order) %></td>
-                    <td><%= order.status_bar %></td>
-                    <td><%= show_date(order.created_at) %></td>
-                    <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
-                </tr>
-                <% end %>
-            </tbody>
-        </table>
-        <%= paginate @orders %> 
-    </div>                     
+    <!-- 高级搜索的form -->
+    <div class="panel-collapse collapse" id="advanced_search" aria-expanded="true">
+      <%= get_advanced_search_form(search_url, Order, Order.search_xml) %>
+    </div>
+    <!-- 高级搜索form end -->
+
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th class="select_all">
+            <label class="">
+              <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
+            </label>
+          </th>
+          <th class="index">序号</th>
+          <th><%= sort_link(@q, :sn, '凭证编号', default_order: :desc) %></th>
+          <th><%= sort_link(@q, :name, '名称', default_order: :desc) %></th>
+          <th><%= sort_link(@q, :total, '总金额（元）', default_order: :desc) %></th>
+          <th>最近操作</th>            
+          <th class="status_bar"><%= action_name.include?('audit') ? "状态" : status_filter(Order) %></th>
+          <th class="date"><%= date_filter %></th>
+          <th class="cando">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @orders.each_with_index do |order,index| %>
+        <tr>
+          <td>
+            <label class="">
+              <input type="checkbox" name="check[]" value="<%= order.id %>" onclick="setSelectAll();"><i></i>
+            </label>
+          </td>
+          <td><%= show_index(index) %></td>
+          <td><%= order.sn %></td>
+          <td><%= order.name %></td>
+          <td class="money"><%= money order.total %></td>
+          <td><%= show_last_user(order) %></td>
+          <td><%= order.status_bar %></td>
+          <td><%= show_date(order.created_at) %></td>
+          <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= paginate @orders %> 
+  </div>                     
 </div>
