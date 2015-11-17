@@ -344,10 +344,16 @@ module BtnArrayHelper
     arr = [] 
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_faq_path(obj), target: "_blank"] 
-    # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_faq_path(obj)]   
-    # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }] 
+    unless  obj.catalog == 'yjjy'
+      # 修改
+      arr << [obj.class.icon_action("修改"), edit_kobe_faq_path(obj)]    
+      # 删除
+      arr << [obj.class.icon_action("提交"), commit_kobe_faq_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if obj.status == 0 
+      # 提交
+      arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }] if obj.status == 0
+    end
+    # 回复
+    # arr << [obj.class.icon_action("回复"), reply_kobe_faq_path(obj)] if (obj.catalog=='yjjy')
     return arr
   end
 

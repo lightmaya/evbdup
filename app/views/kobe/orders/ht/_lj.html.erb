@@ -1,15 +1,15 @@
 <div class="certificate">
 <div class="h_content" style="line-height:150%;">
-    <div id="output1" class="erweima"><%#=@qr%></div>
+    <div id="output1" class="erweima"><%=@qr.html_safe%></div>
     <div class="h1">中国储备粮管理总公司集中采购供货合同--粮机</div>
-    <div class="h2">【合同编号：<%#= @info.ht_code%>】</div>
+    <div class="h2">【合同编号：<%=raw @order.contract_sn%>】</div>
     <div class="fl_2em" style="margin-bottom:8px;">核查合同文本格式条款内容的正确方法：供货商申请签署的每一个合同在系统中都会生成 “ 唯一的 ”电子合同编号，各单位的审计、财务人员可以登陆电子交易系统（http://fwgs.sinograin.com.cn中储粮服务网）输入合同号核查合同文本格式条款内容，若需进一步查询请直接与总公司联系。</div>
-    <div class="h3 float_left">甲方：<%#= h(@info.dep_p_name)  %></div>
-    <div class="h3 float_right">乙方：<%#= h(@info.dep_s_name)  %></div>
+    <div class="h3 float_left">甲方：<%=raw  @order.buyer_name %></div>
+    <div class="h3 float_right">乙方：<%=raw @order.seller_name %></div>
     <div style="clear:both"></div>
     <p class="fl_2em">双方经过平等协商，在真实、充分地表达各自意愿的基础上，根据《中华人民共和国合同法》的规定，达成如下协议，并由双方共同恪守：</p>
     <p>第一条  合同标的（下称：货物）及合同总价 <br/>
-    <%#= render :partial => "/ddcg/print_product_content" %>
+    <%= render  partial: "/kobe/orders/ht/order_items_content" %>
     注：合同总价已包含货物的价款、包装、运输、装卸、安装、调试、技术、指导、培训、咨询、服务、保险、检测、验收合格交付使用之前以及技术和售后服务等等或其他各项有关费用，以及货物进口的商检、关税和海关手续等费用，甲方无须向乙方另外支付本合同规定之外的任何费用。</p>
     <p>第二条  质量保证和技术标准<br/>
       <div style="margin-left:2em;">
@@ -31,8 +31,8 @@
             </tr>
             <tr>
               <td></td>
-              <td>免费保修期<span class="underline"><%#="&nbsp;"*6%></span>年，终身（保用、服务、维修）</td>
-              <td>免费定期保养服务<span class="underline"><%#="&nbsp;"*6%></span>年</td>
+              <td>免费保修期<span class="underline"><%=raw "&nbsp;"*6%></span>年，终身（保用、服务、维修）</td>
+              <td>免费定期保养服务<span class="underline"><%=raw "&nbsp;"*6%></span>年</td>
             </tr>
           </table>
           1、保修期、保养期按甲方经对货物验收合格并签署《质量验收报告》之日起计算。<br/>
@@ -40,24 +40,24 @@
       </div>
     </p>
     <p>第四条  价款和支付方式<br/>
-      <%#
-         buyer = @info.buyer
-         detail_address = buyer.blank? ? "&nbsp;"*40 : (buyer.detail_address.blank? ? "&nbsp;"*40 : buyer.detail_address)
-         seller = @info.seller
-         bank_name = seller.blank? ? "&nbsp;"*40 : (seller.bank_name.blank? ? "&nbsp;"*40 : seller.bank_name)
+      <%
+         buyer = @order.buyer
+         detail_address = buyer.blank? ? "&nbsp;"*40 : (buyer.address.blank? ? "&nbsp;"*40 : buyer.address)
+         seller = @order.seller
+         bank_name = seller.blank? ? "&nbsp;"*40 : (seller.bank.blank? ? "&nbsp;"*40 : seller.bank)
          bank_account = seller.blank? ? "&nbsp;"*40 : (seller.bank_account.blank? ? "&nbsp;"*40 : seller.bank_account)
       %>
       <div style="margin-left:2em;">
-        1、<b>合同总价：￥<span style="text-decoration:underline;"> <%#= money(@info.total) %> </span>元 （人民币大写：<span class="underline"> <%#= total_money_cn(@info.total) %> </span>）。</b><br/>
-        2、支付方式：签订合同后，甲方在5个工作日内支付乙方合同总价的<span class="underline"><%#="&nbsp;"*6%></span>%，待产品全部交货并验收合格后，甲方在8个工作日之内支付乙方合同总价的<span class="underline"><%#="&nbsp;"*6%></span>%，甲方将合同总价剩余的<span class="underline"><%#="&nbsp;"*6%></span>%部分作为质量保证金，一年后无质量问题将支付剩余<span class="underline"><%#="&nbsp;"*6%></span>%。<br/>
-        3、乙方开户银行：<span class="underline"> <%#=bank_name%> </span>，账号：<span class="underline"> <%#=bank_account%> </span>。
+        1、<b>合同总价：￥<span style="text-decoration:underline;"> <%= money @order.total %> </span>元 （人民币大写：<span class="underline"> <%= total_money_cn @order.total %> </span>）。</b><br/>
+        2、支付方式：签订合同后，甲方在5个工作日内支付乙方合同总价的<span class="underline"><%="&nbsp;"*6%></span>%，待产品全部交货并验收合格后，甲方在8个工作日之内支付乙方合同总价的<span class="underline"><%=raw "&nbsp;"*6%></span>%，甲方将合同总价剩余的<span class="underline"><%=raw "&nbsp;"*6%></span>%部分作为质量保证金，一年后无质量问题将支付剩余<span class="underline"><%=raw "&nbsp;"*6%></span>%。<br/>
+        3、乙方开户银行：<span class="underline"> <%=raw bank_name%> </span>，账号：<span class="underline"> <%=raw bank_account%> </span>。
       </div>
     </p>
     <p>第五条  交货时间、地点和方式<br/>
     <div style="margin-left:2em;">
-      1、<b>交货时间：乙方应在本合同签订之日起的<span class="underline"><%#="&nbsp;"*6%></span>个工作日内将货物及其配件、随机工具送达甲方指定地点进行安装调试，并提供技术培训和咨询服务。</b><br/>
+      1、<b>交货时间：乙方应在本合同签订之日起的<span class="underline"><%="&nbsp;"*6%></span>个工作日内将货物及其配件、随机工具送达甲方指定地点进行安装调试，并提供技术培训和咨询服务。</b><br/>
       2、交货时，乙方应将货物的用户手册、保修手册等单证交付给甲方，其中：进口产品必须提供国家进出口商品检验部门的检验证明，国内产品还必须提供出厂合格证。<br/>
-      3、<b>交货地点：<span class="underline"><%#=detail_address%></span>。</b><br/>
+      3、<b>交货地点：<span class="underline"><%=raw detail_address%></span>。</b><br/>
       4、交货方式：由乙方送货上门。
     </div>
     </p>
@@ -111,24 +111,24 @@
     <p></p>
     <div style="clear:both"></div>
     <div style="clear:both">
-        <div class="float_left">甲方（签章）：<%#= @info.dep_p_name %></div>
-        <div class="float_left">乙方（签章）：<%#= @info.dep_s_name %></div>
+        <div class="float_left">甲方（签章）：<%=raw @order.buyer_name %></div>
+        <div class="float_left">乙方（签章）：<%=raw @order.seller_name %></div>
     </div>
     <div style="clear:both">
         <div class="float_left">甲方代表（签字）：</div>
         <div class="float_left">乙方代表（签字）：</div>
     </div>
     <div style="clear:both">
-        <div class="float_left">地址：<%#=@info.dep_p_add%></div>
-        <div class="float_left">地址：<%#=@info.dep_s_add%></div>
+        <div class="float_left">地址：<%=raw @order.buyer_addr%></div>
+        <div class="float_left">地址：<%=raw @order.seller_addr%></div>
     </div>
     <div style="clear:both">
-        <div class="float_left">电话：<%#=@info.dep_p_tel%></div>
-        <div class="float_left">电话：<%#=@info.dep_s_tel%></div>
+        <div class="float_left">电话：<%=raw @order.buyer_tel%></div>
+        <div class="float_left">电话：<%=raw @order.seller_tel%></div>
     </div>
     <div style="clear:both">
-        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
-        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
     </div>
 </div>
 </div>

@@ -2,21 +2,21 @@
 <div class="h_content" style="line-height:150%;">
     <div id="output1" class="erweima"><%#=@qr%></div>
     <div class="h1">中国储备粮管理总公司集中采购供货合同--汽车</div>
-    <div class="h2">【合同编号：<%#= @info.ht_code%>】</div>
+    <div class="h2">【合同编号：<%=raw  @order.contract_sn %>】</div>
     <div class="fl_2em" style="margin-bottom:8px;">核查合同文本格式条款内容的正确方法：</span> 供货商申请签署的每一个合同在系统中都会生成 “ 唯一的 ”电子合同编号，各单位的审计、财务人员可以登陆电子交易系统（http://fwgs.sinograin.com.cn中储粮服务网）输入合同号核查合同文本格式条款内容，若需进一步查询请直接与总公司联系。</div>
-    <div class="h3 float_left">凭证编号：<%#= h(@info.sn)  %></div>
-    <div class="h3 float_right">发票编号：<%#= h(@info.invoice_number)  %></div>
-    <div class="h3 float_left">甲方：<%#= h(@info.yw_type == "个人采购" ? @info.dep_p_man : @info.dep_p_name)  %></div>
-    <div class="h3 float_right">乙方：<%#= h(@info.dep_s_name)  %></div>
+    <div class="h3 float_left">凭证编号：<%=raw @order.sn  %></div>
+    <div class="h3 float_right">发票编号：<%=raw  @order.invoice_number  %></div>
+    <div class="h3 float_left">甲方：<%=raw @order.yw_type == "grcg" ? @order.buyer_man : @order.buyer_name)  %></div>
+    <div class="h3 float_right">乙方：<%=raw @order.seller_name  %></div>
     <div style="clear:both"></div>
     <p class="fl_2em">本合同所称汽车是指新车,为体现合同双方自愿原则，本合同中相关条款中有空白行，供双方自行约定或补充约定，合同生效后，未被修改的文字视为双方同意的内容。甲乙双方依据国家有关法律、法规的规定，在平等、自愿、协商一致的基础上，双方就汽车协议供货订立本合同，以兹共同遵守。</p>
     <p>一、采购车型信息：
-    <%#= render :partial => "/ddcg/print_product_content" %>
+    <%= render  partial: "/kobe/orders/ht/order_items_content" %>
     </p>
     <p>二、交车及验收：
         <ol>
-        <li>乙方收到甲方<span class="underline"><%#="&nbsp;"*20%></span>车款后将车辆交付给甲方。</li>
-        <li>甲方到乙方交车地<span class="underline"><%#="&nbsp;"*40%></span>提车。</li>
+        <li>乙方收到甲方<span class="underline"><%=raw "&nbsp;"*20%></span>车款后将车辆交付给甲方。</li>
+        <li>甲方到乙方交车地<span class="underline"><%=raw "&nbsp;"*40%></span>提车。</li>
         <li>车辆验收于交车地进行，甲方应对所购车辆外观和基本使用功能进行认真检查确认，如对车辆有异议应在验收当场提出。</li>
         <li>车辆验收无误后双方应签署车辆交接书，即为车辆正式交付。</li>
         <li>车辆交付后，车辆的所有权及风险由乙方转移至甲方。</li>
@@ -34,7 +34,7 @@
         <ol>
         <li>乙方保证提供符合国家产品质量标准及厂家该型号汽车质量标准的新下线的未曾经过维修的崭新车辆，符合国家安全及环保要求，可以上牌的合法车辆。</li>
         <li>车辆的质量与其它各项标准或要求均须全面符合本次采购过程中签订的有效相关文件要求，还应当适用国家相关法律、法规，以及中国储备粮管理总公司相关规章。</li>
-        <li>售后服务由<span class="underline"><%#="&nbsp;"*40%></span>公司的特约服务站负责。按《保养手册》的具体规定进行。</li>
+        <li>售后服务由<span class="underline"><%=raw "&nbsp;"*40%></span>公司的特约服务站负责。按《保养手册》的具体规定进行。</li>
         </ol>
     </p>
     <p>五、不可抗力：
@@ -54,24 +54,24 @@
     <p></p>
     <div style="clear:both"></div>
     <div style="clear:both">
-        <div class="float_left">甲方（签章）：<%#= @info.yw_type == "个人采购" ? @info.dep_p_man : @info.dep_p_name %></div>
-        <div class="float_left">乙方（签章）：<%#= @info.dep_s_name %></div>
+        <div class="float_left">甲方（签章）：<%=raw  @order.yw_type == "个人采购" ? @order.buyer_man : @order.buyer_name %></div>
+        <div class="float_left">乙方（签章）：<%=raw @order.seller_name %></div>
     </div>
     <div style="clear:both">
         <div class="float_left">甲方代表（签字）：</div>
         <div class="float_left">乙方代表（签字）：</div>
     </div>
     <div style="clear:both">
-        <div class="float_left">地址：<%#=@info.dep_p_add%></div>
-        <div class="float_left">地址：<%#=@info.dep_s_add%></div>
+        <div class="float_left">地址：<%=raw @order.buyer_addr%></div>
+        <div class="float_left">地址：<%=raw @order.seller_addr%></div>
     </div>
     <div style="clear:both">
-        <div class="float_left">电话：<%#=@info.dep_p_tel%></div>
-        <div class="float_left">电话：<%#=@info.dep_s_tel%></div>
+        <div class="float_left">电话：<%=raw @order.dep_p_tel%></div>
+        <div class="float_left">电话：<%=raw @order.tel%></div>
     </div>
     <div style="clear:both">
-        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
-        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
     </div>
 </div>
 </div>

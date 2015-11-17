@@ -1,21 +1,21 @@
 <div class="certificate">
 <div class="h_content" style="line-height:150%;">
-    <div id="output1" class="erweima"><%#=@qr%></div>
+    <div id="output1" class="erweima"><%=raw @qr%></div>
     <div class="h1">中国储备粮管理总公司集中采购供货合同--办公</div>
-    <div class="h2">【合同编号：<%#= @info.ht_code%>】</div>
+    <div class="h2">【合同编号：<%=raw @order.contract_sn%>】</div>
     <div class="fl_2em" style="margin-bottom:8px;">核查合同文本格式条款内容的正确方法：</span> 供货商申请签署的每一个合同在系统中都会生成 “ 唯一的 ”电子合同编号，各单位的审计、财务人员可以登陆电子交易系统（http://fwgs.sinograin.com.cn中储粮服务网）输入合同号核查合同文本格式条款内容，若需进一步查询请直接与总公司联系。</div>
-    <div class="h3 float_left">甲方：<%#= h(@info.yw_type == "个人采购" ? @info.dep_p_man : @info.dep_p_name)  %></div>
-    <div class="h3 float_right">乙方：<%#= h(@info.dep_s_name)  %></div>
+    <div class="h3 float_left">甲方：<%=raw @order.yw_type == "grcg" ? @order.buyer_man : @order.buyer_name  %></div>
+    <div class="h3 float_right">乙方：<%=raw @order.seller_name  %></div>
     <div style="clear:both"></div>
     <p class="fl_2em">为了保护各方合法权益，根据《中华人民共和国合同法》等相关法律、法规的规定并严格遵循采购协议供货项目招标文件、中标人的投标文件、服务网与中标人签订的《中国储备粮管理总公司协议供货框架协议》等，签订本合同，共同遵守。</p>
     <p>一、本合同采购的产品所需资金来源构成为：预算内（  ）；预算外（  ）；自筹（  ）。付款方式为：财政集中支付（  ）；采购单位直接支付（  ）。</p>
     <p>二、采购产品名称、型号、规格和主要配置、单价、数量、金额、产地。</p>
-    <%#= render :partial => "/ddcg/print_product_content" %>
+    <%= render  partial: "/kobe/orders/ht/order_items_content" %>
     <p>注意事项：1、本合同价格已包含了购买货物的价格及安装、调试、保修、售后服务的费用及其它相关费用，和所需缴纳的一切相关税、费；2、本合同计量货币币种为人民币。若约定使用外汇必须事先已经获得有权部门的批准，并且在本合同中应当注明批准文件文号，该外汇价格须按照批准文件内容并注明是按照固定汇率抑或是按照本合同甲方付款当日中国银行公布的牌价计算。</p>
-    <p>三、交（提）货时间、地点、方式：乙方于 <span class="underline"><B><%#= @info.node_value("送货结束日期")!="" ? @info.node_value("送货结束日期") : "&nbsp;"*8  %></B></span> 前将货物送至以下指定地点交由甲方指定收货人出具签字并加盖公章的证明，该文件仅证明已按现状收到若干具体单位数量的货物。</p>
+    <p>三、交（提）货时间、地点、方式：乙方于 <span class="underline"><B><%= @order.deliver_at %></B></span> 前将货物送至以下指定地点交由甲方指定收货人出具签字并加盖公章的证明，该文件仅证明已按现状收到若干具体单位数量的货物。</p>
     <div style="margin-left:2em;">
-        <p>甲方指定货物交接地点：<span class="underline"><B><%#=@info.dep_p_add%></B></span></p>
-        <p>甲方指定的签字收货人：<span class="underline"><B><%#=@info.dep_p_man%></B></span></p>
+        <p>甲方指定货物交接地点：<span class="underline"><B><%=raw @order.buyer_addr%></B></span></p>
+        <p>甲方指定的签字收货人：<span class="underline"><B><%=raw @order.buyer_man%></B></span></p>
         <p>此外：</p>
         <p class="fl_2em">1、乙方应在<span class="fill">交货前至少2个工作日</span>以书面方式向甲方提供交货计划；</p>
         <p class="fl_2em">2、本合同项下的货物及追加、更换、补充的货物(含零件、部件、配件)的风险自货物交付甲方且由甲方确认验收合格时转移。为此乙方须与有良好信誉记录的保险公司订立保险合同，负担并实际支付保险费，为货物在交付甲方且验收合格前的一切风险取得有效的保险。否则乙方仍应承担货物在交付甲方且由甲方确认验收合格前的一切风险，除非货损是由于甲方明显不当的作为所直接引起的，但该作为不包括验收的行为。</p>
@@ -34,7 +34,7 @@
         (3)若双方对验收所需工作日不能达成一致意见或一方未适当地配合另一方共同完成验收，则除非存在合理的并可以证实的原因或验收所依赖的客观条件不足，验收最迟应当在货到后<B><U>15天内</U></B>完成或应当被视为完成。 <br/>
         (4)由于乙方原因导致不能在上述合理期限内完成验收的，若甲方仍需要该批次货物的，除验收及付款期限应当顺延外，乙方还应当承担本合同所规定的延期交货的违约及赔偿责任；若甲方不再需要该批次货物的，除退货外，乙方还应当承担本合同所规定的不能履行合同约定交货义务的全部违约及赔偿责任。
         </li>
-        <li>对大型或复杂货物或需经试车、运行的货物：应经过至少1至3个月的（<B>本项目选择<span class="underline"><%#="&nbsp;"*6%></span>个月</B>）整套使用或整套试车、运行期方可以完成最终验收。该类验收不合格或不完全合格的情形，或在本合同约定期限内发现货物缺陷及其它质量问题或发现不符合设计要求、招标文件的要求，乙方应当严格按照甲方的要求免费给予合理解决直至完全符合招、投标文件要求及本合同约定为止。</li>
+        <li>对大型或复杂货物或需经试车、运行的货物：应经过至少1至3个月的（<B>本项目选择<span class="underline"><%=raw "&nbsp;"*6%></span>个月</B>）整套使用或整套试车、运行期方可以完成最终验收。该类验收不合格或不完全合格的情形，或在本合同约定期限内发现货物缺陷及其它质量问题或发现不符合设计要求、招标文件的要求，乙方应当严格按照甲方的要求免费给予合理解决直至完全符合招、投标文件要求及本合同约定为止。</li>
         <li>开箱检验时双方皆应派员参加，验收后并最迟于验收期限(含延长的验收期限)结束之日起<B><U>10日内</U></B>对合格货物应签署无异议的《中国储备粮管理总公司集中采购电子凭证》（以下简称《电子凭证》）；对显而易见不合格的货物应在《电子凭证》上加注表示货物不合格的文字或符号，或者以其它书面异议方式提出异议，均为有效异议，但该类异议应最迟于验收期限(含延长的验收期限)结束之日起<B><U>10日内</U></B>提出，否则除非乙方未在接到甲方异议之日起<B><U>10日内</U></B>提出书面反对意见，均应当视为无效异议。</li>
         <li>若检验时发现货物数量不足、规格与合同要求不符，或开箱时虽然货物外包装完好无损但箱内货物短缺或损伤，甲方有权拒绝接收或决定暂时收取该批次货物，双方或单方应当在发现后及时记录并最迟在验收期限(含延长的验收期限)结束之日起<B><U>7日内</U></B>签署书面证明并送达给对方一份，乙方应按照该证明将需补足或更换的货物在送达证明之日起<B><U>10日内</U></B>交付到甲方指定地点，按本合同前述各条款项规定交付及验收。</li>
         <li>乙方保证向甲方提供的技术资料包括全部中文版本是清晰的、正确的、完整的。如发现缺失，乙方应在甲方送达通知之日起<B><U>10日内</U></B>将需补足的资料交付到甲方指定地点，按本合同前述各条款项规定交付及验收。</li>
@@ -48,12 +48,12 @@
         <li>乙方保证提供的货物皆为符合国家标准的正品合格产品，且承诺为甲方提供符合或高于国家标准（国家质量监督检验检疫总局和信息产业部2002年联合发布的24号令）及招标文件要求的服务，且若该货物在投标货物生产厂商中国总部对外公众网站上具有标准配置和服务的，乙方为甲方提供的产品及服务符合或高于其标准。</li>
         <li>乙方保证提供的货物符合中华人民共和国国家及行业的安全质量标准、环保标准中之较高者；若货物来源于中华人民共和国境外，还要同时符合货物来源国的官方、行业及生产厂商的安全质量标准、环保标准中之较高者。上述标准为已发布的且在货物交付时有效的最新版本的标准；当货物来源于中华人民共和国境外时，产品必须附有原产地证明、中华人民共和国商检机构的检验证明、合法进货渠道证明及海关完税证明，此外，有关技术资料中须附有全文翻译的中文文本。</li>
         <li>乙方保证提供给甲方的货物是货物生产厂商原造的，全新、未使用过的，是用一流的工艺和优质材料制造而成的，并完全符合甲方的各项使用目的或在采购时提出的各项需要。</li>
-        <li>本合同中所提供的货物保修期为（大写）<span class="underline"><%#="&nbsp;"*6%></span>年。若本处填写的数据与投标货物生产厂商提供的《售后服务条款--投标产品质量保障和服务表》（详见附件一）中内容不一致，以其中服务年限更长或服务标准更高者为准。若乙方承诺免费提供更高标准的保修服务或增值服务的，可另附页填写，但填写内容对“国家标准、招标要求、《售后服务条款--投标产品质量保障和服务表》中的承诺”，提出免责条件、存在偏离和保留的条款无效。</li>
+        <li>本合同中所提供的货物保修期为（大写）<span class="underline"><%=raw "&nbsp;"*6%></span>年。若本处填写的数据与投标货物生产厂商提供的《售后服务条款--投标产品质量保障和服务表》（详见附件一）中内容不一致，以其中服务年限更长或服务标准更高者为准。若乙方承诺免费提供更高标准的保修服务或增值服务的，可另附页填写，但填写内容对“国家标准、招标要求、《售后服务条款--投标产品质量保障和服务表》中的承诺”，提出免责条件、存在偏离和保留的条款无效。</li>
         <li>货物的保修期或与质量相关的其它期限均自按照本合同约定方式完成最终验收之日起算。特别约定对大型或复杂货物或需经整套试车、整套运行的货物，该类包退、免费包换、免费包修、负责保修等期限，应当在约定质量保证期限、约定使用寿命、招标文件所要求的期限或行业认可的平均使用寿命、国家部委以上文件所规定的强制适用的期限等不同的期限中，自动适用其中最长的期限。若各方对该类期限不能达成一致的确认则应当通过本合同中所约定的解决争议的方式裁决出相关期限。</li>
         <li>如因甲方在使用中自行变更货物的硬件或软件而引起的缺陷，或因甲方人员维护不当而损坏的货物或零部件，乙方不负免费保修的责任，但乙方应按照或比照本合同相关条款规定提供更换或保修服务，由此引起的合理费用由甲方负担。</td>
         <li>如因乙方提供的货物硬件或软件有缺陷，或乙方提供的技术资料有错误，或乙方在现场的技术人员指导有错误而使货物不能达到合同规定的指标和技术性能，乙方应负责按本合同相关条款规定更换或修理，使货物运行指标和技术性能达到合同规定，由此引起的全部费用由乙方承担。 若因软件或硬件缺陷导致或引起甲方损失及导致或引起第三方受到损害的，全部赔偿责任均应由乙方承担。</li>
         <li>在合同货物保修期内或在应当由乙方负责的其他情况下，若由于乙方更换、修理和续补货物，而造成货物不得不停止使用，货物保修期应依照停止使用的实际时间加以延长，如因此给甲方造成损失，乙方应负责赔偿。</li>
-        <li>在质量保障及服务方面，乙方保证：整机保修<span class="underline"><%#="&nbsp;"*6%></span>年，免费安装、调试、现场技术培训和上门取送修服务，报修后<span class="underline"><%#="&nbsp;"*6%></span>小时内响应，第<span class="underline"><%#="&nbsp;"*6%></span>个工作日内上门，<span class="underline"><%#="&nbsp;"*6%></span>小时内实现故障修复，<span class="underline"><%#="&nbsp;"*6%></span>年内免费升级。</li>
+        <li>在质量保障及服务方面，乙方保证：整机保修<span class="underline"><%=raw "&nbsp;"*6%></span>年，免费安装、调试、现场技术培训和上门取送修服务，报修后<span class="underline"><%=raw "&nbsp;"*6%></span>小时内响应，第<span class="underline"><%=raw "&nbsp;"*6%></span>个工作日内上门，<span class="underline"><%=raw "&nbsp;"*6%></span>小时内实现故障修复，<span class="underline"><%=raw "&nbsp;"*6%></span>年内免费升级。</li>
         </ol>
     </p>
     <p>六、付款方式及期限按下列第（  ）项：<br/>
@@ -61,11 +61,11 @@
              第一项 采用财政集中支付方式的应当遵从财政部规定付款；<br />
              第二项 采用甲方直接支付方式的应当在验收合格并由双方签署《电子凭证》后 <span style="font-weight:bold">7 日内</span>将货款全部付清；<br />
              第三项 采用分期付款方式： <br/>
-             ①合同签订后，&nbsp;&nbsp;先付<span class="underline"><%#="&nbsp;"*6%></span>％的货款，小写￥：<span class="underline"><%#="&nbsp;"*14%></span>元，大写：<span class="underline"><%#="&nbsp;"*25%></span>；<br/>
-             ②货到验收合格后再付<span class="underline"><%#="&nbsp;"*6%></span>％的货款，小写￥：<span class="underline"><%#="&nbsp;"*14%></span>元，大写：<span class="underline"><%#="&nbsp;"*25%></span>；<br/>
-             ③预留<span class="underline"><%#="&nbsp;"*6%></span>％的货款，小写￥：<span class="underline"><%#="&nbsp;"*14%></span>元，大写：<span class="underline"><%#="&nbsp;"*40%></span>作为质量保证金，待质保期结束付清。<br/>
-             <br>供应商开户行名称：<span class="underline"><%#="&nbsp;"*60%></span>
-             <br>供应商开户行账号：<span class="underline"><%#="&nbsp;"*60%></span>
+             ①合同签订后，&nbsp;&nbsp;先付<span class="underline"><%=raw "&nbsp;"*6%></span>％的货款，小写￥：<span class="underline"><%=raw "&nbsp;"*14%></span>元，大写：<span class="underline"><%=raw "&nbsp;"*25%></span>；<br/>
+             ②货到验收合格后再付<span class="underline"><%=raw "&nbsp;"*6%></span>％的货款，小写￥：<span class="underline"><%=raw "&nbsp;"*14%></span>元，大写：<span class="underline"><%=raw "&nbsp;"*25%></span>；<br/>
+             ③预留<span class="underline"><%=raw "&nbsp;"*6%></span>％的货款，小写￥：<span class="underline"><%=raw "&nbsp;"*14%></span>元，大写：<span class="underline"><%=raw "&nbsp;"*40%></span>作为质量保证金，待质保期结束付清。<br/>
+             <br>供应商开户行名称：<span class="underline"><%=raw "&nbsp;"*60%></span>
+             <br>供应商开户行账号：<span class="underline"><%=raw "&nbsp;"*60%></span>
              <br/>其它：
              <p class="fl_2em">1、乙方在收到甲方每一批付款的同时，应向甲方开具相应金额的商业发票。</p>
              <p class="fl_2em">2、如乙方根据本合同规定有责任向甲方支付违约金或其它赔偿时，甲方在书面通知乙方后 , 有权从上述付款中扣除该等额款项。</p>
@@ -92,11 +92,11 @@
         </ol>
     </p>
     <p>八、乙方同意并保证尊重任何他方的知识产权及其它合法权益，承诺其所提供的产品或服务均为有合法权利的，不会侵犯、导致或引起侵犯第三方知识产权及其它合法权益，若因本合同所提供的相关产品或服务及因履行本合同导致侵犯第三方的知识产权及其它合法权益，所引起的任何及/或全部责任均应当由乙方承担。</p>
-    <p>九、因本合同所引起的任何相关争议均适用中华人民共和国法律、法规及规章并<B></B>选择采用以下第<span class="underline"><%#="&nbsp;"*6%></span>种方式及规则解决：</B>
+    <p>九、因本合同所引起的任何相关争议均适用中华人民共和国法律、法规及规章并<B></B>选择采用以下第<span class="underline"><%=raw "&nbsp;"*6%></span>种方式及规则解决：</B>
         <ol>
         <li>双方协商解决（ ）；</li>
         <li>向中标人指定协调人反映（ ）；</li>
-        <li>提请位于<span class="underline"><%#="&nbsp;"*20%></span>的<span class="underline"><%#="&nbsp;"*20%></span>仲裁委员会仲裁（ ）；</li>
+        <li>提请位于<span class="underline"><%=raw "&nbsp;"*20%></span>的<span class="underline"><%=raw "&nbsp;"*20%></span>仲裁委员会仲裁（ ）；</li>
         <li>依据《中华人民共和国民事诉讼法》的规定，向对双方争议有管辖权的人民法院提起诉讼（ ）。</li>
         </ol>
         <div class="fl_2em">双方同意下列约定作为规则：根据中国法律规定当事人在上述第 3 、4 项中只能选择其中一种；若选择上述第3种解决方式的必需在相应空格上填写仲裁委员会所在地名和仲裁委员会的准确的全称；若上述第 3、4项均未被选择且事后未能就仲裁事项达成一致书面意见的则可以直接适用上述第4项。</div>
@@ -116,24 +116,24 @@
     <p></p>
     <div style="clear:both"></div>
     <div style="clear:both">
-        <div class="float_left">甲方（签章）：<%#= @info.yw_type == "个人采购" ? @info.dep_p_man : @info.dep_p_name %></div>
-        <div class="float_left">乙方（签章）：<%#= @info.dep_s_name %></div>
+        <div class="float_left">甲方（签章）：<%=raw  @order.yw_type == "grcg" ? @order.buyer_man : @order.buyer_name %></div>
+        <div class="float_left">乙方（签章）：<%=raw  @order.seller_name %></div>
     </div>
     <div style="clear:both">
         <div class="float_left">甲方代表（签字）：</div>
         <div class="float_left">乙方代表（签字）：</div>
     </div>
     <div style="clear:both">
-        <div class="float_left">地址：<%#=@info.dep_p_add%></div>
-        <div class="float_left">地址：<%#=@info.dep_s_add%></div>
+        <div class="float_left">地址：<%=raw @order.buyer_addr%></div>
+        <div class="float_left">地址：<%=raw @order.seller_addr%></div>
     </div>
     <div style="clear:both">
-        <div class="float_left">电话：<%#=@info.dep_p_tel%></div>
-        <div class="float_left">电话：<%#=@info.dep_s_tel%></div>
+        <div class="float_left">电话：<%=@order.buyer_tel%></div>
+        <div class="float_left">电话：<%=@order.seller_tel%></div>
     </div>
     <div style="clear:both">
-        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
-        <div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
     </div>
 </div>
 </div>
