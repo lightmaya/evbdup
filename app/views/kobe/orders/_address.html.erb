@@ -6,11 +6,11 @@
 
 <div class="step-current newobox hide" id="step_address_current">
   <div class="headline"><h2>收货地址</h2></div>
-  <% [["buyer_man", "收货人"], ["buyer_addr", "收货地址"], ["buyer_mobile", "手机"], ["buyer_tel", "座机"]].each do |col| %>
+  <% [["buyer_man", "收货人"], ["buyer_addr", "收货地址"], ["buyer_mobile", "手机"], ["buyer_tel", "座机"], ["deliver_at", "要求交付日期", "my97_date"]].each do |col| %>
     <div class="newinfo" id="order_<%= col[0] %>_div">
       <div class="new-info-label"><span>*</span> <%= col[1] %>：</div>
       <div class="new-info-field">
-        <%= f.text_field col[0], onblur: "checkAddress('order_#{col[0]}_div')", class: "fiel_inpute" %>
+        <%= f.text_field col[0], onblur: "checkAddress('order_#{col[0]}_div')", class: "fiel_inpute #{col[2]}" %>
       </div>
       <span class="status error" id="order_<%= col[0] %>_div_error"></span>
     </div>

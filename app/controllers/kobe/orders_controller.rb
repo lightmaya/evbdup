@@ -8,7 +8,7 @@ class Kobe::OrdersController < KobeController
 
   skip_authorize_resource :only => [:same_template]
 
-  before_filter :order_from_cart, :only => [:cart_order]
+  before_filter :order_from_cart, :only => [:cart_order, :create_cart_order]
   # 辖区内采购项目
   def index
     @q = Order.find_all_by_buyer_code(current_user.department.real_ancestry).where(get_conditions("orders")).ransack(params[:q]) 
@@ -39,41 +39,32 @@ class Kobe::OrdersController < KobeController
     end
   end
 
-  def create_cart_order
-    @order = Order.from(@cart, current_user, params)
-    dsad
-    @order.save  
-
-    redirect_to action: :index
+  def agent_confirm_pre
+    @order = Order.find(params[:id])
   end
 
+  def agent_confirm
+  end
+
+  # 下单
+  def create_cart_order
+    begin
+      if @order.save
+        # 清理购物车
+        # @order.items.each{|item| @cart.destroy(item.product_id, item.seller_id)}
+        # current_user.update(cart: @cart.to_yaml)
+        return render :json => {"success" => true}
+      else
+        return render :json => {"success" => false, "msg" => "订单保存失败: #{@order.errors.full_messages}"}
+      end 
+    rescue Exception => e
+      return render :json => {"success" => false, "msg" => "订单保存失败！"}
+    end
+  end
+
+  #  下单页面
   def cart_order
-    @plans = [] #current_user.budgets
-    # params[:check].each do |product_id|
-    #   if item = @cart.items.find{|item| item.product_id.to_i == product_id}
-    #     product = item.product
-    #     next unless product.show
-    #     order_item = @order.items.build(category_id: product.category_id, 
-    #       product_id: product_id, brand: product.brand, model: product.model, version: product.version,
-    #       unit: product.unit, market_price: product.market_price,
-    #       bid_price: product.bid_price,
-    #       price: params["real_price_cart_item_#{product_id}"].to_f,
-    #       quantity: [params["cart_item_#{product_id}"].to_i, 1].max
-    #     )
-    #   end
-    # end
 
-    # slave_objs = [@order.items]
-    # @ms_form = MasterSlaveForm.new(Order.xml, OrdersItem.xml, @order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
-  
-
-    # if @order.save
-    #   redirect_to edit_kobe_order_path(@order)
-    # else
-
-    #   tips_get("下单失败，请稍后重试")
-    #   redirect_to :back
-    # end
   end
 
   def update
@@ -189,7 +180,22 @@ class Kobe::OrdersController < KobeController
     end
 
     def order_from_cart
-      return redirect_to cart_path if @cart.items.blank?
-      @order = Order.from(@cart, current_user) 
+      return redirect_to cart_path if @cart.ready_items.blank?
+
+      unless @cart.same_seller?
+        tips_get("请选择同一供应商的商品")
+        return redirect_to cart_path
+      end
+
+      unless @cart.same_ht?
+        tips_get("请选择同一合同模板品目的商品")
+        return redirect_to cart_path
+      end
+
+      @order = if action_name == "create_cart_order"
+        Order.from(@cart, current_user, params)
+      else
+        Order.from(@cart, current_user)
+      end 
     end
 end

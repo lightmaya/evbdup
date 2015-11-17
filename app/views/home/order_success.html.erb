@@ -1,0 +1,23 @@
+<!--购物车代码开始-->
+<div class="successorder">
+  <div class="min_height">
+    <div class="sureordermain">
+      <span>恭喜您</span>，您的订单已提交成功，您可以在<%= link_to '我的订单', kobe_orders_path %>中查看，<span id="countdown_num">7</span>秒后跳转
+    </div>
+  </div>
+</div>
+<!--购物车代码结束-->
+<script type="text/javascript">
+  $(function () {
+    setTimeout("countdown();", 1000);
+  });
+  function countdown () {
+    num = parseInt($("#countdown_num").text());
+    if (num == 0) {
+      location.href = '/kobe/orders';
+    }else{
+      $("#countdown_num").text(num-1);
+      setTimeout("countdown();", 1000);
+    };
+  };
+</script>

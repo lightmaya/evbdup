@@ -22,7 +22,7 @@ class Order < ActiveRecord::Base
 
   after_create do 
     create_no("ZCL", "contract_sn")
-    create_no(rule.code, "sn")
+    create_no(rule.code, "sn") if rule
   end
 
   PTypes = {"xygh" => "单位采购", "grcg" => "个人采购"}
@@ -106,28 +106,54 @@ class Order < ActiveRecord::Base
     order.buyer_mobile = user.mobile
     order.buyer_addr = user.department.address
     order.user_id = user.id
+    order.sfz = user.identity_num
     order
   end
 
   def self.from(cart, user, params = {})
+    category_name_ary = []
     order = init_order(user)
-    cart.items.each do |item|
+    dep = nil
+    cart.ready_items.each do |item|
       next if item.ready.blank?
       product = item.product
+      # 获取订单的dep
+      if item == cart.ready_items.first
+        dep = if product.cjzx?
+          product.department
+        else
+          Agent.find(item.seller_id).department
+        end
+      end
+      order.seller_id ||= item.seller_id
       order.items.build(market_price: item.market_price,  
         product_id: item.product_id, quantity: item.num, price: item.price,
         category_id: product.category_id, category_code: product.category_code, 
         category_name: product.category.name, brand: product.brand, model: product.model,
         version: product.version, unit: product.unit, bid_price: product.bid_price,
-        item_id: product.item_id, total: item.num * item.price, vid: item.id, agent_id: item.agent_id
+        item_id: product.item_id, total: item.num * item.price, vid: item.id
         )
+      category_name_ary << product.category.name
     end
 
     # order.items.group_by{|item| item.category.ht_template && item.agent_id}.size
 
-    dep = order.items.first.agent.dep
+    # 先判断seller_id
+    dep = if order.items.first.product.item.item_type
+      Agent.find(order.seller_id).agent_dep
+    else
+      Department.find(order.seller_id)
+    end
 
+    order.name = Order.get_project_name(nil, user, category_name_ary.join("、"))
     order.seller_name = dep.name
+    order.seller_code = dep.real_ancestry
+    order.seller_man = dep.users.first.name
+    order.seller_tel = dep.users.first.tel
+    order.seller_mobile = dep.users.first.mobile
+    order.seller_addr = dep.address
+    order.budget = 0
+    order.deliver_at = Date.today + 3
 
     if params.present?
       order.attributes = params[:order].permit!

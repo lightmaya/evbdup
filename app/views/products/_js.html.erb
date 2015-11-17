@@ -35,7 +35,15 @@
   });
 
   function add_to_cart(agent_id){
-    var url = "/cart/change/" + $("#product_id").val() + "?agent_id=" + agent_id + "&num=" + $("#qty").val();
+    var num = parseInt($("#qty").val());
+    if ($.isBlank(num) || num < 1){
+      num = 1
+    }
+    if ((num + 1) > 9999){
+      num = 9999;
+    }
+
+    var url = "/cart/change/" + $("#product_id").val() + "?seller_id=" + agent_id + "&num=" + num;
     window.location.href = url;
   }
 </script>

@@ -80,6 +80,11 @@ class Product < ActiveRecord::Base
     self.category.user_ids.flatten.uniq
   end
 
+  # 厂家直销？
+  def cjzx?
+    !product.item.item_type
+  end
+
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act

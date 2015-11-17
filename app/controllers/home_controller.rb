@@ -14,6 +14,10 @@ class HomeController < JamesController
       ztree_nodes_json(Menu)
   end
 
+  def order_success
+    
+  end
+
   def form_test
   end
 

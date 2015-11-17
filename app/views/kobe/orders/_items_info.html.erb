@@ -1,5 +1,5 @@
-<div class="step" id="step_items">
-  <div class="headline"><h2>送货清单</h2></div>
+<div class="step">
+  <div class="headline"><h2><i class="fa fa-chevron-circle-down"></i>送货清单</h2></div>
   <table class="table table-bordered table-striped">
     <tr>    
       <th>产品</th>
@@ -8,18 +8,13 @@
       <th width="100px">数量</th>
       <th width="190px">小计</th>
     </tr>
-    <% @order.items.each_with_index do |item, index| %>
+    <%= f.fields_for :items do |item_form| %>
+    <% item = item_form.object %>
       <tr>
         <td><%= item.name %></td>
         <td class="tc"><%= money item.bid_price %></td>
         <td class="tc red">
-          ¥<span id="show-price-<%= item.vid %>"><span id="item-price-show-<%= item.vid %>"><%= item.price.round(2) %></span>
-            <%= link_to_void "[修改]", onclick: "change_real_price('#{item.vid}');" %>
-          </span>
-          <span id="edit-price-<%= item.vid %>" class="hide save_price_span">
-            <%= text_field_tag "item_price_#{item.vid}", item.price, class: "w80", max_price: item.bid_price.to_f, num: item.quantity %>
-            <%= link_to_void "确定", onclick: "save_real_price('#{item.vid}')", class: 'btn-u btn-u-sm' %>
-          </span>
+          ¥<%= item_form.text_field :price, class: "w80", max_price: item.bid_price.to_f, num: item.quantity %>
         </td>
         <td class="tc"><%= item.quantity %></td>
         <td class="tc">¥<span class="cart-item-total" id="cart-item-total-<%= item.vid %>"><%= number_with_precision(item.total, :precision => 2) %><span></td>

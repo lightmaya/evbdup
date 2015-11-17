@@ -3,6 +3,7 @@ class OrdersItem < ActiveRecord::Base
 	belongs_to :order
 	belongs_to :category
 	belongs_to :product
+	belongs_to :agent
 	belongs_to :product_item, class_name: :Item, foreign_key: :item_id
 
 	attr_accessor :vid

@@ -1,0 +1,17 @@
+<div class="step">
+  <div class="headline"><h2><i class="fa fa-chevron-circle-down"></i>基本信息</h2></div>
+  <table class="table table-bordered table-striped">
+    <tr>    
+      <th>项目名称</th>
+      <td><%= @order.name %></td>
+      <th>采购单位</th>
+      <td><%= @order.buyer_name %></td>
+      <th>发票抬头</th>
+      <td><%= @order.payer %></td>
+    </tr>
+    <tr>
+      <th>采购人姓名</th>
+      <td><%= @order.buyer_man %></td>
+    </tr>
+  </table>
+</div>

@@ -13,6 +13,7 @@ Evbdup::Application.routes.draw do
   get 'errors' => 'errors#index'
   get 'help' => "home#help"
   get 'main' => 'kobe/main#index'
+  get 'order_success' => 'home#order_success'
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
   get 'cart_order' => "kobe/orders#cart_order", as: :cart_order
@@ -102,8 +103,9 @@ namespace :kobe do
       post :same_template, :create_cart_order
     end
     member do
+      get :agent_confirm_pre
       get :audit, :print
-      post :commit, :update_audit
+      post :commit, :update_audit, :agent_confirm
     end
   end
   resources :departments do 

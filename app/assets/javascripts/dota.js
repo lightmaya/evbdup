@@ -67,20 +67,37 @@ $(function(){
       art_alert("单位采购请选择预算审批单");
       return false;
     }
+
+    var price_flag = false;
+    $(".save_price_span").each(function(){ 
+      if(!$(this).is(":hidden")){
+        price_flag = true;
+        return false;
+      } 
+    });
+
+    if(price_flag){
+      $(".save_price_span").focus();
+      art_alert("请先保存采购人价格");
+      return false;
+    }
+    
   }).on("ajax:beforeSend", function(){
     $("#order_submit_btn").hide();
     $("#loading_btn").show();
   }).on("ajax:success", function(e, r, status, xhr){
     if (r.success){
-      window.location.href = "/orders/success.html";
+      window.location.href = "/order_success.html";
     }else{
-      $("#order-loading").html("下单失败，请检查");
-      $("#order_msg").html(r.msg);
-      $("#order_msg_div").show();
+      $("#order_msg").text(r.msg);
+      $("#order_msg").show();
+      $("#order_submit_btn").show();
+      $("#loading_btn").hide();
     }
   }).on("ajax:error", function(e, xhr, status, error){
-    $("#order-loading").remove();
     alert("系统繁忙，请刷新页面稍后再试！");
+    $("#order_submit_btn").show();
+    $("#loading_btn").hide();
   }).on("ajax:complete", function(e, xhr, status, error){
     // $("#order-loading").remove();
   });
@@ -340,7 +357,7 @@ function save_address(){
     return;
   }
   
-  $("#current_address_info").text($("#order_buyer_man").val() + " " + $("#order_buyer_addr").val() + " " + $("#order_buyer_tel").val() + " " + $("#order_buyer_mobile").val());
+  $("#current_address_info").text($("#order_buyer_man").val() + " " + $("#order_buyer_addr").val() + " " + $("#order_buyer_tel").val() + " " + $("#order_buyer_mobile").val() + " 要求交付日期：" + $("#order_deliver_at").val());
   $("#step_address").show();
   $("#step_address_current").hide();
 }
