@@ -195,37 +195,4 @@ module KobeHelper
     return result
   end
 
-  def get_advanced_search_form(search_url, model_name)
-    return '' unless model_name.respond_to? "advanced_search_array"
-    search_form_for(@q, url: search_url, html: { method: :get, class: 'form-horizontal' }) do |f|
-      get_advanced_search_field(f, model_name) 
-    end
-  end
-
-  def get_advanced_search_field(f, model_name)
-    str = ''
-    model_name.advanced_search_array.each do |ha|
-      field_ha = {}
-      field_ha[:class] = "form-control"
-      field_ha[:class] << " #{ha[:class_name]}" if ha[:class_name].present?
-      field_ha[:placeholder] = ha[:placeholder].present? ? ha[:placeholder] : "请输入#{ha[:label]}..."
-      field_ha[:json_url] = ha[:json_url] if ha[:json_url].present?
-      # if ha[:partner].present?
-      #   field_ha[:partner] = ha[:partner]
-      #   hidden_field = f.search_field(ha[:partner].to_sym, hide_indicator: true)
-      # end
-
-      field = f.search_field(ha[:name].to_sym, field_ha)
-      str << %Q{
-        <div class="form-group">
-          <label class="col-lg-3 control-label" for="inputEmail1">#{ha[:label]}</label>
-          <div class="col-lg-9">#{field.to_str}</div>
-        </div>
-      }
-    end
-    str << content_tag(:div, raw('<button class="btn btn-success btn-sm" type="submit">搜索</button>').html_safe, class: 'form-group heading')
-
-    return str.html_safe
-  end
-
 end
