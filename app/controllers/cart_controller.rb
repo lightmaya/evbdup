@@ -16,13 +16,13 @@ class CartController < JamesController
   end
 
   def show
+  
   end
 
   # 改变购买状态
   def dynamic
     Product.where("id in (?)", params[:pids].to_s.split("_")).each do |product|
-      seller = product.item.agents.find_by_id(params[:seller_id])
-      @cart.dynamic(product, seller, params[:ready] == "true")
+      @cart.dynamic(product_id, seller_id, params[:ready] == "true")
     end
     save_cart
     render :json => {"success" => true}
@@ -45,8 +45,8 @@ class CartController < JamesController
     @product = Product.show.find_by_id(params[:id])
     return render_404 if @product.blank?
 
-    @seller = if @procut.cjzx?
-      @product.department_id
+    @seller = if @product.cjzx?
+      @product.department
     else
       @product.item.agents.find_by_id(params[:seller_id])
     end

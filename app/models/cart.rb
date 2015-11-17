@@ -21,13 +21,15 @@ class Cart
   def change(product, seller, num, set = false)
     num = num.to_i
     item_id = "#{product.id}-#{seller.id}"
+    # 同一供应商id
+    sid = "#{seller_id}-#{seller.class}"
     if current_item = self.items.find { |item| item.id.to_s == item_id }
       set ? current_item.num = num : current_item.cr(num)
       destroy(product.id, seller.id) if current_item.num <= 0
     else
       current_item = CartItem.new({:market_price => product.market_price, :ready => true, 
       :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
-      :name => product.name, :seller_id => seller.id, 
+      :name => product.name, :seller_id => seller.id, id: item_id, sid: sid,  
       :seller_name => seller.name, id: item_id, ht: product.category.ht_template,
       :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
       self.items = [current_item] + self.items
@@ -41,9 +43,9 @@ class Cart
   end
 
   # 是否准备购买
-  def dynamic(product, seller, ready)
+  def dynamic(product_id, seller_id, ready)
     self.items.each do |item|
-      item_id = "#{product.id}-#{seller.id}"
+      item_id = "#{product_id}-#{seller_id}"
       item.ready = ready if item.id == item_id
     end
   end
@@ -66,9 +68,9 @@ class Cart
     self.items.select{|item| item.ready }
   end
 
-  # 同一seller
+  # 同一供应商
   def same_seller?
-    ready_items.map(&:seller_id).uniq.size == 1
+    ready_items.map(&:sid).uniq.size == 1
   end
 
   # 同一ht
@@ -80,7 +82,7 @@ end
 
 class CartItem
 
-  attr_accessor :product_id, :num, :price, :name, :sku, :ready, :id, :ht,
+  attr_accessor :product_id, :num, :price, :name, :sku, :ready, :id, :ht, :sid,
     :market_price, :old_price, :bid_price, :seller_id, :seller_name, :big_category_name
 
   def initialize(attributes = {})
@@ -88,6 +90,7 @@ class CartItem
     attributes[:num] = [attributes[:num].to_i, 1].max
     self.num = attributes[:num].to_i
     self.id = attributes[:id]
+    self.sid = attributes[:sid]
     self.ht = attributes[:ht]
     self.bid_price = attributes[:bid_price].to_f
     self.price = attributes[:price].to_f

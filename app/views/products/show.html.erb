@@ -66,8 +66,8 @@
               <button type='button' class="quantity-button" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
               <input type='text' class="quantity-field" name='qty' value="1" id='qty'/>
               <button type='button' class="quantity-button" name='add' onclick='javascript: document.getElementById("qty").value++;' value='+'>+</button>
-              <% if product.cjzx? %>
-
+              <% if @product.cjzx? %>
+                <%= link_to_void "加入购物车", onclick: "add_to_cart('#{@product.department_id}')", class:"btn-u btn-u-sea-shop btn-u-lg"  %>
               <% else %>
                 <button id="xzgys" type="button" class="btn-u btn-u-sea-shop btn-u-lg">选择供应商</button>
               <% end -%>
@@ -164,17 +164,13 @@
           <table id="gyslb" class="table table-bordered table-striped">
             <tr>
               <th>供应商</th>
-              <th>报价（元）</th>
-              <th>库存</th>
               <th>联系方式</th>
               <th>操作</th>
             </tr>
-            <% @product.item.agents[0..3].each do |agent| %>
+            <% @product.agents.includes(:agent_dep).each do |agent| %>
               <tr>
                 <td><%= agent.name %></td>
-                <td><%= agent.name %></td>
-                <td><%= agent.name %></td>
-                <td><%= agent.name %></td>
+                <td><%= agent.agent_dep.tel %></td>
                 <td><%= link_to_void "购买", onclick: "add_to_cart('#{agent.id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
                 </td>
               </tr>

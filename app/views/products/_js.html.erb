@@ -34,7 +34,7 @@
 
   });
 
-  function add_to_cart(agent_id){
+  function add_to_cart(seller_id){
     var num = parseInt($("#qty").val());
     if ($.isBlank(num) || num < 1){
       num = 1
@@ -43,7 +43,7 @@
       num = 9999;
     }
 
-    var url = "/cart/change/" + $("#product_id").val() + "?seller_id=" + agent_id + "&num=" + num;
+    var url = "/cart/change/" + $("#product_id").val() + "?seller_id=" + seller_id + "&num=" + num;
     window.location.href = url;
   }
 </script>

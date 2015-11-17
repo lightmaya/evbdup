@@ -13,7 +13,7 @@ $(function(){
       calc_item($(this).parent().attr('item_id'), $num.val());
       // 计算购物车总价
       calc_total();
-      $.get("/cart/change/" + $(this).parent().attr('pid') + "?agent_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + $num.val());
+      $.get("/cart/change/" + $(this).parent().attr('pid') + "?seller_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + $num.val());
     };
   });
 
@@ -32,7 +32,7 @@ $(function(){
     calc_item($(this).parent().attr('item_id'), $num.val());
     // 计算购物车总价
     calc_total();
-    $.get("/cart/change/" + $(this).parent().attr('pid') + "?agent_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + $num.val());
+    $.get("/cart/change/" + $(this).parent().attr('pid') + "?seller_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + $num.val());
   });
 
 
@@ -127,7 +127,7 @@ $(function(){
     }
     // 计算购物车总价
     calc_total();
-    $.get("/cart/dynamic?pids=" + pid + "&agent_id=" + aid + "&ready=" + $(this).prop("checked"));
+    $.get("/cart/dynamic?pids=" + pid + "&seller_id=" + aid + "&ready=" + $(this).prop("checked"));
   });
 
   // 勾选供应商
@@ -154,7 +154,7 @@ $(function(){
     }
     // 计算购物车总价
     calc_total();
-    $.get("/cart/dynamic?pids=" + pids.join("_") + "&agent_id=" + aid + "&ready=" + $(this).prop("checked"));
+    $.get("/cart/dynamic?pids=" + pids.join("_") + "&seller_id=" + aid + "&ready=" + $(this).prop("checked"));
   });
   // 勾选供应商END
 
@@ -176,7 +176,7 @@ $(function(){
     calc_item($(this).parent().attr('item_id'), num);
     // 计算购物车总价
     calc_total();
-    $.get("/cart/change/" + $(this).parent().attr('pid') + "?agent_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + num);
+    $.get("/cart/change/" + $(this).parent().attr('pid') + "?seller_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + num);
   });
 
   // 选择采购方式

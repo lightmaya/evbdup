@@ -117,14 +117,7 @@ class Order < ActiveRecord::Base
     cart.ready_items.each do |item|
       next if item.ready.blank?
       product = item.product
-      # 获取订单的dep
-      if item == cart.ready_items.first
-        dep = if product.cjzx?
-          product.department
-        else
-          Agent.find(item.seller_id).department
-        end
-      end
+      order.item_type ||= product.item.item_type
       order.seller_id ||= item.seller_id
       order.items.build(market_price: item.market_price,  
         product_id: item.product_id, quantity: item.num, price: item.price,
@@ -139,7 +132,7 @@ class Order < ActiveRecord::Base
     # order.items.group_by{|item| item.category.ht_template && item.agent_id}.size
 
     # 先判断seller_id
-    dep = if order.items.first.product.item.item_type
+    dep = if order.item_type
       Agent.find(order.seller_id).agent_dep
     else
       Department.find(order.seller_id)

@@ -20,7 +20,7 @@ class Product < ActiveRecord::Base
 
   def agents
     # item.try(:agents)
-    Agent.where(department_id: self.department_id, item_id: self.item_id).map{|e|e.agent_dep}
+    Agent.where(department_id: self.department_id, item_id: self.item_id).includes(:agent_dep)
   end
 
   def show
@@ -83,7 +83,7 @@ class Product < ActiveRecord::Base
 
   # 厂家直销？
   def cjzx?
-    !product.item.item_type
+    !item.item_type
   end
 
   # 根据action_name 判断obj有没有操作
