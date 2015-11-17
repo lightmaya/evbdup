@@ -19,7 +19,8 @@ class Product < ActiveRecord::Base
   end
 
   def agents
-    item.try(:agents)
+    # item.try(:agents)
+    Agent.where(department_id: self.department_id, item_id: self.item_id).map{|e|e.agent_dep}
   end
 
   def show
