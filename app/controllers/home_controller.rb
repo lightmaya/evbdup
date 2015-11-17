@@ -49,6 +49,20 @@ class HomeController < JamesController
   def help
   end
 
+  def check_ysd
+    sn = params[:no].gsub("'", "").strip
+    money = params[:m].gsub(",", "").to_f
+    @order = Order.find_by("(sn = ? or contract_sn = ? ) and total>= ? and total<= ? and status in (?)",sn,sn,money-0.1,money+0.1,Order.effective_status )
+    if  !@order.present?
+      render :not_found
+    else
+      str = "合同编号：#{sn}"
+      str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{sn}?m=#{@order.total}"
+      @qr = qrcode(str)
+      render partial: @order.ht , layout: 'print'  
+    end
+  end
+
   private
     # 查询条件对应
     # [category_id]_[brand]_[sort]_[page]

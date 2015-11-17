@@ -1,7 +1,3 @@
-<% 
-seller = get_dep(@info.dep_s_id,@info.dep_s_user_type)
-buyer = get_dep(@info.user_dep,@info.user_type)
-%>
 <style type="text/css">
     .ht_dep, .ht_dep td, .ht_dep tr { border: none; font-size: 16px; font-weight: bold; }
     .ht_dep .title { width: 15%; }
@@ -11,42 +7,42 @@ buyer = get_dep(@info.user_dep,@info.user_type)
 <div class="h_content" style="line-height:150%;">
 <div id="output1" class="erweima"><%#=@qr%></div>
 <div class="h1">中国储备粮管理总公司集中采购供货合同--包装物</div>
-<div class="h2">【合同编号：<%#= @info.ht_code%>】</div>
+<div class="h2">【合同编号：<%=raw @order.contract_sn%>】</div>
 <div class="fl_2em" style="margin-bottom:8px;">核查合同文本格式条款内容的正确方法：</span> 供货商申请签署的每一个合同在系统中都会生成 “ 唯一的 ”电子合同编号，各单位的审计、财务人员可以登陆电子交易系统（http://fwgs.sinograin.com.cn中储粮服务网）输入合同号核查合同文本格式条款内容，若需进一步查询请直接与总公司联系。</div>
 <table class='ht_dep'>
     <tr>
-    <td class='title'>甲方名称：</td><td class='content'><%#= h(@info.dep_p_name) %></td><td></td>
-    <td class='title'>乙方名称：</td><td class='content'><%#= h(@info.dep_s_name) %></td>
+    <td class='title'>甲方名称：</td><td class='content'><%=raw @order.buyer_name %></td><td></td>
+    <td class='title'>乙方名称：</td><td class='content'><%=raw  @order.seller_name) %></td>
     </tr>
     <tr>
-    <td class='title'>地&nbsp;&nbsp;址：</td><td class='content'><%#= h(@info.dep_p_add) %></td><td></td>
-    <td class='title'>地&nbsp;&nbsp;址：</td><td class='content'><%#= h(@info.dep_s_add) %></td>
+    <td class='title'>地&nbsp;&nbsp;址：</td><td class='content'><%=raw @order.buyer_addr %></td><td></td>
+    <td class='title'>地&nbsp;&nbsp;址：</td><td class='content'><%=raw @order.seller_addr %></td>
     </tr>
     <tr>
-    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%#= h(buyer.postalcode) %></td><td></td>
-    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%#= h(seller.postalcode) %></td>
+    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%=raw @order.buyer.post_code %></td><td></td>
+    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%=raw @order.seller.post_code %></td>
     </tr>
     <tr>
-    <td class='title'>法定代表人：</td><td class='content'><%#= h(buyer.frdb) %></td><td></td>
-    <td class='title'>法定代表人：</td><td class='content'><%#= h(seller.frdb) %></td>
+    <td class='title'>法定代表人：</td><td class='content'><%=raw @order.buyer.legal_name %></td><td></td>
+    <td class='title'>法定代表人：</td><td class='content'><%=raw @seller.seller.legal_name %></td>
     </tr>
     <tr>
-    <td class='title'>项目联系人：</td><td class='content'><%#= h(@info.dep_p_man) %></td><td></td>
-    <td class='title'>项目联系人：</td><td class='content'><%#= h(@info.dep_s_man) %></td>
+    <td class='title'>项目联系人：</td><td class='content'><%=raw @order.buyer_man %></td><td></td>
+    <td class='title'>项目联系人：</td><td class='content'><%=raw @order.seller_man %></td>
     </tr>
     <tr>
-    <td class='title'>账&nbsp;&nbsp;号：</td><td class='content'><%#= h(buyer.bank_account) %></td><td></td>
-    <td class='title'>账&nbsp;&nbsp;号：</td><td class='content'><%#= h(seller.bank_account) %></td>
+    <td class='title'>账&nbsp;&nbsp;号：</td><td class='content'><%=raw @order.buyer.bank_account) %></td><td></td>
+    <td class='title'>账&nbsp;&nbsp;号：</td><td class='content'><%=raw @order.seller.bank_account) %></td>
     </tr>
     <tr>
-    <td class='title'>开户银行：</td><td class='content'><%#= h(buyer.bank_name) %></td><td></td>
-    <td class='title'>开户银行：</td><td class='content'><%#= h(seller.bank_name) %></td>
+    <td class='title'>开户银行：</td><td class='content'><%=raw @order.buyer.bank_name %></td><td></td>
+    <td class='title'>开户银行：</td><td class='content'><%=raw @order.seller.bank_name %></td>
     </tr>
 </table>
 <div style="clear:both"></div>
 <p class="fl_2em">双方经过平等协商，在真实、充分地表达各自意愿的基础上，根据《中华人民共和国合同法》的规定，达成如下合同，并由双方共同恪守：</p>
 <p>一、合同标的（下称：货物）及合同总价</p>
-<%#= render :partial => "/ddcg/print_product_content" %>
+    <%= render  partial: "/kobe/orders/ht/order_items_content" %>
 <p>注：合同总价已包含货物的价款、包装、运输、装卸、咨询、服务等其他各项有关费用。</p>
 <p>二、采购时间和采购期限：
     <ol>
@@ -56,8 +52,8 @@ buyer = get_dep(@info.user_dep,@info.user_type)
 </p>
 <p>三、质量要求、技术标准和定量包装重量：
     <ol>
-        <li>包装物材料：聚丙烯，带两边各有两条<span class="underline"><%#="&nbsp;"*6%></span>色线条用以区分。</li>
-        <li>规格：长度<span class="underline"><%#="&nbsp;"*6%></span>cm±1厘米，宽度<span class="underline"><%#="&nbsp;"*6%></span>cm±1厘米。每袋重量<span class="underline"><%#="&nbsp;"*6%></span>g±2克。要求能够包装<span class="underline"><%#="&nbsp;"*6%></span>kg。</li>
+        <li>包装物材料：聚丙烯，带两边各有两条<span class="underline"><%=raw "&nbsp;"*6%></span>色线条用以区分。</li>
+        <li>规格：长度<span class="underline"><%=raw "&nbsp;"*6%></span>cm±1厘米，宽度<span class="underline"><%=raw "&nbsp;"*6%></span>cm±1厘米。每袋重量<span class="underline"><%=raw "&nbsp;"*6%></span>g±2克。要求能够包装<span class="underline"><%=raw "&nbsp;"*6%></span>kg。</li>
         <li>质量标准：经公路、铁路运输到对方接货时不散、不漏。乙方出售的货物除符合前述标准以外还应当同时与提供的货物样品相符。质量要求符合下述标准：</li>
         <table>
             <tr><td colspan="2">组织</td><td>单经平纹</td></tr>
@@ -71,13 +67,13 @@ buyer = get_dep(@info.user_dep,@info.user_type)
 </p>
 <p>四、包装物的采购数量、金额和运输要求：
     <ol>
-        <li>计划执行结束后，甲方按<span class="underline"><%#="&nbsp;"*6%>元/条</span>的价格，据实结算。</li>
+        <li>计划执行结束后，甲方按<span class="underline"><%=raw "&nbsp;"*6%>元/条</span>的价格，据实结算。</li>
         <li>乙方负责将包装物运送到甲方指定地点，并负责运送到甲方的一切费用，包括1%损耗。</li>
     </ol>
 </p>
 <p>五、价款和支付方式
     <ol>
-        <li>合同总价：￥<span class="underline"> <%#= @info.total %> </span>元 （人民币大写：<span class="underline"> <%#= total_money_cn(@info.total) %> </span>）。</li>
+        <li>合同总价：￥<span class="underline"> <%=money @order.total %> </span>元 （人民币大写：<span class="underline"> <%= total_money_cn(@order.total) %> </span>）。</li>
         <li>支付方式：产品全部交货并验收无误后，甲方在八日之内支付乙方全部货款。</li>
     </ol>
 </p>
@@ -124,7 +120,7 @@ buyer = get_dep(@info.user_dep,@info.user_type)
     <li>遵守国家法律、法规和中储粮相关文件的规定和保密规定；</li>
     <li>负责处理在包装物供应过程中出现的问题；</li>
     <li>负责委托采购过程的解释、资料备案、整理归档，接受有关部门的监督检查。</li>
-    <li>乙方在收到甲方的包装物配送计划后，应在<span class="underline"><%#="&nbsp;"*6%></span>天内将包装物送到甲方指定的地点。</li>
+    <li>乙方在收到甲方的包装物配送计划后，应在<span class="underline"><%=raw "&nbsp;"*6%></span>天内将包装物送到甲方指定的地点。</li>
 </ol>
 </p>
 <p>十、保密
@@ -164,16 +160,16 @@ buyer = get_dep(@info.user_dep,@info.user_type)
 <p></p>
 <div style="clear:both"></div>
 <div style="clear:both">
-<div class="float_left">甲方（签章）：<%#= @info.dep_p_name %></div>
-<div class="float_left">乙方（签章）：<%#= @info.dep_s_name %></div>
+<div class="float_left">甲方（签章）：<%=raw  @order.buyer_name %></div>
+<div class="float_left">乙方（签章）：<%=raw  @order.seller_name %></div>
 </div>
 <div style="clear:both">
 <div class="float_left">甲方代表（签字）：</div>
 <div class="float_left">乙方代表（签字）：</div>
 </div>
 <div style="clear:both">
-<div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
-<div class="float_left">合同签订日期：<%#="&nbsp;"*8%>年<%#="&nbsp;"*4%>月<%#="&nbsp;"*4%>日</div>
+<div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
+<div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
 </div>
 </div>
 </div>

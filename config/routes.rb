@@ -17,6 +17,10 @@ Evbdup::Application.routes.draw do
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
   get 'cart_order' => "kobe/orders#cart_order", as: :cart_order
+
+  get 'show_faqs' => "faqs#show"
+
+  post 'check_ysd' => "home#check_ysd"  
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
 
@@ -260,7 +264,8 @@ namespace :kobe do
   
    resources :faqs do 
      member do 
-       get :delete
+       get :delete 
+       post :commit 
      end
      collection do
       get  :get_catalog

@@ -234,16 +234,15 @@
 
     <div class="tag-box tag-box-v6 margin-bottom-10">
       <div class="headline"><h2 class="heading-sm"><i class="fa fa-qrcode"></i> 核对电子凭证真伪</h2></div>                                                    
-      <form role="form">
+      <form role="form "id="form" action="<%=check_ysd_path%>" method="post" target="_blank">
         <div class="form-group">
           <label for="exampleInputEmail1">电子凭证编号</label>
-          <input class="form-control" id="exampleInputEmail1" placeholder="请输入电子凭证编号" type="text">
+          <input class="form-control" id="exampleInputEmail1" placeholder="请输入电子凭证编号" name="no" type="text">
         </div>
         <div class="form-group">
           <label for="exampleInputPassword1">项目总金额</label>
-          <input class="form-control" id="exampleInputPassword1" placeholder="请输入项目总金额" type="text">
+          <input class="form-control" id="exampleInputPassword1" placeholder="请输入项目总金额" name="m" type="text">
         </div>
-
         <button class="btn-u" type="submit">提交</button>
       </form>
     </div>
@@ -258,7 +257,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-red icon-book-open"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="#"> 政策法规</a></h3>
+            <h3><a href="<%=show_faqs_path(type:'zcfg')%>"> 政策法规</a></h3>
             <p>集中采购管理办法、采购目录...</p>
           </div>
         </div>
@@ -267,7 +266,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-blue icon-directions"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="#"> 采购指南</a></h3>
+            <h3><a href="<%=show_faqs_path(type:'cgzn')%>"> 采购指南</a></h3>
             <p>采购方式、采购计划、电子凭证</p>
           </div>
         </div>
@@ -276,7 +275,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-green icon-cloud-download"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="#"> 下载中心</a></h3>
+            <h3><a href="<%=show_faqs_path(type:'xzzx')%>"> 下载中心</a></h3>
             <p>合同模板、操作手册、业务单据</p>
           </div>
         </div>
@@ -285,7 +284,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-aqua icon-earphones-alt"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="#"> 常见问题</a></h3>
+            <h3><a href="<%=show_faqs_path(type:'cjwt')%>"> 常见问题</a></h3>
             <p>业务咨询、网上操作帮助...</p>
           </div>
         </div>
@@ -294,7 +293,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-brown icon-bubbles"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="#"> 意见建议</a></h3>
+            <h3><a href="<%=new_kobe_faq_path(catalog: 'yjjy')%>"> 意见建议</a></h3>
             <p>发表您的意见及建议</p>
           </div>
         </div>

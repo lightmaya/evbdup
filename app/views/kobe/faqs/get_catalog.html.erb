@@ -1,0 +1,3 @@
+<div class="tag-box tag-box-v3">
+	<%= Dictionary.faq_catalog.map{ |k,v| link_to("<i class='fa fa-gift '></i> #{v}".html_safe, new_kobe_faq_path(catalog: k), class: 'margin-10 btn-u pulse-grow', rel:'pulse-grow') }.join(" ").html_safe %>
+</div>

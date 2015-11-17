@@ -167,6 +167,25 @@ class ApplicationController < ActionController::Base
     def valid_remote(obj_class,cdt)
       return obj_class.where(cdt).blank? ? true :false
     end
+        # 生产二维码
+    def qrcode(s,sz=8)
+      qr = RQRCode::QRCode.new(s, :size => sz, :level => :l )
+      str = "<table class=\"qrcode\">"
+      qr.modules.each_index do |x|
+        str << "<tr>"
+        qr.modules.each_index do |y|
+          if qr.dark?(x,y)
+            str << "<td class=\"black\"/>"
+          else
+            str << "<td class=\"white\"/>"
+          end
+        end
+        str << "</tr>"
+      end
+      str << "</table>"
+      return str
+    end
+
 
     include SaveXmlForm
 

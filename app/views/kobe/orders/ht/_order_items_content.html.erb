@@ -1,0 +1,39 @@
+<div style="clear:both"></div>
+<table>
+  <tr>
+    <th align="center">品目</th>  
+    <th align="center">产品名称</th>
+    <th align="center">计量单位</th>
+    <th align="center">采购单价</th>
+    <th align="center">采购数量</th>
+    <th align="center">采购金额</th>
+    <th align="center">产品描述</th>
+  </tr>
+  <% @order.items.each do |order_item| %>
+  <tr>
+    <td><%=order_item.category_name%></td>
+    <td><%=order_item.name%></td>
+    <td><%=order_item.unit%></td>
+    <td><%=order_item.price%></td>
+    <td><%=order_item.quantity%></td>
+    <td><%=order_item.total%></td>
+    <td><%=order_item.summary%></td>
+  </tr> 
+  <%end%> 
+</table>
+<%# unless @info.surcharge.map{|s|s.values}.join == "" # 如果有附加费用%>
+<%#="<table><tr>" %>
+<%# @info.surcharge.each do |s| %>
+<%#="<td>#{s.keys.join}</td><td>#{s.values.join}</td>"%>
+<%# end %>
+<%#="</tr></table>" %>
+<%# end %>
+
+<table>
+  <tr>
+    <td>备注信息：<%=raw  @order.summary %></td>
+  </tr>
+  <tr>
+    <td align="center">合计：<%= @order.total  %> 元 | 大写金额：&nbsp;&nbsp;<%= total_money_cn(@order.total) %></td>
+  </tr>
+</table>
