@@ -2,23 +2,22 @@ $(function(){
 
   // 购物车页面商品增减
   $(document).on('click', '.decrease_num', function(event) {
-    $num = $('#item-num-' + $(this).parent().attr('item_id'));
-    num = $num.val();
-    if ($.isBlank(parseInt(num))){
+    $num = $('#item-num-' + $(this).parent().attr('cart_item_id'));
+    if ($.isBlank(parseInt($num.val()))){
       $num.val(1);
     }
-    if (parseInt(num) > 1){
-      $num.val(parseInt(num) - 1);
+    if (parseInt($num.val()) > 1){
+      $num.val(parseInt($num.val()) - 1);
       // 计算单个商品总价
-      calc_item($(this).parent().attr('item_id'), $num.val());
+      calc_item($(this).parent().attr('cart_item_id'), $num.val());
       // 计算购物车总价
       calc_total();
-      $.get("/cart/change/" + $(this).parent().attr('pid') + "?seller_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + $num.val());
+      $.get("/cart/change/" + $(this).parent().attr('cart_item_id') + "?set=1&a=1&num=" + $num.val());
     };
   });
 
   $(document).on('click', '.increase_num', function(event) {
-    $num = $('#item-num-' + $(this).parent().attr('item_id'));
+    $num = $('#item-num-' + $(this).parent().attr('cart_item_id'));
     num = $num.val();
     if ($.isBlank(parseInt(num))){
       $num.val(1);
@@ -29,10 +28,10 @@ $(function(){
       $num.val(parseInt(num) + 1);
     }
     // 计算单个商品总价
-    calc_item($(this).parent().attr('item_id'), $num.val());
+    calc_item($(this).parent().attr('cart_item_id'), $num.val());
     // 计算购物车总价
     calc_total();
-    $.get("/cart/change/" + $(this).parent().attr('pid') + "?seller_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + $num.val());
+    $.get("/cart/change/" + $(this).parent().attr('cart_item_id') + "?set=1&num=" + $num.val());
   });
 
 
@@ -111,50 +110,50 @@ $(function(){
 
 // 勾选商品
   $(".cart_checkbox").change(function(){
-    var item_id = $(this).attr("item_id");
-    var pid = $(this).attr("pid");
-    var aid = $(this).attr("aid");
+    var cart_item_id = $(this).attr("cart_item_id");
+    var sid = cart_item_id.split("-");
+    sid.shift();
+    sid = sid.join("-");
     if ($(this).prop("checked") == false){
-      if ($("[name='p-" + aid + "']:checkbox:checked").length == 0){
-        $("#all-" + $(this).attr("aid")).prop("checked", false);
+      if ($("[name='" + $(this).attr("name") + "']:checkbox:checked").length == 0){
+        $("#all-" + sid).prop("checked", false);
       }
       $(this).closest(".merchandise").addClass("bg7");
-      $("#item-total-" + item_id).removeClass("cart-item-total");
+      $("#item-total-" + cart_item_id).removeClass("cart-item-total");
     }else{
-      $("#all-" + $(this).attr("aid")).prop("checked", true);
+      $("#all-" + sid).prop("checked", true);
       $(this).closest(".merchandise").removeClass("bg7");
-      $("#item-total-" + item_id).addClass("cart-item-total");
+      $("#item-total-" + cart_item_id).addClass("cart-item-total");
     }
     // 计算购物车总价
     calc_total();
-    $.get("/cart/dynamic?pids=" + pid + "&seller_id=" + aid + "&ready=" + $(this).prop("checked"));
+    $.get("/cart/dynamic?cart_item_ids=" + cart_item_id + "&ready=" + $(this).prop("checked"));
   });
 
   // 勾选供应商
   $(".cart_agent_checkbox").change(function(){
-    var item_id = $(this).attr("item_id");
-    var aid = $(this).attr("aid");
-    var pids = new Array();
+    var sid = $(this).attr("id").replace("all-", "");
+    var cart_item_ids = new Array();
     if ($(this).prop("checked") == false){
       $(this).closest(".merchandisetitle").addClass("bg7");
-      $("[name='p-" + aid + "']:checkbox").each(function(){
-        pids.push($(this).attr("pid"));
+      $("[name='p-" + sid + "']:checkbox").each(function(){
+        cart_item_ids.push($(this).attr("cart_item_id"));
         $(this).prop("checked", false);
         $(this).closest(".merchandise").addClass("bg7");
-        $("#item-total-" + item_id).removeClass("cart-item-total");
+        $("#item-total-" + $(this).attr("cart_item_id")).removeClass("cart-item-total");
       })
     }else{
       $(this).closest(".merchandisetitle").removeClass("bg7");
-      $("[name='p-" + aid + "']:checkbox").each(function(){
-        pids.push($(this).attr("pid"));
+      $("[name='p-" + sid + "']:checkbox").each(function(){
+        cart_item_ids.push($(this).attr("cart_item_id"));
         $(this).prop("checked", true);
         $(this).closest(".merchandise").removeClass("bg7");
-        $("#item-total-" + item_id).addClass("cart-item-total");
+        $("#item-total-" + $(this).attr("cart_item_id")).addClass("cart-item-total");
       })
     }
     // 计算购物车总价
     calc_total();
-    $.get("/cart/dynamic?pids=" + pids.join("_") + "&seller_id=" + aid + "&ready=" + $(this).prop("checked"));
+    $.get("/cart/dynamic?cart_item_ids=" + cart_item_ids.join("_") + "&ready=" + $(this).prop("checked"));
   });
   // 勾选供应商END
 
@@ -173,10 +172,10 @@ $(function(){
     }
     $(this).val(num);
     // 计算单个商品总价
-    calc_item($(this).parent().attr('item_id'), num);
+    calc_item($(this).parent().attr('cart_item_id'), num);
     // 计算购物车总价
     calc_total();
-    $.get("/cart/change/" + $(this).parent().attr('pid') + "?seller_id=" + $(this).parent().attr("aid") + "&set=1&a=1&num=" + num);
+    $.get("/cart/change/" + $(this).parent().attr('cart_item_id') + "?set=1&a=1&num=" + num);
   });
 
   // 选择采购方式
@@ -184,18 +183,19 @@ $(function(){
     var title = "";
     if ($(this).val() == "xygh"){
       $("#order_sfz_div").hide();
+      $("#order_budget_div").show();
       // $("#plans_div").show();
       $("#payer_grcg").hide();
       $("#order_payer").show();
       title = $("#order_payer").val();
     }else{
       $("#order_sfz_div").show();
+      $("#order_budget_div").hide();
       // $("#plans_div").show();
       $("#payer_grcg").show();
       $("#order_payer").hide();
       title = "个人";
     }
-    $("#current_yw_type_info").text($(this).next().text() + "（发票抬头：" + title + "）");
   });
 })
 
@@ -321,7 +321,18 @@ function save_yw_type(){
   if (!checkr) {
     return;
   }
-  
+
+  var budget_info = ""
+  var yw_type = $("input:radio[name='order\[yw_type\]']:checked");
+  var title = $("#order_payer").val();
+  if (yw_type.val() == "xygh"){
+    var budget = $("input:radio[name='order\[budget_id\]']:checked");
+    budget_info = " 预算申请单：" + budget.next().text();
+  }else{
+    title = "个人";
+  }
+
+  $("#current_yw_type_info").text(yw_type.next().text() + "（发票抬头：" + title + "）" + budget_info);
   $("#step_yw_type").show();
   $("#step_yw_type_current").hide();
 }

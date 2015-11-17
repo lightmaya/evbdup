@@ -58,13 +58,13 @@ class Kobe::OrdersController < KobeController
         return render :json => {"success" => false, "msg" => "订单保存失败: #{@order.errors.full_messages}"}
       end 
     rescue Exception => e
-      return render :json => {"success" => false, "msg" => "订单保存失败！"}
+      return render :json => {"success" => false, "msg" => "订单保存失败！#{e}"}
     end
   end
 
   #  下单页面
   def cart_order
-
+    @budgets = Budget.all
   end
 
   def update

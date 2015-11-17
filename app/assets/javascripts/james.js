@@ -11,4 +11,3 @@
 //= require shop/master-slider/quick-start/masterslider/jquery.easing.min
 
 //= require my97/WdatePicker
-//= require dota

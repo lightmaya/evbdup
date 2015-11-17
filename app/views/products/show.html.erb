@@ -171,7 +171,7 @@
               <tr>
                 <td><%= agent.name %></td>
                 <td><%= agent.agent_dep.tel %></td>
-                <td><%= link_to_void "购买", onclick: "add_to_cart('#{agent.id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
+                <td class="tc"><%= link_to_void "购买", onclick: "add_to_cart('#{agent.id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
                 </td>
               </tr>
             <% end -%>

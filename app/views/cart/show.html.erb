@@ -20,17 +20,17 @@
                 </thead>
                 <tbody>
                   <% @cart.items.group_by{|item| item.sid}.each do |sid, items| -%>
-                    <% seller_id = sid.split("-")[0] %>
+                    <% seller_id = sid.split("-")[1] %>
                     <tr class="merchandisetitle <%= 'bg7' if items.all?{|item| item.ready.blank? } %>">
                       <td colspan="6" class="tl b">
-                        <%= check_box_tag "all-#{sid}", "", items.any?{|item| item.ready.present? }, class: "cart_agent_checkbox", aid: seller_id %>
-                        <%= items.fisrt.seller_name %>
+                        <%= check_box_tag "all-#{sid}", "", items.any?{|item| item.ready.present? }, class: "cart_agent_checkbox", sid: seller_id %>
+                        <%= items.first.seller_name %>
                       </td>
                     </tr>
                     <% items.each do |item| %>
                       <tr class="merchandise <%= 'bg7' unless item.ready.present? %>">
                         <td>
-                          <%= check_box_tag "p-#{sid}", "", item.ready.present?, class: "cart_checkbox", pid: item.product_id, aid: seller_id, item_id: item.id %>
+                          <%= check_box_tag "p-#{sid}", "", item.ready.present?, class: "cart_checkbox", cart_item_id: item.id %>
                         </td>
                         <td class="product-in-table">
                           <img class="img-responsive" src="assets/img/thumb/08.jpg" alt="">
@@ -41,7 +41,7 @@
                         </td>
                         <td class="tc">¥<span class="cart-item-price" id="item-price-<%= item.id %>"><%= number_with_precision(item.price, :precision => 2) %></span>
                         </td>
-                        <td class="state-success tc" item_id="<%= item.id %>" aid="<%= seller_id %>" pid="<%= item.product_id %>">
+                        <td class="state-success tc" cart_item_id="<%= item.id %>">
                           <button type="button" class="quantity-button decrease_num">-</button>
                           <%= text_field_tag "item-num-#{item.id}", item.num, class: "quantity-field cart-num-field", maxlength: "4", maxsize: "4" %>
                           <button type="button" class="quantity-button increase_num">+</button>
@@ -49,7 +49,7 @@
                         <td class="shop-red tc">¥<span class="cart-item-total" id="item-total-<%= item.id %>"><%= number_with_precision(item.total, :precision => 2) %></span>
                         </td>
                         <td>
-                          <button type="button" class="delete_from_cart_btn_<%= item.product_id %> close"><span><%= link_to "×", rm_cart_path(item.product_id, seller_id: item.seller_id), method: :delete, data: { confirm: '你确定吗?' } %></span>
+                          <button type="button" class="delete_from_cart_btn_<%= item.product_id %> close"><span><%= link_to "×", rm_cart_path(item.id), method: :delete, data: { confirm: '你确定吗?' } %></span>
                               <span class="sr-only">Close</span>
                           </button>
                         </td>

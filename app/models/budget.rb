@@ -8,8 +8,9 @@ class Budget < ActiveRecord::Base
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Plan") }, foreign_key: :obj_id
 
-  scope :find_all_by_dep_code, ->(dep_real_ancestry) { where("dep_code like '#{dep_real_ancestry}/%' or dep_code = '#{dep_real_ancestry}'") }
-
+  scope :find_all_by_dep_code, ->(dep_real_ancestry) { where("budgets.dep_code like '#{dep_real_ancestry}/%' or budgets.dep_code = '#{dep_real_ancestry}'") }
+  scope :unuse, ->{ where("budgets.status = 21")}
+  
   include AboutStatus
 
   before_create do
@@ -73,6 +74,10 @@ class Budget < ActiveRecord::Base
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
       </root>
     }
+  end
+
+  def name_with_budget
+    "#{self.name} [预算金额: #{self.budget}]"
   end
 
 end

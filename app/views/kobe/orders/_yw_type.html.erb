@@ -30,6 +30,20 @@
     </div>
   <% end -%>
 
-  <%= link_to_void "保存采购方式", onclick: "save_yw_type();", id: "save_yw_type_btn", class: "btn-u w120 ml15 mt10 need_close"  %>
+  <div class="newinfo" id="order_budget_div">
+    <div class="new-info-label"><span>*</span> 预算审批单：</div>
+    <div class="new-info-field">
+      <% @budgets.each do |budget| %>
+        <p><%= f.radio_button :budget_id, budget.id, checked: budget.id == @order.budget_id,  onchange: "checkYw_type();" %>
+        <label for="order_budget_<%= budget.id %>"><%= budget.name_with_budget %></label>
+        </p>
+      <% end -%>
+    </div>
+    <span class="status error" id="order_yw_type_div_error"></span>
+  </div>
+
+  <div class="clear">
+    <%= link_to_void "保存采购方式", onclick: "save_yw_type();", id: "save_yw_type_btn", class: "btn-u w120 ml15 mt10 need_close"  %>
+  </div>
 </div>
 

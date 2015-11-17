@@ -20,17 +20,23 @@ class Cart
   # 购物车中保存product(商品)的id
   def change(product, seller, num, set = false)
     num = num.to_i
-    item_id = "#{product.id}-#{seller.id}"
+    cart_item_id = "#{product.id}-#{seller.class}-#{seller.id}"
+    p "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    p "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    p cart_item_id
+    p "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    p num
+
     # 同一供应商id
-    sid = "#{seller_id}-#{seller.class}"
-    if current_item = self.items.find { |item| item.id.to_s == item_id }
+    sid = "#{seller.class}-#{seller.id}"
+    if current_item = self.items.find { |item| item.id.to_s == cart_item_id }
       set ? current_item.num = num : current_item.cr(num)
-      destroy(product.id, seller.id) if current_item.num <= 0
+      destroy(cart_item_id) if current_item.num <= 0
     else
       current_item = CartItem.new({:market_price => product.market_price, :ready => true, 
       :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
-      :name => product.name, :seller_id => seller.id, id: item_id, sid: sid,  
-      :seller_name => seller.name, id: item_id, ht: product.category.ht_template,
+      :name => product.name, :seller_id => seller.id, id: cart_item_id, sid: sid,  
+      :seller_name => seller.name, ht: product.category.ht_template,
       :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
       self.items = [current_item] + self.items
     end
@@ -43,15 +49,14 @@ class Cart
   end
 
   # 是否准备购买
-  def dynamic(product_id, seller_id, ready)
+  def dynamic(cart_item_id, ready)
     self.items.each do |item|
-      item_id = "#{product_id}-#{seller_id}"
-      item.ready = ready if item.id == item_id
+      item.ready = ready if item.id == cart_item_id
     end
   end
 
-  def destroy(product_id, seller_id)
-    self.items.delete_if { |item| item.id == "#{product_id}-#{seller_id}" }
+  def destroy(cart_item_id)
+    self.items.delete_if { |item| item.id == "#{cart_item_id}" }
     self
   end
 

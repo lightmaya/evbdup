@@ -2,16 +2,21 @@
 class Order < ActiveRecord::Base
 	has_many :items, class_name: :OrdersItem
   accepts_nested_attributes_for :items
-
 	has_many :uploads, class_name: :OrdersUpload, foreign_key: :master_id
   # default_scope -> {order("id desc")}
-
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
-
+  belongs_to :budget
+  
   scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("buyer_code like '#{dep_real_ancestry}/%' or buyer_code = '#{dep_real_ancestry}'") }
 
   validates_with MyValidator
+  validate :check_budget
+    def check_budget
+      errors.add(:base, "订单金额#{self.total.to_f}应小于预算金额#{self.budget_money}") if self.budget_money.to_f > 0 && self.total > self.budget_money 
+    end
+
+
 
 	include AboutStatus
 
@@ -141,16 +146,25 @@ class Order < ActiveRecord::Base
     order.name = Order.get_project_name(nil, user, category_name_ary.join("、"))
     order.seller_name = dep.name
     order.seller_code = dep.real_ancestry
-    order.seller_man = dep.users.first.name
-    order.seller_tel = dep.users.first.tel
-    order.seller_mobile = dep.users.first.mobile
     order.seller_addr = dep.address
-    order.budget = 0
+
+    if top_user = dep.users.first
+      order.seller_man = top_user.name
+      order.seller_tel = top_user.tel
+      order.seller_mobile = top_user.mobile
+    end
+    
     order.deliver_at = Date.today + 3
 
     if params.present?
       order.attributes = params[:order].permit!
-      order.items.each_with_index{|item, index| item.price = params["item_price_#{item.vid}"].to_f}
+      if order.yw_type == "grcg"
+        order.budget_id = nil
+        order.payer = "个人"
+      else
+        order.budget_money = order.budget.try(:budget)
+      end
+      order.items.each_with_index{|item, index| item.price = params["item_price_#{item.vid}"].to_f; item.total = item.quantity * item.price}
     end
 
     order.total = order.items.map(&:total).sum
@@ -236,7 +250,7 @@ class Order < ActiveRecord::Base
         <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
         <node name='供应商单位地址' column='seller_addr' class='required'/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-        <node name='预算金额（元）' column='budget' class='required number'/>
+        <node name='预算金额（元）' column='budget_money' class='number'/>
         <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>

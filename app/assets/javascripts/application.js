@@ -23,6 +23,7 @@
 //= require app
 //= require form
 //= require common
+//= require dota
 //= require plugins/jquery.dragsort-0.5.2.min
 //= require plugins/fancybox/fancy-box
 //= require plugins/style-switcher
@@ -30,6 +31,7 @@
 //= require plugins/owl-carousel
 //= require plugins/owl-recent-works
 //= require plugins/jquery.mCustomScrollbar.concat.min
+//= require my97/WdatePicker
 
 
 //= require select2/select2.min
