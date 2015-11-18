@@ -12,6 +12,7 @@ gem 'devise', '3.4.1'
 gem "default_value_for", "3.0.0.1"
 # 上传插件
 gem 'carrierwave', '0.8.0'
+gem 'rqrcode'
 
 group :assets do
 	# Use SCSS for stylesheets
