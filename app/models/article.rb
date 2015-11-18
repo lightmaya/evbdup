@@ -27,7 +27,7 @@ class Article < ActiveRecord::Base
   end
   
   # status各状态的中文意思 状态值 标签颜色 进度 
-  def status_array
+  def self.status_array
     [
       ["暂存", 0, "orange", 50],
       ["等待审核", 1, "orange", 90],
