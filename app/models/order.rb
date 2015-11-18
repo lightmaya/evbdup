@@ -30,6 +30,10 @@ class Order < ActiveRecord::Base
     create_no(rule.code, "sn") if rule
   end
 
+  after_save do 
+    budget.try(:used!)
+  end
+
   PTypes = {"xygh" => "单位采购", "grcg" => "个人采购"}
 
 	# 附件的类
