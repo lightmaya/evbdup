@@ -1,6 +1,24 @@
 # -*- encoding : utf-8 -*-
 module AboutRuleStep
 
+  # before_create时初始化rule_id和rule_step
+  def init_rule
+    self.rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
+    self.rule_step = 'start'
+  end
+
+  # 提交时需更新的参数 主要用于更新rule_step
+  # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
+  def commit_params
+    arr = []
+    if self.find_step_by_rule.blank?
+      arr << "rule_step = 'done'"
+    else
+      arr << "rule_step = 'start'"
+    end
+    return arr
+  end
+
 	# 审核下一步的hash
 	def audit_next_hash
     # 确认并结束当前流程（如需上级单位审核则自动转向上级单位。）

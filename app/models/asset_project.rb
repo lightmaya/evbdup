@@ -10,24 +10,13 @@ class AssetProject < ActiveRecord::Base
   include AboutStatus
 
   before_create do
-    # 设置rule_id
-    self.rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
+    # 设置rule_id和rule_step
+    init_rule
   end
 
   after_create do 
     create_no(rule.code, "sn")
   end
-
-  def commit_params
-    arr = []
-    if self.find_step_by_rule.blank?
-      arr << "rule_step = 'done'"
-    else
-      arr << "rule_step = 'start'"
-    end
-    return arr
-  end
-
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array

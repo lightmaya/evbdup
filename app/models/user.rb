@@ -21,6 +21,9 @@ class User < ActiveRecord::Base
   has_many :bid_projects
   has_many :bid_project_bids
 
+  # 当前用户可用的预算审批单
+  has_many :valid_budgets, -> { where("budgets.status = 21") }, class_name: "Budget", foreign_key: "user_id"
+
   # before_save {self.email = email.downcase}
   before_create :create_remember_token
   # 为了在Model层使用current_user
@@ -218,6 +221,11 @@ class User < ActiveRecord::Base
   # 参与的竞价产品明细报价
   def bid_item_bids(bid_project)
     BidItemBid.where(user_id: self.id, bid_project_id: bid_project.id)
+  end
+
+  # 联系方式
+  def tel_and_mobile
+    self.tel.present? ? "#{self.tel} / #{self.mobile}" : self.mobile
   end
 
 

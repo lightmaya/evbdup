@@ -53,7 +53,7 @@ class Kobe::PlansController < KobeController
 
   # 提交
   def commit
-    @plan.change_status_and_write_logs("提交",stateless_logs("提交","提交成功！", false))
+    @plan.change_status_and_write_logs("提交", stateless_logs("提交","提交成功！", false), @plan.commit_params)
     # 插入采购计划审核的待办事项
     @plan.reload.create_task_queue
     tips_get("提交成功！")

@@ -121,6 +121,21 @@ if Menu.first.blank?
     Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_plan)
   end
 
+# ----预算管理-------------------------------------------------------------------------------------
+  budget = Menu.create(:name => "预算审批单", :is_show => true, :parent => yw)
+  budget_list = Menu.create(:name => "辖区内预算审批单", :route_path => "/kobe/budgets", :can_opt_action => "Budget|read", :is_show => true, :parent => budget)
+  [ ["新增预算审批单", "Budget|create"], 
+    ["修改预算审批单", "Budget|update"], 
+    ["提交预算审批单", "Budget|commit"], 
+    ["删除预算审批单", "Budget|update_destroy"] 
+  ].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => budget_list)
+  end
+  audit_budget = Menu.create(:name => "审核预算审批单", :route_path => "/kobe/budgets/list", :can_opt_action => "Budget|list", :is_show => true, :parent => budget)
+  [["预算审批单初审", "Budget|first_audit"], ["预算审批单终审", "Budget|last_audit"]].each do |m|
+    Menu.create(:name => m[0], :can_opt_action => m[1], :parent => audit_budget)
+  end
+
 # ----定点采购-----------------------------------------------------------------------------------------
   ddcg = Menu.create(:name => "定点采购", :is_show => true, :parent => yw)
   ddcg_list = Menu.create(:name => "我的定点采购项目", :route_path => "/kobe/orders/ddcg_list", :can_opt_action => "Order|ddcg_list", :is_show => true, :parent => ddcg)

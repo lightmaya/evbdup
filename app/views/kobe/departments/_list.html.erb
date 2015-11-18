@@ -19,7 +19,7 @@
 				        <tr>
 				            <th class="index">序号</th>
 				            <th class="hidden-sm">名称</th>
-				            <th class="status_bar"><%= action_name == "search" ? status_filter(Department) : "状态" %></th>
+				            <th class="status_badge"><%= action_name == "search" ? status_filter(Department) : "状态" %></th>
                     <th class="date"><%= date_filter %></th>
                     <% if action_name == 'list'  %>
 				            <th class="cando">操作</th>
@@ -31,7 +31,7 @@
 				        <tr>
 				            <td><%= show_index(index) %></td>
 				            <td><%= link_to dep.name, kobe_departments_path(id: dep.id), target: "_blank" %></td>
-				            <td><%= dep.status_bar %></td>
+				            <td><%= dep.status_badge %></td>
                     <td><%= show_date(dep.created_at) %></td>
                     <% if action_name == 'list'  %>
 				            <td><%= btn_group(departments_btn(dep,true)) %></td>

@@ -28,7 +28,7 @@
                     <th>项目名称</th>
                     <th>品目</th>
                     <th>截止时间</th>
-                    <th class="status_bar"><%= status_filter(PlanItem) %></th>
+                    <th class="status_badge"><%= status_filter(PlanItem) %></th>
                     <th class="cando">操作</th>
                 </tr>
             </thead>
@@ -39,7 +39,7 @@
                     <td><%= obj.name %></td>
                     <td><%= get_details_node_value(obj,"品目")%></td>
                     <td><%= obj.end_time %></td>
-                    <td><%= obj.status_bar %></td>
+                    <td><%= obj.status_badge %></td>
                     <td><%= btn_group(plan_items_btn(obj)) %></td>
                 </tr>
                 <% end %>

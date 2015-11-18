@@ -15,6 +15,11 @@ class BidProject < ActiveRecord::Base
   # 模型名称
   Mname = "网上竞价项目"
 
+  before_create do
+    # 设置rule_id和rule_step
+    init_rule
+  end
+
   after_create do 
     create_no
   end
@@ -36,8 +41,9 @@ class BidProject < ActiveRecord::Base
   end
    # 根据不同操作 改变状态
   def change_status_hash
-    {
-      "提交审核" => { 0 => 1 },
+    status_ha = self.find_step_by_rule.blank? ? 2 : 1
+    return {
+      "提交审核" => { 3 => status_ha, 0 => status_ha },
       "删除" => { 0 => 404 },
       "通过" => { 1 => 2 },
       "确定中标人" => {2 => 12},
@@ -88,14 +94,6 @@ class BidProject < ActiveRecord::Base
   def get_tips
     msg = []
     return msg
-  end
-
-  def commit_params
-    arr = []
-    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = #{rule_id}"
-    arr << "rule_step = 'start'"
-    return arr
   end
 
   def self.xml(who = '',options = {})

@@ -29,7 +29,7 @@
                     <th>类别</th>
                     <th>录入人</th>
                     <th>金额</th>
-                    <th class="status_bar"><%= status_filter(DailyCost) %></th>
+                    <th class="status_badge"><%= status_filter(DailyCost) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
                 </tr>
@@ -42,7 +42,7 @@
                     <td><%= daily_cost.name %></td>
                     <td><%= daily_cost.dep_man %></td>
                     <td class="money"><%= money daily_cost.total %></td>
-                    <td><%= daily_cost.status_bar %></td>
+                    <td><%= daily_cost.status_badge %></td>
                     <td><%= show_date(daily_cost.created_at) %></td>
                     <td><%= btn_group(daily_costs_btn(daily_cost,action_name == "list")) %></td>
                 </tr>

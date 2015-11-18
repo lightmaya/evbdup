@@ -15,9 +15,8 @@ class Plan < ActiveRecord::Base
 	include AboutStatus
 
   before_create do
-    # 设置rule_id
-    self.rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    self.rule_step = 'start'
+    # 设置rule_id和rule_step
+    init_rule
   end
 
   after_create do 
@@ -36,14 +35,16 @@ class Plan < ActiveRecord::Base
       ["审核通过",1,"u",100],
       ["等待审核",2,"blue",50],
       ["审核拒绝",3,"red",0],
+      ["自动生效",5,"yellow",100],
       ["已删除",404,"light",0]
     ]
   end
 
   # 根据不同操作 改变状态
   def change_status_hash
-    {
-      "提交" => { 0 => 2, 3 => 2 },
+    status_ha = self.find_step_by_rule.blank? ? 5 : 2 
+    return {
+      "提交" => { 3 => status_ha, 0 => status_ha },
       "通过" => { 2 => 1 },
       "不通过" => { 2 => 3 },
       "删除" => { 0 => 404 }

@@ -16,7 +16,7 @@
                     <th>标题</th>
                     <th>内容</th>
                     <th>类别</th>
-                    <th class="status_bar"><%= status_filter(Article) %></th>
+                    <th class="status_badge"><%= status_filter(Article) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
                 </tr>
@@ -28,7 +28,7 @@
                     <td><%= text_truncate(faq.title,30) %></td>
                     <td><%= text_truncate(faq.content,30) %></td>
                     <td><%= Dictionary.faq_catalog[faq.catalog]%></td>
-                    <td><%= faq.status_bar %></td>
+                    <td><%= faq.status_badge %></td>
                     <td><%= show_date(faq.created_at) %></td>
                     <td><%= btn_group(faqs_btn(faq)) %></td>
                 </tr>

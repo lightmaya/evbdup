@@ -28,7 +28,7 @@
             <th class="hidden-sm">标题</th>
             <th class="hidden-sm">发送人</th>
             <th class="hidden-sm">接收人</th>
-            <th class="status_bar"><%= status_filter(Article) %></th>
+            <th class="status_badge"><%= status_filter(Article) %></th>
             <th class="date"><%= date_filter %></th>
             <th class="cando">操作</th>
           </tr>
@@ -41,7 +41,7 @@
             <td><%= msg.author.try(:name) %></td>
             <td>[<%= dict_value msg.send_type, "send_types" %>] 
                 <%= truncate(msg.send_tos, length: 20) + " （共#{msg.send_tos.split.size}个）" %></td>
-            <td><%= msg.status_bar %></td>
+            <td><%= msg.status_badge %></td>
             <td><%= show_date(msg.created_at) %></td>
             <td><%= btn_group(msgs_btn(msg)) %></td>
           </tr>

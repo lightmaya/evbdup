@@ -6,7 +6,7 @@ class Budget < ActiveRecord::Base
   belongs_to :department
 
   belongs_to :rule
-  has_many :task_queues, -> { where(class_name: "Plan") }, foreign_key: :obj_id
+  has_many :task_queues, -> { where(class_name: "Budget") }, foreign_key: :obj_id
 
   scope :find_all_by_dep_code, ->(dep_real_ancestry) { where("budgets.dep_code like '#{dep_real_ancestry}/%' or budgets.dep_code = '#{dep_real_ancestry}'") }
   scope :unuse, ->{ where("budgets.status = 21")}
@@ -14,9 +14,8 @@ class Budget < ActiveRecord::Base
   include AboutStatus
 
   before_create do
-    # 设置rule_id
-    self.rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    self.rule_step = 'start'
+    # 设置rule_id和rule_step
+    init_rule
   end
 
   # 附件的类
@@ -34,14 +33,13 @@ class Budget < ActiveRecord::Base
       ["审核拒绝",19,"red",0],
       ["已删除",404,"light",0]
     ]
-    # [["未提交", 5, "orange", 10], ["审核通过", 21, "u", 100], ["等待审核", 1, "blue", 50], ["审核拒绝", 19, "red", 0], ["已删除", 404, "red", 0]]
-    # get_status_array(["未提交", "审核通过", "等待审核", "审核拒绝", "已删除"])
   end
 
   # 根据不同操作 改变状态
   def change_status_hash
-    {
-      "提交" => { 0 => 1, 19 => 1 },
+    status_ha = self.find_step_by_rule.blank? ? 21 : 1
+    return {
+      "提交" => { 19 => status_ha, 0 => status_ha },
       "通过" => { 1 => 21 },
       "不通过" => { 1 => 19 },
       "删除" => { 0 => 404 }

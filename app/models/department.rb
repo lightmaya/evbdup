@@ -22,6 +22,11 @@ class Department < ActiveRecord::Base
   include AboutAncestry
   include AboutStatus
 
+  before_create do
+    # 设置rule_id和rule_step
+    init_rule
+  end
+
   after_save do
     real_ancestry_arr = []
     real_ancestry_arr << self.ancestors.where(dep_type: false).map(&:id) if self.ancestors.present?
@@ -79,8 +84,9 @@ class Department < ActiveRecord::Base
 
   # 根据不同操作 改变状态
   def change_status_hash
-    {
-      "提交" => { 0 => 2, 3 => 2 },
+    status_ha = self.find_step_by_rule.blank? ? 1 : 2
+    return {
+      "提交" => { 3 => status_ha, 0 => status_ha },
       "通过" => { 2 => 1 },
       "不通过" => { 2 => 3 },
       "删除" => { 0 => 404 },
@@ -157,16 +163,6 @@ class Department < ActiveRecord::Base
   # 是否需要隐藏树形结构 用于没有下级单位的单位 不显示树
   def hide_tree?
     self.is_childless? || self.descendants.where.not(status: 404).blank?
-  end
-
-  # 提交时需更新的参数 主要用于更新rule_id 
-  # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
-  def commit_params
-    arr = []
-    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = '#{rule_id}'"
-    arr << "rule_step = 'start'"
-    return arr
   end
 
   # 根据单位的祖先节点判断单位是采购单位还是供应商

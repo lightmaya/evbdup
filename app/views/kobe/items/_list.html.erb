@@ -28,7 +28,7 @@
                     <th>项目名称</th>
                     <th>项目类型</th>
                     <th>有效期</th>
-                    <th class="status_bar"><%= status_filter(Item) %></th>
+                    <th class="status_badge"><%= status_filter(Item) %></th>
                     <th class="cando">操作</th>
                 </tr>
             </thead>
@@ -39,7 +39,7 @@
                     <td><%= obj.name %></td>
                     <td><%= dict_value (obj.item_type ? 1 : 0), "item_type" %></td>
                     <td><%= "#{obj.begin_time} 至 #{obj.end_time}" %></td>
-                    <td><%= obj.status_bar %></td>
+                    <td><%= obj.status_badge %></td>
                     <td><%= btn_group(items_btn(obj)) %></td>
                 </tr>
                 <% end %>

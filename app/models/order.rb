@@ -68,25 +68,6 @@ class Order < ActiveRecord::Base
     }
   end
 
-  # 提交时需更新的参数 主要用于更新rule_step
-  # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
-  def commit_params
-    arr = []
-    if self.find_step_by_rule.blank?
-      arr << "rule_step = 'done'"
-    else
-      arr << "rule_step = 'start'"
-    end
-    return arr
-  end
-
-	# 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
-
   # 根据品目创建项目名称
   def self.get_project_name(order, user, category_names)
     yw_type = ''

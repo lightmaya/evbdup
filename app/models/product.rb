@@ -11,6 +11,11 @@ class Product < ActiveRecord::Base
 
   include AboutStatus
 
+  before_create do
+    # 设置rule_id和rule_step
+    init_rule
+  end
+  
   QS = ["category_id_eq", "brand_eq", "sort", "page"]
 
 	# 附件的类
@@ -46,8 +51,9 @@ class Product < ActiveRecord::Base
 
   # 根据不同操作 改变状态
   def change_status_hash
-    {
-      "提交" => { 0 => 2, 3 => 2 },
+    status_ha = self.find_step_by_rule.blank? ? 1 : 2
+    return {
+      "提交" => { 3 => status_ha, 0 => status_ha },
       "通过" => { 2 => 1 },
       "不通过" => { 2 => 3 },
       "删除" => { 0 => 404 },
@@ -61,15 +67,6 @@ class Product < ActiveRecord::Base
   	# 列表中不允许出现的
   	limited = [404]
   	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
-
-  # 提交时的参数
-  def commit_params
-    arr = []
-    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = '#{rule_id}'"
-    arr << "rule_step = 'start'"
-    return arr
   end
 
   def cover_url(style = :md)

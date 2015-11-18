@@ -33,7 +33,7 @@
                     <% end %>
                     <th>产品名称</th>
                     <th>中标价</th>
-                    <th class="status_bar"><%= status_filter(Product) %></th>
+                    <th class="status_badge"><%= status_filter(Product) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
                 </tr>
@@ -50,7 +50,7 @@
                     <% end %>
                     <td><%= product.name %></td>
                     <td class="money"><%= money product.bid_price %></td>
-                    <td><%= product.status_bar %></td>
+                    <td><%= product.status_badge %></td>
                     <td><%= show_date(product.created_at) %></td>
                     <td><%= btn_group(products_btn(product,action_name == "list")) %></td>
                 </tr>

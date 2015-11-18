@@ -30,7 +30,7 @@
                     <th>采购单位</th>
                     <th>录入人</th>
                     <th>金额</th>
-                    <th class="status_bar"><%= status_filter(AssetProject) %></th>
+                    <th class="status_badge"><%= status_filter(AssetProject) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
                 </tr>
@@ -44,7 +44,7 @@
                     <td><%= asset_project.dep_name %></td>
                     <td><%= asset_project.dep_man %></td>
                     <td class="money"><%= money asset_project.total %></td>
-                    <td><%= asset_project.status_bar %></td>
+                    <td><%= asset_project.status_badge %></td>
                     <td><%= show_date(asset_project.created_at) %></td>
                     <td><%= btn_group(asset_projects_btn(asset_project,action_name == "list")) %></td>
                 </tr>

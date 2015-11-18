@@ -85,6 +85,7 @@ module KobeHelper
   # 当前用户有超过10条的待办事项 用list方式显示 不足10条全部显示
   def show_to_do_list
     str = ""
+    num = 0
     if current_user.to_do_count > 10
       current_user.to_do_list.each_with_index do |obj, index|
         title = %Q|
@@ -93,22 +94,26 @@ module KobeHelper
         |
         desc = "暂时忽略 <i class='fa fa-minus-circle'></i>"
         str << show_to_do_div(title,desc,index)
+        num = index + 1
       end
     else
       current_user.to_do_all.each_with_index do |obj, index|
-        title = link_to obj.get_belongs_to_obj.try(:name), obj.to_do_list.get_audit_url(obj.obj_id.to_s)
+        title = link_to text_truncate(obj.get_belongs_to_obj.try(:name), 20), obj.to_do_list.get_audit_url(obj.obj_id.to_s), title: obj.get_belongs_to_obj.try(:name)
         desc = "来自 #{obj.to_do_list.name} <i class='fa fa-check-circle'></i>"
         str << show_to_do_div(title,desc,index)
+        num = index + 1
       end
     end
+    (4-num).times{ |i| str << show_to_do_div('&nbsp;','&nbsp;',-1) }
+
     return str.html_safe
   end
 
   # 显示一条待办事项的div
   def show_to_do_div(title,desc,index)
     return %Q|
-      <div class="profile-post color-#{index%7+1}">
-        <span class="profile-post-numb">#{sprintf("%02d",index+1)}</span>
+      <div class="profile-post color-#{index >=0 ? index%7+1 : -1}">
+        <span class="profile-post-numb">#{index >=0 ? sprintf("%02d",index+1) : '&nbsp;'}</span>
         <div class="profile-post-in">
             <h3 class="heading-xs">#{title}</h3>
             <p>#{desc}</p>

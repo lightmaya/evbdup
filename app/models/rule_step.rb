@@ -17,7 +17,7 @@ class RuleStep < XmlColumn
         <node column='senior' data_type='hidden'/>
         <node name='待办事项显示名称' column='to_do_id' class='required' data_type='select' data='#{to_do_data}' hint='例如：审核定点采购项目'/>
 	      <node name='审核单位' column='dep' data_type='textarea' class='required' hint='例如：self.real_ancestry_level(2)'/>
-	      <node name='执行条件' column='inflow' data_type='textarea' class='required' hint='例如：self.total > 3000'/>
+	      <node name='执行条件' column='inflow' data_type='textarea' class='required' hint='执行条件不能包括状态=等待审核 例如：self.total > 3000'/>
 	      <node name='跳过条件' column='outflow' data_type='textarea' class='required' hint='例如：self.status == 404'/>
 	    </root>
 	  }

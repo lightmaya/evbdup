@@ -18,7 +18,36 @@ class Article < ActiveRecord::Base
   # 有status字段的需要加载AboutStatus
   include AboutStatus  
 
+  # 审核流程必须有rule
+  belongs_to :rule
   
+  before_create do
+    # 设置rule_id和rule_step
+    init_rule
+  end
+  
+  # status各状态的中文意思 状态值 标签颜色 进度 
+  def status_array
+    [
+      ["暂存", 0, "orange", 50],
+      ["等待审核", 1, "orange", 90],
+      ["已发布", 2, "u", 100],
+      ["审核拒绝",3,"red",0],
+      ["已删除", 404, "red", 0]
+    ]
+  end
+
+  # 根据不同操作 改变状态
+  # "提交审核"与action中obj.change_status_and_write_logs一致
+  def change_status_hash
+    status_ha = self.find_step_by_rule.blank? ? 2 : 1
+    return {
+      "提交审核" => { 3 => status_ha, 0 => status_ha },
+      "删除" => { 0 => 404 },
+      "通过" => { 1 => 2 },
+      "不通过" => { 1 => 3 }
+    }
+  end
 
   # 根据action_name 判断obj有没有操作
   # 用于前台的操作按钮，在BtnArrayHelper.rb中配置，与cancancan结合使用
@@ -45,17 +74,6 @@ class Article < ActiveRecord::Base
   end
 
   ####### status及审核相关 END ############
-
-  # 审核流程必须有rule
-  belongs_to :rule
-  def commit_params
-    arr = []
-    rule_id = Rule.find_by(yw_type: self.class.to_s).try(:id)
-    arr << "rule_id = #{rule_id}"
-    # 起始状态
-    arr << "rule_step = 'start'"
-    return arr
-  end
 
   # 定义form表单
   # name: label名称

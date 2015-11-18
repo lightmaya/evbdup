@@ -28,7 +28,7 @@
                     <th>单位名称</th>
                     <th>名称</th>
                     <th>预算总金额</th>
-                    <th class="status_bar"><%= status_filter(Budget) %></th>
+                    <th class="status_badge"><%= status_filter(Budget) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
                 </tr>
@@ -40,7 +40,7 @@
                     <td><%= budget.department.present? ? budget.department.real_dep.name : "" %></td>
                     <td><%= budget.name %></td>
                     <td class="money"><%= money budget.budget %></td>
-                    <td><%= budget.status_bar %></td>
+                    <td><%= budget.status_badge %></td>
                     <td><%= show_date(budget.created_at) %></td>
                     <td><%= btn_group(budgets_btn(budget,action_name == "list")) %></td>
                 </tr>

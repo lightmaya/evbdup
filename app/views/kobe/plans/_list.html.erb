@@ -32,7 +32,7 @@
                     <th>计划编号</th>
                     <th>计划名称</th>
                     <th>预算总金额</th>
-                    <th class="status_bar"><%= status_filter(Plan) %></th>
+                    <th class="status_badge"><%= status_filter(Plan) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
                 </tr>
@@ -48,7 +48,7 @@
                     <td><%= plan.sn %></td>
                     <td><%= plan.name %></td>
                     <td class="money"><%= money plan.total %></td>
-                    <td><%= plan.status_bar %></td>
+                    <td><%= plan.status_badge %></td>
                     <td><%= show_date(plan.created_at) %></td>
                     <td><%= btn_group(plans_btn(plan,action_name == "list")) %></td>
                 </tr>

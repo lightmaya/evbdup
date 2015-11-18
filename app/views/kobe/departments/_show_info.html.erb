@@ -21,7 +21,7 @@
 					<td align="center"><i class="fa fa-user color-<%= user.is_admin ? "orange" : "sea" %>"></i></td>
 					<td><%= user.login %></td>
 					<td><%= user.name %></td>
-					<td><%= user.tel.present? ? "#{user.tel} / #{user.mobile}" : user.mobile %></td>
+					<td><%= user.tel_and_mobile %></td>
 					<td><%= user.status_badge %></td>
 					<td><%= btn_group(users_btn(user)) %></td>
 				</tr>
