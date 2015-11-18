@@ -12,6 +12,7 @@ class OrdersItem < ActiveRecord::Base
 		ca = self.category_id.present? ? Category.find_by(id: self.category_id) : Category.find_by(name: self.category_name)
 		self.category_code = ca.ancestry if ca.present?
 		self.total = self.quantity * self.price
+		fdsf
   end
 
     # 产品全称 品牌+型号+版本号
@@ -35,6 +36,26 @@ class OrdersItem < ActiveRecord::Base
 	      <node name='成交单价（元）' column='price' class='required number'/>
 	      <node name='数量' column='quantity' class='required number'/>
 	      <node name='单位' class='zip' column='unit' class='required'/>
+	      <node name='小计（元）' column='total' class='required number' display='readonly'/>
+	      <node name='备注' column='summary' data_type='textarea' class='maxlength_800' placeholder='不超过800字'/>
+	    </root>
+	  }
+	end
+
+	def self.confirm_xml(who='',options={})
+	  %Q{
+	    <?xml version='1.0' encoding='UTF-8'?>
+	    <root>
+	    	<node column='id' data_type='hidden'/>
+	    	<node name='品目' column='category_name' display='readonly'/>
+	    	<node name='品牌' column='brand' class='required' display='readonly'/>
+	    	<node name='型号' column='model' class='required' display='readonly'/>
+	    	<node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。' display='readonly'/>
+	      <node name='市场单价（元）' column='market_price' class='required number' display='readonly'/>
+	      <node name='入围单价（元）' column='bid_price' class='number' display='readonly'/>
+	      <node name='成交单价（元）' column='price' class='required number'/>
+	      <node name='数量' column='quantity' class='required number' display='readonly'/>
+	      <node name='单位' class='zip' column='unit' class='required' display='readonly'/>
 	      <node name='小计（元）' column='total' class='required number' display='readonly'/>
 	      <node name='备注' column='summary' data_type='textarea' class='maxlength_800' placeholder='不超过800字'/>
 	    </root>
