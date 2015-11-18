@@ -20,7 +20,7 @@
 
   		// 判断预算是否大于总金额
   		var total = parseFloat($("input#orders_total").val());
-  		var budget = parseFloat($("input#orders_budget").val());
+  		var budget = parseFloat($("input#orders_budget_money").val());
   		if (budget < total) {
   			// flash_dialog("订单总金额不能超过预算！");
   			msg.push("订单总金额不能超过预算！");
