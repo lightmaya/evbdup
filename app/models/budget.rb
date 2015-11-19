@@ -2,7 +2,7 @@
 class Budget < ActiveRecord::Base
   has_many :uploads, class_name: :BudgetUpload, foreign_key: :master_id
 
-  belongs_to :order
+  has_one :order
   belongs_to :department
 
   belongs_to :rule
