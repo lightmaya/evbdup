@@ -45,7 +45,7 @@ class CartController < JamesController
     product_id = params[:id].to_s.split("-")[0]
     seller_id = params[:id].to_s.split("-")[2]
     @product = Product.show.find_by_id(product_id)
-    return render_404 if @product.blank?
+    return redirect_to(not_found_path) if @product.blank?
 
     @seller = if @product.cjzx?
       @product.department
@@ -53,7 +53,7 @@ class CartController < JamesController
       @product.item.agents.find_by_id(seller_id)
     end
 
-    return render_404 if @seller.blank?
+    return redirect_to(not_found_path) if @seller.blank?
   end
  
 end

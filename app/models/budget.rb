@@ -63,6 +63,10 @@ class Budget < ActiveRecord::Base
     end
   end
 
+  def used!
+    update(status: 61)
+  end
+
   def self.xml(who='',options={})
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
