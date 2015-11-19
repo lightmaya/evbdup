@@ -9,6 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to :budget
   
   scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("buyer_code like '#{dep_real_ancestry}/%' or buyer_code = '#{dep_real_ancestry}'") }
+  scope :not_grcg, -> { where("yw_type <> 'grcg'") }
 
   validates_with MyValidator
   validate :check_budget
@@ -28,6 +29,17 @@ class Order < ActiveRecord::Base
   after_create do 
     create_no("ZCL", "contract_sn")
     create_no(rule.code, "sn") if rule
+    # 变更预算审批单的状态
+    self.budget.update(status: 61, order_id: self.id)
+  end
+
+  after_save do
+    c = previous_changes["budget_id"]
+    if c.present?
+      # 释放就得预算审批单 锁定新的预算审批单
+      Budget.find_by(id: c.first).update(status: 21, order_id: null)
+      Budget.find_by(id: c.last).update(status: 61, order_id: self.id)
+    end
   end
 
   PTypes = {"xygh" => "单位采购", "grcg" => "个人采购"}
@@ -231,7 +243,8 @@ class Order < ActiveRecord::Base
         <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
         <node name='供应商单位地址' column='seller_addr' class='required'/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-        <node name='预算金额（元）' column='budget_money' class='number'/>
+        <node name='预算金额（元）' column='budget_money' class='number box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
+        <node column='budget_id' data_type='hidden'/>
         <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>

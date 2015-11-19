@@ -11,7 +11,7 @@ class Kobe::OrdersController < KobeController
   before_filter :order_from_cart, :only => [:cart_order, :create_cart_order]
   # 辖区内采购项目
   def index
-    @q = Order.find_all_by_buyer_code(current_user.department.real_ancestry).where(get_conditions("orders")).ransack(params[:q]) 
+    @q = Order.find_all_by_buyer_code(current_user.department.real_ancestry).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
     @orders = @q.result.page params[:page]
   end
 
