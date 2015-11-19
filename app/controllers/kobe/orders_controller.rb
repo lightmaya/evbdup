@@ -39,6 +39,7 @@ class Kobe::OrdersController < KobeController
     end
   end
 
+  # 供应商确认页面
   def agent_confirm_pre
     @order = Order.find(params[:id])
     slave_objs = @order.items
@@ -48,11 +49,22 @@ class Kobe::OrdersController < KobeController
     )
   end
 
+  # 供应商确认
   def agent_confirm
     @order = Order.find(params[:id])
     @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     write_logs(@order, "供应商确认", "")
     redirect_to action: :index
+  end
+
+  # 采购人确认页面
+  def buyer_confirm_pre
+
+  end
+
+  # 采购人确认
+  def buyer_confirm
+    
   end
 
   # 下单
