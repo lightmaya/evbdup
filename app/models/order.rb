@@ -10,6 +10,7 @@ class Order < ActiveRecord::Base
   
   scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("buyer_code like '#{dep_real_ancestry}/%' or buyer_code = '#{dep_real_ancestry}'") }
   scope :not_grcg, -> { where("yw_type <> 'grcg'") }
+  scope :by_seller_id, ->(seller_id) { where("orders.seller_id = #{seller_id}")}
 
   validates_with MyValidator
   validate :check_budget
@@ -269,6 +270,32 @@ class Order < ActiveRecord::Base
         <node name='供应商单位联系人座机' column='seller_tel' class='required'/>
         <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
         <node name='供应商单位地址' column='seller_addr' class='required'/>
+        <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
+        <node name='预算金额（元）' column='budget_money' class='number' display='readonly'/>
+        <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
+        <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
+        <node column='total' data_type='hidden'/>
+        <node column='yw_type' data_type='hidden'/>
+      </root>
+    }
+  end
+
+  def self.buyer_xml
+     %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='项目名称' column='name' class='required' display='readonly'/>
+        <node name='采购单位' column='buyer_name' class='required' display='readonly'/>
+        <node name='发票抬头' column='payer' hint='付款单位，默认与采购单位相同。' display='readonly' class='required'/>
+        <node name='采购单位联系人' column='buyer_man' class='required' />
+        <node name='采购单位联系人座机' column='buyer_tel' class='required' />
+        <node name='采购单位联系人手机' column='buyer_mobile' class='required' />
+        <node name='采购单位地址' column='buyer_addr' hint='一般是使用单位。' class='required' />
+        <node name='供应商名称' column='seller_name' class='required' display='readonly'/>
+        <node name='供应商单位联系人' column='seller_man' class='required' display='readonly'/>
+        <node name='供应商单位联系人座机' column='seller_tel' class='required' display='readonly'/>
+        <node name='供应商单位联系人手机' column='seller_mobile' class='required' display='readonly'/>
+        <node name='供应商单位地址' column='seller_addr' class='required' display='readonly'/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
         <node name='预算金额（元）' column='budget_money' class='number' display='readonly'/>
         <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>

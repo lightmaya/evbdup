@@ -107,9 +107,9 @@ namespace :kobe do
       post :same_template, :create_cart_order
     end
     member do
-      get :agent_confirm_pre
+      get :agent_confirm_pre, :buyer_confirm_pre
       get :audit, :print
-      post :commit, :update_audit, :agent_confirm
+      post :commit, :update_audit, :agent_confirm, :buyer_confirm
     end
   end
   resources :departments do 

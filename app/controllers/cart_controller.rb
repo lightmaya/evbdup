@@ -45,15 +45,15 @@ class CartController < JamesController
     product_id = params[:id].to_s.split("-")[0]
     seller_id = params[:id].to_s.split("-")[2]
     @product = Product.show.find_by_id(product_id)
-    return redirect_to(not_found_path) if @product.blank?
+    return render_404 if @product.blank?
 
     @seller = if @product.cjzx?
       @product.department
     else
-      @product.item.agents.find_by_id(seller_id)
+      @product.item.agents.find_by_agent_id(seller_id).try(:agent_dep)
     end
 
-    return redirect_to(not_found_path) if @seller.blank?
+    return render_404 if @seller.blank?
   end
  
 end

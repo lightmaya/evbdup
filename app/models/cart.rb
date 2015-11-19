@@ -21,12 +21,6 @@ class Cart
   def change(product, seller, num, set = false)
     num = num.to_i
     cart_item_id = "#{product.id}-#{seller.class}-#{seller.id}"
-    p "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    p "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    p cart_item_id
-    p "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    p num
-
     # 同一供应商id
     sid = "#{seller.class}-#{seller.id}"
     if current_item = self.items.find { |item| item.id.to_s == cart_item_id }
