@@ -130,6 +130,12 @@ class Kobe::SharedController < KobeController
     end
   end
 
+  # 当前用户的可用的预算审批单的json
+  def get_budgets_json
+    json = current_user.valid_budgets.map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name} [预算金额: <span class='red'>#{n.budget}</span>]"}|}
+    render :json => json.blank? ? '' : "[#{json.join(", ")}]" 
+  end
+
   private
 
 end

@@ -4,6 +4,13 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
+
+    // 选择预算审批单 给budget_id和budget_money赋值
+    $("body").on("click", ".dialog_box input[name='orders_budget_money'][type='radio']", function(){
+      var budget_money = $(this).nextAll('.red').text();
+      $("#new_order #orders_budget_money").val(budget_money);
+    });
+
   	$('#new_order').on('submit',function(){
   		var msg = []
   		// 判断品目模板是否相同

@@ -10,6 +10,8 @@ class BidProject < ActiveRecord::Base
   has_one :item
   belongs_to :department  
 
+  belongs_to :budget
+
   scope :can_bid, -> { where("bid_projects.status = 2 and now() < bid_projects.end_time") }
 
   # 模型名称
@@ -22,6 +24,7 @@ class BidProject < ActiveRecord::Base
 
   after_create do 
     create_no
+
   end
   
   include AboutStatus
@@ -105,7 +108,6 @@ class BidProject < ActiveRecord::Base
         <node name='采购人姓名' column='buyer_name' class='required' />
         <node name='采购人电话' class='buyer_phone' class='required' />
         <node name='采购人手机' column='buyer_mobile' class='required' />
-        <node name='采购人电子邮箱' column='buyer_email' class='required' />
         <node name='采购人地址' column='buyer_add' class='required' />
         <node name='明标或暗标' column='lod' class='required' data='#{Dictionary.lod}' data_type='radio' />
         <node name='投标截止时间' column='end_time' class='required datetime_select datetime' />
@@ -113,6 +115,8 @@ class BidProject < ActiveRecord::Base
         <node name='资质要求' column='req' data_type='textarea' class='required' />
         <node column='item_id' data_type='hidden'/>
         <node name='指定入围供应商' hint='粮机设备必须从入围项目中选择' class='box_radio' json_url='/kobe/shared/item_ztree_json' partner='item_id'/>
+        <node name='预算金额（元）' column='budget_money' class='number box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
+        <node column='budget_id' data_type='hidden'/>
         <node name='备注信息' column='remark' data_type='textarea' />
       </root>
     }

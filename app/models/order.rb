@@ -29,18 +29,18 @@ class Order < ActiveRecord::Base
   after_create do 
     create_no("ZCL", "contract_sn")
     create_no(rule.code, "sn") if rule
-    # 变更预算审批单的状态
-    self.budget.update(status: 61, order_id: self.id)
+  #   # 变更预算审批单的状态
+  #   self.budget.update(status: 61, order_id: self.id)
   end
 
-  after_save do
-    c = previous_changes["budget_id"]
-    if c.present?
-      # 释放就得预算审批单 锁定新的预算审批单
-      Budget.find_by(id: c.first).update(status: 21, order_id: null)
-      Budget.find_by(id: c.last).update(status: 61, order_id: self.id)
-    end
-  end
+  # after_save do
+  #   c = previous_changes["budget_id"]
+  #   if c.present?
+  #     # 释放就得预算审批单 锁定新的预算审批单
+  #     Budget.find_by(id: c.first).update(status: 21, order_id: null)
+  #     Budget.find_by(id: c.last).update(status: 61, order_id: self.id)
+  #   end
+  # end
 
   after_save do 
     budget.try(:used!)

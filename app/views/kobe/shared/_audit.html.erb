@@ -63,7 +63,7 @@
 		// 转向下一个审核人
 		$('#<%= form_id %> input[name="audit_next"]').live("click", function () {
 			if ($(this).val() == "turn") {
-				$(this).parent().after('<label class="input" id="audit_next_turn_user"><input id="audit_next_user" class="tree_radio required" type="text" json_params=\'{"json_class": "<%= obj.class %>", "id": "<%= obj.id %>"}\' json_url="/kobe/shared/audit_next_user" partner="audit_next_user_id" name="audit_next_user" value=""><input id="audit_next_user_id" type="hidden" value="" name="audit_next_user_id"></label>');
+				$(this).parent().after('<label class="input" id="audit_next_turn_user"><input id="audit_next_user" class="tree_radio required" type="text" json_params=\'{"json_class": "<%= obj.class %>", "id": "<%= obj.id %>"}\' json_url="/kobe/shared/audit_next_user" partner="audit_next_user_id" name="audit_next_user" value=""><b class="tooltip tooltip-bottom-right">如果没有可选项，请先给其他人授权！</b><input id="audit_next_user_id" type="hidden" value="" name="audit_next_user_id"></label>');
 			}else{
 				$("#audit_next_turn_user").remove();
 			};

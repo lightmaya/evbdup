@@ -262,7 +262,7 @@
 		  cache: false,
 		  success: function(data){
 		  	if (data == null) {
-		  		d.content("没有相关权限，请先联系管理员！");
+		  		d.content("没有可选项！");
 		  	}else{
 			  	if (data.length == 0){
 			  		$("#" + treeId).html("搜索结果为空，请换个关键字试试。");
@@ -303,7 +303,7 @@
 		  cache: false,
 		  success: function(data){
 		  	if (data == null) {
-		  		d.content("没有相关权限，请先联系管理员！");
+		  		d.content("没有可选项！");
 		  	}else{
 			  	if (data.length == 0){
 			  		$("#" + boxId).html("搜索结果为空，请换个关键字试试。");
