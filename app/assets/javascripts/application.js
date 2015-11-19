@@ -21,7 +21,6 @@
 //= require plugins/smoothScroll
 //= require plugins/jquery.parallax
 //= require app
-//= require form
 //= require common
 //= require dota
 //= require plugins/jquery.dragsort-0.5.2.min
@@ -32,6 +31,7 @@
 //= require plugins/owl-recent-works
 //= require plugins/jquery.mCustomScrollbar.concat.min
 //= require my97/WdatePicker
+//= require form
 
 
 //= require select2/select2.min
