@@ -65,14 +65,14 @@ class Kobe::ProductsController < KobeController
     redirect_back_or request.referer
   end
 
-  # 冻结
+  # 下架
   def freeze
     render partial: '/shared/dialog/opt_liyou', locals: {form_id: 'freeze_product_form', action: update_freeze_kobe_product_path(@product)}
   end
 
   def update_freeze
-    @product.change_status_and_write_logs("冻结",stateless_logs("冻结", params[:opt_liyou], false))
-    tips_get("冻结成功。")
+    @product.change_status_and_write_logs("下架",stateless_logs("下架", params[:opt_liyou], false))
+    tips_get("下架成功。")
     redirect_back_or request.referer
   end
 

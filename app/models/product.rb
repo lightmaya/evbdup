@@ -44,7 +44,7 @@ class Product < ActiveRecord::Base
       ["正常",1,"u",100],
       ["等待审核",2,"blue",50],
       ["审核拒绝",3,"red",0],
-      ["下架",4,"yellow",20],
+      ["已下架",4,"yellow",20],
       ["已删除",404,"light",0]
     ]
   end
@@ -57,7 +57,7 @@ class Product < ActiveRecord::Base
       "通过" => { 2 => 1 },
       "不通过" => { 2 => 3 },
       "删除" => { 0 => 404 },
-      "冻结" => { 1 => 4 },
+      "下架" => { 1 => 4 },
       "恢复" => { 4 => 1 }
     }
   end
@@ -98,7 +98,7 @@ class Product < ActiveRecord::Base
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "recover", "update_recover" 
-      self.can_opt?("恢复") && current_u.department.real_ancestry_level(1)
+      self.can_opt?("下架") && current_u.department.real_ancestry_level(1)
     when "freeze", "update_freeze" 
       self.can_opt?("冻结") && current_u.department.real_ancestry_level(1)
     else false
