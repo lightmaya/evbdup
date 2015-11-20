@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   has_many :user_categories, :dependent => :destroy
   has_many :categories, through: :user_categories
   has_many :orders
+  has_many :yjjy , class_name:'Faq' , foreign_key: 'ask_user_id'
   # 收到的消息
   has_many :msg_users
   # has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  

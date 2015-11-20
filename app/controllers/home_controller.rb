@@ -54,12 +54,19 @@ class HomeController < JamesController
     money = params[:m].gsub(",", "").to_f
     @order = Order.find_by("(sn = ? or contract_sn = ? ) and total>= ? and total<= ? and status in (?)",sn,sn,money-0.1,money+0.1,Order.effective_status )
     if  !@order.present?
-      render :not_found
+      render :text => %{<div style="text-align:left;margin:24px;color:#ff0000;">您输入的信息与实际不符，详情请联系服务热线：<br>办公物资：010-88016607。<br>粮机物资：010-88016801,010-88016802。<br>技术支持：010-88016617,010-88016623。</div>}, :layout => false
     else
-      str = "合同编号：#{sn}"
-      str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{sn}?m=#{@order.total}"
-      @qr = qrcode(str)
-      render partial: @order.ht , layout: 'print'  
+      if @order.sn == sn
+        str = "凭证编号：#{sn}"
+        str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{sn}?m=#{@order.total}"
+        @qr = qrcode(str)
+        render partial: '/kobe/orders/print_ysd' , layout: 'print'
+      else
+        str = "合同编号：#{sn}"
+        str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{sn}?m=#{@order.total}"
+        @qr = qrcode(str)
+        render partial: @order.ht , layout: 'print'
+      end  
     end
   end
 

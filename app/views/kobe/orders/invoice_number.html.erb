@@ -1,0 +1,39 @@
+<div class="tab-v1 margin-bottom-60">          
+    <form action="<%= update_invoice_number_kobe_order_path(@order)%>" class="sky-form" method="post">
+        <fieldset>                  
+                        <%if @order.invoice_number.present?%>
+                            <section>
+            <div class="row">
+                    <label class="label col col-4">发票编号: </label>
+                    <label class="label col col-8"><%= @order.invoice_number %></label>
+                </div>
+                </section>
+                <section>
+                <div class="row">
+                    <label class="label col col-4">修改发票: </label>
+                    <div class="col col-8">
+                        <label class="input">
+                            <input type="text" placeholder="发票号.." name="number">
+                        </label>
+                    </div>
+                </div>
+                </section>
+                <%else%>
+                <section>
+                <div class="row">
+                    <label class="label col col-4">请填写发票编号:</label>
+                    <div class="col col-8">
+                        <label class="input">
+                            <input type="text" placeholder="发票号.." name="number">
+                        </label>
+                    </div>
+                </div> 
+                </section>                                  
+                <%end%> 
+        </fieldset>
+        <footer class="textc">
+            <button type="submit" class="btn-u">提交</button>
+        </footer>
+    </form>
+</div>
+<!-- End Tabs -->

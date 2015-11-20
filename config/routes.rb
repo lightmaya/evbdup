@@ -108,8 +108,8 @@ namespace :kobe do
     end
     member do
       get :agent_confirm_pre, :buyer_confirm_pre
-      get :audit, :print
-      post :commit, :update_audit, :agent_confirm, :buyer_confirm
+      get :audit, :print, :print_ht, :print_ysd, :invoice_number
+      post :commit, :update_audit, :agent_confirm, :buyer_confirm, :update_invoice_number
     end
   end
   resources :departments do 
@@ -264,11 +264,11 @@ namespace :kobe do
   
    resources :faqs do 
      member do 
-       get :delete 
-       post :commit 
+       get :delete ,:reply
+       post :commit, :create_reply 
      end
      collection do
-      get  :get_catalog
+      get  :get_catalog,:yjjy_list
      end
  
    end

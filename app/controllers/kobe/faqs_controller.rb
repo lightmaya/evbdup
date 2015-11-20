@@ -14,18 +14,18 @@ class Kobe::FaqsController < KobeController
       @faq.ask_dep_name = current_user.department.real_dep.name
     end 
     type = Dictionary.faq_catalog[params[:catalog]]
-    @myform = SingleForm.new(Faq.xml(params[:catalog],action_name), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faqs_path(catalog: params[:catalog]), grid: 3 })
+    @myform = SingleForm.new(Faq.xml(params[:catalog]), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faqs_path(catalog: params[:catalog]), grid: 3 })
   end
 
 
   def create
-    create_and_write_logs(Faq, Faq.xml,{},{catalog: params[:catalog]})
+    create_and_write_logs(Faq, Faq.xml(params[:catalog]),{},{catalog: params[:catalog], ask_user_id: current_user.id })
     redirect_to kobe_faqs_path
   end
   
   def edit
     type = Dictionary.faq_catalog[@faq.catalog]
-    @myform = SingleForm.new(Faq.xml(@faq.catalog,action_name), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faq_path(@faq), method: "patch", grid: 3 })
+    @myform = SingleForm.new(Faq.xml(@faq.catalog), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faq_path(@faq), method: "patch", grid: 3 })
   end
 
   def update 
@@ -65,6 +65,19 @@ class Kobe::FaqsController < KobeController
 
   def  reply
     
+  end
+
+  def  create_reply
+     status = @faq.change_status_hash["回复"][@faq.status]
+     @faq.update(content: params[:reply], status: status )
+     write_logs(@faq, '回复')
+     redirect_to kobe_faqs_path
+  end
+
+  def yjjy_list
+     @q = current_user.yjjy.ransack(params[:q]) 
+     @yjjys = @q.result.status_not_in(404).page params[:page]
+
   end
 
 

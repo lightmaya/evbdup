@@ -5,7 +5,7 @@ class Faq < ActiveRecord::Base
 	  include AboutStatus
 
 	before_save do 
-    self.status = self.catalog=='yjjy' ?  1 : 0 
+    self.status = (self.catalog=='yjjy' ?  2 : 0) if self.new_record?
   end
 
   
@@ -14,6 +14,8 @@ class Faq < ActiveRecord::Base
 		[
 	    ["暂存",0,"orange",50],
 	    ["已发布",1,"u",100],
+	    ["未回复",2,"blue",80],
+	    ["已回复",3,"sea",100],
 	    ["已删除",404,"light",0]
     ]
   end
@@ -22,16 +24,17 @@ class Faq < ActiveRecord::Base
   def change_status_hash
     return {
       "提交" => { 0 => 1 },
-      "删除" => { 0 => 404 }
+      "删除" => { 0 => 404 },
+      "回复" => { 2 => 3 }
     }
   end
 
 	# 从表的XML加ID是为了修改的时候能找到记录
-	def self.xml(catalog='',action='')
-    bool = ['yjjy','cjwt'].include? catalog
-		title = bool ?  '问题' : '标题'
-		content = bool ? '答案' : '内容'
-		if (action=='edit' && bool) || catalog=='yjjy'
+	def self.xml(catalog='')
+    bool = catalog=='yjjy'
+		title = bool ?  '建议' : '标题'
+		content = bool ? '回复' : '内容'
+		if  bool
 		str= %Q{
 			 	  <node name="发布人" column="ask_user_name" display="readonly" /> 
 	        <node name="所在单位" column="ask_dep_name" display="readonly" /> 
