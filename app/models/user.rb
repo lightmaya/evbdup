@@ -49,6 +49,16 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest(token.to_s)
   end
 
+  # 判断当前用户所在单位是采购单位、供应商还是监管机构
+  def user_type
+    r_id = self.department.root_id
+    if r_id == Department.purchaser.try(:id) && self.real_department.id == self.department.real_ancestry_level(1).try(:id)
+      return 1
+    else
+      return r_id
+    end
+  end
+
   # 获取当前人的菜单
   # def show_menus
   #   return menus_ul(Menu.to_depth(0))
@@ -81,7 +91,7 @@ class User < ActiveRecord::Base
         <node name='职务' column='duty'/>
         <node name='是否单位管理员' column='is_admin' data_type='radio' data='[[0,"否"],[1,"是"]]'/>
         <node name='用户类型' column='user_type' data_type='radio' data='[[0,"单位用户"],[1,"个人用户"]]'/>
-        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Menu"}' partner='menuids'/>
+        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/user_ztree_json' partner='menuids'/>
         <node column='menuids' data_type='hidden'/>
         <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden'/>
