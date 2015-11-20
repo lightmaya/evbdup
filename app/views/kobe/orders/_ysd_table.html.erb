@@ -1,4 +1,4 @@
-<div class="h_content float_left">凭证编号：<%=raw @info.sn %></div>
+<div class="h_content float_left">凭证编号：<%=raw @order.sn %></div>
 <div class="h_content float_left">发票编号：<%=raw @order.invoice_number  %></div>
 <div class="h_content float_right">采购方式：<%=Dictionary.yw_type[@order.yw_type] %></div>
 <div class="h_content">
@@ -12,18 +12,18 @@
 </ol>
 </div>
 <div style="clear:both">
-    <div class="h_content float_left">采购单位：<%=@info.dep_p_name%></div>
-    <div class="h_content float_left">供货单位：<%=@info.dep_s_name%></div>
+    <div class="h_content float_left">采购单位：<%=@order.buyer_name%></div>
+    <div class="h_content float_left">供货单位：<%=@order.seller_name%></div>
 </div>
 <div style="clear:both">
-    <div class="h_content float_left">联 系 人：<%=@info.dep_p_man%></div>
-    <div class="h_content float_left">联 系 人：<%=@info.dep_s_man%></div>
+    <div class="h_content float_left">联 系 人：<%=@order.buyer_man%></div>
+    <div class="h_content float_left">联 系 人：<%=@order.seller_man%></div>
 </div>
 <div style="clear:both">
-    <div class="h_content float_left">联系电话：<%=@info.dep_p_tel%></div>
-    <div class="h_content float_left">联系电话：<%=@info.dep_s_tel%></div>
+    <div class="h_content float_left">联系电话：<%=@order.buyer_tel%></div>
+    <div class="h_content float_left">联系电话：<%=@order.seller_tel%></div>
 </div>
 <div style="clear:both">
-    <div class="h_content float_left">单位地址：<%=@info.dep_p_add%></div>
-    <div class="h_content float_left">单位地址：<%=@info.dep_s_add%></div>
+    <div class="h_content float_left">单位地址：<%=@order.buyer_addr%></div>
+    <div class="h_content float_left">单位地址：<%=@order.seller_addr%></div>
 </div>

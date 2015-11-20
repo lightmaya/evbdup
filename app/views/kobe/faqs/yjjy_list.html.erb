@@ -1,0 +1,47 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i>意见建议</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+      <div class="col-md-4 pull-right">
+        <%= search_form_for @q, url: yjjy_list_kobe_faqs_path, html: { method: :get } do |f| %>
+        <div class="margin-bottom-10">
+          <div class="input-group">
+            <%= f.search_field :title_cont, class: "form-control input-sm", placeholder: "请输入问题内容..." %>
+            <span class="input-group-btn">
+              <button class="btn btn-success btn-sm" type="submit">搜索</button>
+            </span>
+
+            <span class="margin-left-10 pull-left">
+              <button class="btn btn-success btn-sm accordion-toggle" data-target="#advanced_search" data-toggle="collapse" type="button" aria-expanded="true">高级搜索</button>
+            </span>
+          </div>
+        </div>
+        <% end %>
+      </div>
+</div>
+        <%= modal_dialog("opt_dialog") %>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="index">序号</th>
+                    <th>问题</th>
+                    <th class="status_badge">状态</th>
+                    <th class="w200">发布时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @yjjys.each_with_index do |yjjy,index| %>
+                <tr>
+                    <td><%= show_index(index) %></td>
+                    <td><%=link_to  text_truncate(yjjy.title),  kobe_faq_path(yjjy.id)%></td>
+                    <td><%= yjjy.status_badge %></td>
+                    <td class="textr"><%= yjjy.created_at %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @yjjys %> 
+    </div>                     
+</div>

@@ -1,0 +1,19 @@
+
+<%= show_obj_info(@faq,Faq.xml('yjjy'),{title: "意见建议" , grid: 2})%>
+  <!-- Comments -->
+  <form action="<%=create_reply_kobe_faq_path%>" method="post" id="sky-form5" class="sky-form">
+  	<header>意见建议回复</header>
+
+  	<fieldset>                                      
+  		<section>
+  		<label class="label">请填写回复信息</label>
+  			<label class="textarea">
+  				<textarea rows="4" name="reply"></textarea>
+  			</label>
+  		</section>
+  	</fieldset>
+
+  	<footer>
+  		<button type="submit" name="submit" class="button">提交</button>
+  	</footer>
+  </form>         

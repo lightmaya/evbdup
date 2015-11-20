@@ -150,11 +150,32 @@ class Kobe::OrdersController < KobeController
     render :text => templates.size
   end
 
-  def print
+  def print_ht
     str = "合同编号：#{@order.contract_sn}"
     str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{@order.contract_sn}?m=#{@order.total}"
     @qr = qrcode(str)
     render partial: @order.ht , layout: 'print'  
+  end
+  
+  def print_ysd
+    str = "凭证编号：#{@order.sn}"
+    str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{@order.sn}?m=#{@order.total}"
+    @qr = qrcode(str)
+    render  partial: 'print_ysd',layout: 'print'  
+  end
+
+  def print
+    render layout: false
+  end
+  
+  def invoice_number
+    render layout: false 
+  end
+
+  def update_invoice_number
+     @order.update(invoice_number: params[:number] )
+     write_logs(@order, '填写发票')
+     redirect_to kobe_orders_path
   end
 
   private
