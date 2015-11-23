@@ -20,7 +20,10 @@ Evbdup::Application.routes.draw do
 
   get 'show_faqs' => "faqs#show"
 
-  post 'check_ysd' => "home#check_ysd"  
+  post 'check_ysd' => "home#check_ysd" 
+
+  # 检查是否登录
+  get "check_login" => "home#check_login" 
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
 

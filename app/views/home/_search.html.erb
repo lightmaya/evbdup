@@ -35,6 +35,24 @@
     </div>
   <% end -%>
   <!-- 品牌筛选END -->
+
+  <!-- 关键参数 -->
+  <% if @key_params.present? %>
+    <% @key_params.each do |h| %>
+      <div class="filterminlist">
+        <div class="filtername tr" style="border: 0px"><%= h["name"] %>：</div>
+        <dl>
+          <% h["data"].each do |key_hash| %>
+            <dd class="w120">
+              <%= link_to_channel key_hash %>
+            </dd> 
+          <% end -%>
+        </dl>
+        <div style="clear:both"></div>
+      </div>
+    <% end -%>
+  <% end -%>
+  <!-- 关键参数END -->
 </div>
 
 <style type="text/css">
@@ -58,7 +76,7 @@
   border-bottom:none;
 }
 .filtername {
-  width:70px;
+  width: 90px;
   float:left;
   line-height: 40px;
   color:#000;
@@ -76,7 +94,7 @@
   // padding:2px 20px 2px 5px;
   // background:url(/assets/zcl/icon_1.png) no-repeat right -140px;
   padding:2px 5px 2px 5px;
-  border:1px solid #dcdcdc;
+  border:1px solid #d72727;
   cursor:pointer;
 }
 .a-values ul li:hover {
@@ -120,7 +138,8 @@
 .filter dl {
   display:block;
   float:left;
-  width:720px;  
+  /*width:720px;  */
+  width: 85%;
   margin-left: 40px;
 }
 .filter dd {

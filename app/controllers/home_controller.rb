@@ -73,11 +73,24 @@ class HomeController < JamesController
   private
     # 查询条件对应
     # [category_id]_[brand]_[sort]_[page]
-    def combo_to_conditions
+    def combo_to_conditions(source)
       # 随机排序
       params[:q][:s] = "id asc"
       @combos = params[:combo].split("_")
-      Product::QS.each_with_index do |q, index|
+      # 关键参数
+      @all_qs = if source.is_a?(Category)
+          rs = Product::QS
+          source.get_key_params_nodes.each do |l|
+            data = eval l.attr("data")
+            next if data.size <= 1
+            rs << l.attr("name")
+          end
+          rs
+        else
+          Product::QS
+        end
+      # all_qs = ["brand", "排气量"]
+      @all_qs.each_with_index do |q, index|
         @combos[index] = 0 if @combos[index].blank?
         next if @combos[index].to_i == 0
         if q == "sort"
@@ -97,7 +110,7 @@ class HomeController < JamesController
         elsif q == "page"
           params[:page] = @combos[index].to_i
           params[:page] = 1 if params[:page] < 1
-        else
+        elsif index < Product::QS.size
           params[:q][q.to_sym] = @combos[index]
         end
       end
@@ -105,11 +118,14 @@ class HomeController < JamesController
     end
 
     def ult(source)
-      combo_to_conditions
+      combo_to_conditions(source)
       clazz = source.products.show
       
       # 已选条件
       @qs = []
+      # 关键参数
+      @key_params = []
+      keys_conditions = []
 
       # 品牌查询标签
       @all_brands = clazz.group("brand").map(&:brand)
@@ -124,7 +140,35 @@ class HomeController < JamesController
         @brands << {title: brand, id: i+1, q: "brand_eq"} if q_brand_index == 0 || brand != @all_brands[q_brand_index- 1]
       end
 
-      @q = clazz.ransack(params[:q])
+      # 关键参数
+      if source.is_a?(Category)
+        source.get_key_params_nodes.each do |l|
+          data = eval l.attr("data")
+          next if data.size <= 1
+          h = {}; data_ary = []
+          h["name"] = l.attr("name")
+
+          # 已选参数
+          key_index = @combos[@all_qs.index(h["name"])].to_i
+          if key_index > 0
+            key = data[key_index - 1]
+            @qs << {title: "#{h["name"]}：<span>#{key}</span>", id: 0, q: h["name"]}
+            keys_conditions << %Q|extractvalue(details, '//node[@name=\"#{h["name"]}\"]/@value') = '#{key}'|
+          end
+
+          # extractvalue(details, "//node[@name='排量（L）']/@value") = '2.11'
+          # dasd if h["name"] == "座位数（个）"
+
+          data.each_with_index do |d, index|
+            data_ary << {title: d, id: index + 1, q: h["name"]} if key_index != index + 1
+          end
+          h["data"] = data_ary
+          
+          @key_params << h 
+        end
+      end
+
+      @q = clazz.where(keys_conditions.join(" and ")).ransack(params[:q])
       @products = @q.result.includes([:category, :uploads]).page(params[:page]).per(20)
       # 推荐产品
       @rec_products = source.products.show.order("id DESC").limit(3)

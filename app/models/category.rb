@@ -158,7 +158,7 @@ class Category < ActiveRecord::Base
 
   # 获取关键参数的node is_key="是"
   def get_key_params_nodes
-    Nokogiri::XML(self.params_xml).xpath("/root/node[@is_key='是']").to_s
+    Nokogiri::XML(self.params_xml).xpath("/root/node[@is_key='是']")
   end
 
 end
