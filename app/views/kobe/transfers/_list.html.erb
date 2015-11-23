@@ -1,0 +1,56 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-8 pull-left padding-top-5">
+            <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_transfer_path) if action_name =='index' %>
+            </div>
+        <div class="col-md-4 pull-right">
+         <%= search_form_for @q, url: kobe_transfers_path, html: { method: :get } do |f| %>
+        <div class="margin-bottom-10">
+          <div class="input-group">
+            <%= f.search_field :sn_cont, class: "form-control input-sm", placeholder: "请输入标题..." %>
+            <span class="input-group-btn">
+              <button class="btn btn-success btn-sm" type="submit">搜索</button>
+            </span>
+
+            <span class="margin-left-10 pull-left">
+              <button class="btn btn-success btn-sm accordion-toggle" data-target="#advanced_search" data-toggle="collapse" type="button" aria-expanded="true">高级搜索</button>
+            </span>
+          </div>
+        </div>
+        <% end %>
+       </div>
+    </div>
+       <%= modal_dialog("opt_dialog") %>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="index">序号</th>
+                    <th><%= sort_link(@q, :sn, '项目编号', default_order: :desc) %></th>
+                    <th><%= sort_link(@q, :name, '项目名称', default_order: :desc) %></th>
+                    <th><%= sort_link(@q, :total, '金额（元）', default_order: :desc) %></th>
+                    <th>状态</th>
+                    <th class="date"><%= date_filter %></th>
+                    <th class="cando">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @transfers.each_with_index do |transfer,index| %>
+                <tr>
+                    <td><%= show_index(index) %></td>
+                    <td><%= transfer.sn %></td>
+                    <td><%= transfer.name %></td>
+                   <td class="money"><%= money transfer.total %></td>
+                    <td><%= transfer.status_badge %></td>
+                    <td><%= show_date(transfer.created_at) %></td>
+                    <td><%= btn_group(transfers_btn(transfer)) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @transfers %> 
+    </div>                     
+</div>

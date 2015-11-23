@@ -20,6 +20,7 @@ Evbdup::Application.routes.draw do
 
   get 'show_faqs' => "faqs#show"
 
+  resources  :transfers
   post 'check_ysd' => "home#check_ysd"  
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
@@ -271,6 +272,13 @@ namespace :kobe do
       get  :get_catalog,:yjjy_list
      end
  
+   end
+
+   resources :transfers do 
+     member do 
+       get :delete 
+       post :commit
+     end
    end
 
    resources :products do
