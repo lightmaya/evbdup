@@ -121,16 +121,17 @@ class Department < ActiveRecord::Base
   end
 
   # 根据action_name 判断obj有没有操作
-  def cando(act='')
+  def cando(act='',current_u)
+    cdt = current_u.is_admin || current_u.user_type == Dictionary.manage_user_type
     case act
     when "show", "index" 
       true
     when "update", "edit", "upload", "update_upload", "show_bank", "edit_bank", "update_bank" 
-      [0,1,3].include?(self.status)
+      [0,1,3].include?(self.status) && cdt
     when "commit" 
-      [0,3].include?(self.status) && self.get_tips.blank? && self.can_opt?("提交")
+      [0,3].include?(self.status) && self.get_tips.blank? && self.can_opt?("提交") && cdt
     when "add_user", "update_add_user", "new", "create" 
-      self.status == 1
+      self.status == 1 && cdt
     when "update_audit", "audit" 
       self.can_opt?("通过") && self.can_opt?("不通过")
     when "delete", "destroy" 

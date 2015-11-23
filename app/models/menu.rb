@@ -10,6 +10,8 @@ class Menu < ActiveRecord::Base
 
   has_many :task_queues
 
+  scope :by_user_type, ->(user_type) { where("find_in_set('#{user_type}', user_type) > 0") }
+
 	include AboutAncestry
 	include AboutStatus
 

@@ -13,17 +13,17 @@ class Kobe::UsersController < KobeController
   end
 
   def edit
-    @myform = SingleForm.new(User.xml, @user, { form_id: "user_form", action: kobe_user_path(@user), method: "patch", grid: 2 })
+    @myform = SingleForm.new(User.xml(@user, current_user), @user, { form_id: "user_form", action: kobe_user_path(@user), method: "patch", grid: 2 })
   end
 
   def show
     @arr  = []
-    @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@user, User.xml) }
+    @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@user, User.xml(@user, current_user)) }
     @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@user) }
   end
 
   def only_show_info
-    render :text => show_obj_info(@user, User.xml).html_safe
+    render :text => show_obj_info(@user, User.xml(@user, current_user)).html_safe
   end
 
   def only_show_logs
@@ -34,7 +34,7 @@ class Kobe::UsersController < KobeController
   end
 
   def update
-    if update_and_write_logs(@user, User.xml)
+    if update_and_write_logs(@user, User.xml(@user, current_user))
       if @user.previous_changes["menuids"].present?
         @user.menu_ids = @user.menuids.split(",")
         @user.cache_menus(true)
@@ -95,6 +95,6 @@ class Kobe::UsersController < KobeController
         end
       end
     end
-    cannot_do_tips unless @user.present? && @user.cando(action_name)
+    cannot_do_tips unless @user.present? && @user.cando(action_name, current_user)
   end
 end

@@ -188,7 +188,7 @@ class Kobe::DepartmentsController < KobeController
         @dep = current_user.department.subtree.find_by(id: params[:id]) if current_user.is_admin && params[:id].present?
       end
       unless action_name == "ztree"
-        cannot_do_tips unless @dep.present? && @dep.cando(action_name)
+        cannot_do_tips unless @dep.present? && @dep.cando(action_name, current_user)
         audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@dep,@menu_ids)
       end
     end

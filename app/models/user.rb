@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   validates :password, presence: true, length: { in: 6..20 }, :on => :create
   validates :login, presence: true, length: { in: 6..20 }, uniqueness: { case_sensitive: false }
   include AboutStatus
-  validates_with MyValidator, on: :update
+  # validates_with MyValidator, on: :update
 
   belongs_to :department
   has_many :user_menus, :dependent => :destroy
@@ -54,7 +54,7 @@ class User < ActiveRecord::Base
   def user_type
     r_id = self.department.root_id
     if r_id == Department.purchaser.try(:id) && self.real_department.id == self.department.real_ancestry_level(1).try(:id)
-      return 1
+      return Dictionary.manage_user_type
     else
       return r_id
     end
@@ -80,7 +80,21 @@ class User < ActiveRecord::Base
     }
   end
 
-  def self.xml(who='',options={})
+  def self.xml(obj, current_u)
+    tmp = ''
+    if current_u.is_admin
+      if current_u.user_type == Dictionary.manage_user_type
+        tmp << %Q{
+        <node name='是否单位管理员' column='is_admin' data_type='radio' data='[[0,"否"],[1,"是"]]'/>
+        } 
+      end
+      tmp << %Q{
+        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/user_ztree_json' partner='menuids' json_params='{"id":"#{obj.id}"}' hint='如果没有可选项，请先给其他人授权！'/>
+        <node column='menuids' data_type='hidden'/>
+        <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
+        <node column='categoryids' data_type='hidden'/>
+      }
+    end
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
@@ -90,12 +104,8 @@ class User < ActiveRecord::Base
         <node name='手机' column='mobile' class='required'/>
         <node name='传真' column='fax'/>
         <node name='职务' column='duty'/>
-        <node name='是否单位管理员' column='is_admin' data_type='radio' data='[[0,"否"],[1,"是"]]'/>
-        <node name='用户类型' column='user_type' data_type='radio' data='[[0,"单位用户"],[1,"个人用户"]]'/>
-        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/user_ztree_json' partner='menuids'/>
-        <node column='menuids' data_type='hidden'/>
-        <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
-        <node column='categoryids' data_type='hidden'/>
+        <node name='用户类型' column='is_personal' data_type='radio' data='[[0,"单位用户"],[1,"个人用户"]]'/>
+        #{tmp}
       </root>
     }
   end
@@ -172,7 +182,7 @@ class User < ActiveRecord::Base
 
   # 自动获取操作权限
   def set_auto_menu
-    self.menu_ids = Menu.where(is_auto: true).map(&:id)
+    self.menu_ids = Menu.by_user_type(self.user_type).map(&:id)
   end
 
   # 待办事项的条件
@@ -197,16 +207,17 @@ class User < ActiveRecord::Base
   end
 
   # 根据action_name 判断obj有没有操作
-  def cando(act='')
+  def cando(act='',current_u)
+    cdt = current_u.is_admin || current_u.user_type == Dictionary.manage_user_type
     case act
     when "show", "index", "only_show_info", "only_show_logs" 
       true
     when "edit", "update", "reset_password", "update_reset_password" 
-      [0,1,3].include?(self.department.status) && self.status == 0
+      [0,1,3].include?(self.department.status) && self.status == 0 && cdt || self.id == current_u.id
     when "recover", "update_recover" 
-      [0,1,3].include?(self.department.status) && self.can_opt?("恢复")
+      [0,1,3].include?(self.department.status) && self.can_opt?("恢复") && cdt
     when "freeze", "update_freeze" 
-      [0,1,3].include?(self.department.status) && self.can_opt?("冻结")
+      [0,1,3].include?(self.department.status) && self.can_opt?("冻结") && cdt
     else false
     end
   end

@@ -19,6 +19,21 @@ class Kobe::SharedController < KobeController
     end
   end
 
+  # 用户权限 当前用户只能授权当前他有的权限
+  def user_ztree_json
+    name = params[:ajax_key]
+    user_type = User.find_by(id: params[:id]).try(:user_type)
+    nodes = Menu.status_not_in(404).by_user_type(user_type)
+
+    if name.present?
+      ids = nodes.map(&:id)
+      cdt = "and a.status != 404 and b.status != 404 and a.id in (#{ids}) and b.id in (#{ids})"
+      sql = ztree_box_sql(Menu, cdt)
+      nodes = Menu.find_by_sql([sql,"%#{name}%"])
+    end
+    render :json => Menu.get_json(nodes)
+  end
+
   def item_ztree_json
     json = Item.all.map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}|}
     render :json => "[#{json.join(", ")}]" 
