@@ -1,0 +1,15 @@
+<%= title( Dictionary.web_site_name + " - " + @transfer.name) %>
+
+<div class="container">
+  <div class="headline-center">
+    <h2><%= @transfer.name %>
+      <div class="service-block-v5">
+				<p> 时间：<%= @transfer.created_at %></p>
+		  </div>
+    </h2>
+  </div>
+</div>
+<div class="container">
+	<%= @obj_contents %>
+	<%= uploads_html(@transfer, {title: true}).html_safe %>
+</div>
