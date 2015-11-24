@@ -13,6 +13,11 @@ gem "default_value_for", "3.0.0.1"
 # 上传插件
 gem 'carrierwave', '0.8.0'
 gem 'rqrcode'
+# gem "ruby-pinyin"
+
+
+gem 'sunspot_rails', '2.1.1'
+gem 'sunspot_solr', '2.1.1'
 
 group :assets do
 	# Use SCSS for stylesheets

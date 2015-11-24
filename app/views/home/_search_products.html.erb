@@ -1,0 +1,63 @@
+
+<%= render "js" %>
+<div class="content container">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- 上部筛选 -->
+      <div class="row margin-bottom-5">
+        <div class="col-sm-4 result-category">
+          <h2>关于“<%= params[:k] %>”</h2>
+          <small class="shop-bg-red badge-results">共<%= @products.total %>个商品</small>
+        </div>
+        <div class="col-sm-8">
+          <ul class="list-inline clear-both">
+            
+          </ul>
+        </div>
+
+      </div>
+      <!-- 上部筛选END -->
+
+      <div class="filter-results">
+        <div class="row illustration-v2 margin-bottom-30">
+           <% @products.each_hit_with_result do |hit, product| %>
+            <% name =  hit.highlight(:name) ? hit.highlight(:name).format { |word| "<span class=\"red\">#{word}</span>" } : product.try(:name) %>
+            <% title = name %>
+            <!-- 产品 -->
+            <div class="col-md-3 h412">
+                <div class="product-img product-img-brd">
+                  <%= link_to_blank image_tag(product.cover_url, class: "full-width img-responsive lazy", onerror: "$(this).attr('src', '/assets/no_pic_small.gif')"), product %>
+                  <div class="shop-rgba-dark-green rgba-banner">新产品</div>
+                </div> 
+                <div class="product-description product-description-brd margin-bottom-30">
+                  <div class="overflow-h margin-bottom-5">
+                    <div class="pull-left">
+                      <h4 class="title-price">
+                        <%= link_to_blank title.html_safe, product, class: "shop-ui-inner.html" %>
+                      </h4>
+                      <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
+                      <div class="price_div" id="price_div_<%= product.id %>">
+                        <span class="title-price line-through fl clear">市场价：<b class="b_m hide">请登录查看</b></span>
+                        <span class="title-price fl clear">协议价：<b class="b_b hide">请登录查看</b></span>
+                      </div>
+                    </div>    
+                  </div>    
+                  <!--<ul class="list-inline product-ratings">
+                      <li><i class="rating-selected fa fa-star"></i></li>
+                      <li><i class="rating-selected fa fa-star"></i></li>
+                      <li><i class="rating-selected fa fa-star"></i></li>
+                      <li><i class="rating fa fa-star"></i></li>
+                      <li><i class="rating fa fa-star"></i></li>
+                       <li class="like-icon"><a data-original-title="收藏" data-toggle="tooltip" data-placement="left" class="tooltips" href="#"><i class="fa fa-heart"></i></a></li>
+                  </ul>     -->
+                </div>
+            </div>
+            <!-- 产品END -->
+          <% end -%>
+        </div>
+      </div><!--/end filter resilts-->
+      <%= paginate @products.results %>
+      <!-- 产品列表END -->
+    </div>
+  </div><!--/end row-->
+</div><!--/end container-->    

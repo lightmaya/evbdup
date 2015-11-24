@@ -18,6 +18,26 @@ class Product < ActiveRecord::Base
   
   QS = ["category_id_eq", "brand_eq", "sort", "page"]
 
+  # 全文检索
+  if Rails.env.production?
+    searchable do      
+      text :brand_name, :stored => true, :boost => 10.0
+      text :model, :stored => true, :boost => 10.0
+      text :category do
+        category.name if category
+      end
+      text :department do 
+        department.name if department
+      end
+      integer :department_id
+      integer :category_id
+      boolean :show
+      time :created_at
+      time :updated_at
+      integer :id
+    end
+  end
+
 	# 附件的类
   def self.upload_model
     ProductsUpload

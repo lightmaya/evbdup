@@ -17,7 +17,8 @@ Evbdup::Application.routes.draw do
   get 'test' => 'errors#test'
   get 'not_found' => "home#not_found", as: :not_found
   get 'cart_order' => "kobe/orders#cart_order", as: :cart_order
-
+  get "search", :to => 'home#search', :as => "search"
+  
   get 'show_faqs' => "faqs#show"
 
   post 'check_ysd' => "home#check_ysd" 

@@ -25,6 +25,23 @@ class Article < ActiveRecord::Base
     # 设置rule_id和rule_step
     init_rule
   end
+
+  # 全文检索
+  unless Rails.env.test?
+    searchable do
+      text :title, :stored => true, :boost => 10.0
+      text :content, :boost => 1.1
+
+      text :tags
+      time :publish_time
+      integer :user_id
+      integer :status
+      time :created_at
+      time :updated_at  
+      integer :id
+      # boost { index_date*10000000 }
+    end
+  end
   
   # status各状态的中文意思 状态值 标签颜色 进度 
   def self.status_array

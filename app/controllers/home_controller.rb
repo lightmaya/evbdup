@@ -38,6 +38,23 @@ class HomeController < JamesController
     render :json => {"success" => login, "rs" => @rs}
   end
 
+  # 全文检索
+  def search
+    return redirect_to root_path if params[:key].blank? || 
+    case params[:t]
+    when "search_products"
+      params[:show] = true
+      @products = Product.search(params, {:page_num => 20})
+    when "search_gys"
+      @deps = Department.search(params, {:page_num => 20})
+    when "search_articles"
+      @articles = Article.search(params, {:page_num => 20})
+    when "search_dzpz"
+    else
+      return redirect_to root_path
+    end
+  end
+
   def channel
     if @category = Category.usable.find_by_id(params[:combo].to_s.split("_").first)
       ult(@category)
