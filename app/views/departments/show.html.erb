@@ -1,0 +1,15 @@
+<h3><%= @dep.name %></h3>
+<table class="table table-bordered table-hover">
+  <tr>
+    <th>所在地区</th>
+    <td><%= @dep.area.pcc_name %></td>
+    <th>联系方式</th>
+    <td><%= @dep.tel  %></td>
+  </tr>
+  <tr>
+    <th>公司地址</th>
+    <td><%= current_user.present? ? @dep.address : "请登录后查看" %></td>
+    <th>公司网址</th>
+    <td><%= @dep.website %></td>
+  </tr>
+</table>

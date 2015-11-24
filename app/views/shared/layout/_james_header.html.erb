@@ -40,15 +40,22 @@
             <div class="col-md-8">
               <div class="search-block-v2">
                 <div class="">
-                  <div class="col-md-10 pull-right">
-                    <h5>产品搜索 | 公告搜索 | 供应商搜索</h5>
-                    <div class="input-group">
-                      <input type="text" class="form-control" placeholder="请输入搜索内容 ...">
-                      <span class="input-group-btn">
-                        <button class="btn-u" type="button"><i class="fa fa-search"></i></button>
-                      </span>
+                  <%= form_tag search_path, method: :get do %>
+                    <%= hidden_field_tag "t", params[:t] %>
+                    <div class="col-md-10 pull-right">
+                      <h5>  
+                        <span id="search_products" class="btn btn-xs search_t <%= params[:t] == 'search_products' ? 'btn-warning' : 'bgw' %>">产品搜索</span> | 
+                        <span id="search_articles" class="btn btn-xs search_t <%= params[:t] == 'search_articles' ? 'btn-warning' : 'bgw' %>">公告搜索</span> | 
+                        <span id="search_gys" class="btn btn-xs search_t <%= params[:t] == 'search_gys' ? 'btn-warning' : 'bgw' %>">供应商搜索</span>
+                      </h5>
+                      <div class="input-group">
+                        <%= text_field_tag :k, params[:k], class: 'form-control', placeholder: '请输入搜索词' %>
+                        <span class="input-group-btn">
+                          <%= submit_tag '搜索', class: 'btn-u' %>
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  <% end -%>
                 </div>    
               </div>
             </div>

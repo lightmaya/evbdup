@@ -62,6 +62,13 @@ $(function() {
 		location.href = newUrl;
 	});
 
+  // 首页搜索
+  $(".search_t").on("click", function(){
+    $("#t").val($(this).attr("id"));
+    $(".search_t").addClass("bgw").removeClass("btn-warning");
+    $(this).removeClass("bgw").addClass("btn-warning");
+  })
+
   // 增加明细
   var add_max = -1;
   var add_html = "";
