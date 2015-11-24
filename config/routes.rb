@@ -25,6 +25,7 @@ Evbdup::Application.routes.draw do
 
   # 检查是否登录
   get "check_login" => "home#check_login" 
+  resources  :transfers
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
 
@@ -275,6 +276,13 @@ namespace :kobe do
       get  :get_catalog,:yjjy_list
      end
  
+   end
+
+   resources :transfers do 
+     member do 
+       get :delete 
+       post :commit
+     end
    end
 
    resources :products do

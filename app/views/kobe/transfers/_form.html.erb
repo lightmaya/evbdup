@@ -1,0 +1,30 @@
+<div class='col-md-12'>
+  <%= draw_myform(myform) %>
+</div>
+
+<script type="text/javascript">
+//  计算总金额
+  function hj_total(){
+    var total=0
+    $("input[name^='transfer_items[transfer_price]']").each(function() {
+      var thisValue = $(this).val();
+      if ( (thisValue != '') ) {
+        total += formatFloat(parseFloat(thisValue),2);
+        $(this).val(formatFloat(parseFloat(thisValue),2));
+      };
+    });
+    total = formatFloat(total,2);
+    $("#transfers_total").val(total);
+    $(".show_total #form_sum_total").text(total);
+  }
+
+  $(function(){
+    hj_total();
+  $("input[name^='transfer_items[transfer_price]']").live('change blur', function(){hj_total()}) 
+
+  })
+  
+
+ 
+
+</script>
