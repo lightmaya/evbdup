@@ -11,7 +11,7 @@ class Kobe::PlansController < KobeController
 
   # 辖区内采购计划
   def index
-    @q = Plan.find_all_by_dep_code(current_user.department.real_ancestry).where(get_conditions("plans")).ransack(params[:q]) 
+    @q = Plan.find_all_by_dep_code(current_user.real_dep_code).where(get_conditions("plans")).ransack(params[:q]) 
     @plans = @q.result.page params[:page]
   end
 
@@ -33,7 +33,7 @@ class Kobe::PlansController < KobeController
   end
 
   def create
-    other_attrs = { plan_item_id: @item.id, category_id: @category.id, category_code: @category.ancestry, department_id: current_user.department.id, dep_code: current_user.department.real_ancestry }
+    other_attrs = { plan_item_id: @item.id, category_id: @category.id, category_code: @category.ancestry, department_id: current_user.department.id, dep_code: current_user.real_dep_code }
     create_msform_and_write_logs(Plan, Plan.xml, PlanProduct, PlanProduct.xml(@category), {:action => "录入采购计划", :slave_title => "产品信息"}, other_attrs)
     redirect_to item_list_kobe_plans_path(item_id: @item.id) 
   end

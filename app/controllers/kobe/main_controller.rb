@@ -6,9 +6,9 @@ class Kobe::MainController < KobeController
   def index
     # 本辖区本年度 采购方式占比
     cdt = "year(created_at) = '#{Time.now.year}' and status in (3)"
-    total = Order.find_all_by_buyer_code(current_user.department.real_ancestry).where(cdt).sum(:total)
+    total = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).sum(:total)
     total = 0 if total.blank?
-    yw_type = Order.find_all_by_buyer_code(current_user.department.real_ancestry).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
+    yw_type = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
     if total == 0 
       @xygh = @ddcg = @wsjj = 0
     else

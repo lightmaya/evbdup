@@ -4,8 +4,8 @@ class User < ActiveRecord::Base
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   # validates :email, presence: true, format: { with:VALID_EMAIL_REGEX }#, uniqueness: { case_sensitive: false }
   has_secure_password
-  validates :password, presence: true, length: { in: 6..20 }, :on => :create
-  validates :login, presence: true, length: { in: 6..20 }, uniqueness: { case_sensitive: false }
+  validates :password, presence: true, :on => :create
+  validates :login, presence: true, uniqueness: { case_sensitive: false }
   include AboutStatus
   # validates_with MyValidator, on: :update
 
@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='用户名' column='login' class='required rangelength_6_20' display='readonly'/>
+        <node name='用户名' column='login' class='required' display='readonly'/>
         <node name='姓名' column='name' class='required'/>
         <node name='电话' column='tel'/>
         <node name='手机' column='mobile' class='required'/>
@@ -227,11 +227,16 @@ class User < ActiveRecord::Base
     self.department.real_dep
   end
 
+  # 该用户真实的单位code
+  def real_dep_code
+    self.department.real_ancestry
+  end
+
   # 参与的竞价报价
   def bid_project_bid(bid_project)
     bpb = BidProjectBid.find_or_initialize_by(user_id: self.id, bid_project_id: bid_project.id)
     if bpb.new_record?
-      bpb.com_name = self.department.real_dep.name
+      bpb.com_name = self.real_department.name
       bpb.add = self.department.address
       bpb.username = self.name
       bpb.tel = self.tel

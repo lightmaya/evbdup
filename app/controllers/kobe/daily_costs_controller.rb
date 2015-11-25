@@ -19,7 +19,7 @@ class Kobe::DailyCostsController < KobeController
   end
 
   def create
-    other_attrs = { name: create_name , department_id: current_user.department.id, dep_code: current_user.department.real_ancestry }
+    other_attrs = { name: create_name , department_id: current_user.department.id, dep_code: current_user.real_dep_code }
     create_msform_and_write_logs(DailyCost, DailyCost.xml, DailyCostItem, DailyCostItem.xml, {:action => "录入费用信息", :slave_title => "费用明细"}, other_attrs)
     redirect_to  kobe_daily_costs_path
   end

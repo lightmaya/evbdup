@@ -19,6 +19,10 @@ module SaveXmlForm
     title[:master_title] ||= "基本信息"
     title[:slave_title] ||= "明细信息"
     attribute = prepare_params_for_save(master, master_xml, other_attrs) # 获取并整合主表参数信息
+    # 保存附加费用
+    if master.respond_to?(:fee_xml)
+      attribute = attribute.merge(prepare_params_for_save(master, master.fee_xml))
+    end
     master_obj = master.create(attribute) #保存主表
     unless master_obj.id.nil?
       logs_remark = prepare_origin_logs_remark(master, master_xml, title[:master_title]) #主表日志
@@ -41,6 +45,10 @@ module SaveXmlForm
     title[:master_title] ||= "基本信息"
     title[:slave_title] ||= "明细信息"
     attribute = prepare_params_for_save(master_obj.class,master_xml,other_attrs) # 获取并整合主表参数信息
+    # 保存附加费用
+    if master_obj.class.respond_to?(:fee_xml)
+      attribute = attribute.merge(prepare_params_for_save(master_obj.class, master_obj.class.fee_xml))
+    end
     logs_remark = prepare_edit_logs_remark(master_obj,master_xml,"修改#{title[:master_title]}") #主表日志--修改痕迹 先取日志再更新主表，否则无法判断修改前后的变化情况
     save_uploads(master_obj) # 保存附件,附件日志已经在文件上传时记录了
     if master_obj.update_attributes(attribute) #更新主表
@@ -249,9 +257,8 @@ private
     return node
   end
 
-  # 准备创建纪录时的原始日志
-  def prepare_origin_logs_remark(model,xml,title='详细信息',all_params={})
-    all_params = params.require(model.to_s.tableize.to_sym) if all_params.length == 0
+  # 生成日志的table的tr 为准备创建纪录时的原始日志
+  def get_logs_tr_from_xml_for_create(xml, all_params={})
     spoor = ""
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
@@ -264,6 +271,17 @@ private
       new_value = transform_node_value(node,new_value)
       spoor << "<tr><td>#{attr_name.to_str}</td><td>#{new_value}</td></tr>" unless new_value.to_s.blank?
     }
+    return spoor
+  end
+
+  # 准备创建纪录时的原始日志
+  def prepare_origin_logs_remark(model,xml,title='详细信息',all_params={})
+    all_params = params.require(model.to_s.tableize.to_sym) if all_params.length == 0
+    spoor = get_logs_tr_from_xml_for_create(xml, all_params)
+    # 保存附加费用
+    if model.respond_to?(:fee_xml)
+      spoor << get_logs_tr_from_xml_for_create(model.fee_xml, all_params)
+    end
     if spoor.blank?
       return ""
     else
@@ -271,9 +289,8 @@ private
     end
   end
 
-  # 准备修改纪录时的痕迹纪录
-  def prepare_edit_logs_remark(obj,xml,title='修改痕迹',all_params={})
-    all_params = params.require(obj.class.to_s.tableize.to_sym) if all_params.length == 0
+  # 生成日志的table的tr 准备修改纪录时的痕迹纪录
+  def get_logs_tr_from_xml_for_edit(obj, xml, all_params={})
     spoor = ""
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
@@ -288,6 +305,17 @@ private
       old_value = get_node_value(obj,node)
       spoor << "<tr><td>#{attr_name.to_str}</td><td>#{old_value}</td><td>#{new_value}</td></tr>" unless old_value.to_s == new_value.to_s || new_value.nil?
     }
+    return spoor
+  end
+
+  # 准备修改纪录时的痕迹纪录
+  def prepare_edit_logs_remark(obj,xml,title='修改痕迹',all_params={})
+    all_params = params.require(obj.class.to_s.tableize.to_sym) if all_params.length == 0
+    spoor = get_logs_tr_from_xml_for_edit(obj, xml, all_params)
+    # 保存附加费用
+    if obj.class.respond_to?(:fee_xml)
+      spoor << get_logs_tr_from_xml_for_edit(obj, obj.class.fee_xml, all_params)
+    end
     if spoor.blank?
       return ""
     else

@@ -2,6 +2,8 @@
 namespace :data do
   desc '导入协议供货产品'
   task :products => :environment do
+    p "#{begin_time = Time.now} in products....."
+
     Dragon.table_name = "zcl_product"
     max = 1000 ; succ = i = 0
     total = Dragon.count
@@ -52,11 +54,14 @@ namespace :data do
       end
       # break if i > max
     end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
   end
 
   desc '导入单位'
   task :departments => :environment do
-    p "in departments....."
+    p "#{begin_time = Time.now} in departments....."
 
     if Department.first.blank?
       [["采购单位", "1", 2], ["供应商", "1", 3], ["监管机构", "1", 1], ["评审专家", "1", 4]].each do |option|
@@ -192,10 +197,15 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{d.errors.full_messages}" ,"departments.log"
       end
     end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
   end
 
   desc '导入协议供货项目'
   task :items => :environment do
+    p "#{begin_time = Time.now} in items....."
+
     Dragon.table_name = "zcl_item"
     max = 1000 ; succ = i = 0
     total = Dragon.count
@@ -236,8 +246,7 @@ namespace :data do
 
     end
 
-    old_table_name = "zcl_item_factory" 
-    Dragon.table_name = old_table_name
+    Dragon.table_name = "zcl_item_factory" 
     max = 1000 ; succ = i = 0
     total = Dragon.count
     Dragon.find_each do |old|
@@ -260,11 +269,15 @@ namespace :data do
     end
 
     Item.fix_dep_names
-    
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
   end
 
   desc '导入代理商'
   task :agents => :environment do
+    p "#{begin_time = Time.now} in agents....."
+
     Dragon.table_name = "zcl_agents"
     max = 1000 ; succ = i = 0
     total = Dragon.count
@@ -301,10 +314,14 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"agents.log"
       end
     end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
   end
 
   desc '导入用户'
   task :users => :environment do
+    p "#{begin_time = Time.now} in users....."
     Dragon.table_name = "user_logins"
     max = 1000 ; succ = i = 0
     total = Dragon.count
@@ -357,11 +374,14 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"users.log"
       end
     end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
   end
 
   desc '导入品目'
   task :categories => :environment do
-    p "in categories....."
+    p "#{begin_time = Time.now} in categories....."
 
     Dragon.table_name = "zcl_category" 
     max = 1000 ; succ = i = 0
@@ -453,38 +473,46 @@ namespace :data do
     Category.qc.update_all(ht_template: 'qc') if Category.qc.present?
     Category.bg.update_all(ht_template: 'bg') if Category.bg.present?
     Category.lj.update_all(ht_template: 'lj') if Category.lj.present?
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
   end
 
   desc '导入订单'
   task :orders => :environment do
-    Dragon.table_name = "user_logins"
+    p "#{begin_time = Time.now} in orders....."
+
+    Dragon.table_name = "ddcg_info"
     max = 1000 ; succ = i = 0
     total = Dragon.count
     Dragon.find_each do |old|
       next if old.yw_type == '资产消费'
       n = Order.find_or_initialize_by(id: old.id)
+
       n.name = old.project_name
       n.sn = old.sn
       n.contract_sn = old.ht_code
       n.buyer_name = old.dep_p_name 
-      n.payer = get_value_in_xml(old.detail, "发票单位")
-      # ================================begin======================================
-      dep = case old.user_type
-      when 1
-        Department.find_by(name: "总公司机关")
-      when 2
-        Department.find_by(old_id: old.user_dep, old_table: "dep_purchaser")
-      when 3
-        Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
-      end
+      n.payer = get_value_in_xml(old.detail, "发票单位").blank? ? old.dep_p_name : get_value_in_xml(old.detail, "发票单位")
 
+      dep = Department.find_by(name: old.dep_p_name, old_table: "dep_purchaser")
+      if dep.blank?
+        dep = case old.user_type
+        when 1
+          Department.find_by(name: "总公司机关")
+        when 2
+          Department.find_by(old_id: old.user_dep, old_table: "dep_purchaser")
+        when 3
+          Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
+        end
+      end
       n.buyer_id = dep.try(:id)
-      n.buyer_code = dep.real_ancestry
-      # ==================================end=====================================
-      n.buyer_man = old.dep_p_man
-      n.buyer_tel = old.dep_p_tel 
-      n.buyer_mobile = old.dep_p_mobile 
-      n.buyer_addr = old.dep_p_add
+      n.buyer_code = dep.try(:real_ancestry)
+
+      n.buyer_man = old.dep_p_man.present? ? old.dep_p_man : '-'
+      n.buyer_tel = old.dep_p_tel.present? ? old.dep_p_tel : '-' 
+      n.buyer_mobile = old.dep_p_mobile.present? ? old.dep_p_mobile : '-' 
+      n.buyer_addr = old.dep_p_add.present? ? old.dep_p_add : '-'
 
       n.seller_name = old.dep_s_name
       seller_dep = if old.dep_s_id.present?
@@ -495,13 +523,13 @@ namespace :data do
       n.seller_id = seller_dep.try(:id)
       n.seller_code = seller_dep.try(:real_ancestry)
 
-      n.seller_man = old.dep_s_man
-      n.seller_tel = old.dep_s_tel
-      n.seller_mobile = old.dep_s_mobile
-      n.seller_addr = old.dep_s_add
-      n.budget_money = old.bugget
+      n.seller_man = old.dep_s_man.present? ? old.dep_s_man : '-'
+      n.seller_tel = old.dep_s_tel.present? ? old.dep_s_tel : '-'
+      n.seller_mobile = old.dep_s_mobile.present? ? old.dep_s_mobile : '-'
+      n.seller_addr = old.dep_s_add.present? ? old.dep_s_add : '-'
+      n.budget_money = old.bugget.present? ? (old.bugget < old.total ? old.total : old.bugget) : old.total
       n.total = old.total
-      n.deliver_at = get_value_in_xml(old.detail, "送货开始日期")
+      n.deliver_at = get_value_in_xml(old.detail, "送货开始日期").present? ? get_value_in_xml(old.detail, "送货开始日期") : old.created_at
       n.invoice_number = old.invoice_number
       n.summary = get_value_in_xml(old.detail, "备注信息")
       n.user_id = old.user_id
@@ -570,16 +598,120 @@ namespace :data do
       n.deliver_fee = get_value_in_xml(old.detail, "运费（元）")
       n.other_fee = get_value_in_xml(old.detail, "其他费用（元）")
       n.other_fee_desc = get_value_in_xml(old.detail, "其他费用说明")
+      n.comment_total = old.comment_total
+      n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
+
+      n.ht_template = case old.category_id
+      when 154, 155
+        "bzw"
+      when 50, 883
+        "gc"
+      when 48, 22, 2
+        "lj"
+      when 13, 4
+        "qc"
+      when 56
+        "gz"
+      when 44
+        "ds"          
+      else
+        "bg"
+      end
 
       if n.save
-        # 给用户授权
-        n.set_auto_menu
         succ += 1
-        p ".users succ: #{succ}/#{total} old: #{old.id}"
+        p ".orders succ: #{succ}/#{total} old: #{old.id}"
       else
-        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"users.log"
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"orders.log"
       end
     end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
+  end
+
+  desc '导入订单产品'
+  task :orders_items => :environment do
+    p "#{begin_time = Time.now} in orders_items....."
+
+    old_table_name = "ddcg_product"
+    Dragon.table_name = old_table_name
+    max = 10 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      next if old.category_id == 55
+      n = OrdersItem.find_or_initialize_by(old_id: old.id, old_table: old_table_name)
+      next if n.id.present?
+
+      n.order_id = old.ddcg_info_id
+      n.category_id = old.zcl_category_id
+      ca = Category.find_by(id: old.zcl_category_id)
+      n.category_code = ((ca.present? && ca.ancestry.present?) ? ca.ancestry : 0)
+      n.category_name = old.product_type
+      n.product_id = old.product_id.blank? ? 0 : old.product_id
+      n.brand = old.product_brand
+      n.model = old.product_name
+      n.version = old.product_xinghao
+      n.unit = old.unit
+      n.market_price = old.market_price
+      n.bid_price = old.bid_price
+      n.price = old.purchase_price.present? ? old.purchase_price : 0
+      n.quantity = old.purchase_num.present? ? old.purchase_num : 0
+      n.total = old.total.present? ? old.total : (old.purchase_price * old.purchase_num)
+      n.summary = old.product_description
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+      n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
+
+      if n.save
+        succ += 1
+        p ".orders_items succ: #{succ}/#{total} #{old_table_name}_id: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"orders_items.log"
+      end
+    end
+
+    old_table_name = "ddcg_spare"
+    Dragon.table_name = old_table_name
+    max = 10 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      next if old.category_id == 55
+      n = OrdersItem.find_or_initialize_by(old_id: old.id, old_table: old_table_name)
+      next if n.id.present?
+
+      n.order_id = old.ddcg_info_id
+      n.category_id = old.zcl_category_id
+      ca = Category.find_by(id: old.zcl_category_id)
+      n.category_code = ((ca.present? && ca.ancestry.present?) ? ca.ancestry : 0)
+      n.category_name = old.product_type
+      n.product_id = old.product_id.blank? ? 0 : old.product_id
+      n.brand = old.product_brand
+      n.model = old.product_name
+      n.version = old.product_xinghao
+      n.unit = old.unit
+      n.market_price = old.market_price
+      n.bid_price = old.bid_price
+      n.price = old.purchase_price.present? ? old.purchase_price : 0
+      n.quantity = old.purchase_num.present? ? old.purchase_num : 0
+      n.total = old.total.present? ? old.total : (old.purchase_price * old.purchase_num)
+      n.summary = old.product_description
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+      n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
+
+      if n.save
+        succ += 1
+        p ".orders_items succ: #{succ}/#{total} #{old_table_name}_id: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"orders_items.log"
+      end
+    end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+
   end
 
 
@@ -591,7 +723,8 @@ namespace :data do
 
   def self.get_value_in_xml(xml, name)
     doc = Nokogiri::XML(xml)
-    doc.at_css("//[@name='#{name}]")["value"]
+    node = doc.at_css("//[@name='#{name}']")
+    return node.present? ? node["value"] : ''
   end
 
 

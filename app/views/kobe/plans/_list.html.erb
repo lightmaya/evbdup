@@ -43,7 +43,7 @@
                     <td><%= show_index(index) %></td>
                     <% if action_name == "index" %>
                     <td><%= plan.plan_item.name %></td>
-                    <td><%= plan.department.present? ? plan.department.real_dep.name : "" %></td>
+                    <td><%= plan.department.present? ? plan.real_department.name : "" %></td>
                     <% end %>
                     <td><%= plan.sn %></td>
                     <td><%= plan.name %></td>

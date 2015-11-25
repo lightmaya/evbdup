@@ -46,7 +46,7 @@
                     <td><%= product.item.name %></td>
                     <% end %>
                     <% if can?(:admin, Product) %>
-                    <td><%= product.department.present? ?  product.department.real_dep.name : "" %></td>
+                    <td><%= product.department.present? ?  product.real_department.name : "" %></td>
                     <% end %>
                     <td><%= product.name %></td>
                     <td class="money"><%= money product.bid_price %></td>

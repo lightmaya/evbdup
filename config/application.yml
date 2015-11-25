@@ -100,6 +100,7 @@ defaults: &defaults
   yw_type:  { ddcg: "定点采购", xygh: "协议供货",  wsjj: "网上竞价" , grcg: "个人采购"}
   faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
   manage_user_type: 1
+  ht_template: [ ["bg", "办公物资"], ["lj", "粮机物资"], ["qc", "汽车采购"], ["bzw", "包装物采购"], ["gc", "建筑工程"], ["gz", "职工工装"], ["ds", "电商采购"]]
 
   # 状态数组 
   # 无效状态：除7取余数为5 例如 已删除404 404%7=5

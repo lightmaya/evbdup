@@ -16,7 +16,7 @@ class Kobe::TransfersController < KobeController
   end
 
    def create
-    other_attrs = { department_id: current_user.department.id, dep_code: current_user.department.real_ancestry, user_id: current_user.id, name: create_name }
+    other_attrs = { department_id: current_user.department.id, dep_code: current_user.real_dep_code, user_id: current_user.id, name: create_name }
     @transfer = create_msform_and_write_logs(Transfer, Transfer.xml, TransferItem, TransferItem.xml, {:action => "下单", :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     redirect_to kobe_transfers_path
   end

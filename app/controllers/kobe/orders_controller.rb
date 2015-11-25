@@ -11,7 +11,7 @@ class Kobe::OrdersController < KobeController
   before_filter :order_from_cart, :only => [:cart_order, :create_cart_order]
   # 辖区内采购项目
   def index
-    @q = Order.find_all_by_buyer_code(current_user.department.real_ancestry).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
+    @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
     @orders = @q.result.page params[:page]
   end
 
@@ -32,7 +32,7 @@ class Kobe::OrdersController < KobeController
 
   def create
     other_attrs = { 
-      buyer_id: current_user.department.id, buyer_code: current_user.department.real_ancestry, 
+      buyer_id: current_user.department.id, buyer_code: current_user.real_dep_code, 
       name: Order.get_project_name(nil, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) 
     }
     @order = create_msform_and_write_logs(Order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "下单", :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
@@ -118,7 +118,9 @@ class Kobe::OrdersController < KobeController
   def commit
     remark = @order.find_step_by_rule.blank? ? "提交成功！项目已生效。" : "提交成功！请等待#{@order.find_step_by_rule["name"]}。"
     logs = stateless_logs("提交",remark, false)
-    @order.change_status_and_write_logs("提交",logs,@order.commit_params, false)
+    c_arr = @order.commit_params
+    c_arr << "ht_template = '#{@order.get_ht_template}'"
+    @order.change_status_and_write_logs("提交", logs, c_arr, false)
     @order.reload.create_task_queue
     tips_get(remark)
     redirect_to eval("#{@order.yw_type}_list_kobe_orders_path")
@@ -206,7 +208,7 @@ class Kobe::OrdersController < KobeController
     # 判断是不是同一个模板
     def check_same_template
       templates = get_templates(params[:orders_items][:category_id].values)
-      cannot_do_tips("请选择同一类品目!") unless templates.size == 1
+      cannot_do_tips("请选择同一大类的品目!") unless templates.size == 1
     end
 
     # 获取模版

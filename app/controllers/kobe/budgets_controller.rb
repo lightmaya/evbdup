@@ -8,7 +8,7 @@ class Kobe::BudgetsController < KobeController
 
   # 我的预算审批单
   def index
-    @q = Budget.find_all_by_dep_code(current_user.department.real_ancestry).where(get_conditions("budgets")).ransack(params[:q]) 
+    @q = Budget.find_all_by_dep_code(current_user.real_dep_code).where(get_conditions("budgets")).ransack(params[:q]) 
     @budgets = @q.result.page params[:page]
   end
 
@@ -17,7 +17,7 @@ class Kobe::BudgetsController < KobeController
   end
 
   def create
-    create_and_write_logs(Budget, Budget.xml, {}, { department_id: current_user.department.id, dep_code: current_user.department.real_ancestry })
+    create_and_write_logs(Budget, Budget.xml, {}, { department_id: current_user.department.id, dep_code: current_user.real_dep_code })
     redirect_to kobe_budgets_path
   end
 

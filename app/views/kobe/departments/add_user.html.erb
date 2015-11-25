@@ -37,9 +37,9 @@
 <script type="text/javascript">
 $(document).ready(function(){
   var add_user_rules = {
-    "user[login]": { required: true, maxlength: 20, minlength: 6, remote: { url: '/users/valid_user_login', type: "post" } },
-    "user[password]": { required: true, maxlength: 20, minlength: 6 },
-    "user[password_confirmation]": { required: true, maxlength: 20, minlength: 6, equalTo: '#add_user_form #user_password' },
+    "user[login]": { required: true, remote: { url: '/users/valid_user_login', type: "post" } },
+    "user[password]": { required: true },
+    "user[password_confirmation]": { required: true, equalTo: '#add_user_form #user_password' },
   };
   validate_form_rules("#add_user_form", add_user_rules);
 });

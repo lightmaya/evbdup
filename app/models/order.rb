@@ -116,7 +116,7 @@ class Order < ActiveRecord::Base
     order.user_id = user.id
     order.sfz = user.identity_num
     order.buyer_id = user.department.id
-    order.buyer_code = user.department.real_ancestry
+    order.buyer_code = user.real_dep_code
     order
   end
 
@@ -211,10 +211,14 @@ class Order < ActiveRecord::Base
     self.items.map{ |item| item.category.audit_type }.uniq.compact
   end
 
+  # 获取订单的合同模板
+  def get_ht_template
+    self.items.map{ |item| item.category.ht_template }.uniq.compact[0]
+  end
+
   # 同一个合同模板才可以下单
   def ht
-    ht = self.items.map{ |item| item.category.ht_template }.uniq.compact.join
-    return "/kobe/orders/ht/#{ht}"
+    "/kobe/orders/ht/#{self.ht_template}"
   end
   
   # 根据品目判断审核人 插入待办事项用
@@ -226,15 +230,17 @@ class Order < ActiveRecord::Base
   def cando(act='',current_u=nil)
     case act
     when "show" 
-      current_u.department.is_ancestors?(self.buyer_id)
+      current_u.real_department.is_ancestors?(self.buyer_id)
     when "update", "edit" 
       [0,2].include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" 
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 
       self.status == 1
+    when "invoice_number"
+      self.class.effective_status.include?(self.status)
     when "print" 
-      [3,5,6].include?(self.status) && current_u.department.is_ancestors?(self.buyer_id)
+      self.class.effective_status.include?(self.status) && current_u.real_department.is_ancestors?(self.buyer_id)
     else false
     end
   end
@@ -342,6 +348,18 @@ class Order < ActiveRecord::Base
         <node name='截止日期' column='created_at_lt' class='finish_date'/>
       </root>
     }
+  end
+
+  def self.fee_xml
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='运费（元）' column='deliver_fee' class='number'/>
+        <node name='其他费用（元）' column='other_fee' class='number' hint='如填写其他费用，请填写其他费用说明'/>
+        <node name='其他费用说明' column='other_fee_desc'/>
+      </root>
+    }
+    
   end
 
 end

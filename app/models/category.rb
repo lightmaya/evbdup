@@ -59,13 +59,12 @@ class Category < ActiveRecord::Base
   end
 
   def self.xml(who='',options={})
-  	ht_data = ContractTemplate.status_not_in(404).map{ |e| [e.file_name, e.name] }
 	  %Q{
 	    <?xml version='1.0' encoding='UTF-8'?>
 	    <root>
 	    	<node name='parent_id' data_type='hidden'/>
 	    	<node name='品目名称' column='name' class='required' rules='{ remote: { url:"/kobe/categories/valid_name", type:"post" }}'/>
-	    	<node name='合同模板' column='ht_template' class='required' data_type='select' data='#{ht_data}'/>
+	    	<node name='合同模板' column='ht_template' class='required' data_type='select' data='#{Dictionary.ht_template}'/>
 	    	<node name='是否显示在首页' column='show_mall' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
 	      <node name='是否采购计划显示' column='show_plan' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
 	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>

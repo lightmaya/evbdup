@@ -77,7 +77,7 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def new
-    @bid_project.buyer_dep_name = @bid_project.invoice_title = current_user.department.real_dep.name
+    @bid_project.buyer_dep_name = @bid_project.invoice_title = current_user.real_department.name
     @bid_project.buyer_name = current_user.name
     @bid_project.buyer_phone = current_user.tel
     @bid_project.buyer_mobile = current_user.mobile
@@ -99,7 +99,7 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def create
-    other_attrs = {buyer_dep_name: current_user.department.name, department_id: current_user.department.id, department_code: current_user.department.real_ancestry, name: get_project_name }
+    other_attrs = {buyer_dep_name: current_user.department.name, department_id: current_user.department.id, department_code: current_user.real_dep_code, name: get_project_name }
     obj = create_msform_and_write_logs(BidProject, BidProject.xml, BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     redirect_to kobe_bid_projects_path
   end

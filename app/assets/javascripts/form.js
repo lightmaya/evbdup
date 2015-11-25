@@ -94,6 +94,19 @@ function calc_total(master_table_names,slave_table_names) {
             $(this).val(formatFloat(parseFloat(thisValue),2));
         };
     });
+    var deliver_fee = $("input#" + master_table_names + "_deliver_fee");
+    var other_fee = $("input#" + master_table_names + "_other_fee");
+
+    if(!isEmpty(deliver_fee.val())){
+      total += formatFloat(parseFloat(deliver_fee.val()),2);
+      $(deliver_fee).val(formatFloat(parseFloat(deliver_fee.val()),2));
+    }
+    
+    if(!isEmpty(other_fee.val())){
+      total += formatFloat(parseFloat(other_fee.val()),2);
+      $(other_fee).val(formatFloat(parseFloat(other_fee.val()),2));
+    }
+
     total = formatFloat(total,2);
     $("#"+master_table_names+"_total").val(total);
     $(".show_total #form_sum_total").text(total);

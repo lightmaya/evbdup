@@ -72,8 +72,8 @@
 <script type="text/javascript">
   $(document).ready(function() {
     var sign_in_rules = {
-      "user[login]": { required: true, maxlength: 20, minlength: 6 },
-      "user[password]": { required: true, maxlength: 20, minlength: 6, remote: { url: '/users/valid_user', type: 'post', data: { user_name: function(){ return $("#user_login").val(); } }, async: false } },
+      "user[login]": { required: true },
+      "user[password]": { required: true, remote: { url: '/users/valid_user', type: 'post', data: { user_name: function(){ return $("#user_login").val(); } }, async: false } },
       "user[captcha]": { required: true, minlength: 6, remote: { url: '/users/valid_captcha', type: 'post', async: false } }
     };
     var sign_in_msg = {

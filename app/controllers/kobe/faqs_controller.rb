@@ -11,7 +11,7 @@ class Kobe::FaqsController < KobeController
   def new 
     if params[:catalog]=='yjjy'
       @faq.ask_user_name = current_user.name
-      @faq.ask_dep_name = current_user.department.real_dep.name
+      @faq.ask_dep_name = current_user.real_department.name
     end 
     type = Dictionary.faq_catalog[params[:catalog]]
     @myform = SingleForm.new(Faq.xml(params[:catalog]), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faqs_path(catalog: params[:catalog]), grid: 3 })

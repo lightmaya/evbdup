@@ -10,7 +10,7 @@ class OrdersItem < ActiveRecord::Base
 
 	before_save do
 		ca = self.category_id.present? ? Category.find_by(id: self.category_id) : Category.find_by(name: self.category_name)
-		self.category_code = ca.ancestry if ca.present?
+		self.category_code = ((ca.present? && ca.ancestry.present?) ? ca.ancestry : 0)
 		self.total = self.quantity * self.price
 		if price_changed? && price > price_was.to_f
       errors.add(:base, "采购人报价只能向下调整")
