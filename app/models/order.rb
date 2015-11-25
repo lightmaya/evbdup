@@ -91,16 +91,16 @@ class Order < ActiveRecord::Base
   end
 
   # 根据品目创建项目名称
-  def self.get_project_name(order, user, category_names)
-    yw_type = ''
+  def self.get_project_name(order, user, category_names, yw_type = 'xygh')
+    yw_type = Dictionary.yw_type[yw_type]
     if order.present?
       project_name = order.name.split(" ")
       project_name[2] = category_names
       return project_name.join(" ")
-      yw_type = Dictionary.yw_type(order.yw_type)
     else
       name = "#{user.real_department.name} #{Time.new.to_date.to_s} #{category_names}"
       name += " #{yw_type}" if yw_type.present?
+      name += "项目"
       return name
     end
   end
@@ -115,6 +115,8 @@ class Order < ActiveRecord::Base
     order.buyer_addr = user.department.address
     order.user_id = user.id
     order.sfz = user.identity_num
+    order.buyer_id = user.department.id
+    order.buyer_code = user.department.real_ancestry
     order
   end
 
@@ -146,7 +148,7 @@ class Order < ActiveRecord::Base
       Department.find(order.seller_id)
     end
 
-    order.name = Order.get_project_name(nil, user, category_name_ary.join("、"))
+    order.name = Order.get_project_name(nil, user, category_name_ary.uniq.join("、"))
     order.seller_name = dep.name
     order.seller_code = dep.real_ancestry
     order.seller_addr = dep.address
@@ -260,7 +262,7 @@ class Order < ActiveRecord::Base
         <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
         <node name='供应商单位地址' column='seller_addr' class='required'/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-        <node name='预算金额（元）' column='budget_money' class='number box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
+        <node name='预算金额（元）' column='budget_money' class='number required box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
         <node column='budget_id' data_type='hidden'/>
         <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
