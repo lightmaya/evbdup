@@ -69,7 +69,7 @@ class HomeController < JamesController
   def check_ysd
     sn = params[:no].gsub("'", "").strip
     money = params[:m].gsub(",", "").to_f
-    @order = Order.find_by("(sn = ? or contract_sn = ? ) and total>= ? and total<= ? and status in (?)",sn,sn,money-0.1,money+0.1,Order.effective_status )
+    @order = Order.find_by("(sn = ? or contract_sn = ? ) and total>= ? and total<= ? and status in (?)",sn,sn,money-0.1,money+0.1,Order.ysd_status )
     if  !@order.present?
       render :text => %{<div style="text-align:left;margin:24px;color:#ff0000;">您输入的信息与实际不符，详情请联系服务热线：<br>办公物资：010-88016607。<br>粮机物资：010-88016801,010-88016802。<br>技术支持：010-88016617,010-88016623。</div>}, :layout => false
     else

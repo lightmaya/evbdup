@@ -73,8 +73,9 @@ namespace :data do
       d = Department.find_or_initialize_by(old_id: old.id, old_table: old_table_name)
       next if d.id.present?
       d.parent_id = 2 if old.id == 144
-      d.name = old.name
+      d.name = old.id == 144 ? "中国储备粮管理总公司" : (old.name == "中国储备粮管理总公司" ? "总公司机关" : old.name)
       d.is_secret = old.secret == "是"
+      d.dep_type = old.name == "中国储备粮管理总公司" ? 1 : 0
       d.old_name = old.old_name
       d.short_name = old.short_name
       d.status = case old.status
@@ -93,7 +94,7 @@ namespace :data do
       d.fax = old.fax
       d.summary = old.description
       d.area_id = old.city_id
-      d.sort = old.sort
+      d.sort = old.name == "中国储备粮管理总公司" ? 0 : old.sort
       d.details = old.detail.to_s.gsub("param", "node")
       d.logs = old.logs.to_s.gsub("param", "node")
       d.created_at = old.created_at
@@ -251,9 +252,9 @@ namespace :data do
 
       if n.save
         succ += 1
-        p ".zcl_item_factory succ: #{succ}/#{total} old: #{old.id}"
+        p ".item_departments succ: #{succ}/#{total} old: #{old.id}"
       else
-        log_p "[error]zcl_item_factory_old_id: #{old.id} | #{n.errors.full_messages}" ,"data_items.log"
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"item_departments.log"
       end
 
     end
@@ -295,17 +296,303 @@ namespace :data do
 
       if n.save
         succ += 1
-        p ".zcl_item_factory succ: #{succ}/#{total} old: #{old.id}"
+        p "agents succ: #{succ}/#{total} old: #{old.id}"
       else
-        log_p "[error]zcl_item_factory_old_id: #{old.id} | #{n.errors.full_messages}" ,"data_items.log"
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"agents.log"
       end
     end
   end
+
+  desc '导入用户'
+  task :users => :environment do
+    Dragon.table_name = "user_logins"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = User.find_or_initialize_by(id: old.id)
+      
+      dep = case old.user_type
+      when 1
+        Department.find_by(name: "总公司机关")
+      when 2
+        Department.find_by(old_id: old.dep_purchaser, old_table: "dep_purchaser")
+      when 3
+        Department.find_by(old_id: old.dep_supplier, old_table: "dep_supplier")
+      end
+      next if dep.blank?
+      n.department_id = dep.id
+      n.login = old.login
+      n.name = old.user_name
+      n.is_admin = old.is_admin == "是" ? 1 : 0
+      n.is_personal = 0
+      n.password = n.password_confirmation = Base64.decode64(old.password).reverse
+      n.email = old.email
+      n.mobile = old.mobile
+      n.tel = old.telephone
+      n.fax = old.fax
+
+      # ["正常",0,"u",100], 
+      # ["冻结",1,"yellow",100]
+      n.status = case old.status
+      when "正常"
+        0
+      when "已冻结"
+        1
+      else
+        404
+      end
+
+      n.duty = old.user_duty
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        # 给用户授权
+        n.set_auto_menu
+        succ += 1
+        p ".users succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"users.log"
+      end
+    end
+  end
+
+  desc '导入品目'
+  task :categories => :environment do
+    p "in categories....."
+
+    Dragon.table_name = "zcl_category" 
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = Category.find_or_initialize_by(id: old.id)
+      n.name = old.name
+      n.audit_type = case old.audit_type
+      when "1"
+        1 
+      when "2"
+        -1
+      when "1,2"
+        0
+      else
+        -1
+      end
+
+      new_doc = Nokogiri::XML::Document.new()
+      new_doc.encoding = "UTF-8"
+      new_doc << "<root>"
+
+      old_doc = Nokogiri::XML(old.xygh_param)
+      old_doc.xpath("//param").each do |old_node|
+        n_node = new_doc.root.add_child("<node>").first
+        n_node["name"] = old_node["name"] if old_node.has_attribute? "name"
+        n_node["column"] = old_node["alias"] if old_node.has_attribute? "alias"
+        class_arr = []
+        class_arr << "required" if old_node.has_attribute?("input") && old_node["input"] == "true"
+
+        case old_node["type"]
+        when "字符类型"
+          if old_node.has_attribute? "dropdata"
+            n_node["data_type"] = 'select' 
+            n_node["data"] = old_node['dropdata'].split('|').to_s
+          end
+        when "大文本型"
+          n_node["data_type"] = 'textarea'
+        when "数字类型"
+          class_arr << 'number'
+        when "日期类型"
+          class_arr << 'date_select'
+          class_arr << 'dateISO'
+        when "时间类型"
+          class_arr << 'datetime_select'
+          class_arr << 'datetime'
+        end
+        n_node["is_key"] = (old_node["alias"] == "unit" ? "否" : old_node["is_key"]) if old_node.has_attribute? "is_key"
+        n_node["hint"] = old_node["tips"] if old_node.has_attribute? "tips"
+        n_node["class"] = class_arr.join(" ") if class_arr.present?
+      end
+
+      n.params_xml = new_doc.to_s
+
+      # ["正常",0,"u",100],
+      # ["冻结",1,"yellow",0],
+      # ["已删除",404,"red",100]
+      n.status = case old.status
+      when "正常"
+        0
+      when "停止"
+        1
+      when "已删除"
+        404
+      end
+
+      n.sort = old.sort
+      if n.save
+        succ += 1
+        p ".categories succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"categories.log"
+      end
+    end
+
+    # 导入层级关系
+    Dragon.order("code asc").each do |old|
+      n = Category.find_or_initialize_by(id: old.id)
+      next if n.ancestry.present?
+      n.parent_id = Category.find_by(id: old.parent_id)  
+      if n.save
+        p ".categories ancestry: #{n.ancestry} succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"categories.log"
+      end
+    end
+
+    # 更新合同模板
+    Category.qc.update_all(ht_template: 'qc') if Category.qc.present?
+    Category.bg.update_all(ht_template: 'bg') if Category.bg.present?
+    Category.lj.update_all(ht_template: 'lj') if Category.lj.present?
+  end
+
+  desc '导入订单'
+  task :orders => :environment do
+    Dragon.table_name = "user_logins"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      next if old.yw_type == '资产消费'
+      n = Order.find_or_initialize_by(id: old.id)
+      n.name = old.project_name
+      n.sn = old.sn
+      n.contract_sn = old.ht_code
+      n.buyer_name = old.dep_p_name 
+      n.payer = get_value_in_xml(old.detail, "发票单位")
+      # ================================begin======================================
+      dep = case old.user_type
+      when 1
+        Department.find_by(name: "总公司机关")
+      when 2
+        Department.find_by(old_id: old.user_dep, old_table: "dep_purchaser")
+      when 3
+        Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
+      end
+
+      n.buyer_id = dep.try(:id)
+      n.buyer_code = dep.real_ancestry
+      # ==================================end=====================================
+      n.buyer_man = old.dep_p_man
+      n.buyer_tel = old.dep_p_tel 
+      n.buyer_mobile = old.dep_p_mobile 
+      n.buyer_addr = old.dep_p_add
+
+      n.seller_name = old.dep_s_name
+      seller_dep = if old.dep_s_id.present?
+        Department.find_by(old_id: old.dep_s_id, old_table: "dep_supplier")
+      else
+        Department.find_by(name: (old.new_name.present? ? old.new_name : old.dep_s_name))
+      end
+      n.seller_id = seller_dep.try(:id)
+      n.seller_code = seller_dep.try(:real_ancestry)
+
+      n.seller_man = old.dep_s_man
+      n.seller_tel = old.dep_s_tel
+      n.seller_mobile = old.dep_s_mobile
+      n.seller_addr = old.dep_s_add
+      n.budget_money = old.bugget
+      n.total = old.total
+      n.deliver_at = get_value_in_xml(old.detail, "送货开始日期")
+      n.invoice_number = old.invoice_number
+      n.summary = get_value_in_xml(old.detail, "备注信息")
+      n.user_id = old.user_id
+      n.effective_time = old.ysd_time
+
+      # ["未提交",0,"orange",10],
+      # ["等待审核",1,"blue",50],
+      # ["审核拒绝",2,"red",0],
+      # ["自动生效",5,"yellow",60],
+      # ["审核通过",6,"yellow",60],
+      # ["已完成",3,"u",80],
+      # ["未评价",4,"purple",100],
+      # ["已删除",404,"light",0],
+      # ["等待卖方确认", 10, "aqua", 20],
+      # ["等待买方确认", 21, "light-green", 40],
+      # ["卖方退回", 15, "orange", 10],
+      # ["买方退回", 26, "aqua", 20],
+      # ["撤回等待审核", 32, "sea", 30],
+      # ["作废等待审核", 43, "sea", 30],
+      # ["已作废", 49, "red", 0],
+      # ["拒绝撤回", 37, "yellow", 60],
+      # ["拒绝作废", 48, "yellow", 60],
+      # ["已拆单", 50, "light", 0]
+      # 
+      n.status = case old.status
+      when "未提交"
+        0
+      when "新增等待审核"
+        1
+      when "新增审核拒绝"
+        2
+      when "自动生效"
+        5
+      when "新增审核通过"
+        6
+      when "已完成"
+        3
+      when "已删除"
+        404
+      when "订单等待确认"
+        10
+      when "供应商反馈"
+        15
+      when "撤回等待审核"
+        32
+      when "作废等待审核"
+        43
+      when "已作废"
+        49
+      when "撤回审核拒绝"
+        37
+      when "作废审核拒绝"
+        48
+      when "已拆单"
+        50
+      else
+        404
+      end
+
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+      n.yw_type = Dictionary.yw_type.key(old.yw_type)
+      n.sfz = get_value_in_xml(old.detail, "身份证号码")
+      n.deliver_fee = get_value_in_xml(old.detail, "运费（元）")
+      n.other_fee = get_value_in_xml(old.detail, "其他费用（元）")
+      n.other_fee_desc = get_value_in_xml(old.detail, "其他费用说明")
+
+      if n.save
+        # 给用户授权
+        n.set_auto_menu
+        succ += 1
+        p ".users succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"users.log"
+      end
+    end
+  end
+
 
   # 输出日志到文件和控制台
   def self.log_p(msg, log_path = "data.log")
     @logger ||= Logger.new(Rails.root.join('log', log_path))
     @logger.info msg 
   end
+
+  def self.get_value_in_xml(xml, name)
+    doc = Nokogiri::XML(xml)
+    doc.at_css("//[@name='#{name}]")["value"]
+  end
+
 
 end
