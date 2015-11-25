@@ -6,7 +6,7 @@
       <div class="row margin-bottom-5">
         <div class="col-sm-4 result-category">
           <h2>关于“<%= params[:k] %>”</h2>
-          <small class="shop-bg-red badge-results">共<%= @products.total %>个商品</small>
+          <small class="shop-bg-red badge-results">共<%= @rs.total %>个商品</small>
         </div>
         <div class="col-sm-8">
           <ul class="list-inline clear-both">
@@ -18,7 +18,7 @@
 
       <div class="filter-results">
         <div class="row illustration-v2 margin-bottom-30">
-          <% @products.each_hit_with_result do |hit, product| %>
+          <% @rs.each_hit_with_result do |hit, product| %>
             <% name =  hit.highlight(:name) ? hit.highlight(:name).format { |word| "<span class=\"red\">#{word}</span>" } : product.try(:name) %>
             <% title = name %>
             <!-- 产品 -->
@@ -46,7 +46,7 @@
           <% end -%>
         </div>
       </div><!--/end filter resilts-->
-      <%= paginate @products.results %>
+      <%= paginate @rs.results %>
       <!-- 产品列表END -->
     </div>
   </div><!--/end row-->

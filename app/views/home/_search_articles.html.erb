@@ -1,11 +1,11 @@
 <div class="container s-results margin-bottom-50">
-  <span class="results-number">公告搜索关于“<span class="red"><%= params[:key] %></span>” 共有<%= @products.total %>个结果</span>
+  <span class="results-number">公告搜索关于“<span class="red"><%= params[:k] %></span>” 共有<%= @rs.total %>个结果</span>
   <% @rs.each_hit_with_result do |hit, r| %>
     <% name =  hit.highlight(:title) ? hit.highlight(:title).format { |word| "<span class=\"red\">#{word}</span>" } : r.try(:title) %>
     <% title = name %>
     <!-- Begin Inner Results -->
-    <div class="inner-results">
-      <h3><%= link_to_blank title, article_path(r) %></h3>
+    <div class="inner-results bb1">
+      <h3><%= link_to_blank title.html_safe, article_path(r) %></h3>
       <p><%= truncate(sanitize(r.content), length: 100).html_safe %></p>
       <ul class="list-inline down-ul">
           <li>发布时间：<%= r.publish_time %> </li>
@@ -13,7 +13,6 @@
           <li>点击：<%= r.hits %></li>
       </ul>     
     </div>
-    <hr>
   <% end -%>
   <!-- Begin Inner Results -->
   <%= paginate @rs.results %>

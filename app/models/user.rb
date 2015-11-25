@@ -60,6 +60,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def cgr?
+    [2, 3].include? current_user.department.root_id 
+  end
+
   # 获取当前人的菜单
   # def show_menus
   #   return menus_ul(Menu.to_depth(0))
