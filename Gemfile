@@ -16,8 +16,8 @@ gem 'rqrcode'
 # gem "ruby-pinyin"
 
 
-gem 'sunspot_rails', '2.1.1'
-gem 'sunspot_solr', '2.1.1'
+gem 'sunspot_rails', github: "betam4x/sunspot" #, '2.1.1'
+gem 'sunspot_solr', github: "betam4x/sunspot" #, '2.1.1'
 
 group :assets do
 	# Use SCSS for stylesheets

@@ -12,8 +12,6 @@ class Article < ActiveRecord::Base
   default_value_for :hits, 0
   default_value_for :status, 0
 
-  scope :published, -> { where(status: 1) }
-
   ####### status及审核相关 ############
   # 有status字段的需要加载AboutStatus
   include AboutStatus  
@@ -27,14 +25,13 @@ class Article < ActiveRecord::Base
   end
 
   # 全文检索
-  unless Rails.env.test?
+  if Rails.env.production?
     searchable do
       text :title, :stored => true, :boost => 10.0
       text :content, :boost => 1.1
 
       text :tags
       time :publish_time
-      boolean :published
       integer :user_id
       integer :status
       time :created_at
@@ -51,13 +48,11 @@ class Article < ActiveRecord::Base
       params[:page] = 1
     end
     options[:status]||= 2
-    options[:published] ||= true
     conditions = Proc.new{
       fulltext params[:k] do
         highlight :title
       end if params[:k].present?
       with(:status, options[:status]) if options[:status].present?
-      with(:published, options[:published]) if options[:published].present?
       order_by :id
       paginate :page => params[:page], :per_page => options[:page_num]
     }

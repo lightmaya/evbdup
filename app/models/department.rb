@@ -85,11 +85,11 @@ class Department < ActiveRecord::Base
   end
 
   # 全文检索
-  if Rails.env.production?
+  if Rails.env.production? 
     searchable do      
       text :name, :stored => true, :boost => 10.0
-      text :ancestry, :stored => true, :boost => 10.0
       integer :status
+      boolean :is_secret
       text :address
       time :created_at
       time :updated_at
@@ -103,12 +103,12 @@ class Department < ActiveRecord::Base
       options[:page_num] = Sunspot.search(Product).total
       params[:page] = 1
     end
-    options[:ancestry] ||= 3
+    options[:is_secret] ||= false
     conditions = Proc.new{
       fulltext params[:k] do
         highlight :name
       end if params[:k].present?
-      with(:ancestry, options[:ancestry]) if options[:ancestry].present?
+      with(:is_secret, options[:is_secret]) if options[:is_secret].present?
       order_by :id
       paginate :page => params[:page], :per_page => options[:page_num]
     }

@@ -21,7 +21,7 @@ class Product < ActiveRecord::Base
   # 全文检索
   if Rails.env.production?
     searchable do      
-      text :brand_name, :stored => true, :boost => 10.0
+      text :brand, :stored => true, :boost => 10.0
       text :model, :stored => true, :boost => 10.0
       text :version, :stored => true, :boost => 10.0
 

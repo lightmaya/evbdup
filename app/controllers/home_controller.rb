@@ -26,10 +26,14 @@ class HomeController < JamesController
     if current_user
       login = true
       # 如果有product_id, 返回价格
-      if params[:pids].present?
-        @products = Product.where("id in (?)", params[:pids].split(","))
-        @products.each do |pr| 
-          @rs << {"id" => pr.id, "bid_price" => ApplicationController.helpers.money(pr.bid_price), "market_price" => ApplicationController.helpers.money(pr.market_price)}
+      if params[:pids].present? 
+        if current_user.cgr?
+          @products = Product.where("id in (?)", params[:pids].split(","))
+          @products.each do |pr| 
+            @rs << {"id" => pr.id, "bid_price" => ApplicationController.helpers.money(pr.bid_price), "market_price" => ApplicationController.helpers.money(pr.market_price)}
+          end
+        else
+          login = false
         end
       end
     else
@@ -40,7 +44,7 @@ class HomeController < JamesController
 
   # 全文检索
   def search
-    return redirect_to root_path if params[:key].blank?
+    return redirect_to root_path if params[:k].blank?
     case params[:t]
     when "search_products"
       @rs = Product.search(params, {:page_num => 20})

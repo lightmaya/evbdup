@@ -18,5 +18,17 @@ class Area < ActiveRecord::Base
       area.save
     end
   end
+
+  def pet_name
+    if self.ancestry_depth == 2
+      if ["内蒙古", "黑龙江"].any?{|str| name.include?(str)}
+        name[0...3]
+      else
+        name[0...2]
+      end
+    else
+      name
+    end
+  end
   
 end
