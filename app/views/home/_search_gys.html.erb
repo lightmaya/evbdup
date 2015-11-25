@@ -1,0 +1,20 @@
+<div class="container s-results margin-bottom-50">
+  <span class="results-number">供应商搜索关于“<span class="red"><%= params[:key] %></span>” 共有<%= @rs.total %>个结果</span>
+  <% @rs.each_hit_with_result do |hit, r| %>
+    <% name =  hit.highlight(:name) ? hit.highlight(:name).format { |word| "<span class=\"red\">#{word}</span>" } : r.try(:name) %>
+    <% title = name %>
+    <!-- Begin Inner Results -->
+    <div class="inner-results">
+      <h3><%= link_to_blank title, department_path(r) %></h3>
+      <p><%= truncate(sanitize(r.summary.to_s), length: 100) %></p>
+      <ul class="list-inline down-ul">
+        <li>注册时间：<%= r.created_at %> </li>
+      </ul>     
+    </div>
+    <hr>
+  <% end -%>
+  <!-- Begin Inner Results -->
+  <%= paginate @rs.results %>
+</div>
+
+

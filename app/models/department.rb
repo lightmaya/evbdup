@@ -14,6 +14,8 @@ class Department < ActiveRecord::Base
   has_many :items, through: :item_departments
 
   scope :find_real_dep,  ->{ where(dep_type: false) }
+  scope :valid, -> { where("departments.status = 1") }
+
   default_value_for :is_secret, true
   default_value_for :comment_total, 0
   default_value_for :is_blacklist, false
@@ -81,6 +83,38 @@ class Department < ActiveRecord::Base
       ["已删除",404,"light",0]
     ]
   end
+
+  # 全文检索
+  if Rails.env.production?
+    searchable do      
+      text :name, :stored => true, :boost => 10.0
+      text :ancestry, :stored => true, :boost => 10.0
+      integer :status
+      text :address
+      time :created_at
+      time :updated_at
+      integer :id
+    end
+  end
+
+  def self.search(params = {}, options = {})
+    options[:page_num] ||= 30
+    if options[:all]
+      options[:page_num] = Sunspot.search(Product).total
+      params[:page] = 1
+    end
+    options[:ancestry] ||= 3
+    conditions = Proc.new{
+      fulltext params[:k] do
+        highlight :name
+      end if params[:k].present?
+      with(:ancestry, options[:ancestry]) if options[:ancestry].present?
+      order_by :id
+      paginate :page => params[:page], :per_page => options[:page_num]
+    }
+    Sunspot.search(Department, &conditions)
+  end
+
 
   # 根据不同操作 改变状态
   def change_status_hash

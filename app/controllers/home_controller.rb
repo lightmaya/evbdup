@@ -3,7 +3,7 @@ class HomeController < JamesController
   # layout "application" ,:only => :test
 
   def index
-      # trial and error
+    params[:t] ||= "search_products"
   end
   
   def ajax_test
@@ -40,18 +40,14 @@ class HomeController < JamesController
 
   # 全文检索
   def search
-    return redirect_to root_path if params[:key].blank? || 
+    return redirect_to root_path if params[:key].blank?
     case params[:t]
     when "search_products"
-      params[:show] = true
-      @products = Product.search(params, {:page_num => 20})
+      @rs = Product.search(params, {:page_num => 20})
     when "search_gys"
-      @deps = Department.search(params, {:page_num => 20})
+      @rs = Department.search(params, {:page_num => 20})
     when "search_articles"
-      @articles = Article.search(params, {:page_num => 20})
-    when "search_dzpz"
-    else
-      return redirect_to root_path
+      @rs = Article.search(params, {:page_num => 20})
     end
   end
 

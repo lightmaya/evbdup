@@ -42,6 +42,8 @@ Evbdup::Application.routes.draw do
     end
   end
 
+  resources :departments, only: [:show]
+
   resources :products
 
   resources :home, :only => :index  do 

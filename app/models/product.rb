@@ -23,6 +23,8 @@ class Product < ActiveRecord::Base
     searchable do      
       text :brand_name, :stored => true, :boost => 10.0
       text :model, :stored => true, :boost => 10.0
+      text :version, :stored => true, :boost => 10.0
+
       text :category do
         category.name if category
       end
@@ -36,6 +38,26 @@ class Product < ActiveRecord::Base
       time :updated_at
       integer :id
     end
+  end
+
+  def self.search(params = {}, options = {})
+    options[:page_num] ||= 30
+    if options[:all]
+      options[:page_num] = Sunspot.search(Product).total
+      params[:page] = 1
+    end
+    options[:show] ||= 1
+    conditions = Proc.new{
+      fulltext params[:k] do
+        highlight :model
+        highlight :brand
+        highlight :version
+      end if params[:k].present?
+      with(:show, options[:show]) if options[:show].present?
+      order_by :id
+      paginate :page => params[:page], :per_page => options[:page_num]
+    }
+    Sunspot.search(Product, &conditions)
   end
 
 	# 附件的类
