@@ -16,12 +16,13 @@ class Kobe::OrdersController < KobeController
   end
 
   def new
-    @order.yw_type = 'ddcg'
-  	@order.buyer_name = @order.payer = current_user.real_department.name
-    @order.buyer_man = current_user.name
-    @order.buyer_tel = current_user.tel
-    @order.buyer_mobile = current_user.mobile
-    @order.buyer_addr = current_user.department.address
+    @order = Order.init_order(current_user, 'ddcg')
+   #  @order.yw_type = 'ddcg'
+  	# @order.buyer_name = @order.payer = current_user.real_department.name
+   #  @order.buyer_man = current_user.name
+   #  @order.buyer_tel = current_user.tel
+   #  @order.buyer_mobile = current_user.mobile
+   #  @order.buyer_addr = current_user.department.address
     slave_objs = [OrdersItem.new(order_id: @order.id)]
     @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
@@ -30,7 +31,10 @@ class Kobe::OrdersController < KobeController
   end
 
   def create
-    other_attrs = { buyer_id: current_user.department.id, buyer_code: current_user.department.real_ancestry, name: get_project_name }
+    other_attrs = { 
+      buyer_id: current_user.department.id, buyer_code: current_user.department.real_ancestry, 
+      name: Order.get_project_name(nil, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) 
+    }
     @order = create_msform_and_write_logs(Order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "下单", :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     unless @order.id
       redirect_back_or
@@ -101,7 +105,7 @@ class Kobe::OrdersController < KobeController
   end
 
   def update
-    update_msform_and_write_logs(@order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息"}, { name: get_project_name(@order) })
+    update_msform_and_write_logs(@order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息"}, { name: Order.get_project_name(@order, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) })
     redirect_to eval("#{@order.yw_type}_list_kobe_orders_path")
   end
 
@@ -184,19 +188,6 @@ class Kobe::OrdersController < KobeController
       cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
       menu_ids = Menu.get_menu_ids("Order|audit_#{@order.yw_type}") if @order.present?
       audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@order, menu_ids)
-    end
-
-
-    # 根据品目创建项目名称
-    def get_project_name(order=nil)
-      category_names = params[:orders_items][:category_name].values.uniq.join("、")
-      if order.present?
-        project_name = order.name.split(" ")
-        project_name[2] = category_names
-        return project_name.join(" ")
-      else
-        return "#{current_user.real_department.name} #{Time.new.to_date.to_s} #{category_names} 定点采购项目"
-      end
     end
 
     # show页面的数组
