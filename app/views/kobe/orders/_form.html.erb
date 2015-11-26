@@ -48,7 +48,7 @@
 
   		if (msg.length != 0) {
   			flash_dialog(msg.join("<br/>"));
-        $("#new_order_submit").text("\<i class='fa fa-floppy-o'\>\</i\> 保 存 ");
+        $("#new_order_submit").html("<i class='fa fa-floppy-o'></i> 保 存 ");
         $("#new_order_submit").removeClass("btn-u-default");
   			return false;
   		};
