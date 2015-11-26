@@ -20,13 +20,12 @@ class Item < ActiveRecord::Base
 	end
 
 	after_save do 
-		arr = []
     if self.dep_names.present?
   		self.dep_names.split("\r\n").each do |name|
   			dep = Department.find_by(name: name)
-  			arr << (dep.present? ? { name: name, department_id: dep.id } : { name: name })
+  			tmp = (dep.present? ? { name: name, department_id: dep.id } : { name: name })
+        self.item_departments.find_or_create_by(tmp)
   		end
-  		self.item_departments.find_or_create_by(arr)
     end
 	end
 

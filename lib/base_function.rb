@@ -118,6 +118,17 @@ module BaseFunction
     return html.html_safe
   end
 
+  # 显示总金额
+  def show_total_part(total=0)
+    %Q{
+      <div class="show_total">
+          <h2 class="text-red">
+            <strong>总计：￥<span id="form_sum_total">#{total}</span></strong>
+          </h2>
+      </div>
+    }.html_safe
+  end
+
   alias_method :info_html, :show_obj_info
  
 

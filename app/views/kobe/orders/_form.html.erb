@@ -14,7 +14,6 @@
   	$('#new_order').on('submit',function(){
       $("#new_order_submit").text("保存中...");
       $("#new_order_submit").addClass("btn-u-default");
-      $("#new_order_submit").attr("disabled", "disabled");
 
   		var msg = []
       // 填写其他费用 没有填写其他费用说明
@@ -49,6 +48,8 @@
 
   		if (msg.length != 0) {
   			flash_dialog(msg.join("<br/>"));
+        $("#new_order_submit").text("\<i class='fa fa-floppy-o'\>\</i\> 保 存 ");
+        $("#new_order_submit").removeClass("btn-u-default");
   			return false;
   		};
   	});

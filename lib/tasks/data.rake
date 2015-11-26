@@ -489,7 +489,8 @@ namespace :data do
       next if old.yw_type == '资产消费'
       n = Order.find_or_initialize_by(id: old.id)
 
-      n.name = old.project_name
+      next if Order.find_by(sn: old.sn).present?
+      n.name = old.project_name.present? ? old.project_name : '-'
       n.sn = old.sn
       n.contract_sn = old.ht_code
       n.buyer_name = old.dep_p_name 

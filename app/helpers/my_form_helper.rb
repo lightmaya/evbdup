@@ -79,14 +79,8 @@ module MyFormHelper
         $("input#" + master_table_names + "_other_fee").live('change blur',function(){calc_total(master_table_names,slave_table_names);});
       }
     end
+    myform.html_code << show_total_part
     myform.html_code << %Q|
-      <div class="row show_total">
-        <section class="col">
-          <h2 class="text-red">
-            <strong>总计：￥<span id="form_sum_total">0</span></strong>
-          </h2>
-        </section>
-      </div>
       <script type="text/javascript">
       $(function() {
         var master_table_names = "#{myform.table_name}";
