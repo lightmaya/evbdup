@@ -59,7 +59,7 @@
             </section>
           </fieldset>
           <footer>
-            <button type="submit" class="btn-u pull-right">登 录</button>
+            <button type="submit" class="btn-u pull-right" id="sign_in_form_submit">登 录</button>
             <%= link_to "注 册", sign_up_users_path, class: "btn-u btn-u-default" %>
           </footer>
 
@@ -71,6 +71,18 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
+    // 表单提交 登录按钮变登录中
+    $("#sign_in_form").on('submit',function(){
+      $("#sign_in_form_submit").text("登录中...");
+      $("#sign_in_form_submit").addClass("btn-u-default");
+    });
+
+    // 有没通过验证的input 登录按钮由登录中变成登录
+    $("body").on("blur", "#sign_in_form input.invalid", function(){
+      $("#sign_in_form_submit").text("登 录");
+      $("#sign_in_form_submit").removeClass("btn-u-default");
+    });
+
     var sign_in_rules = {
       "user[login]": { required: true },
       "user[password]": { required: true, remote: { url: '/users/valid_user', type: 'post', data: { user_name: function(){ return $("#user_login").val(); } }, async: false } },

@@ -8,6 +8,8 @@ class Article < ActiveRecord::Base
 	has_and_belongs_to_many :catalogs, class_name: "ArticleCatalog"
 	accepts_nested_attributes_for :catalogs
   has_many :task_queues, -> { where(class_name: "Article") }, foreign_key: :obj_id
+
+  belongs_to :department
   
   default_value_for :hits, 0
   default_value_for :status, 0
@@ -15,6 +17,10 @@ class Article < ActiveRecord::Base
   ####### status及审核相关 ############
   # 有status字段的需要加载AboutStatus
   include AboutStatus  
+
+  before_save do 
+    self.catalog_ids = self.catalogids.split(",")
+  end
 
   # 审核流程必须有rule
   belongs_to :rule
@@ -122,8 +128,8 @@ class Article < ActiveRecord::Base
         <node name='几天内显示新' column='new_days' class='required number' hint='请填写自然数' />
         <node name='发布人' column='username' class='required' />
         <node name='内容' column='content' data_type='richtext' style='width:100%;height:300px;' />
-        <node name='公告目录' class='tree_checkbox' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"ArticleCatalog"}' partner='catalog_ids'/>
-        <node column='catalog_ids' data_type='hidden'/>
+        <node name='所属栏目' class='tree_checkbox' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"ArticleCatalog"}' partner='catalogids'/>
+        <node column='catalogids' data_type='hidden'/>
       </root>
     }
   end

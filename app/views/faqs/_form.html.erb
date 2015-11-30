@@ -10,14 +10,11 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title color-dark">
-                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=i%>">
-                                   <%=i+1%>、 <%= faq.title%> </a>
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=i%>"><%= "#{i+1}.#{faq.title}" %> </a>
                             </h4>
                         </div>
-                        <div id="collapse<%=i%>" class="panel-collapse collapse in">
-                            <div class="panel-body">
-                                 <%= faq.content%>
-                            </div>
+                        <div id="collapse<%=i%>" class="panel-collapse collapse <%= i==0 ? "in" : "" %>">
+                            <div class="panel-body"><%= faq.content.html_safe %></div>
                         </div>
                     </div>
                     <%end%>

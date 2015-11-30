@@ -322,21 +322,4 @@ module ApplicationHelper
     icon_location == 'left' ? "<i class='fa #{icon}'></i> #{name}" : "#{name} <i class='fa #{icon}'></i>"
   end
 
-  # 首页品目标签 品目共三级 
-  # 第一级显示在首页上 鼠标悬浮显示二三级 第二级用li_header_tag显示 第三级跳转到channel页面
-  def li_header_tag(name, icon = '')
-    "<li><div class='category_header'>#{get_name_with_icon(name, icon)}</div></li>".html_safe
-  end
-
-  # 首页第三级品目的跳转的li
-  def li_link_to_tag(name, id, icon = '')
-    "<li><a href='/channel/#{id}' target='_blank'>#{get_name_with_icon(name, icon)}</a></li>".html_safe
-  end
-
-  # 首页第三级品目没有产品不用跳转，需加 * 标记
-  def li_no_link_tag(name,icon = '')
-    "<li><div class='category_grey'>#{get_name_with_icon(name, icon)}</div></li>".html_safe
-  end
-
-
 end

@@ -34,19 +34,14 @@
     </div>
   </div>
   <div class="col-md-4 padding-0">
-    <!--Tag Box v6-->
     <div class="tag-box tag-box-v3 margin-0 padding-bottom-0 padding-top-5">
-      <div class="headline headline-md"><h2> 重要通知</h2><span class="badge badge-light pull-right">更多...</span></div>
+      <div class="headline headline-md"><h2> 重要通知</h2><%= more_tag %></div>
       <ul class="list-unstyled categories">
-        <li><a href="#">磷化氢环流熏蒸系统供应商目</a><span class="text-highlights text-highlights-red rounded-2x">new</span> <span class="hex pull-right">2015-06-01</span></li>
-        <li><a href="#">磷化氢环流熏蒸系统供入围项目</a> <span class="hex pull-right">2015-06-01</span></li>
-        <li><a href="#">磷化氢环流熏蒸系统供应商围...</a> <span class="hex pull-right">2015-06-01</span></li>
-        <li><a href="#">磷化氢环流熏蒸系统供应商入围...</a> <span class="hex pull-right">2015-06-01</span></li>
-        <li><a href="#">磷化氢环流熏蒸系统供应商入围...</a> <span class="hex pull-right">2015-06-01</span></li>
-        <li><a href="#">磷化氢环流熏蒸系统供应商入围...</a> <span class="hex pull-right">2015-06-01</span></li>
+        <% @zytz.each do |article| %>
+          <%= article_li_tag(article, 13) %>
+        <% end %>
       </ul>
     </div>
-    <!--End Tag Box v6-->
   </div>
 </div>
 
@@ -55,86 +50,37 @@
   <i>这是一个广告位</i>
 </div>
 <div class="row magazine-page">
-  <!-- Begin Content -->
   <div style="padding-right:3px;" class="col-md-9">
-    <!-- Magazine Slider -->
-
-    <!-- End Magazine Slider -->
-
-    <!-- Magazine News -->
-
-
-
-
-    <div class="row job-content">
-
-    </div>
-
-
-
-    <!-- End Magazine News -->
-
-
-
-    <!-- Magazine News -->
-
-    <!-- End Magazine News -->
-
-
-
-
     <div class="row job-content margin-bottom-20">
       <div class="col-md-6 padding-right-5">
         <!--Tag Box v6-->
         <div class="tag-box tag-box-v1 margin-bottom-0">
-          <h2>招标公告<span class="badge badge-light pull-right">更多...</span></h2>
+          <h2>招标公告<%= more_tag %></h2>
           <ul class="list-unstyled categories">
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目 <span class="text-highlights text-highlights-red rounded-2x">new</span></a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围项目</a> <span class="hex pull-right">2015-06-01</span></li> 
+            <% @zbgg.each do |article| %>
+              <%= article_li_tag(article) %>
+            <% end %>
           </ul>
         </div>
-        <!--End Tag Box v6-->
       </div>
 
       <div class="col-md-6 padding-left-5">
         <!--Tag Box v7-->
         <div class="tag-box tag-box-v1 margin-bottom-0">
-          <h2>招标结果公告<span class="badge badge-light pull-right">更多...</span></h2>
+          <h2>招标结果公告<%= more_tag %></h2>
           <ul class="list-unstyled categories">
-            <li><a href="#">磷化氢环流熏蒸系统供应商入围项目入围结果公告</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-            <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
+            <% @jggg.each do |article| %>
+              <%= article_li_tag(article) %>
+            <% end %>
           </ul>
         </div>
-        <!--End Tag Box v7-->
       </div>
     </div>
-
-
 
     <div class="service-block service-block-blue">
       <i class="icon-custom icon-color-light rounded-x icon-line icon-diamond"></i>
       <h2 class="heading-md">这是一个广告位</h2>
     </div>
-
-
-
-
-
-
-
-
 
     <div class="row job-content">
       <div class="col-md-6 padding-right-5">
@@ -147,32 +93,22 @@
             <div class="tab-pane fade active in" id="tab-1">
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
+                  <% @wsjj_xq.each do |project| %>
+                    <%= li_tag_with_date(project.name, bid_project_path(project), project.end_time.to_date, 20) %>
+                  <% end %>
                 </ul>
-                <div class="padding-bottom-10"><span class="badge badge-light pull-right">更多...</span></div>
+                <div class="padding-bottom-10"><%= more_tag %></div>
               </div>
 
             </div>
             <div class="tab-pane fade" id="tab-2">
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
+                  <% @wsjj_jg.each do |project| %>
+                     <%= li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, 18, true, (project.status == 12 ? '中标' : '废标'), (project.status == 12 ? 'green' : 'blue')) %>
+                  <% end %>
                 </ul>
-                <div class="padding-bottom-10"><span class="badge badge-light pull-right">更多...</span></div>
+                <div class="padding-bottom-10"><%= more_tag %></div>
               </div>
             </div>
           </div>
@@ -188,31 +124,21 @@
             <div class="tab-pane fade active in" id="tab-3">
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
+                  <% @xyzr.each do |project| %>
+                    <%= li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, 20) %>
+                  <% end %>
                 </ul>
-                <div class="padding-bottom-10"><span class="badge badge-light pull-right">更多...</span></div>
+                <div class="padding-bottom-10"><%= more_tag %></div>
               </div>
             </div>
             <div class="tab-pane fade" id="tab-4">
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-                  <li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
+                  <% @wchz.each do |project| %>
+                    <%= li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, 20) %>
+                  <% end %>
                 </ul>
-                <div class="padding-bottom-10"><span class="badge badge-light pull-right">更多...</span></div>
+                <div class="padding-bottom-10"><%= more_tag %></div>
               </div>
             </div>
           </div>
@@ -300,217 +226,100 @@
       </div>
     </div>
     <hr class="margin-0">
-    <!--
-<div class="job-content tag-box tag-box-v6 margin-bottom-10">
-<div class="headline"><h2 class="heading-sm"><i class="fa fa-calendar"></i> 工作动态</h2></div>
-<ul class="list-unstyled categories">
-<li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-<li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-<li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-<li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-<li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-<li><a href="#">中储粮镇江粮油公司油脂公司专用编织袋竞价项目</a> <span class="hex pull-right">2015-06-01</span></li>
-</ul>
 
 </div>
--->
-
-
-  </div>
-  <!-- End Sidebar -->
+<!-- End Sidebar -->
 </div>
 
 <!-- Recent Works -->
-    <div class="owl-carousel-v1 owl-work-v1 margin-bottom-35">
-        <div class="headline"><h2 class="pull-left"><i class="fa fa-signal"></i> 畅销入围产品</h2>
-            <div class="owl-navigation">
-                <div class="customNavigation">
-                    <a class="owl-btn prev-v2"><i class="fa fa-angle-left"></i></a>
-                    <a class="owl-btn next-v2"><i class="fa fa-angle-right"></i></a>
-                </div>
-            </div><!--/navigation-->
-        </div>
+<!-- <div class="owl-carousel-v1 owl-work-v1 margin-bottom-35">
+  <div class="headline"><h2 class="pull-left"><i class="fa fa-signal"></i> 畅销入围产品</h2>
+    <div class="owl-navigation">
+      <div class="customNavigation">
+        <a class="owl-btn prev-v2"><i class="fa fa-angle-left"></i></a>
+        <a class="owl-btn next-v2"><i class="fa fa-angle-right"></i></a>
+      </div>
+    </div><!--/navigation-->
+  <!-- </div> -->
 
-        <div class="owl-recent-works-v1">
-            <div class="item">
-              <div class="thumbnails thumbnail-style thumbnail-kenburn">
-              <div class="thumbnail-img">
-                  <div class="overflow-hidden">
-                      <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-                  </div>
-                  <a class="btn-more hover-effect" href="#">详情 +</a>         
-              </div>
-              <div class="caption">
-                  <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-                  <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-              </div>
-            </div>   
-            </div>
-            <div class="item">
-              <div class="thumbnails thumbnail-style thumbnail-kenburn">
-                <div class="thumbnail-img">
-                    <div class="overflow-hidden">
-                        <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-                    </div>
-                    <a class="btn-more hover-effect" href="#">详情 +</a>                   
-                </div>
-                <div class="caption">
-                  <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-                  <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-                </div>
-              </div>   
-            </div>
-            <div class="item">
-              <div class="thumbnails thumbnail-style thumbnail-kenburn">
-                  <div class="thumbnail-img">
-                      <div class="overflow-hidden">
-                          <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-                      </div>
-                      <a class="btn-more hover-effect" href="#">详情 +</a>                   
-                  </div>
-                  <div class="caption">
-                      <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-                  		<p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-                  </div>
-              </div>  
-            </div>
-            <div class="item">
-              <div class="thumbnails thumbnail-style thumbnail-kenburn">
-                  <div class="thumbnail-img">
-                      <div class="overflow-hidden">
-                          <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-                      </div>
-                      <a class="btn-more hover-effect" href="#">详情 +</a>                   
-                  </div>
-                  <div class="caption">
-                     <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-                     <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-                  </div>
-              </div>   
-            </div>
-            
+<div class="headline"><h2>畅销入围产品</h2></div>
+
+<div class="row margin-bottom-20">
+  <!-- <div class="owl-recent-works-v1"> -->
+  <% @products.each do |product|%>
+    <%= show_product_div(product) %>
+  <% end %>
+    <!-- <div class="item">
+      <div class="thumbnails thumbnail-style thumbnail-kenburn">
+        <div class="thumbnail-img">
+          <div class="overflow-hidden">
+            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
+          </div>
+          <a class="btn-more hover-effect" href="#">详情 +</a>         
         </div>
+        <div class="caption">
+          <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
+          <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
+        </div>
+      </div>   
     </div>
-    <!-- End Recent Works -->
+    <div class="item">
+      <div class="thumbnails thumbnail-style thumbnail-kenburn">
+        <div class="thumbnail-img">
+          <div class="overflow-hidden">
+            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
+          </div>
+          <a class="btn-more hover-effect" href="#">详情 +</a>                   
+        </div>
+        <div class="caption">
+          <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
+          <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
+        </div>
+      </div>   
+    </div>
+    <div class="item">
+      <div class="thumbnails thumbnail-style thumbnail-kenburn">
+        <div class="thumbnail-img">
+          <div class="overflow-hidden">
+            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
+          </div>
+          <a class="btn-more hover-effect" href="#">详情 +</a>                   
+        </div>
+        <div class="caption">
+          <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
+          <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
+        </div>
+      </div>  
+    </div>
+    <div class="item">
+      <div class="thumbnails thumbnail-style thumbnail-kenburn">
+        <div class="thumbnail-img">
+          <div class="overflow-hidden">
+            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
+          </div>
+          <a class="btn-more hover-effect" href="#">详情 +</a>                   
+        </div>
+        <div class="caption">
+         <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
+         <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
+       </div>
+     </div>   
+   </div> -->
+
+  <!-- </div> -->
+</div>
+<!-- End Recent Works -->
 
 <!--供应商展示-->
-    <div class="headline margin-bottom-35"><h2><i class="fa fa-trophy"></i>入围供应商展示</h2></div>
-    
-    <!-- Easy Blocks v1 -->                
-    <div class="row high-rated margin-bottom-20">
-        <!-- Easy Block -->                
-        <div class="col-md-4 md-margin-bottom-40">
-            <div class="easy-block-v1">
-                               
-                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li class="rounded-x active" data-target="#carousel-example-generic" data-slide-to="0"></li>
-                        <li class="rounded-x" data-target="#carousel-example-generic" data-slide-to="1"></li>
-                        <li class="rounded-x" data-target="#carousel-example-generic" data-slide-to="2"></li>
-                    </ol>
-                    <div class="carousel-inner">
-                        <div class="item active">
-                          <div class="easy-block-v1-badge rgba-default">TQLZ180×200</div> 
-                            <img alt="" src="/plugins/images/main/img3.jpg">
-                        </div>
-                        <div class="item">
-                        <div class="easy-block-v1-badge rgba-default">TDSP-650-20米</div> 
-                            <img alt="" src="/plugins/images/main/img1.jpg">
-                        </div>
-                        <div class="item">
-                        <div class="easy-block-v1-badge rgba-default">TSFQ-50A型</div> 
-                            <img alt="" src="/plugins/images/main/img7.jpg">
-                        </div>
-                    </div>
-                </div>
-                <div class="margin-top-10 font-size-16">
-                    安徽省界首市云龙粮机配套工程有限公司
-                </div>     
-                <ul class="list-unstyled">
-                    <li><span class="color-green">信用分：</span> 11089</li>
-                    <li><span class="color-green">入围项目:</span>输送设备、清理设备、粮情测控、环流熏蒸</li>
-                </ul>    
-                <a class="btn-u btn-u-sm" href="#">更多产品</a>
-            </div>  
-        </div>
-        <!-- End Easy Block -->
-        
-        <!-- Easy Block -->                
-        <div class="col-md-4 md-margin-bottom-40">
-            <div class="easy-block-v1">
-                               
-                <div id="carousel-example-generic-2" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li class="rounded-x active" data-target="#carousel-example-generic-2" data-slide-to="0"></li>
-                        <li class="rounded-x" data-target="#carousel-example-generic-2" data-slide-to="1"></li>
-                        <li class="rounded-x" data-target="#carousel-example-generic-2" data-slide-to="2"></li>
-                    </ol>
-                    <div class="carousel-inner">
-                        <div class="item active">
-                          <div class="easy-block-v1-badge rgba-red">TQLZ180×200</div> 
-                            <img alt="" src="/plugins/images/main/img5.jpg">
-                        </div>
-                        <div class="item">
-                        <div class="easy-block-v1-badge rgba-red">TDSP-650-20米</div> 
-                            <img alt="" src="/plugins/images/main/img4.jpg">
-                        </div>
-                        <div class="item">
-                        <div class="easy-block-v1-badge rgba-red">TSFQ-50A型</div> 
-                            <img alt="" src="/plugins/images/main/img6.jpg">
-                        </div>
-                    </div>
-                </div>
-                <div class="margin-top-10 font-size-16">
-                    吴江市胜天包装输送机械有限责任公司
-                </div>     
-                <ul class="list-unstyled">
-                    <li><span class="color-green">信用分：</span> 11089</li>
-                    <li><span class="color-green">入围项目:</span>输送设备、清理设备、粮情测控、环流熏蒸</li>
-                </ul>    
-                <a class="btn-u btn-u-sm" href="#">更多产品</a>
-            </div>  
-        </div>
-        <!-- End Easy Block -->
-        
-        <!-- Easy Block -->                
-        <div class="col-md-4 md-margin-bottom-40">
-            <div class="easy-block-v1">
-                               
-                <div id="carousel-example-generic-3" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li class="rounded-x active" data-target="#carousel-example-generic-3" data-slide-to="0"></li>
-                        <li class="rounded-x" data-target="#carousel-example-generic-3" data-slide-to="1"></li>
-                        <li class="rounded-x" data-target="#carousel-example-generic-3" data-slide-to="2"></li>
-                    </ol>
-                    <div class="carousel-inner">
-                        <div class="item active">
-                          <div class="easy-block-v1-badge rgba-blue">宣传图1</div> 
-                            <img alt="" src="/plugins/images/main/img2.jpg">
-                        </div>
-                        <div class="item">
-                        <div class="easy-block-v1-badge rgba-blue">宣传图2</div> 
-                            <img alt="" src="/plugins/images/main/img4.jpg">
-                        </div>
-                        <div class="item">
-                        <div class="easy-block-v1-badge rgba-blue">宣传图3</div> 
-                            <img alt="" src="/plugins/images/main/img8.jpg">
-                        </div>
-                    </div>
-                </div>
-                <div class="margin-top-10 font-size-16">
-                    北京中天京谷机电设备制造有限公司
-                </div>     
-                <ul class="list-unstyled">
-                    <li><span class="color-green">信用分：</span> 11089</li>
-                    <li><span class="color-green">入围项目:</span>输送设备、清理设备、粮情测控、环流熏蒸</li>
-                </ul>    
-                <a class="btn-u btn-u-sm" href="#">更多产品</a>
-            </div>  
-        </div>
-        <!-- End Easy Block -->
-        
-    </div>
-    <!-- End Easy Blocks v1 -->                
+<div class="headline margin-bottom-35"><h2><i class="fa fa-trophy"></i>入围供应商展示</h2></div>
+
+<!-- Easy Blocks v1 -->                
+<div class="row high-rated margin-bottom-20">
+  <% @deps.each do |dep|%>
+    <%= show_dep_div(dep) %>
+  <% end %>
+</div>
+<!-- End Easy Blocks v1 -->                
 <hr>
 
 <!--供应商展示结束-->

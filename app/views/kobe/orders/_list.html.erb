@@ -41,11 +41,13 @@
           </th>
           <th class="index">序号</th>
           <th><%= sort_link(@q, :sn, '凭证编号', default_order: :desc) %></th>
-          <th><%= sort_link(@q, :name, '名称', default_order: :desc) %></th>
+          <% unless action_name.include?('list') %>
+          <th>采购单位</th>
+          <% end %>
+          <th>名称</th>
           <th><%= sort_link(@q, :total, '总金额（元）', default_order: :desc) %></th>
-          <th>最近操作</th>            
+          <!-- <th>最近操作</th>             -->
           <th class="status_bar"><%= action_name.include?('audit') ? "状态" : status_filter(Order) %></th>
-          <th class="date"><%= date_filter %></th>
           <th class="cando">操作</th>
         </tr>
       </thead>
@@ -59,11 +61,13 @@
           </td>
           <td><%= show_index(index) %></td>
           <td><%= order.sn %></td>
+          <% unless action_name.include?('list') %>
+          <td><%= order.buyer_name %></td>
+          <% end %>
           <td><%= order.name %></td>
           <td class="money"><%= money order.total %></td>
-          <td><%= show_last_user(order) %></td>
-          <td><%= order.status_bar %></td>
-          <td><%= show_date(order.created_at) %></td>
+          <!-- <td><%#= show_last_user(order) %></td> -->
+          <td><%= "#{order.status_bar}#{show_last_user(order)}".html_safe %></td>
           <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
         </tr>
         <% end %>

@@ -65,6 +65,12 @@ class Product < ActiveRecord::Base
     ProductsUpload
   end
 
+  # 总协调人
+  def coordinators
+    Coordinator.where(department_id: self.department_id, item_id: self.item_id)
+  end
+
+  # 代理商
   def agents
     # item.try(:agents)
     Agent.where(department_id: self.department_id, item_id: self.item_id).includes(:agent_dep)

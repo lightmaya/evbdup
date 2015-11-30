@@ -63,7 +63,7 @@ class Kobe::FaqsController < KobeController
     redirect_back_or
   end
 
-  def  reply
+  def reply
     
   end
 

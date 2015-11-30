@@ -5,7 +5,7 @@ class Kobe::ArticlesController < KobeController
 
   def index
     # authorize! :index, Article, :message => "您没有相关权限！"
-    params[:q][:user_id_eq] = current_user.id unless current_user.admin?
+    # params[:q][:user_id_eq] = current_user.id unless current_user.admin?
     @q = Article.where(get_conditions("articles")).ransack(params[:q]) 
     @articles = @q.result.includes([:author, :catalogs]).page params[:page]
   end

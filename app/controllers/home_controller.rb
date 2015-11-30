@@ -4,6 +4,27 @@ class HomeController < JamesController
 
   def index
     params[:t] ||= "search_products"
+    # 重要通知
+    zytz_articles = get_articles('重要通知')
+    @zytz = zytz_articles.present? ? zytz_articles.order("id desc").limit(6) : []
+    # 招标公告
+    zbgg_articles = get_articles('招标公告')
+    @zbgg = zbgg_articles.present? ? zbgg_articles.order("id desc").limit(6) : []
+    # 招标结果公告
+    jggg_articles = get_articles('招标结果公告')
+    @jggg = jggg_articles.present? ? jggg_articles.order("id desc").limit(6) : []
+    # 网上竞价需求公告
+    @wsjj_xq = BidProject.can_bid.order("id desc").limit(8)
+    # 网上竞价结果公告
+    @wsjj_jg = BidProject.where(status: [-1, 12]).order("id desc").limit(8)
+    # 畅销产品
+    @products = Product.show.order("id desc").limit(4)
+    # 入围供应商
+    @deps = Department.order("comment_total desc").limit(4)
+    # 协议转让公告
+    @xyzr = Transfer.xyzr.order("id desc").limit(8)
+    # 无偿划转公告
+    @wchz = Transfer.wchz.order("id desc").limit(8)
   end
   
   def ajax_test
@@ -70,8 +91,8 @@ class HomeController < JamesController
     sn = params[:no].gsub("'", "").strip
     money = params[:m].gsub(",", "").to_f
     @order = Order.find_by("(sn = ? or contract_sn = ? ) and total>= ? and total<= ? and status in (?)",sn,sn,money-0.1,money+0.1,Order.ysd_status )
-    if  !@order.present?
-      render :text => %{<div style="text-align:left;margin:24px;color:#ff0000;">您输入的信息与实际不符，详情请联系服务热线：<br>办公物资：010-88016607。<br>粮机物资：010-88016801,010-88016802。<br>技术支持：010-88016617,010-88016623。</div>}, :layout => false
+    if @order.blank?
+      render :text => %{<div style="text-align:left;margin:24px;color:#ff0000;">您输入的信息与实际不符，详情请联系服务热线：<br>办公物资：#{Dictionary.service_bg_tel}。<br>粮机物资：#{Dictionary.service_lj_tel}。<br>技术支持：#{Dictionary.technical_support}。</div>}, :layout => false
     else
       if @order.sn == sn
         str = "凭证编号：#{sn}"
@@ -191,6 +212,11 @@ class HomeController < JamesController
       @rec_products = source.products.show.order("id DESC").limit(3)
       # 清理params
       params[:q] = nil; params[:page] = nil
+    end
+
+    # 根据公告类别获取公告
+    def get_articles(catalog='')
+      ArticleCatalog.find_by(name: catalog).try(:articles)
     end
 
 end

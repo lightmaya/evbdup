@@ -6,7 +6,7 @@ module AboutAncestry
     base.class_eval do 
       # 自己和后代
       # scope :self_and_descendants, lambda { |id| where(["FIND_IN_SET(?, CONCAT_WS(',',id,REPLACE(ancestry,'/',','))) >0", id ]) }
-      default_scope -> {order(:ancestry, :sort, :id)}
+      # default_scope -> {order(:ancestry, :sort, :id)}
       # 树形结构
       has_ancestry :cache_depth => true
     end

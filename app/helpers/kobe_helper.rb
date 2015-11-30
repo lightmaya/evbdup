@@ -157,36 +157,42 @@ module KobeHelper
     # 判断当前步骤在数组中的位置 从0开始
     current_index = obj.get_current_step_in_array(arr)
 
-    str = %Q{
-      <div class="headline"><h2 class="pull-left"><i class="fa fa-signal"></i> 流程</h2>
-        <div class="owl-navigation">
-          <div class="customNavigation">
-            <a class="owl-btn prev-v1"><i class="fa fa-angle-left"></i></a>
-            <a class="owl-btn next-v1"><i class="fa fa-angle-right"></i></a>
-          </div>
-        </div>
-      </div>
-    }
+    # str = %Q{
+    #   <div class="headline"><h2 class="pull-left"><i class="fa fa-signal"></i> 流程</h2>
+    #     <div class="owl-navigation">
+    #       <div class="customNavigation">
+    #         <a class="owl-btn prev-v1"><i class="fa fa-angle-left"></i></a>
+    #         <a class="owl-btn next-v1"><i class="fa fa-angle-right"></i></a>
+    #       </div>
+    #     </div>
+    #   </div>
+    # }
     item_str = ""
+    num = arr.size
     arr.each_with_index do |name, index|
       bg_class = "bg-light heading-sm"
-      icon_class = "icon-custom rounded-x icon-sm fa margin-left-5"
-      if index < current_index || current_index == arr.length-1
-        icon_class << " icon-color-u fa-check"
-      elsif index == current_index
-        bg_class << " bg-color-light-grey"
-        icon_class << " icon-color-light fa-info"
+      icon_class = "rounded-x "
+      if index <= current_index || current_index == arr.length-1
+        icon_class << " dot-active"
+      # elsif index == current_index
+      #   bg_class << " bg-color-light-grey"
+      #   icon_class << " icon-color-light fa-info"
       else
-        icon_class << " icon-color-grey fa-history"
+        icon_class << " bg-color-grey"
       end
       item_str << %Q{
-        <div class="item">
-          <h2 class="#{bg_class}"><span>#{index+1}. #{name}</span><i class="#{icon_class}"></i></h2>
-        </div>
+        <li class="col-sm-#{12/num} sm-margin-bottom-50">
+          <div class="process-icon">
+              <i class="#{icon_class}"></i>
+          </div>
+          <div class="process-desc">
+              <h3>#{index+1}. #{name}</h3>
+          </div>
+        </li>
       }
     end
-    str << content_tag(:div, raw(item_str).html_safe, :class=>'owl-slider')
-    return content_tag(:div, raw(str).html_safe, :class=>'owl-carousel-v1 owl-work-v1 margin-bottom-15')
+    str = content_tag(:ul, raw(item_str).html_safe, :class=>'list-inline row process-in process-border')
+    return content_tag(:div, raw(str).html_safe, class: 'process-v1').html_safe
   end
 
   # 取实例details字段中的某个node的值 用于列表中显示没有column的字段

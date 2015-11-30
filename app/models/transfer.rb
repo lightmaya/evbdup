@@ -3,6 +3,10 @@ class Transfer < ActiveRecord::Base
 
 	has_many :uploads, class_name: :TransferUpload, foreign_key: :master_id
   
+  # 协议转让
+  scope :xyzr, -> {where("transfers.total <> 0")}
+  # 无偿划转
+  scope :wchz, -> {where("transfers.total = 0")}
 
   # default_scope -> {order("id desc")}
   belongs_to :rule

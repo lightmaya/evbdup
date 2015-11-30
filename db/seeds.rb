@@ -17,11 +17,11 @@ if Area.first.blank?
   Area.rebuild_depth_cache!
 end
 
-if Department.first.blank?
-  [["执行机构","1"],["采购单位", "1"], ["供应商", "1"], ["监管机构", "1"], ["评审专家", "1"]].each do |option|
-    Department.create(name: option[0], status: option[1])
-  end
-end
+# if Department.first.blank?
+#   [["执行机构","1"],["采购单位", "1"], ["供应商", "1"], ["监管机构", "1"], ["评审专家", "1"]].each do |option|
+#     Department.create(name: option[0], status: option[1])
+#   end
+# end
 
 if Menu.first.blank?
   manage_user_type = '1'
@@ -476,6 +476,22 @@ if Menu.first.blank?
     ac.save
   end
 
+# ----政策法规、相关下载、常见问题、意见建议-----------------------------------------------------------
+  faq_list = Menu.find_or_initialize_by(name: "常见问题列表", route_path: "/kobe/faqs", can_opt_action: "Faq|read", is_show: true, user_type: manage_user_type)
+  faq_list.parent = article
+  faq_list.save
+
+  [ ["增加常见问题", "Faq|create", all_ut], 
+    ["修改常见问题", "Faq|update", manage_user_type], 
+    ["删除常见问题", "Faq|update_destroy", manage_user_type],
+    ["提交常见问题", "Faq|commit", manage_user_type],
+    ["回复意见建议", "Faq|reply", manage_user_type]
+  ].each do |m|
+    ac = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: m[2])
+    ac.parent = faq_list
+    ac.save
+  end
+
 # ----数据统计与分析-----------------------------------------------------------------------------------
   tongji = Menu.find_or_create_by(name: "数据统计与分析", icon: "fa-bar-chart-o", is_show: true, user_type: mp_ut)
 
@@ -547,7 +563,7 @@ if Menu.first.blank?
 
  end
 
-if Category.first.blank?
+# if Category.first.blank?
   # a = Category.create(name: "办公物资", :status => 1) 
   # b = Category.create(name: "粮机物资", :status => 1) 
   # ["计算机","打印机","复印机","服务器"].each do |option|
@@ -556,12 +572,12 @@ if Category.first.blank?
   # ["输送机","清理筛"].each do |option|
   #   Category.create(name: option, :status => 1, :parent => b)
   # end
-  file = File.open("#{Rails.root}/db/sql/categories.sql")
-  file.each{ |line|
-    ActiveRecord::Base.connection.execute(line)
-  }
-  file.close
-end
+#   file = File.open("#{Rails.root}/db/sql/categories.sql")
+#   file.each{ |line|
+#     ActiveRecord::Base.connection.execute(line)
+#   }
+#   file.close
+# end
 
 if Bank.first.blank?
   # source = File.new("#{Rails.root}/db/sql/banks.sql", "r")
@@ -571,4 +587,22 @@ if Bank.first.blank?
     ActiveRecord::Base.connection.execute(line)
   }
   file.close
+end
+
+if ToDoList.first.blank?
+  [ ["审核注册供应商", "/kobe/departments/list", "/kobe/departments/$$obj_id$$/audit"], 
+    ["审核采购计划", "/kobe/plans/list", "/kobe/plans/$$obj_id$$/audit"], 
+    ["审核网上竞价需求", "/kobe/bid_projects/list", "/kobe/bid_projects/$$obj_id$$/audit"], 
+    ["审核网上竞价结果", "/kobe/bid_projects/list", "/kobe/bid_projects/$$obj_id$$/audit"], 
+    ["审核公告", "/kobe/articles/list", "/kobe/articles/$$obj_id$$/audit"], 
+    ["审核产品", "/kobe/products/list", "/kobe/products/$$obj_id$$/audit"], 
+    ["审核预算审批单", "/kobe/budgets/list", "/kobe/budgets/$$obj_id$$/audit"], 
+    ["审核定点采购项目", "/kobe/orders/audit_ddcg", "/kobe/orders/$$obj_id$$/audit"], 
+    ["审核协议供货项目", "/kobe/orders/audit_xygh", "/kobe/orders/$$obj_id$$/audit"], 
+    ["卖方确认", "/kobe/orders/list", "/kobe/orders/$$obj_id$$/audit"], 
+    ["买方确认", "/kobe/orders/list", "/kobe/orders/$$obj_id$$/audit"],
+    ["个人采购", "/kobe/orders/list", "/kobe/orders/$$obj_id$$/audit"] 
+  ].each do |m|
+    ToDoList.find_or_create_by(name: m[0], list_url: m[1], audit_url: m[2])
+  end
 end

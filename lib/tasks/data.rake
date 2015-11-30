@@ -11,7 +11,7 @@ namespace :data do
       i += 1
       pr = Product.find_or_initialize_by(id: zcl_product.id)
       pr.category_id = zcl_product.zcl_category_id
-      pr.category_code = pr.category.try(:ancestry)
+      pr.category_code = pr.category.present? ? pr.category.ancestry : 0
       pr.item_id = zcl_product.item_id
       pr.brand = zcl_product.brand
       pr.model = zcl_product.name
@@ -54,9 +54,7 @@ namespace :data do
       end
       # break if i > max
     end
-
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-
   end
 
   desc '导入单位'
@@ -197,9 +195,7 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{d.errors.full_messages}" ,"departments.log"
       end
     end
-
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-
   end
 
   desc '导入协议供货项目'
@@ -271,7 +267,6 @@ namespace :data do
     Item.fix_dep_names
 
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-
   end
 
   desc '导入代理商'
@@ -283,14 +278,25 @@ namespace :data do
     total = Dragon.count
     Dragon.find_each do |old|
       n = Agent.find_or_initialize_by(id: old.id)
+
       new_dep = Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
       next if new_dep.blank?
       n.department_id = new_dep.id
       n.name = old.agent_name
-      new_dep = Department.find_by(old_id: old.agent_id, old_table: "dep_supplier")
-      next if new_dep.blank?
-      n.agent_id = new_dep.id
+      if old.user_dep == old.agent_id
+        n.agent_id = n.department_id
+      else
+        a_dep = Department.find_by(old_id: old.agent_id, old_table: "dep_supplier")
+        next if a_dep.blank?
+        n.agent_id = a_dep.id
+      end
       n.area_id = old.city
+      n.category_id = old.category_id
+      ca_ids = old.category_id.split(",")
+      n.department.items.each do |item|
+        i_ca_ids = item.categoryids.split(",")
+        n.item_id = item.id if (ca_ids & i_ca_ids).present?
+      end
       # ["正常",0,"u",100],
       # ["已删除",404,"light",0]
       n.status = case old.status
@@ -314,9 +320,54 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"agents.log"
       end
     end
-
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
 
+  desc '导入总协调人'
+  task :coordinators => :environment do
+    p "#{begin_time = Time.now} in coordinators....."
+
+    Dragon.table_name = "zcl_zxtr"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = Coordinator.find_or_initialize_by(id: old.id)
+      next if old.user_type == 2
+      dep = Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
+      next if dep.blank?
+      n.department_id = dep.id
+      n.name = get_value_in_xml(old.detail, "总协调人")
+      n.tel = get_value_in_xml(old.detail, "联系电话")
+      n.mobile = get_value_in_xml(old.detail, "联系手机")
+      n.fax = get_value_in_xml(old.detail, "传真号码")
+      n.email = get_value_in_xml(old.detail, "电子邮件")
+
+      # ["正常",0,"u",100],
+      # ["已删除",404,"light",0]
+      n.status = 0
+
+      n.summary = get_value_in_xml(old.detail, "备注")
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.user_id = old.user_id
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+      
+      n.category_id = old.category_id
+      ca_ids = old.category_id.split(",")
+      n.department.items.each do |item|
+        i_ca_ids = item.categoryids.split(",")
+        n.item_id = item.id if (ca_ids & i_ca_ids).present?
+      end
+
+      if n.save
+        succ += 1
+        p "coordinators succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"coordinators.log"
+      end
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
   end
 
   desc '导入用户'
@@ -374,9 +425,7 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"users.log"
       end
     end
-
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-
   end
 
   desc '导入品目'
@@ -475,7 +524,6 @@ namespace :data do
     Category.lj.update_all(ht_template: 'lj') if Category.lj.present?
 
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-
   end
 
   desc '导入订单'
@@ -626,9 +674,7 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"orders.log"
       end
     end
-
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-
   end
 
   desc '导入订单产品'
@@ -710,10 +756,450 @@ namespace :data do
         log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"orders_items.log"
       end
     end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc '创建文章公告类别'
+  task :article_catalogs => :environment do
+    p "#{begin_time = Time.now} in article_catalogs....."
+
+    arr = ["招标公告", "招标结果公告", "图片新闻", "重要通知"]
+    max = 1000 ; succ = i = 0
+    total = arr.count
+    arr.each do |name|
+      n = ArticleCatalog.find_or_initialize_by(name: name)
+      if n.save
+        succ += 1
+        p ".article_catalogs succ: #{succ}/#{total}"
+      else
+        log_p "[error] #{n.errors.full_messages}" ,"article_catalogs.log"
+      end
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc '导入文章公告'
+  task :articles => :environment do
+    p "#{begin_time = Time.now} in articles....."
+
+    Dragon.table_name = "zcl_article"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      old_catalog = old.catalog.split(",")
+      next if (["图片新闻", "工作动态", "服务消息", "采购公告"] & old_catalog).blank?
+
+      n = Article.find_or_initialize_by(id: old.id)
+      n.title = old.title
+      n.user_id = old.user_id
+      n.publish_time = old.publish_time
+      n.tags = old.keywords
+      n.new_days = old.newdays
+      #  [[0, "不置顶"], [1, "普通置顶"], [2, "标红置顶"]]
+      n.top_type = case old.top_type
+      when "未置顶"
+        0
+      when "普通置顶"
+        1
+      when "红色置顶"
+        2
+      else
+        0
+      end
+      # ["暂存", 0, "orange", 50],
+      # ["等待审核", 1, "orange", 90],
+      # ["已发布", 2, "u", 100],
+      # ["审核拒绝",3,"red",0],
+      # ["已删除", 404, "red", 0]
+      n.status = case old.status
+      when "审核通过"
+        2
+      when "未提交"
+        0
+      when "审核拒绝"
+        3
+      when "已删除"
+        404
+      when "等待审核"
+        1
+      else
+        0
+      end
+      n.username = old.user_name
+      n.content = old.content
+      n.hits = old.hits
+      n.department_id = User.find_by(id: old.user_id).try(:department_id)
+      # ["图片新闻", "图片新闻,工作动态", "工作动态", "服务消息", "采购公告", "采购公告,服务消息"]
+      # ["招标公告", "招标结果公告", "图片新闻", "重要通知"]
+      ca_name = []
+      ca_name << "重要通知" if (["工作动态", "服务消息"] & old_catalog).present?
+      ca_name << (old.title.include?("结果") ? "招标结果公告" : "招标公告") if old_catalog.include?("采购公告")
+      ca_name << "图片新闻" if old_catalog.include?"图片新闻"
+      if ca_name.present?
+        ca_ids = []
+        ca_name.each { |e| ca_ids << ArticleCatalog.find_by(name: e).try(:id) }
+        n.catalogids = ca_ids.compact.join(",")
+      end
+
+      xml = old.detail.to_s.gsub("param", "node")
+      if xml.present?
+        doc = Nokogiri::XML(xml)
+      else
+        doc = Nokogiri::XML::Document.new
+        doc.encoding = "UTF-8"
+        doc << "<root>"
+      end
+      node = doc.root.add_child("<node>").first
+      node["name"] = "所属栏目"
+      node["value"] = ca_name.join(",")
+      n.details = doc.to_s
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        succ += 1
+        p ".articles succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"articles.log"
+      end
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc '导入下载栏目、用户指南'
+  task :faqs => :environment do
+    p "#{begin_time = Time.now} in faqs....."
+
+    Dragon.table_name = "zcl_article"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      next unless ['下载栏目','供应商须知','用户指南','采购人须知'].include?(old.catalog)
+        
+      n = Faq.find_or_initialize_by(id: old.id)
+
+      # { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
+      n.catalog = case old.catalog
+      when "下载栏目"
+        "xzzx"
+      when "供应商须知", "采购人须知", "用户指南"
+        "cgzn"
+      end        
+
+      n.title = old.title
+      n.content = old.content
+      n.user_id = old.user_id
+      # ["暂存",0,"orange",50],
+      # ["已发布",1,"u",100],
+      # ["未回复",2,"blue",80],
+      # ["已回复",3,"sea",100],
+      # ["已删除",404,"light",0]
+      # n.status = case old.status
+      # when "审核通过"
+      #   1
+      # when "未提交", "审核拒绝"
+      #   0
+      # when "已删除"
+      #   404
+      # else
+      #   0
+      # end
+      n.status = 1
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        succ += 1
+        p ".faqs succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"faqs.log"
+      end
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc '导入网上竞价需求主表'
+  task :bid_projects => :environment do
+    p "#{begin_time = Time.now} in bid_projects....."
+
+    Dragon.table_name = "zcl_xq_info"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      next if BidProject.find_by(code: old.project_code).present?
+      n = BidProject.find_or_initialize_by(id: old.id)
+
+      n.buyer_dep_name = old.dep_p_name
+      n.invoice_title = get_value_in_xml(old.detail, "发票单位").blank? ? old.dep_p_name : get_value_in_xml(old.detail, "发票单位")
+      n.buyer_name = old.dep_p_man
+      n.buyer_phone = old.dep_p_tel
+      n.buyer_mobile = old.dep_p_mobile
+      n.buyer_add = old.dep_p_add
+      # [[1, "明标"], [0, "暗标"]]
+      n.lod = Dictionary.lod.find{|e| e[1] == old.show_price}.try(:first)
+      n.end_time = old.end_time
+      n.budget_money = old.budget
+      n.req = get_value_in_xml(old.detail, "供应商资质要求")
+      n.remark = get_value_in_xml(old.detail, "备注信息")
+
+      n.name = old.project_name
+      n.code = old.project_code
+      n.user_id = old.user_id
+      dep = Department.find_by(old_id: old.user_dep, old_table: "dep_purchaser")
+      n.department_id = dep.try(:id)
+      n.department_code = dep.try(:real_ancestry)
+      
+      # ["暂存", 0, "orange", 20],
+      # ["需求等待审核", 1, "blue", 40],
+      # ["需求审核拒绝",3,"red", 0],
+      # ["已发布", 2, "orange", 50],
+      # ["结果等待审核", 4, "sea", 70],
+      # ["结果审核拒绝",5,"red", 50],
+      # ["确定中标人", 12, "u", 100],
+      # ["废标等待审核", 6, "sea", 70],
+      # ["废标审核拒绝",7,"red", 50],
+      # ["已废标", -1, "red", 100],
+      # ["已删除", 404, "light", 0]
+      n.status = case old.status
+      when "需求未提交"
+        0
+      when "需求等待审核"
+        1
+      when "需求审核拒绝"
+        3
+      when "接受报价"
+        2
+      when "结果等待审核"
+        4
+      when "结果审核拒绝"
+        5
+      when "确定中标人"
+        12
+      when "废标等待审核"
+        6
+      when "废标审核拒绝"
+        7
+      when "已废标"
+        -1
+      else
+        404
+      end
+
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+      
+      if n.save
+        succ += 1
+        p ".bid_projects succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"bid_projects.log"
+      end
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc '导入网上竞价需求产品从表'
+  task :bid_items => :environment do
+    p "#{begin_time = Time.now} in bid_items....."
+
+    old_table_name = "zcl_xq_product"
+    Dragon.table_name = old_table_name
+    max = 10 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = BidItem.find_or_initialize_by(id: old.id)
+
+      n.category_id = old.zcl_category_id
+      n.bid_project_id = old.zcl_xq_info_id
+      n.category_name = old.product_type
+      n.brand_name = old.product_brand
+      n.xh = old.product_xinghao
+      n.num = old.purchase_num
+      n.unit = old.unit
+      n.can_other = old.is_allow == "是" ? 1 : 0
+      n.req = old.product_description
+      n.remark = get_value_in_xml(old.detail, "备注")
+
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        succ += 1
+        p ".bid_items succ: #{succ}/#{total} #{old_table_name}_id: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"bid_items.log"
+      end
+    end
 
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-
   end
+
+  desc '导入网上竞价报价主表'
+  task :bid_project_bids => :environment do
+    p "#{begin_time = Time.now} in bid_project_bids....."
+
+    old_table_name = "zcl_bid_info"
+    Dragon.table_name = old_table_name
+    max = 10 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = BidProjectBid.find_or_initialize_by(id: old.id)
+
+      n.bid_project_id = old.zcl_xq_info_id
+      n.com_name = old.dep_name
+      n.username = old.dep_s_man
+      n.tel = old.dep_s_tel
+      n.mobile = old.dep_s_mobile
+      n.add = old.dep_s_add
+      n.user_id = old.user_id
+      n.total = old.total.blank? ? 0 : old.total
+      n.bid_time = old.bid_time
+      n.department_id = Department.find_by(old_id: old.user_dep, old_table: "dep_supplier").try(:id)
+      n.is_bid = old.is_bid == "是" ? 1 : 0
+
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      if n.save
+        succ += 1
+        p ".bid_project_bids succ: #{succ}/#{total} #{old_table_name}_id: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"bid_project_bids.log"
+      end
+    end
+
+    bids = BidProjectBid.where(is_bid: true)
+    succ = 0
+    bids.each do |e|
+      doc = Nokogiri::XML(e.bid_project.logs)
+      node = doc.present? ? doc.xpath('//node[@操作内容="选择中标人"]').last : ''
+      arr = node.present? ? node["备注"].split("操作理由：") : []
+      reason = arr.size == 2 ? arr.last : ''
+      if e.bid_project.update(bid_project_bid_id: e.id, reason: reason)
+        succ += 1
+        p ".update bid_project.bid_project_bid_id succ: #{succ}/#{bids.size} bid_project_id: #{e.bid_project_id}"
+      else
+        log_p "[error]bid_project_id: #{e.bid_project_id} | #{n.errors.full_messages}" ,"update_bid_project_bid_id.log"
+      end
+    end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc '导入网上竞价报价产品从表'
+  task :bid_item_bids => :environment do
+    p "#{begin_time = Time.now} in bid_item_bids....."
+
+    old_table_name = "zcl_bid_product"
+    Dragon.table_name = old_table_name
+    max = 10 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = BidItemBid.find_or_initialize_by(id: old.id)
+
+      n.brand_name = old.product_brand
+      n.xh = old.product_xinghao
+      n.bid_project_bid_id = old.zcl_bid_info_id
+      n.price = old.purchase_price.blank? ? 0 : old.purchase_price
+      n.total = old.total.blank? ? 0 : old.total
+      n.req = old.product_description
+      n.remark = get_value_in_xml(old.detail, "备注")
+      n.details = old.detail.to_s.gsub("param", "node")
+
+      n.bid_project_id = n.bid_project_bid.try(:bid_project).try(:id)
+      n.user_id = n.bid_project_bid.try(:user_id)
+      items = n.bid_project_bid.try(:bid_project).try(:items)
+      if items.present? 
+        n.bid_item_id = items.first.id if items.size == 1
+        n_item = items.find{ |i| i.brand_name == n.brand_name && i.xh == n.xh && i.req == n.req }
+        n.bid_item_id = n_item.id if n_item.present?
+        n.bid_item_id = nil if BidItemBid.find_by(bid_item_id: n.bid_item_id, user_id: n.user_id).present?
+      end
+
+      if n.save
+        succ += 1
+        p ".bid_item_bids succ: #{succ}/#{total} #{old_table_name}_id: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"bid_item_bids.log"
+      end
+    end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc '导入资产划转'
+  task :transfers => :environment do
+    p "#{begin_time = Time.now} in transfers....."
+
+    Dragon.table_name = "zcl_transfer_out"
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = Transfer.find_or_initialize_by(id: old.id)
+      n.name = old.project_name
+      n.sn = old.sn
+      dep = Department.find_by(old_id: old.user_dep, old_table: "dep_purchaser")
+      n.department_id = dep.try(:id)
+      n.dep_name = old.dep_p_name
+      n.dep_code = dep.try(:real_ancestry)
+      n.dep_man = get_value_in_xml(old.detail, "联系人姓名")
+      n.dep_tel = get_value_in_xml(old.detail, "联系人电话")
+      n.dep_mobile = get_value_in_xml(old.detail, "联系人手机")
+      n.dep_addr = get_value_in_xml(old.detail, "单位地址")
+      n.total = old.budget
+      n.submit_time = old.submit_time
+      n.user_id = old.user_id
+      # ["暂存",0,"orange",50],
+      # ["已发布",1,"blue",100],
+      # ["已删除",404,"light",0]
+      n.status = case old.status
+      when "未提交"
+        0
+      when "已发布"
+        1
+      else
+        404
+      end
+      n.details = old.detail.to_s.gsub("param", "node")
+      n.logs = old.logs.to_s.gsub("param", "node")
+      n.created_at = old.created_at
+      n.updated_at = old.updated_at
+
+      # [[0,'完好可使用'],[1,'需要维修'], [2,'提供配件']]
+      p_status = case old.product_status
+      when "完好可使用"
+        0
+      when "需要维修"
+        1
+      when "提供配件"
+        2
+      end
+      ca = Category.find_by(id: old.zcl_category_id)
+      n.items.build(category_id: old.zcl_category_id, category_name: old.zcl_category_name, category_code: ca.try(:ancestry),
+        unit: old.unit, original_price: old.original_value, net_price: old.net_value, transfer_price: old.budget,
+        num: old.product_num, product_status: p_status, created_at: old.created_at,
+        description: get_value_in_xml(old.detail, "技术规格或产品说明"), updated_at: old.updated_at,
+        summary: get_value_in_xml(old.detail, "备注"), details: old.detail.to_s.gsub("param", "node")
+      )
+
+      if n.save
+        succ += 1
+        p ".transfers succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"transfers.log"
+      end
+
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
 
 
   # 输出日志到文件和控制台

@@ -24,7 +24,8 @@ class BidItemBid < ActiveRecord::Base
 	      <node name='总价' column='total' class='required number' display="readonly" />
 	      <node name='计量单位' column='unit' class='required' display="show" delegate='bid_item' />
 	      <node name='是否允许投报其他型号的产品' column='can_other' class='required' display="show" data='#{Dictionary.yes_or_no}' data_type='radio'  delegate='bid_item'/>
-	      <node name='备注' data_type='textarea' class='maxlength_800' placeholder='不超过800字' />
+	      <node name='技术指标和服务要求' column='req' data_type='textarea' class='maxlength_800' if="obj.bid_item.can_other==0|display=show" placeholder='不超过800字'/>
+	      <node name='备注' column='remark' data_type='textarea' if="obj.bid_item.can_other==0|display=show" class='maxlength_800' placeholder='不超过800字'/>
 	    </root>
 	  }
 	end

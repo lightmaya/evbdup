@@ -27,7 +27,7 @@ class TransferItem < ActiveRecord::Base
 	      <node name='资产原值' column='original_price' class='required number'/>
 	      <node name='资产净值' column='net_price' class='required number'/>
 	      <node name='转让资金'  column='transfer_price' class='required number'/>
-	      <node name='设备状态' column='product_status' data_type='select' data="['完好可使用','需要维修', '提供配件']" />
+	      <node name='设备状态' column='product_status' data_type='select' data="[[0,'完好可使用'],[1,'需要维修'], [2,'提供配件']]" />
 	      <node name='配件情况' data_type='select' data="['配件齐全','有部分配件', '无配件']" />
 	      <node name='运费'  data_type='select' data="['接收方支付','转让方支付']"/>
 	      <node name='技术规格或产品说明' column='description' data_type='textarea' class='maxlength_800' placeholder='不超过800字'/>
