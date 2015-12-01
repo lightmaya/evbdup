@@ -186,7 +186,14 @@ class User < ActiveRecord::Base
 
   # 自动获取操作权限
   def set_auto_menu
-    self.menu_ids = Menu.by_user_type(self.user_type).map(&:id)
+    self.menu_ids = self.get_auto_menus.map(&:id)
+  end
+
+  # 根据user_type判断用户的权限 
+  # 如果单位不是正常状态的 只能有is_auto=true的权限
+  def get_auto_menus
+    ms = Menu.status_not_in(404).by_user_type(self.user_type)
+    self.department.status == 1 ? ms : ms.where(is_auto: true)
   end
 
   # 待办事项的条件

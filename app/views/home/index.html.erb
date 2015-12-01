@@ -40,6 +40,7 @@
         <% @zytz.each do |article| %>
           <%= article_li_tag(article, 13) %>
         <% end %>
+        <%= (li_blank_tag * (6-@zytz.size)).html_safe if @zytz.size < 6 %>
       </ul>
     </div>
   </div>
@@ -60,6 +61,7 @@
             <% @zbgg.each do |article| %>
               <%= article_li_tag(article) %>
             <% end %>
+            <%= (li_blank_tag * (6-@zbgg.size)).html_safe if @zbgg.size < 6 %>
           </ul>
         </div>
       </div>
@@ -72,6 +74,7 @@
             <% @jggg.each do |article| %>
               <%= article_li_tag(article) %>
             <% end %>
+            <%= (li_blank_tag * (6-@jggg.size)).html_safe if @jggg.size < 6 %>
           </ul>
         </div>
       </div>
@@ -96,6 +99,7 @@
                   <% @wsjj_xq.each do |project| %>
                     <%= li_tag_with_date(project.name, bid_project_path(project), project.end_time.to_date, 20) %>
                   <% end %>
+                  <%= (li_blank_tag * (8-@wsjj_xq.size)).html_safe if @wsjj_xq.size < 8 %>
                 </ul>
                 <div class="padding-bottom-10"><%= more_tag %></div>
               </div>
@@ -107,6 +111,7 @@
                   <% @wsjj_jg.each do |project| %>
                      <%= li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, 18, true, (project.status == 12 ? '中标' : '废标'), (project.status == 12 ? 'green' : 'blue')) %>
                   <% end %>
+                  <%= (li_blank_tag * (8-@wsjj_jg.size)).html_safe if @wsjj_jg.size < 8 %>
                 </ul>
                 <div class="padding-bottom-10"><%= more_tag %></div>
               </div>
@@ -127,6 +132,7 @@
                   <% @xyzr.each do |project| %>
                     <%= li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, 20) %>
                   <% end %>
+                  <%= (li_blank_tag * (8-@xyzr.size)).html_safe if @xyzr.size < 8 %>
                 </ul>
                 <div class="padding-bottom-10"><%= more_tag %></div>
               </div>
@@ -137,6 +143,7 @@
                   <% @wchz.each do |project| %>
                     <%= li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, 20) %>
                   <% end %>
+                  <%= (li_blank_tag * (8-@wchz.size)).html_safe if @wchz.size < 8 %>
                 </ul>
                 <div class="padding-bottom-10"><%= more_tag %></div>
               </div>

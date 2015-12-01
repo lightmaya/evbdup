@@ -19,11 +19,12 @@ class Kobe::SharedController < KobeController
     end
   end
 
-  # 用户权限 当前用户只能授权当前他有的权限
+  # 用户权限 按user.user_type授权 
+  # 单位状态不是正常的 只有menu.is_auto=true & user.user_type = current_user.user_type的权限
   def user_ztree_json
     name = params[:ajax_key]
-    user_type = User.find_by(id: params[:id]).try(:user_type)
-    nodes = Menu.status_not_in(404).by_user_type(user_type)
+    user = User.find_by(id: params[:id])
+    nodes = user.get_auto_menus
 
     if name.present?
       ids = nodes.map(&:id)

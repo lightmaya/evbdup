@@ -183,7 +183,7 @@ class Department < ActiveRecord::Base
     msg = []
     if [0].include?(self.status)
       msg << "单位信息填写不完整，请点击[修改]。" if self.area_id.blank?
-      msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 4
+      msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 2
       msg << "开户银行信息不完整，请点击[维护开户银行]" if self.bank.blank? || self.bank_code.blank?
       msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.users.find{ |u| u.name.present? }.blank?
     end

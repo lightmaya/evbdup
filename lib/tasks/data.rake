@@ -418,7 +418,7 @@ namespace :data do
 
       if n.save
         # 给用户授权
-        n.set_auto_menu
+        n.set_auto_menu if n.department.name != "总公司机关" || [7960, 14058, 146891, 147038, 147037, 136607].include?(n.id)
         succ += 1
         p ".users succ: #{succ}/#{total} old: #{old.id}"
       else
@@ -1199,6 +1199,49 @@ namespace :data do
     end
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
   end
+
+  desc "导入单位审核的待办事项"
+  task :dep_tqs => :environment do
+    p "#{begin_time = Time.now} in dep_tqs....."
+
+    deps = Department.where(status: 2)
+    succ = 0
+    deps.each do |d|
+      next if d.task_queues.present?
+      d.create_task_queue
+      if d.reload.task_queues.present?
+        succ += 1
+        p ".dep_tqs succ: #{succ}/#{deps.size} dep: #{d.id}"
+      else
+        log_p "[error]dep: #{d.id} | #{d.errors.full_messages}" ,"dep_tqs.log"
+      end
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc "导入产品审核的待办事项"
+  task :product_tqs => :environment do
+    p "#{begin_time = Time.now} in product_tqs....."
+
+    products = Product.where(status: 2)
+    succ = 0
+    products.each do |d|
+      next if d.task_queues.present?
+      d.create_task_queue
+      if d.reload.task_queues.present?
+        succ += 1
+        p ".product_tqs succ: #{succ}/#{products.size} dep: #{d.id}"
+      else
+        log_p "[error]dep: #{d.id} | #{d.errors.full_messages}" ,"product_tqs.log"
+      end
+    end
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+
+
+
+
 
 
 

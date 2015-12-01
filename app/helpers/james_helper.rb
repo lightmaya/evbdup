@@ -44,6 +44,11 @@ module JamesHelper
     }.html_safe
   end
 
+  # 占位li
+  def li_blank_tag
+    "<li>&nbsp;</li>".html_safe
+  end
+
   # 首页 畅销产品展示
   def show_product_div(product)
     img = "/plugins/images/zclfww/product.jpg"
@@ -95,10 +100,10 @@ module JamesHelper
               </div>
             </div>
           </div>
-          <div class="margin-top-10 font-size-16">#{text_truncate(dep.name, 15)}</div>     
+          <div class="margin-top-10 font-size-16">#{text_truncate(dep.name, 13)}</div>     
           <ul class="list-unstyled">
             <li><span class="color-green">信用分：</span> #{dep.comment_total}</li>
-            <li><span class="color-green">入围项目：</span> #{dep.items.map{|e| e.categories.where(ancestry_depth: 2).map(&:name)}.flatten.uniq.join('、')}</li>
+            <li><span class="color-green">入围项目：</span> #{text_truncate(dep.items.map{|e| e.categories.where(ancestry_depth: 2).map(&:name)}.flatten.uniq.join('、'), 45)}</li>
           </ul>    
           <a class="btn-u btn-u-sm" href="#">更多产品</a>
         </div>  

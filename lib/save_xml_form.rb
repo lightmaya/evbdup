@@ -231,7 +231,7 @@ private
 
   # 准备日志的内容
   def prepare_logs_content(obj,action,remark='')
-    unless obj.logs.nil?
+    if obj.logs.present?
       doc = Nokogiri::XML(obj.logs)
     else
       doc = Nokogiri::XML::Document.new()
