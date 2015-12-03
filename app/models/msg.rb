@@ -65,23 +65,23 @@ class Msg < ActiveRecord::Base
     return false if user.try(:id) != self.user_id
     case act
     when "commit", "edit"
-      [0].include?(self.status) && self.get_tips.blank?
+      [0].include?(self.status) # && self.get_tips.blank?
     else 
       false
     end
   end
 
   # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
-  def get_tips
-    msg = []
-    if [0].include?(self.status)
-      msg << "请填写内容" if self.content.blank?
-      msg << "请填写标题" if self.title.blank?
-      msg << "请填写接收人类型" if self.send_tos.blank?
-      msg << "请填写接收人" if self.send_type.blank?
-    end
-    return msg
-  end
+  # def get_tips
+  #   msg = []
+  #   if [0].include?(self.status)
+  #     msg << "请填写内容" if self.content.blank?
+  #     msg << "请填写标题" if self.title.blank?
+  #     msg << "请填写接收人类型" if self.send_tos.blank?
+  #     msg << "请填写接收人" if self.send_type.blank?
+  #   end
+  #   return msg
+  # end
 
   def self.xml(who='',options={})
     %Q{

@@ -64,7 +64,7 @@ class BidProject < ActiveRecord::Base
   def cando(act='')
     case act
     when "edit" 
-      [0, 3].include?(self.status) && self.get_tips.blank?
+      [0, 3].include?(self.status) # && self.get_tips.blank?
     when "update_audit", "audit" 
       self.can_opt?("通过") && self.can_opt?("不通过")
     else false
@@ -95,13 +95,16 @@ class BidProject < ActiveRecord::Base
     end
   end
 
-
+  # 根据品目判断审核人 插入待办事项用
+  def audit_user_ids
+    self.items.map{|e| e.category.user_ids}.flatten.uniq
+  end
 
   # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
-  def get_tips
-    msg = []
-    return msg
-  end
+  # def get_tips
+  #   msg = []
+  #   return msg
+  # end
 
   def self.xml(who = '',options = {})
     %Q{

@@ -95,7 +95,7 @@ class Article < ActiveRecord::Base
     case act
     when "commit" 
       # 必须是0状态并且没有数据合法才能commit
-      [0].include?(self.status) && self.get_tips.blank?
+      [0].include?(self.status) # && self.get_tips.blank?
     when "update_audit", "audit" 
       # change_status_hash中是否有此操作
       self.can_opt?("通过") && self.can_opt?("不通过")
@@ -104,14 +104,14 @@ class Article < ActiveRecord::Base
   end
 
   # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
-  def get_tips
-    msg = []
-    if [0].include?(self.status)
-      msg << "请填写内容" if self.content.blank?
-      msg << "请填写标题" if self.title.blank?
-    end
-    return msg
-  end
+  # def get_tips
+  #   msg = []
+  #   if [0].include?(self.status)
+  #     msg << "请填写内容" if self.content.blank?
+  #     msg << "请填写标题" if self.title.blank?
+  #   end
+  #   return msg
+  # end
 
   ####### status及审核相关 END ############
 

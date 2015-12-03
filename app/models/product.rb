@@ -146,9 +146,9 @@ class Product < ActiveRecord::Base
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "recover", "update_recover" 
-      self.can_opt?("下架") && current_u.department.real_ancestry_level(1)
+      self.can_opt?("恢复") && current_u.department.real_ancestry_level(1)
     when "freeze", "update_freeze" 
-      self.can_opt?("冻结") && current_u.department.real_ancestry_level(1)
+      self.can_opt?("下架") && current_u.department.real_ancestry_level(1)
     else false
     end
   end
