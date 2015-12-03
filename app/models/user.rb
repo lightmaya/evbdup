@@ -27,6 +27,10 @@ class User < ActiveRecord::Base
 
   # before_save {self.email = email.downcase}
   before_create :create_remember_token
+
+  after_save do 
+    self.reset_menus_cache if self.previous_changes["menuids"].present?
+  end
   # 为了在Model层使用current_user
   # def self.current
   #   Thread.current[:user]
@@ -184,16 +188,28 @@ class User < ActiveRecord::Base
   #   return opt.present? && opt.include?(action.to_sym)
   # end
 
+  # 重置权限缓存
+  def reset_menus_cache
+    self.cache_menus(true)
+    self.cache_option_hash(true)
+  end
+
   # 自动获取操作权限
   def set_auto_menu
     self.menu_ids = self.get_auto_menus.map(&:id)
+    self.reset_menus_cache
   end
 
   # 根据user_type判断用户的权限 
   # 如果单位不是正常状态的 只能有is_auto=true的权限
   def get_auto_menus
-    ms = Menu.status_not_in(404).by_user_type(self.user_type)
-    self.department.status == 1 ? ms : ms.where(is_auto: true)
+    # 用户状态是冻结 或者单位状态是冻结、已删除的 没有任何权限
+    if self.status == 1 || [4, 404].include?(self.department.status)
+      return []
+    else
+      ms = Menu.status_not_in(404).by_user_type(self.user_type)
+      return self.department.status == 1 ? ms : ms.where(is_auto: true)
+    end
   end
 
   # 待办事项的条件

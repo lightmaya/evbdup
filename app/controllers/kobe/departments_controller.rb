@@ -10,6 +10,7 @@ class Kobe::DepartmentsController < KobeController
   skip_authorize_resource :only => [:ztree, :valid_dep_name, :search_bank]
 
   def index
+    @is_hide_dep = (can?(:search, @dep) || current_user.is_admin) ? @dep.real_dep : @dep
   end
 
   def move
@@ -17,7 +18,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def ztree
-    ztree_nodes_json(Department,@dep)
+    ztree_nodes_json(Department,@is_hide_dep)
   end
 
   def new
