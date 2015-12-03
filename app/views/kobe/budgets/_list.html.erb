@@ -37,7 +37,7 @@
                 <% @budgets.each_with_index do |budget,index| %>
                 <tr>
                     <td><%= show_index(index) %></td>
-                    <td><%= budget.department.present? ? budget.real_department.name : "" %></td>
+                    <td><%= budget.department.present? ? budget.department.real_dep.name : "" %></td>
                     <td><%= budget.name %></td>
                     <td class="money"><%= money budget.budget %></td>
                     <td><%= budget.status_badge %></td>

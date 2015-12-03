@@ -28,6 +28,7 @@
                     <% if action_name == "index" %>
                     <th class="hidden-sm">项目名称</th>
                     <% end %>
+                    <th>品目</th>
                     <% if can?(:admin, Product) %>
                     <th>单位名称</th>
                     <% end %>
@@ -45,8 +46,9 @@
                     <% if action_name == "index" %>
                     <td><%= product.item.name %></td>
                     <% end %>
+                    <td><%= product.category.name %></td>
                     <% if can?(:admin, Product) %>
-                    <td><%= product.department.present? ?  product.real_department.name : "" %></td>
+                    <td><%= product.department.present? ?  product.department.real_dep.name : "" %></td>
                     <% end %>
                     <td><%= product.name %></td>
                     <td class="money"><%= money product.bid_price %></td>

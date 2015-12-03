@@ -26,7 +26,7 @@
     </div>
     <!-- 高级搜索的form -->
     <div class="panel-collapse collapse" id="advanced_search" aria-expanded="true">
-      <%= get_advanced_search_form(search_url, Order, Order.search_xml) %>
+      <%= get_advanced_search_form(search_url, Order, Order.search_xml(action_name)) %>
     </div>
     <!-- 高级搜索form end -->
   <%= modal_dialog("opt_dialog") %>
