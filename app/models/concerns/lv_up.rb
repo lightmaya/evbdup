@@ -12,12 +12,12 @@ module LvUp
      "foo"
   end
 
-  # 通用生成编号 prefix + 8位日期 + 4位ID
+  # 通用生成编号 prefix + 8位日期 + 后4位ID
   def create_no(prefix = "WSJJ", column_name = "code")
     # 当前id格式化为4位
-    uniq_id = ('%04d' % self.id)[0...4]
+    uniq_id = ('%04d' % self.id)[-4...self.id.size]
     if send(column_name).blank?
-      update(column_name => "#{prefix}-#{Date.today.to_s(:number)}#{uniq_id}") 
+      update(column_name => "#{prefix}-#{Time.now.to_s(:number)[0...10]}#{uniq_id}") 
     end
   end
 

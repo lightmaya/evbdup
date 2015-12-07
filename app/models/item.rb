@@ -14,6 +14,8 @@ class Item < ActiveRecord::Base
   has_many :orders_items 
   has_many :orders, -> { distinct }, through: :orders_items
 	# default_scope -> {order("id desc")}
+  
+  default_value_for :status, 0 
 
 	before_save do 
 		self.category_ids = self.categoryids.split(",") - ["734"]
@@ -40,36 +42,44 @@ class Item < ActiveRecord::Base
 
 	# 中文意思 状态值 标签颜色 进度 
 	def self.status_array
-		[
-	    ["暂存",0,"orange",10],
-	    ["有效",1,"blue",100],
-      ["停止申请",2,"red",50],
-	    ["已删除",404,"light",0],
-      ["已停止", 3, "red", 60]
-    ]
+    # [
+    #   ["暂存", "0", "orange", 10], 
+    #   ["正常", "65", "yellow", 100], 
+    #   ["停止申请", "68", "dark", 100], 
+    #   ["已过期", "54", "dark", 100], 
+    #   ["已删除", "404", "dark", 100]
+    # ]
+    self.get_status_array(["暂存", "正常", "停止申请", "已过期", "已删除"])
+		# [
+	 #    ["暂存",0,"orange",10],
+	 #    ["有效",1,"blue",100],
+  #     ["停止申请",2,"red",50],
+	 #    ["已删除",404,"light",0],
+  #     ["已停止", 3, "red", 60]
+  #   ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "提交" => { 0 => 1 },
-      "停止" => { 1 => 2 },
-      "恢复" => { 2 => 1 },
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "提交" => { 0 => 1 },
+  #     "停止" => { 1 => 2 },
+  #     "恢复" => { 2 => 1 },
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  # 	# 列表中不允许出现的
+  # 	limited = [404]
+  # 	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def cando(act='',current_u=nil)
     case act
     when "update", "edit" 
-      [0].include?(self.status)
+      self.class.edit_status.include?(self.status)
     when "commit" 
       self.can_opt?("提交")
     when "delete", "destroy" 
@@ -79,11 +89,11 @@ class Item < ActiveRecord::Base
     when "pause", "update_pause" 
       self.can_opt?("停止")
     when "add_product" 
-      self.finalist?(current_u.department.id) && self.status == 1
+      self.finalist?(current_u.department.id) && self.class.effective_status.include?(self.status)
     when "add_agent" 
-      self.finalist?(current_u.department.id) && self.status == 1 && self.item_type
+      self.finalist?(current_u.department.id) && self.class.effective_status.include?(self.status) && self.item_type
     when "add_coordinator" 
-      self.finalist?(current_u.department.id) && self.status == 1 && self.item_type      
+      self.finalist?(current_u.department.id) && self.class.effective_status.include?(self.status) && self.item_type      
     else false
     end
   end

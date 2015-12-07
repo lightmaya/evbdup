@@ -72,12 +72,13 @@ class Kobe::PlansController < KobeController
   end
 
   def list
-    arr = []
-    arr << ["plans.status = ? ", 2]
-    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    @q =  Plan.joins(:task_queues).where(get_conditions("plans", arr)).ransack(params[:q])
-    @plans = @q.result(distinct: true).page params[:page]
+    @plans = audit_list(Plan)
+    # arr = []
+    # arr << ["plans.status = ? ", 2]
+    # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    # @q =  Plan.joins(:task_queues).where(get_conditions("plans", arr)).ransack(params[:q])
+    # @plans = @q.result(distinct: true).page params[:page]
   end
 
   def audit

@@ -116,67 +116,31 @@
       </div>
       <!-- End Description -->
       <div class="tab-pane fade" id="gysxx">
-        <h5><i class="fa fa-chevron-circle-down"></i> 中标单位总协调人联系信息：</h5>
-        <div class="row p0_25">
-          <% @product.coordinators.each do |c| %>
-            <ul class="list-unstyled specifies-list">
-              <li>
-                <i class="fa fa-caret-right"></i>厂商或代理商名称：
-                <span><%= c.department.name %></span>
-              </li>
-              <li>
-                <i class="fa fa-caret-right"></i>
-                总协调人姓名: 
-                <span><%= c.name %></span>
-              </li>
-              <li>
-                <i class="fa fa-caret-right"></i>
-                总协调人电话：
-                <span><%= c.tel %></span>
-              </li>
-              <li>
-                <i class="fa fa-caret-right"></i>
-                总协调人手机: 
-                <span><%= c.mobile %></span>
-              </li>
-              <li>
-                <i class="fa fa-caret-right"></i>
-                总协调人传真: 
-                <span><%= c.fax %></span>
-              </li>
-              <li>
-                <i class="fa fa-caret-right"></i>
-                总协调人E-Mail: 
-                <span><%= c.email %></span>
-              </li>
-              <li>
-                <i class="fa fa-caret-right"></i>
-                备注: 
-                <span><%= c.summary %></span>
-              </li>
-            </ul>
-            <hr>
-          <% end -%>
-        </div>
-
-        <h5><i class="fa fa-chevron-circle-down"></i> 供应商列表：</h5>
-        <div class="row p0_25">
-          <table id="gyslb" class="table table-bordered table-striped">
-            <tr>
-              <th>供应商</th>
-              <th>联系方式</th>
-              <th>操作</th>
-            </tr>
-            <% @product.agents.includes(:agent_dep).each do |agent| %>
+        
+        <%= get_seller_info(@product) %>
+        
+        <% unless @product.cjzx? %>
+          <h5><i class="fa fa-chevron-circle-down"></i> 代理商列表：</h5>
+          <div class="row p0_25">
+            <table id="gyslb" class="table table-bordered table-striped">
               <tr>
-                <td><%= agent.name %></td>
-                <td><%= agent.agent_dep.tel %></td>
-                <td class="tc"><%= link_to_void "购买", onclick: "add_to_cart('#{agent.agent_id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
-                </td>
+                <th>代理商单位</th>
+                <th>联系人</th>
+                <th>联系方式</th>
+                <th>操作</th>
               </tr>
-            <% end -%>
-          </table>
-        </div>
+              <% @product.agents.each do |dep| %>
+                <tr>
+                  <td><%= dep.real_dep.name %></td>
+                  <td><%= dep.users.first.try(:name) %></td>
+                  <td><%= dep.users.first.try(:tel_and_mobile) %></td>
+                  <td class="tc"><%= link_to_void "购买", onclick: "add_to_cart('#{dep.id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
+                  </td>
+                </tr>
+              <% end -%>
+            </table>
+          </div>
+        <% end %>
       </div>
 
       <div class="tab-pane fade" id="shfw">

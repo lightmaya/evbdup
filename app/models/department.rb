@@ -14,7 +14,7 @@ class Department < ActiveRecord::Base
   has_many :items, through: :item_departments
 
   scope :find_real_dep,  ->{ where(dep_type: false) }
-  scope :valid, -> { where("departments.status = 1") }
+  scope :valid, -> { where(status: self.effective_status) }
 
   default_value_for :is_secret, true
   default_value_for :comment_total, 0
@@ -23,6 +23,8 @@ class Department < ActiveRecord::Base
 
   include AboutAncestry
   include AboutStatus
+
+  default_value_for :status, 0
 
   before_create do
     # 设置rule_id和rule_step
@@ -47,7 +49,7 @@ class Department < ActiveRecord::Base
 
   # 有效的入围项目
   def effective_items
-    self.items.where(status: 1)
+    self.items.where(status: Item.effective_status)
   end
 
   # 拆分real_ancestry 获取独立核算单位的id数组
@@ -55,7 +57,7 @@ class Department < ActiveRecord::Base
     self.real_ancestry.split("/")
   end
 
-  # 获取单位的第几层祖先 例如总公司(level = 1)还是分公司(level = 2) 没有返回nil
+  # 获取单位的第几层祖先 例如总公司(level = 1)还是分公司(level = 2) 单位存在返回该单位 不存在返回nil
   def real_ancestry_level(level)
     dep_id = self.real_ancestry_id_arr[level.to_i]
     return dep_id.present? ? Department.find_by(id: dep_id) : nil
@@ -72,16 +74,35 @@ class Department < ActiveRecord::Base
     Department.where(real_ancestry: self.real_ancestry).map(&:users).flatten.uniq
   end
 
+  # 判断单位是不是分公司
+  def is_fgs?
+    self.root_id == Department.purchaser.try(:id) && self.real_ancestry_id_arr.size == 3
+  end
+
+  # 判断单位是不是总公司
+  def is_zgs?
+    self.root_id == Department.purchaser.try(:id) && self.real_ancestry_id_arr.size == 2
+  end
+
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["未提交",0,"orange",10],
-      ["正常",1,"u",100],
-      ["等待审核",2,"blue",50],
-      ["审核拒绝",3,"red",0],
-      ["冻结",4,"yellow",20],
-      ["已删除",404,"light",0]
-    ]
+    #  [
+    #   ["暂存", "0", "orange", 10], 
+    #   ["正常", "65", "yellow", 100], 
+    #   ["等待审核", "8", "blue", 60],
+    #   ["审核拒绝", "7", "red", 20],  
+    #   ["已冻结", "12", "dark", 100], 
+    #   ["已删除", "404", "dark", 100]
+    # ]
+    self.get_status_array(["暂存", "正常", "等待审核", "审核拒绝", "已冻结", "已删除"])
+    # [
+    #   ["未提交",0,"orange",10],
+    #   ["正常",1,"u",100],
+    #   ["等待审核",2,"blue",50],
+    #   ["审核拒绝",3,"red",0],
+    #   ["冻结",4,"yellow",20],
+    #   ["已删除",404,"light",0]
+    # ]
   end
 
   # 全文检索
@@ -117,17 +138,17 @@ class Department < ActiveRecord::Base
 
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    status_ha = self.find_step_by_rule.blank? ? 1 : 2
-    return {
-      "提交" => { 3 => status_ha, 0 => status_ha },
-      "通过" => { 2 => 1 },
-      "不通过" => { 2 => 3 },
-      "删除" => { 0 => 404 },
-      "冻结" => { 1 => 4 },
-      "恢复" => { 4 => 1 }
-    }
-  end
+  # def change_status_hash
+  #   status_ha = self.find_step_by_rule.blank? ? 1 : 2
+  #   return {
+  #     "提交" => { 3 => status_ha, 0 => status_ha },
+  #     "通过" => { 2 => 1 },
+  #     "不通过" => { 2 => 3 },
+  #     "删除" => { 0 => 404 },
+  #     "冻结" => { 1 => 4 },
+  #     "恢复" => { 4 => 1 }
+  #   }
+  # end
 
   # 附件的类
   def self.upload_model
@@ -135,11 +156,11 @@ class Department < ActiveRecord::Base
   end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  # 	# 列表中不允许出现的
+  # 	limited = [404]
+  # 	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def self.purchaser
     Department.find_by(id: 2)
@@ -161,11 +182,11 @@ class Department < ActiveRecord::Base
     when "show", "index" 
       true
     when "update", "edit", "upload", "update_upload", "show_bank", "edit_bank", "update_bank" 
-      [0,1,3].include?(self.status) && cdt
+      self.class.edit_status.include?(self.status) && cdt
     when "commit" 
-      [0,3].include?(self.status) && self.get_tips.blank? && self.can_opt?("提交") && cdt
+      self.get_tips.blank? && self.can_opt?("提交") && cdt
     when "add_user", "update_add_user", "new", "create" 
-      self.status == 1 && cdt
+      self.class.effective_status.include?(self.status) && cdt
     when "update_audit", "audit" 
       self.can_opt?("通过") && self.can_opt?("不通过")
     when "delete", "destroy" 
@@ -181,13 +202,25 @@ class Department < ActiveRecord::Base
   # 获取提示信息 用于1.注册完成时提交的提示信息、2.登录后验证个人信息是否完整
   def get_tips
     msg = []
-    if [0].include?(self.status)
+    if self.class.only_edit_status.include?(self.status)
       msg << "单位信息填写不完整，请点击[修改]。" if self.area_id.blank?
-      msg << "上传的资质证书不全，请点击[上传资质]。" if self.uploads.length < 2
+      msg << "上传附件的不全，请点击[上传附件]。" if self.uploads.length < 2
       msg << "开户银行信息不完整，请点击[维护开户银行]" if self.bank.blank? || self.bank_code.blank?
       msg << "用户信息填写不完整，请在用户列表中点击[修改]。" if self.users.find{ |u| u.name.present? }.blank?
     end
     return msg
+  end
+
+  # @dep.get_tips.blank? ? 'tips' : 'error', 
+  # @dep.get_tips.blank? ? '恭喜您！' : '很抱歉！', 
+  # @dep.get_tips.blank? ? "账户信息已填写完整，请点击[提交]，提交并等待审核。" : @dep.get_tips
+
+  def show_tips_arr
+    arr = []
+    arr << (self.get_tips.present? || self.status == 7 ? 'error' : 'tips')
+    arr << (self.get_tips.present? || self.status == 7 ? '很抱歉！' : '恭喜您！')
+    tips = self.status == 7 ? self.get_last_node_by_logs('[操作内容 *= "审核"]')["备注"] : '账户信息已填写完整，请点击[提交]，提交并等待审核。'
+    arr << (self.get_tips.present? ? self.get_tips : tips )
   end
 
   # 维护开户银行提示
@@ -197,7 +230,7 @@ class Department < ActiveRecord::Base
 
   # 是否需要隐藏树形结构 用于没有下级单位的单位 不显示树
   def hide_tree?
-    self.is_childless? || self.descendants.where.not(status: 404).blank?
+    self.is_childless? || self.descendants.status_not_in(404).blank?
   end
 
   # 根据单位的祖先节点判断单位是采购单位还是供应商
@@ -218,7 +251,7 @@ class Department < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='parent_id' data_type='hidden'/>
-        <node name='单位名称' column='name' hint='必须与参照营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:3, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
+        <node name='单位名称' column='name' hint='必须与营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:3, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
         <node name='单位简称' column='short_name'/>
         <node name='曾用名' column='old_name' display='disabled'/>
         <node name='单位类型' column='dep_type' data_type='radio' data='[[0,"独立核算单位"],[1,"部门"]]' hint='独立核算单位是****************'/>
@@ -238,7 +271,7 @@ class Department < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='parent_id' data_type='hidden'/>
-        <node name='单位名称' column='name' hint='必须与参照营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:6, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
+        <node name='单位名称' column='name' hint='必须与营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:6, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
         <node name='单位简称' column='short_name'/>
         <node name='曾用名' column='old_name' display='disabled'/>
         <node name='单位类型' column='dep_type' data_type='radio' data='[[0,"独立核算单位"],[1,"部门"]]' hint='独立核算单位是****************'/>

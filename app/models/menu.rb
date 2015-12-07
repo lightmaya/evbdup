@@ -10,10 +10,12 @@ class Menu < ActiveRecord::Base
 
   has_many :task_queues
 
-  scope :by_user_type, ->(user_type) { where("find_in_set('#{user_type}', user_type) > 0") }
+  scope :by_user_type, ->(user_type) { where("find_in_set('#{user_type}', menus.user_type) > 0") }
 
 	include AboutAncestry
 	include AboutStatus
+  
+  default_value_for :status, 65
 
   after_save do 
     Setting.where("var like 'user_options_%' or var like 'menus_%'").delete_all if changes["id"].blank? && changes["can_opt_action"].present?
@@ -27,18 +29,20 @@ class Menu < ActiveRecord::Base
 
 	# 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["正常",0,"u",100],
-      ["已删除",404,"red",0]
-    ]
+    # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
+    self.get_status_array(["正常", "已删除"])
+    # [
+    #   ["正常",0,"u",100],
+    #   ["已删除",404,"red",0]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
   # 根据action_name 判断obj有没有操作
   def cando(act='')
@@ -46,11 +50,11 @@ class Menu < ActiveRecord::Base
   end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  # 	# 列表中不允许出现的
+  # 	limited = [404]
+  # 	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def self.xml(who='',options={})
 	  %Q{
@@ -66,6 +70,7 @@ class Menu < ActiveRecord::Base
         <node name='显示菜单' column='is_show' data_type='radio' data='[[0,"不显示菜单"],[1,"显示菜单"]]'/>
         <node name='自动获取' column='is_auto' data_type='radio' data='[[0,"不自动获取"],[1,"自动获取"]]'/>
         <node name='弹出页面' column='is_blank' data_type='radio' data='[[0,"不弹出页面"],[1,"弹出页面"]]'/>
+        <node name='用户类别' column='user_type' hint='#{Dictionary.manage_user_type}：表示监管用户，#{Department.purchaser.try(:id)}：表示采购用户，#{Department.supplier.try(:id)}：表示供应商，#{Dictionary.audit_user_type}：表示审核用户。例如：1,2,3 或者 7'/>
 	    </root>
 	  }
 	end

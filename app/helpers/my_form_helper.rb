@@ -75,8 +75,8 @@ module MyFormHelper
       str = myform.get_input_str(myform.obj.class.fee_xml, myform.obj, myform.table_name, 3)
       myform.html_code << content_tag(:div, raw(str.html_safe).html_safe, :class=>'tag-box tag-box-v1')
       tmp = %Q{
-        $("input#" + master_table_names + "_deliver_fee").live('change blur',function(){calc_total(master_table_names,slave_table_names);});
-        $("input#" + master_table_names + "_other_fee").live('change blur',function(){calc_total(master_table_names,slave_table_names);});
+        $("input#" + master_table_names + "_deliver_fee").live('change blur',function(){sum_calc_total(master_table_names,slave_table_names);});
+        $("input#" + master_table_names + "_other_fee").live('change blur',function(){sum_calc_total(master_table_names,slave_table_names);});
       }
     end
     myform.html_code << show_total_part
@@ -88,8 +88,8 @@ module MyFormHelper
         //影响小计的输入框有变动
         $("input[name^='"+slave_table_names+"[price]']").live('change blur',function(){input_blur($(this),master_table_names,slave_table_names)});
         $("input[name^='"+slave_table_names+"[quantity]']").live('change blur',function(){input_blur($(this),master_table_names,slave_table_names)});
-        $("input[name^='"+slave_table_names+"[total]']").live('change blur',function(){calc_total(master_table_names,slave_table_names);});
-        calc_total(master_table_names,slave_table_names);
+        $("input[name^='"+slave_table_names+"[total]']").live('change blur',function(){sum_calc_total(master_table_names,slave_table_names);});
+        sum_calc_total(master_table_names,slave_table_names);
         #{tmp}
       });
       </script>

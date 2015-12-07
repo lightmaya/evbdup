@@ -58,12 +58,13 @@ class Kobe::AssetProjectsController < KobeController
   end
 
   def list
-    arr = []
-    arr << ["asset_projects.status = ? ", 2]
-    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    @q =  AssetProject.joins(:task_queues).where(get_conditions("asset_projects", arr)).ransack(params[:q])
-    @asset_projects = @q.result(distinct: true).page params[:page]
+    @asset_projects = audit_list(AssetProject)
+    # arr = []
+    # arr << ["asset_projects.status = ? ", AssetProject.audit_status]
+    # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    # @q =  AssetProject.joins(:task_queues).where(get_conditions("asset_projects", arr)).ransack(params[:q])
+    # @asset_projects = @q.result(distinct: true).page params[:page]
   end
 
   def audit

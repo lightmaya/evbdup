@@ -4,8 +4,9 @@ class Kobe::MainController < KobeController
 	skip_load_and_authorize_resource 
 	
   def index
+    redirect_to kobe_departments_path(id: current_user.department) unless Department.effective_status.include?(current_user.department.status) && User.effective_status.include?(current_user.status)
     # 本辖区本年度 采购方式占比
-    cdt = "year(created_at) = '#{Time.now.year}' and status in (3)"
+    cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"
     total = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).sum(:total)
     total = 0 if total.blank?
     yw_type = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
@@ -20,7 +21,7 @@ class Kobe::MainController < KobeController
     # 粮机类、办公类采购统计
 
     # 最近本单位未完成的订单
-  	@orders = current_user.department.buyer_orders.status_not_in([3]).limit(5)
+  	@orders = current_user.department.buyer_orders.status_not_in(Order.ysd_status | Order.finish_status).limit(5).order('id desc')
   end
 
   def to_do

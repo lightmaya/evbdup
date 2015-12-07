@@ -24,13 +24,14 @@ class Kobe::ArticlesController < KobeController
   end
 
   def list
-    arr = []
-    arr << ["articles.status = ? ", 1]
-    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    cdt = get_conditions("articles", arr)
-    @q =  Article.joins(:task_queues).where(cdt).ransack(params[:q]) 
-    @articles = @q.result(distinct: true).page params[:page]
+    @articles = audit_list(Article)
+    # arr = []
+    # arr << ["articles.status = ? ", Article.audit_status]
+    # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    # cdt = get_conditions("articles", arr)
+    # @q =  Article.joins(:task_queues).where(cdt).ransack(params[:q]) 
+    # @articles = @q.result(distinct: true).page params[:page]
   end
 
   # 获取审核的menu_ids
@@ -40,8 +41,8 @@ class Kobe::ArticlesController < KobeController
 
   # 注册提交
   def commit
-    @article.change_status_and_write_logs("提交审核",
-      stateless_logs("提交审核","注册完成，提交审核！", false),
+    @article.change_status_and_write_logs("提交",
+      stateless_logs("提交","注册完成，提交审核！", false),
       @article.commit_params, false)
     @article.reload.create_task_queue
     tips_get("提交成功，请等待审核。")
@@ -50,7 +51,6 @@ class Kobe::ArticlesController < KobeController
 
   def new
     @article.username = current_user.name 
-    @article.status = 2
     @myform = SingleForm.new(Article.xml, @article, 
       { form_id: "article_form", action: kobe_articles_path,
         title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2  
@@ -87,7 +87,7 @@ class Kobe::ArticlesController < KobeController
   end
 
   def destroy
-    @article.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
+    @article.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除成功。")
     redirect_to kobe_articles_path
   end

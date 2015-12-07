@@ -12,23 +12,52 @@ module AboutStatus
 
   # 拓展类方法
  	module ClassMethods
+ 		# 无效的完结状态
+ 		def finish_status
+	    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 5) } & self.status_array).map{ |e| e[1] }
+ 		end
+
+ 		# 审核状态
+ 		def audit_status
+	    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 1) } & self.status_array).map{ |e| e[1] }
+ 		end
+
+ 		# 有效的状态
+	  def effective_status
+	    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 2) } & self.status_array).map{ |e| e[1] }
+	  end
+
+	  # 自动生效的有效状态
+	  def auto_effective_status
+	    (Dictionary.all_status_array.select{ |e| [16, 72, 51, 65, 2].include? e[1] } & self.status_array).map{ |e| e[1] }
+	  end
+
+	  # 可以修改的状态 包括有效状态
+	  def edit_status
+	    return only_edit_status | edit_and_effective_status
+	  end
+
+	  # 可以修改的状态 不包括有效状态下也可以修改
+	  def only_edit_status
+	    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 0) } & self.status_array).map{ |e| e[1] }
+	  end
+
+	  # 有效状态可以修改
+	  def edit_and_effective_status
+	    (Dictionary.all_status_array.select{ |e| [72, 51, 65].include? e[1] } & self.status_array).map{ |e| e[1] }
+	  end
 
  		# 列表中的状态筛选, 默认404不显示
-	  def status_filter(action='')
+	  def status_filter(arr = [])
 	  	# 列表中不允许出现的
-	    limited = [404]
+	  	arr = [404] if arr.blank?
+	    limited = arr
 	  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
 	  end
 
-	  # 根据application.yml中status_array中的状态 获取每个model不同的状态数组
-	  # arr=["正常", "已删除"]
+	  # 在application中的所有状态中，获取每个model中所需要的状态
 	  def get_status_array(arr=[])
-	  	return [] if arr.blank?
-	  	status_arr = []
-	  	arr.each do |a|
-	  		status_arr << Dictionary.status_array[a]
-	  	end
-	  	return status_arr	  	
+	  	Dictionary.all_status_array.select{ |e| arr.include? e.first }
 	  end
 
 	  # 获取状态的属性数组 i表示状态数组的维度，0按中文查找，1按数字查找
@@ -101,7 +130,7 @@ module AboutStatus
 
 	# 根据不同操作 获取需改变的状态 返回数字格式的状态
 	def get_change_status(opt)
-		if self.class.attribute_method? "change_status_hash"
+		if self.class.attribute_method?("change_status_hash") && self.change_status_hash[opt].present?
 			status = self.change_status_hash[opt][self.status] # 获取更新后的状态
 			return status.present? ? status : self.status
 		else
@@ -112,6 +141,7 @@ module AboutStatus
 	# 根据状态变更判断是否有某个操作
 	def can_opt?(opt)
 		if self.class.attribute_method? "change_status_hash"
+			return false if self.change_status_hash[opt].blank?
 			status = self.change_status_hash[opt][self.status]
 			# ["暂存", 0, "orange", 50] 获得 "暂存"
 # 			cn_status = self.class.get_status_attributes(self.status, 1)[0] # 当前状态转成中文
@@ -121,5 +151,59 @@ module AboutStatus
 			return false
 		end
 	end
+
+	# 根据不同操作 改变状态
+  def change_status_hash
+  	ha = {
+  		"删除" => { 0 => 404, 65 => 404 },
+      
+      "下架" => { 65 => 26 },
+      "冻结" => { 65 => 12 },
+      "停止" => { 65 => 68 },
+      "恢复" => { 12 => 65, 26 => 65, 68 => 65 },
+      
+      "回复" => { 58 => 75 }
+    }
+
+  	auto_status = self.class.auto_effective_status.first
+    ha["提交"] = { 0 => auto_status, 7 => auto_status, 14 => 16 } if auto_status.present?
+
+    if self.class.attribute_method? "rule"
+	  	rs = self.find_step_by_rule
+	  	if rs.present? 
+	  		start_status = rs["start_status"].to_i
+	  		return_status = rs["return_status"].to_i
+	  		ns = self.get_next_step
+	  		finish_status = ns.is_a?(Hash) ? ns["start_status"].to_i : rs["finish_status"].to_i
+	  		# 如果当前状态是修改状态，提交后变成开始某流程步骤的状态 start_status
+	  		ha["提交"] = { self.status => start_status } if self.class.only_edit_status.include? self.status
+	  		# 通过本步骤 状态转向 下一步的开始状态 如果没有下一步则是本部的结束状态
+	  		ha["通过"] = { start_status => finish_status }
+	  		# 不通过 状态转向 本步的退回状态
+	  		ha["不通过"] = { start_status => return_status }
+	  	end
+	  end
+  	return ha
+    # {
+    #   "提交" => { 0 => [16, 8, 72, 15, 51, 65, 2], 7 => [16, 8, 72, 51, 65, 2],  14 => [15, 16] },
+
+    #   # 审核、买方卖方确认
+    #   "通过" => { 8 => [16, 72, 51, 65, 9], 15 => [16], 22 => [23], 29 => [33], 3 => [4, 8], 4 => [8], 36 => [35], 43 => [47] },
+    #   "不通过" => { 8 => [7], 15 => [14], 22 => [21], 29 => [28], 3 => [42], 4 => [10], 36 => [37], 43 => [44] },
+
+    #   "确定中标人" => { 16 => 22 },
+    #   "废标" => { 16 => 29},
+      
+      # "删除" => { 0 => 404, 65 => 404 },
+
+      # "下架" => { 65 => 26 },
+      # "冻结" => { 65 => 12 },
+      # "停止" => { 65 => 68 },
+
+      # "恢复" => { 12 => 65, 26 => 65, 68 => 65 },
+      
+      # "回复" => { 58 => 75 }
+    # }
+  end
 
 end

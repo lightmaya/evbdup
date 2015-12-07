@@ -10,7 +10,7 @@ class Kobe::ArticleCatalogsController < KobeController
   
   def index
     # 至少有一个分类才能增删改查
-    ArticleCatalog.find_or_create_by(name: "栏目分类", status: 2) if ArticleCatalog.count == 0
+    ArticleCatalog.find_or_create_by(name: "栏目分类", status: ArticleCatalog.effective_status) if ArticleCatalog.count == 0
     @article_catalog = ArticleCatalog.find_by(id: params[:id]) if params[:id].present?
   end
 

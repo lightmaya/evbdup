@@ -5,21 +5,25 @@ class Rule < ActiveRecord::Base
 	has_many :orders
 
 	include AboutStatus
+  
+  default_value_for :status, 65
 
 	# 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["正常",0,"u",100],
-      ["已删除",404,"red",0]
-    ]
+    # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
+    self.get_status_array(["正常", "已删除"])
+    # [
+    #   ["正常",0,"u",100],
+    #   ["已删除",404,"red",0]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
   # 根据action_name 判断obj有没有操作
   def cando(act='')
@@ -27,11 +31,11 @@ class Rule < ActiveRecord::Base
   end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  # 	# 列表中不允许出现的
+  # 	limited = [404]
+  # 	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def self.xml(who='',options={})
 	  %Q{
@@ -50,9 +54,9 @@ class Rule < ActiveRecord::Base
 
 	# 根据rule xml 生成的n个实例 返回数组
 	def create_rule_objs
-		return [RuleStep.new] if self.rule.blank?
+		return [RuleStep.new] if self.rule_xml.blank?
     arr = []
-    Nokogiri::XML(self.rule).xpath("/root/step").each do |step|
+    Nokogiri::XML(self.rule_xml).xpath("/root/step").each do |step|
       obj = RuleStep.new
       obj.attributes["name"] = step.attributes["name"].to_str
       step.children.each do |e|

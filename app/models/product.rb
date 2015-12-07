@@ -7,9 +7,11 @@ class Product < ActiveRecord::Base
 
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Product") }, foreign_key: :obj_id
-  scope :show, -> {where("products.status = 1")}
+  scope :show, -> {where(status: self.effective_status)}
 
   include AboutStatus
+
+  default_value_for :status, 0
 
   before_create do
     # 设置rule_id和rule_step
@@ -67,17 +69,17 @@ class Product < ActiveRecord::Base
 
   # 总协调人
   def coordinators
-    Coordinator.where(department_id: self.department_id, item_id: self.item_id)
+    Coordinator.where(department_id: self.department_id, item_id: self.item_id, status: Coordinator.effective_status)
   end
 
   # 代理商
   def agents
     # item.try(:agents)
-    Agent.where(department_id: self.department_id, item_id: self.item_id).includes(:agent_dep)
+    Agent.where(department_id: self.department_id, item_id: self.item_id, status: Agent.effective_status).map(&:agent_dep)
   end
 
   def show
-    self.status == 1
+    self.status == self.class.effective_status
   end
 
   # 产品全称 品牌+型号+版本号
@@ -87,35 +89,44 @@ class Product < ActiveRecord::Base
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["未提交",0,"orange",10],
-      ["正常",1,"u",100],
-      ["等待审核",2,"blue",50],
-      ["审核拒绝",3,"red",0],
-      ["已下架",4,"yellow",20],
-      ["已删除",404,"light",0]
-    ]
+    # [
+    #   ["暂存", "0", "orange", 10],
+    #   ["正常", "65", "yellow", 100], 
+    #   ["等待审核", "8", "blue", 60],
+    #   ["审核拒绝", "7", "red", 20],  
+    #   ["已下架", "26", "dark", 100],
+    #   ["已删除", "404", "dark", 100]
+    # ]
+    self.get_status_array(["暂存", "正常", "等待审核", "审核拒绝", "已下架", "已删除"])
+    # [
+    #   ["未提交",0,"orange",10],
+    #   ["正常",1,"u",100],
+    #   ["等待审核",2,"blue",50],
+    #   ["审核拒绝",3,"red",0],
+    #   ["已下架",4,"yellow",20],
+    #   ["已删除",404,"light",0]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    status_ha = self.find_step_by_rule.blank? ? 1 : 2
-    return {
-      "提交" => { 3 => status_ha, 0 => status_ha },
-      "通过" => { 2 => 1 },
-      "不通过" => { 2 => 3 },
-      "删除" => { 0 => 404 },
-      "下架" => { 1 => 4 },
-      "恢复" => { 4 => 1 }
-    }
-  end
+  # def change_status_hash
+  #   status_ha = self.find_step_by_rule.blank? ? 1 : 2
+  #   return {
+  #     "提交" => { 3 => status_ha, 0 => status_ha },
+  #     "通过" => { 2 => 1 },
+  #     "不通过" => { 2 => 3 },
+  #     "删除" => { 0 => 404 },
+  #     "下架" => { 1 => 4 },
+  #     "恢复" => { 4 => 1 }
+  #   }
+  # end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  # 	# 列表中不允许出现的
+  # 	limited = [404]
+  # 	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def cover_url(style = :md)
     uploads.first.upload.url(style.to_sym) if uploads.present?
@@ -136,9 +147,9 @@ class Product < ActiveRecord::Base
     case act
     when "show"
       # 上级单位或者总公司人
-      current_u.department.is_ancestors?(self.department_id) || current_u.department.real_ancestry_level(1)
+      current_u.department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
     when "update", "edit" 
-      [0,3].include?(self.status) #&& current_u.try(:id) == self.user_id
+      self.class.edit_status.include?(self.status) #&& current_u.try(:id) == self.user_id
     when "commit" 
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 
@@ -146,9 +157,9 @@ class Product < ActiveRecord::Base
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "recover", "update_recover" 
-      self.can_opt?("恢复") && current_u.department.real_ancestry_level(1)
+      self.can_opt?("恢复") && current_u.department.is_zgs?
     when "freeze", "update_freeze" 
-      self.can_opt?("下架") && current_u.department.real_ancestry_level(1)
+      self.can_opt?("下架") && current_u.department.is_zgs?
     else false
     end
   end

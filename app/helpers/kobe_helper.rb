@@ -150,43 +150,36 @@ module KobeHelper
   end
 
   # 显示项目流程图
-  def show_step(obj)
-    arr =  obj.class.attribute_method?("step_array") ? obj.step_array : obj.get_obj_step_names
-    return "" if arr.blank?
-    arr << "完成"
-    # 判断当前步骤在数组中的位置 从0开始
-    current_index = obj.get_current_step_in_array(arr)
-
+  def show_step(obj_or_arr, current_index = 0)
+    if obj_or_arr.is_a?(Array)
+      arr = obj_or_arr
+    else
+      arr =  obj_or_arr.class.attribute_method?("step_array") ? obj_or_arr.step_array : obj_or_arr.get_obj_step_names
+      return "" if arr.blank?
+      arr << "完成"
+      # 判断当前步骤在数组中的位置 从0开始
+      current_index = obj_or_arr.get_current_step_in_array(arr)
+    end
     str = %Q{
-      <div class="headline"><h2 class="pull-left"><i class="fa fa-signal"></i> 流程</h2>
-        <div class="owl-navigation">
-          <div class="customNavigation">
-            <a class="owl-btn prev-v1"><i class="fa fa-angle-left"></i></a>
-            <a class="owl-btn next-v1"><i class="fa fa-angle-right"></i></a>
-          </div>
-        </div>
-      </div>
+      <div class="wizard margin-bottom-20">
+        <div class="steps clearfix">
+          <ul role="tablist">
     }
-    item_str = ""
-    arr.each_with_index do |name, index|
-      bg_class = "bg-light heading-sm"
-      icon_class = "icon-custom rounded-x icon-sm fa margin-left-5"
-      if index < current_index || current_index == arr.length-1
-        icon_class << " icon-color-u fa-check"
-      elsif index == current_index
-        bg_class << " bg-color-light-grey"
-        icon_class << " icon-color-light fa-info"
-      else
-        icon_class << " icon-color-grey fa-history"
-      end
-      item_str << %Q{
-        <div class="item">
-          <h2 class="#{bg_class}"><span>#{index+1}. #{name}</span><i class="#{icon_class}"></i></h2>
-        </div>
+    arr.each_with_index do |step, index|
+      str << %Q{
+        <li role="tab" style="width: #{89/arr.size}%" class="#{index == current_index ? 'current' : (index < current_index ? 'done' : '') }" aria-disabled="false" aria-selected="true">
+        <a id="steps-uid-0-t-0" href="#steps-uid-0-h-0" aria-controls="steps-uid-0-p-0">
+          <span class="number">#{index + 1}.</span>             
+          <div class="overflow-h">
+              <h2 class='col-sm-10'>#{step}</h2>
+              <i class="rounded-x fa #{index == current_index ? 'fa-info' : (index < current_index ? 'fa-check' : 'fa-history') }"></i>
+           </div>    
+        </a>
+        </li>
       }
     end
-    str << content_tag(:div, raw(item_str).html_safe, :class=>'owl-slider')
-    return content_tag(:div, raw(str).html_safe, :class=>'owl-carousel-v1 owl-work-v1 margin-bottom-15')
+    str << %Q{</ul></div></div>}
+    return str.html_safe
   end
 
   # 取实例details字段中的某个node的值 用于列表中显示没有column的字段

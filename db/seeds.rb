@@ -30,12 +30,17 @@ if Menu.first.blank?
   mp_ut = '1,2'
   ms_ut = '1,3'
   all_ut = '1,2,3'
+  audit_user_type = Dictionary.audit_user_type
 
-  yw = Menu.find_or_create_by(name: "业务管理", icon: "fa-tasks", is_auto: true, is_show: true, user_type: all_ut)
+  yw = Menu.find_or_create_by(name: "业务管理", icon: "fa-tasks", is_show: true, user_type: all_ut)
 # ----订单中心-----------------------------------------------------------------------------------------
-  ddzc = Menu.find_or_initialize_by(name: "订单中心", route_path: "/kobe/orders", can_opt_action: "Order|read", is_show: true, user_type: all_ut)
+  ddzc = Menu.find_or_initialize_by(name: "订单中心", route_path: "/kobe/orders", can_opt_action: "Order|read", is_show: true, user_type: mp_ut)
   ddzc.parent = yw
   ddzc.save
+
+  seller_ddzc = Menu.find_or_initialize_by(name: "我销售的订单", route_path: "/kobe/orders/seller_list", can_opt_action: "Order|read", is_show: true, user_type: supplier_user_type)
+  seller_ddzc.parent = yw
+  seller_ddzc.save
   
 # ----品目管理-----------------------------------------------------------------------------------------
   category = Menu.find_or_initialize_by(name: "品目管理", route_path: "/kobe/categories", can_opt_action: "Category|read", is_show: true, user_type: manage_user_type)
@@ -124,12 +129,12 @@ if Menu.first.blank?
     tmp.save
   end
   
-  audit_product = Menu.find_or_initialize_by(name: "审核产品", route_path: "/kobe/products/list", can_opt_action: "Product|list", is_show: true, user_type: manage_user_type)
+  audit_product = Menu.find_or_initialize_by(name: "审核产品", route_path: "/kobe/products/list", can_opt_action: "Product|list", is_show: true, user_type: audit_user_type)
   audit_product.parent = item_manage
   audit_product.save
 
   [["产品初审", "Product|first_audit"], ["产品终审", "Product|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     tmp.parent = audit_product
     tmp.save
   end
@@ -194,12 +199,12 @@ if Menu.first.blank?
     tmp.save
   end
 
-  audit_plan = Menu.find_or_initialize_by(name: "审核采购计划", route_path: "/kobe/plans/list", can_opt_action: "Plan|list", is_show: true, user_type: mp_ut)
+  audit_plan = Menu.find_or_initialize_by(name: "审核采购计划", route_path: "/kobe/plans/list", can_opt_action: "Plan|list", is_show: true, user_type: audit_user_type)
   audit_plan.parent = plan
   audit_plan.save
 
   [["采购计划初审", "Plan|first_audit"], ["采购计划终审", "Plan|last_audit"]].each do |m|
-    tmp =Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
+    tmp =Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     tmp.parent = audit_plan
     tmp.save
   end
@@ -223,12 +228,12 @@ if Menu.first.blank?
     tmp.save
   end
 
-  audit_budget = Menu.find_or_initialize_by(name: "审核预算审批单", route_path: "/kobe/budgets/list", can_opt_action: "Budget|list", is_show: true, user_type: mp_ut)
+  audit_budget = Menu.find_or_initialize_by(name: "审核预算审批单", route_path: "/kobe/budgets/list", can_opt_action: "Budget|list", is_show: true, user_type: audit_user_type)
   audit_budget.parent = budget
   audit_budget.save
 
   [["预算审批单初审", "Budget|first_audit"], ["预算审批单终审", "Budget|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     tmp.parent = audit_budget
     tmp.save
   end
@@ -254,14 +259,60 @@ if Menu.first.blank?
     tmp.save
   end
 
-  audit_ddcg = Menu.find_or_initialize_by(name: "审核定点采购", route_path: "/kobe/orders/audit_ddcg", can_opt_action: "Order|audit_ddcg", is_show: true, user_type: mp_ut)
+  audit_ddcg = Menu.find_or_initialize_by(name: "审核定点采购", route_path: "/kobe/orders/audit_ddcg", can_opt_action: "Order|audit_ddcg", is_show: true, user_type: audit_user_type)
   audit_ddcg.parent = ddcg
   audit_ddcg.save
 
 
   [["定点采购初审", "Order|first_audit"], ["定点采购终审", "Order|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     tmp.parent = audit_ddcg
+    tmp.save
+  end
+
+# ----协议采购-----------------------------------------------------------------------------------------
+  xygh = Menu.find_or_initialize_by(name: "协议采购", is_show: true, user_type: all_ut)
+  xygh.parent = yw
+  xygh.save
+
+  xygh_list = Menu.find_or_initialize_by(name: "我的协议采购项目", route_path: "/kobe/orders/xygh_list", can_opt_action: "Order|xygh_list", is_show: true, user_type: mp_ut)
+  xygh_list.parent = xygh
+  xygh_list.save
+
+  [ ["查看协议采购", "Order|read"],
+    ["增加协议采购", "Order|cart"], 
+    ["修改协议采购", "Order|update"], 
+    ["提交协议采购", "Order|commit"],
+    ["删除协议采购", "Order|update_destroy"],
+    ["打印协议采购订单", "Order|print"],
+    ["买方确认", "Order|buyer_confirm_pre"]
+  ].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
+    tmp.parent = xygh_list
+    tmp.save
+  end
+
+  audit_xygh = Menu.find_or_initialize_by(name: "审核协议采购", route_path: "/kobe/orders/audit_xygh", can_opt_action: "Order|audit_xygh", is_show: true, user_type: audit_user_type)
+  audit_xygh.parent = xygh
+  audit_xygh.save
+
+
+  [["协议采购初审", "Order|first_audit"], ["协议采购终审", "Order|last_audit"]].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
+    tmp.parent = audit_xygh
+    tmp.save
+  end
+
+  xygh_seller_list = Menu.find_or_initialize_by(name: "我销售的协议采购项目", route_path: "/kobe/orders/xygh_seller_list", can_opt_action: "Order|xygh_seller_list", is_show: true, user_type: ms_ut)
+  xygh_seller_list.parent = xygh
+  xygh_seller_list.save
+
+  [ ["查看协议采购", "Order|read"],
+    ["打印协议采购订单", "Order|print"],
+    ["卖方确认", "Order|agent_confirm_pre"]
+  ].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: ms_ut)
+    tmp.parent = xygh_seller_list
     tmp.save
   end
 
@@ -284,14 +335,46 @@ if Menu.first.blank?
     ac.save
   end
 
-  audit_wsjj = Menu.find_or_initialize_by(name: "审核网上竞价", route_path: "/kobe/bid_projects/list", can_opt_action: "BidProject|list", is_show: true, user_type: mp_ut)
+  audit_wsjj = Menu.find_or_initialize_by(name: "审核网上竞价", route_path: "/kobe/bid_projects/list", can_opt_action: "BidProject|list", is_show: true, user_type: audit_user_type)
   audit_wsjj.parent = ra_project
   audit_wsjj.save
 
   [["网上竞价初审", "BidProject|first_audit"], ["网上竞价终审", "BidProject|last_audit"]].each do |m|
-    a = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
+    a = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     a.parent = audit_wsjj
     a.save
+  end
+
+# ----个人采购-----------------------------------------------------------------------------------------
+  grcg = Menu.find_or_initialize_by(name: "个人采购", is_show: true, user_type: mp_ut)
+  grcg.parent = yw
+  grcg.save
+
+  grcg_list = Menu.find_or_initialize_by(name: "我的个人采购项目", route_path: "/kobe/orders/grcg_list", can_opt_action: "Order|grcg_list", is_show: true, user_type: mp_ut)
+  grcg_list.parent = grcg
+  grcg_list.save
+
+  [ ["查看个人采购", "Order|read"],
+    ["增加个人采购", "Order|create"], 
+    ["修改个人采购", "Order|update"], 
+    ["提交个人采购", "Order|commit"], 
+    ["删除个人采购", "Order|update_destroy"], 
+    ["打印个人采购订单", "Order|print"]
+  ].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
+    tmp.parent = grcg_list
+    tmp.save
+  end
+
+  audit_grcg = Menu.find_or_initialize_by(name: "审核个人采购", route_path: "/kobe/orders/audit_grcg", can_opt_action: "Order|audit_grcg", is_show: true, user_type: audit_user_type)
+  audit_grcg.parent = grcg
+  audit_grcg.save
+
+
+  [["个人采购初审", "Order|first_audit"], ["个人采购终审", "Order|last_audit"]].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
+    tmp.parent = audit_grcg
+    tmp.save
   end
 
 # ----日常费用报销类别---------------------------------------------------------------------------------
@@ -329,12 +412,12 @@ if Menu.first.blank?
     tmp.save
   end
 
-  audit_cost = Menu.find_or_initialize_by(name: "审核日常报销", route_path: "/kobe/daily_costs/list", can_opt_action: "DailyCost|list", is_show: true, user_type: manage_user_type)
+  audit_cost = Menu.find_or_initialize_by(name: "审核日常报销", route_path: "/kobe/daily_costs/list", can_opt_action: "DailyCost|list", is_show: true, user_type: audit_user_type)
   audit_cost.parent = daily_cost
   audit_cost.save
 
   [["日常报销初审", "DailyCost|first_audit"], ["日常报销终审", "DailyCost|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     tmp.parent = audit_cost
     tmp.save
   end
@@ -373,12 +456,12 @@ if Menu.first.blank?
     tmp.save
   end
 
-  audit_asset = Menu.find_or_initialize_by(name: "审核车辆报销", route_path: "/kobe/asset_projects/list", can_opt_action: "AssetProject|list", is_show: true, user_type: manage_user_type)
+  audit_asset = Menu.find_or_initialize_by(name: "审核车辆报销", route_path: "/kobe/asset_projects/list", can_opt_action: "AssetProject|list", is_show: true, user_type: audit_user_type)
   audit_asset.parent = fixed_asset
   audit_asset.save
 
   [["车辆报销初审", "AssetProject|first_audit"], ["车辆报销终审", "AssetProject|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     tmp.parent = audit_asset
     tmp.save
   end
@@ -410,12 +493,12 @@ if Menu.first.blank?
   dep_list.parent = dep
   dep_list.save
 
-  audit_dep = Menu.find_or_initialize_by(name: "审核单位", route_path: "/kobe/departments/list", can_opt_action: "Department|list", is_show: true, user_type: manage_user_type)
+  audit_dep = Menu.find_or_initialize_by(name: "审核单位", route_path: "/kobe/departments/list", can_opt_action: "Department|list", is_show: true, user_type: audit_user_type)
   audit_dep.parent = dep
   audit_dep.save
 
   [["单位初审", "Department|first_audit"], ["单位终审", "Department|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     tmp.parent = audit_dep
     tmp.save
   end
@@ -424,13 +507,13 @@ if Menu.first.blank?
   user.parent = dep
   user.save
 
-  [ ["修改用户", "User|update", true],
-    ["重置密码", "User|reset_password", false],
-    ["冻结用户", "User|freeze", false],
-    ["恢复用户", "User|recover", false],
-    ["user_admin","User|admin", false]
+  [ ["修改用户", "User|update", true, all_ut],
+    ["重置密码", "User|reset_password", false, all_ut],
+    ["冻结用户", "User|freeze", false, all_ut],
+    ["恢复用户", "User|recover", false, manage_user_type],
+    ["user_admin","User|admin", false, manage_user_type]
   ].each do |u|
-    tmp = Menu.find_or_initialize_by(name: u[0], can_opt_action: u[1], is_auto: u[2], user_type: all_ut)
+    tmp = Menu.find_or_initialize_by(name: u[0], can_opt_action: u[1], is_auto: u[2], user_type: u[3])
     tmp.parent = user
     tmp.save
   end
@@ -452,12 +535,12 @@ if Menu.first.blank?
     ac.save
   end
 
-  audit_article = Menu.find_or_initialize_by(name: "审核公告", route_path: "/kobe/articles/list", can_opt_action: "Article|list", is_show: true, user_type: manage_user_type)
+  audit_article = Menu.find_or_initialize_by(name: "审核公告", route_path: "/kobe/articles/list", can_opt_action: "Article|list", is_show: true, user_type: audit_user_type)
   audit_article.parent = article
   audit_article.save
 
   [["公告初审", "Article|first_audit"], ["公告终审", "Article|last_audit"]].each do |m|
-    a = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
+    a = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
     a.parent = audit_article
     a.save
   end
@@ -477,11 +560,11 @@ if Menu.first.blank?
   end
 
 # ----政策法规、相关下载、常见问题、意见建议-----------------------------------------------------------
-  faq_list = Menu.find_or_initialize_by(name: "常见问题列表", route_path: "/kobe/faqs", can_opt_action: "Faq|read", is_show: true, user_type: manage_user_type)
+  faq_list = Menu.find_or_initialize_by(name: "意见建议列表", route_path: "/kobe/faqs", can_opt_action: "Faq|read", is_show: true, user_type: all_ut)
   faq_list.parent = article
   faq_list.save
 
-  [ ["增加常见问题", "Faq|create", all_ut], 
+  [ ["增加意见建议", "Faq|create", all_ut], 
     ["修改常见问题", "Faq|update", manage_user_type], 
     ["删除常见问题", "Faq|update_destroy", manage_user_type],
     ["提交常见问题", "Faq|commit", manage_user_type],
@@ -495,11 +578,11 @@ if Menu.first.blank?
 # ----数据统计与分析-----------------------------------------------------------------------------------
   tongji = Menu.find_or_create_by(name: "数据统计与分析", icon: "fa-bar-chart-o", is_show: true, user_type: mp_ut)
 
-  all_tj = Menu.find_or_initialize_by(name: "整体采购统计", route_path: "/kobe/tongji", can_opt_action: "Tongji|read", is_show: true, user_type: mp_ut)
+  all_tj = Menu.find_or_initialize_by(name: "整体采购统计", route_path: "/kobe/tongji", can_opt_action: "Order|tongji", is_show: true, user_type: mp_ut)
   all_tj.parent = tongji
   all_tj.save
 
-  item_dep_tj = Menu.find_or_initialize_by(name: "入围供应商销量统计", route_path: "/kobe/tongji/item_dep_sales", can_opt_action: "Tongji|read", is_show: true, user_type: manage_user_type)
+  item_dep_tj = Menu.find_or_initialize_by(name: "入围供应商销量统计", route_path: "/kobe/tongji/item_dep_sales", can_opt_action: "Order|item_dep_sales", is_show: true, user_type: manage_user_type)
   item_dep_tj.parent = tongji
   item_dep_tj.save
 
@@ -521,18 +604,18 @@ if Menu.first.blank?
     tmp.save
   end
 
-  contract_template = Menu.find_or_initialize_by(name: "合同模板", route_path: "/kobe/contract_templates", can_opt_action: "ContractTemplate|read", is_show: true, user_type: manage_user_type)
-  contract_template.parent = setting
-  contract_template.save
+  # contract_template = Menu.find_or_initialize_by(name: "合同模板", route_path: "/kobe/contract_templates", can_opt_action: "ContractTemplate|read", is_show: true, user_type: manage_user_type)
+  # contract_template.parent = setting
+  # contract_template.save
 
-  [ ["增加合同", "ContractTemplate|create"], 
-    ["修改合同", "ContractTemplate|update"], 
-    ["删除合同", "ContractTemplate|update_destroy"]
-  ].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
-    tmp.parent = contract_template
-    tmp.save
-  end
+  # [ ["增加合同", "ContractTemplate|create"], 
+  #   ["修改合同", "ContractTemplate|update"], 
+  #   ["删除合同", "ContractTemplate|update_destroy"]
+  # ].each do |m|
+  #   tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
+  #   tmp.parent = contract_template
+  #   tmp.save
+  # end
 
   to_do_list = Menu.find_or_initialize_by(name: "待办事项", route_path: "/kobe/to_do_lists", can_opt_action: "ToDoList|read", is_show: true, user_type: manage_user_type)
   to_do_list.parent = setting
@@ -599,8 +682,8 @@ if ToDoList.first.blank?
     ["审核预算审批单", "/kobe/budgets/list", "/kobe/budgets/$$obj_id$$/audit"], 
     ["审核定点采购项目", "/kobe/orders/audit_ddcg", "/kobe/orders/$$obj_id$$/audit"], 
     ["审核协议供货项目", "/kobe/orders/audit_xygh", "/kobe/orders/$$obj_id$$/audit"], 
-    ["卖方确认", "/kobe/orders/list", "/kobe/orders/$$obj_id$$/audit"], 
-    ["买方确认", "/kobe/orders/list", "/kobe/orders/$$obj_id$$/audit"],
+    ["卖方确认", "/kobe/orders/xygh_seller_list", "/kobe/orders/$$obj_id$$/agent_confirm_pre"], 
+    ["买方确认", "/kobe/orders/list", "/kobe/orders/$$obj_id$$/buyer_confirm_pre"],
     ["个人采购", "/kobe/orders/list", "/kobe/orders/$$obj_id$$/audit"] 
   ].each do |m|
     ToDoList.find_or_create_by(name: m[0], list_url: m[1], audit_url: m[2])

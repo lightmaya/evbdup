@@ -53,7 +53,7 @@ class Article < ActiveRecord::Base
       options[:page_num] = Sunspot.search(Product).total
       params[:page] = 1
     end
-    options[:status]||= 2
+    options[:status]||= self.effective_status
     conditions = Proc.new{
       fulltext params[:k] do
         highlight :title
@@ -68,26 +68,34 @@ class Article < ActiveRecord::Base
   
   # status各状态的中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["暂存", 0, "orange", 50],
-      ["等待审核", 1, "orange", 90],
-      ["已发布", 2, "u", 100],
-      ["审核拒绝",3,"red",0],
-      ["已删除", 404, "red", 0]
-    ]
+    # [
+    #   ["暂存", "0", "orange", 10], 
+    #   ["审核拒绝", "7", "red", 20], 
+    #   ["等待审核", "8", "blue", 60], 
+    #   ["已发布", "16", "yellow", 40], 
+    #   ["已删除", "404", "dark", 100]
+    #   ]
+    self.get_status_array(["暂存", "等待审核", "已发布", "审核拒绝", "已删除"])
+    # [
+    #   ["暂存", 0, "orange", 50],
+    #   ["等待审核", 1, "orange", 90],
+    #   ["已发布", 2, "u", 100],
+    #   ["审核拒绝",3,"red",0],
+    #   ["已删除", 404, "red", 0]
+    # ]
   end
 
   # 根据不同操作 改变状态
   # "提交审核"与action中obj.change_status_and_write_logs一致
-  def change_status_hash
-    status_ha = self.find_step_by_rule.blank? ? 2 : 1
-    return {
-      "提交审核" => { 3 => status_ha, 0 => status_ha },
-      "删除" => { 0 => 404 },
-      "通过" => { 1 => 2 },
-      "不通过" => { 1 => 3 }
-    }
-  end
+  # def change_status_hash
+  #   status_ha = self.find_step_by_rule.blank? ? 2 : 1
+  #   return {
+  #     "提交审核" => { 3 => status_ha, 0 => status_ha },
+  #     "删除" => { 0 => 404 },
+  #     "通过" => { 1 => 2 },
+  #     "不通过" => { 1 => 3 }
+  #   }
+  # end
 
   # 根据action_name 判断obj有没有操作
   # 用于前台的操作按钮，在BtnArrayHelper.rb中配置，与cancancan结合使用
@@ -95,7 +103,7 @@ class Article < ActiveRecord::Base
     case act
     when "commit" 
       # 必须是0状态并且没有数据合法才能commit
-      [0].include?(self.status) # && self.get_tips.blank?
+      self.class.edit_status.include?(self.status) # && self.get_tips.blank?
     when "update_audit", "audit" 
       # change_status_hash中是否有此操作
       self.can_opt?("通过") && self.can_opt?("不通过")

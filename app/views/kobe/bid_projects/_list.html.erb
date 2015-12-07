@@ -3,44 +3,44 @@
         <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
     </div>
     <div class="panel-body">
+    	<div class="col-md-4 pull-right">
       <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
 				<div class="margin-bottom-10">
 				    <div class="input-group">
-				    	<%= f.search_field :name_cont, class: "form-control input-sm", placeholder: "请输入单位名称..." %>
+				    	<%= f.search_field :name_cont, class: "form-control input-sm", placeholder: "请输入项目名称..." %>
 				        <span class="input-group-btn">
 				          <button class="btn btn-success btn-sm" type="submit">搜索</button>
 				        </span>
 				    </div>
 				</div>
 			<% end %>
-			<% if @articles.present? %>
+			</div>
+			<% if @bid_projects.present? %>
 				<table class="table table-bordered table-hover">
 	        <thead>
 	          <tr>
 	            <th class="index">序号</th>
-	            <th class="hidden-sm">标题</th>
-	            <th class="hidden-sm">发布人</th>
+	            <th class="hidden-sm">项目编号</th>
+	            <th class="hidden-sm">项目名称</th>
 	            <th class="status_badge"><%= status_filter(BidProject) %></th>
 	            <th class="date"><%= date_filter %></th>
 	            <th class="cando">操作</th>
 	          </tr>
 	        </thead>
 	        <tbody>
-	        <% @articles.each_with_index do |article,index| %>
+	        <% @bid_projects.each_with_index do |bid_project,index| %>
 	          <tr>
 	            <td><%= show_index(index) %></td>
-	            <td><%= article.title %></td>
-	            <td><%= article.author.try(:name) %></td>
-	            <td><%= article.status_badge %></td>
-	            <td><%= show_date(article.created_at) %></td>
-	            <% if action_name == 'list'  %>
-	            	<td><%= btn_group(articles_btn(article, true)) %></td>
-							<% end %>
+	            <td><%= bid_project.code %></td>
+	            <td><%= bid_project.name %></td>
+	            <td><%= bid_project.status_badge %></td>
+	            <td><%= show_date(bid_project.created_at) %></td>
+	            <td><%= btn_group(bid_projects_btn(bid_project, action_name == 'list')) %></td>
 	          </tr>
 	        <% end %>
 	        </tbody>
 	      </table>
-      	<%= paginate @articles %> 
+      	<%= paginate @bid_projects %> 
 			<% end %>
     </div>                     
 </div>

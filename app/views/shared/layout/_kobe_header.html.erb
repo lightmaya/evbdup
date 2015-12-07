@@ -9,16 +9,11 @@
         <!-- Topbar -->
         <div class="topbar">
             <ul class="loginbar pull-right">
-                <li><%= render partial: '/shared/layout/get_user_info' %></li>  
+                <%= render partial: '/shared/layout/get_user_info' %>
                 <li class="topbar-devider"></li> 
-                <li>
-                    <a href="#">
-                        <i class="fa fa-shopping-cart"></i> 购物车
-                    </a>
-                    <span class="badge badge-red rounded-x">4</span>
-                </li> 
-                <li class="topbar-devider"></li> 
-                <li>
+                <li><%= cart_tag %></li> 
+                <!-- <li class="topbar-devider"></li>  -->
+                <!-- <li>
                     <a href="#">
                         <i class="fa fa-bolt"></i> 待办事项
                     </a>
@@ -35,8 +30,8 @@
                 <li><a href="page_faq.html">内部论坛</a></li> 
                 <li class="topbar-devider"></li>   
                 <li><a href="page_faq.html">帮助</a></li>  
-                <li class="topbar-devider"></li>   
-                <li><a href="/users/sign_out">退出</a></li>   
+                <li class="topbar-devider"></li>   --> 
+                <!-- <li><a href="/users/sign_out">退出</a></li>    -->
             </ul>
         </div>
         <!-- End Topbar -->

@@ -12,42 +12,51 @@ class PlanItem < ActiveRecord::Base
 
   include AboutStatus
 
+  default_value_for :status, 0
+
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["暂存",0,"orange",10],
-      ["有效",1,"blue",100],
-      ["已过期",2,"red",50],
-      ["已删除",404,"light",0]
-    ]
+    # [
+    #   ["暂存", "0", "orange", 10], 
+    #   ["正常", "65", "yellow", 100], 
+    #   ["已过期", "54", "dark", 100], 
+    #   ["已删除", "404", "dark", 100]
+    # ]
+    self.get_status_array(["暂存", "正常", "已过期", "已删除"])
+    # [
+    #   ["暂存",0,"orange",10],
+    #   ["有效",1,"blue",100],
+    #   ["已过期",2,"red",50],
+    #   ["已删除",404,"light",0]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "提交" => { 0 => 1 },
-      "停止" => { 1 => 2 },
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "提交" => { 0 => 1 },
+  #     "停止" => { 1 => 2 },
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-    # 列表中不允许出现的
-    limited = [404]
-    arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  #   # 列表中不允许出现的
+  #   limited = [404]
+  #   arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def cando(act='',current_u=nil)
     case act
     when "update", "edit" 
-      [0].include?(self.status)
+      self.class.edit_status.include?(self.status)
     when "commit" 
       self.can_opt?("提交")
     when "delete", "destroy" 
       self.can_opt?("删除")
     when "add_plan" 
-      self.status == 1 && self.end_time > Time.now
+      self.class.effective_status.include?(self.status) && self.end_time > Time.now
     else false
     end
   end

@@ -5,14 +5,17 @@ class BidProject < ActiveRecord::Base
   has_many :bid_item_bids
   has_many :bid_project_bids
   has_one :bid_project_bid
-  has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
+  belongs_to :rule
+  has_many :task_queues, -> { where(class_name: "BidProject") }, foreign_key: :obj_id
   belongs_to :user
   has_one :item
   belongs_to :department  
 
   belongs_to :budget
 
-  scope :can_bid, -> { where("bid_projects.status = 2 and now() < bid_projects.end_time") }
+  default_value_for :status, 0
+
+  scope :can_bid, -> { where("bid_projects.status = 16 and now() < bid_projects.end_time") }
 
   # 模型名称
   Mname = "网上竞价项目"
@@ -32,39 +35,53 @@ class BidProject < ActiveRecord::Base
  
   # 中文意思 状态值 标签颜色 进度 
 	def self.status_array
-		[
-	    ["暂存", 0, "orange", 20],
-      ["需求等待审核", 1, "blue", 40],
-      ["需求审核拒绝",3,"red", 0],
-	    ["已发布", 2, "orange", 50],
-      ["结果等待审核", 4, "sea", 70],
-      ["结果审核拒绝",5,"red", 50],
-      ["确定中标人", 12, "u", 100],
-      ["废标等待审核", 6, "sea", 70],
-      ["废标审核拒绝",7,"red", 50],
-      ["已废标", -1, "red", 100],
-	    ["已删除", 404, "light", 0]
-    ]
+    # [
+    #   ["暂存", "0", "orange", 10],
+    #   ["需求等待审核", "15", "blue", 30],
+    #   ["需求审核拒绝", "14", "red", 20],
+    #   ["已发布", "16", "yellow", 40],
+    #   ["结果等待审核", "22", "sea", 60],
+    #   ["结果审核拒绝", "21", "purple", 50],
+    #   ["确定中标人", "23", "yellow", 100],
+    #   ["废标等待审核", "29", "sea", 60],
+    #   ["废标审核拒绝", "28", "purple", 50],
+    #   ["已废标", "33", "dark", 100],
+    #   ["已删除", "404", "dark", 100]
+    # ]
+    self.get_status_array(["暂存", "需求等待审核", "需求审核拒绝", "已发布", "结果等待审核", "结果审核拒绝", "确定中标人", "废标等待审核", "废标审核拒绝", "已废标", "已删除"])
+		# [
+	 #    ["暂存", 0, "orange", 20],
+  #     ["需求等待审核", 1, "blue", 40],
+  #     ["需求审核拒绝",3,"red", 0],
+	 #    ["已发布", 2, "orange", 50],
+  #     ["结果等待审核", 4, "sea", 70],
+  #     ["结果审核拒绝",5,"red", 50],
+  #     ["确定中标人", 12, "u", 100],
+  #     ["废标等待审核", 6, "sea", 70],
+  #     ["废标审核拒绝",7,"red", 50],
+  #     ["已废标", -1, "red", 100],
+	 #    ["已删除", 404, "light", 0]
+  #   ]
   end
    # 根据不同操作 改变状态
-  def change_status_hash
-    status_ha = self.find_step_by_rule.blank? ? 2 : 1
-    return {
-      "提交审核" => { 3 => status_ha, 0 => status_ha },
-      "删除" => { 0 => 404 },
-      "通过" => { 1 => 2, 4 => 12, 6 => -1 },
-      "确定中标人" => {2 => 4},
-      "废标" => {2 => 6},
-      "不通过" => { 1 => 3, 4 => 5, 6 => 7 }
-    }
-  end
+  # def change_status_hash
+  #   status_ha = self.find_step_by_rule.blank? ? 2 : 1
+  #   return {
+  #     "提交审核" => { 3 => status_ha, 0 => status_ha },
+  #     "删除" => { 0 => 404 },
+  #     "通过" => { 1 => 2, 4 => 12, 6 => -1 },
+  #     "确定中标人" => {2 => 4},
+  #     "废标" => {2 => 6},
+  #     "不通过" => { 1 => 3, 4 => 5, 6 => 7 }
+  #   # }
+  # end
 
 
   # 根据action_name 判断obj有没有操作
   def cando(act='')
     case act
     when "edit" 
-      [0, 3].include?(self.status) # && self.get_tips.blank?
+      self.class.edit_status.include?(self.status) # && self.get_tips.blank?
     when "update_audit", "audit" 
       self.can_opt?("通过") && self.can_opt?("不通过")
     else false
@@ -76,7 +93,7 @@ class BidProject < ActiveRecord::Base
   end
     
   def can_bid?
-    self.status == 2 && !is_end?
+    self.status == 16 && !is_end?
   end
 
   # 判断是否是指定供应商

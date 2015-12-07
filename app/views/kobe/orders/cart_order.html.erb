@@ -1,5 +1,6 @@
 <div class="wizard">
-  <%= render "shared/steps", i: 2 %>
+  <%#= render "shared/steps", i: 2 %>
+  <%= show_step(["我的购物车", "下单", "供应商确认", "打印合同<br/>及凭证", "商品及<br/>服务评价"], 1) %>
 </div>
 
 <div class="container content"> 
@@ -10,11 +11,13 @@
   <%= render 'yw_type', f: f %>
   <!-- 送货清单 -->
   <%= render 'items', f: f %>
-  
+
+  <%= render 'fee', f: f %>
+
   <div class="step" id="step_summary">
     <div class="headline"><h2>备注</h2></div>
     <div class="row p0_25">
-      <%= f.text_field :summary, class: "w350 h30" %>
+      <%= f.text_field :summary, class: "w350 h30 fiel_inpute" %>
     </div>
   </div>
 

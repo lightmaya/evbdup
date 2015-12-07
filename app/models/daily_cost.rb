@@ -8,6 +8,7 @@ class DailyCost < ActiveRecord::Base
   has_many :task_queues, -> { where(class_name: "DailyCost") }, foreign_key: :obj_id
 
 
+  default_value_for :status, 0
 	include AboutStatus
 
   before_create do
@@ -21,32 +22,40 @@ class DailyCost < ActiveRecord::Base
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["未提交",0,"orange",10],
-      ["已完成",1,"u",100],
-      ["等待审核",2,"blue",50],
-      ["审核拒绝",3,"red",0],
-      ["已删除",404,"light",0]
-    ]
+    # [
+    #   ["暂存", "0", "orange", 10], 
+    #   ["已生效", "72", "yellow", 100],
+    #   ["等待审核", "8", "blue", 60], 
+    #   ["审核拒绝", "7", "red", 20],  
+    #   ["已删除", "404", "dark", 100]
+    # ]
+    self.get_status_array(["暂存", "已生效", "等待审核", "审核拒绝", "已删除"])
+    # [
+    #   ["未提交",0,"orange",10],
+    #   ["已完成",1,"u",100],
+    #   ["等待审核",2,"blue",50],
+    #   ["审核拒绝",3,"red",0],
+    #   ["已删除",404,"light",0]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    status_ha = self.find_step_by_rule.blank? ? 1 : 2
-    return {
-      "提交" => { 3 => status_ha, 0 => status_ha },
-      "通过" => { 2 => 1 },
-      "不通过" => { 2 => 3 },
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   status_ha = self.find_step_by_rule.blank? ? 1 : 2
+  #   return {
+  #     "提交" => { 3 => status_ha, 0 => status_ha },
+  #     "通过" => { 2 => 1 },
+  #     "不通过" => { 2 => 3 },
+  #     "删除" => { 0 => 404 }
+  #   # }
+  # end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  # 	# 列表中不允许出现的
+  # 	limited = [404]
+  # 	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   # 流程图的开始数组
   def step_array
@@ -61,7 +70,7 @@ class DailyCost < ActiveRecord::Base
     when "show" 
       current_u.department.is_ancestors?(self.department_id)
     when "update", "edit" 
-      [0,3].include?(self.status) && current_u.try(:id) == self.user_id
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" 
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 

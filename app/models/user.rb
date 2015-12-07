@@ -23,10 +23,12 @@ class User < ActiveRecord::Base
   has_many :bid_project_bids
 
   # 当前用户可用的预算审批单
-  has_many :valid_budgets, -> { where("budgets.status = 21") }, class_name: "Budget", foreign_key: "user_id"
+  has_many :valid_budgets, -> { where(status: self.effective_status) }, class_name: "Budget", foreign_key: "user_id"
 
   # before_save {self.email = email.downcase}
   before_create :create_remember_token
+  
+  default_value_for :status, 65
 
   after_save do 
     self.reset_menus_cache if self.previous_changes["menuids"].present?
@@ -56,16 +58,15 @@ class User < ActiveRecord::Base
 
   # 判断当前用户所在单位是采购单位、供应商还是监管机构
   def user_type
-    r_id = self.department.root_id
-    if r_id == Department.purchaser.try(:id) && self.real_department.id == self.department.real_ancestry_level(1).try(:id)
+    if self.real_department.is_zgs?
       return Dictionary.manage_user_type
     else
-      return r_id
+      return self.department.root_id
     end
   end
 
   def cgr?
-    [2, 3].include? current_user.department.root_id 
+    [1,2].include? self.department.root_id 
   end
 
   # 获取当前人的菜单
@@ -74,19 +75,21 @@ class User < ActiveRecord::Base
   # end
 
   def self.status_array
-    [
-      ["正常",0,"u",100], 
-      ["冻结",1,"yellow",100]
-    ]
+    # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100], ["已冻结", "12", "dark", 100]]
+    self.get_status_array(["正常", "已冻结", "已删除"])
+    # [
+    #   ["正常",0,"u",100], 
+    #   ["冻结",1,"yellow",100]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "冻结" => { 0 => 1 },
-      "恢复" => { 1 => 0 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "冻结" => { 0 => 1 },
+  #     "恢复" => { 1 => 0 }
+  #   }
+  # end
 
   def self.xml(obj, current_u)
     tmp = ''
@@ -97,10 +100,10 @@ class User < ActiveRecord::Base
         } 
       end
       tmp << %Q{
-        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/user_ztree_json' partner='menuids' json_params='{"id":"#{obj.id}"}' hint='如果没有可选项，请先给其他人授权！'/>
+        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/user_ztree_json' partner='menuids' json_params='{"id":"#{obj.id}"}' hint='如果没有可选项，请先查看单位状态和用户状态是否正常！'/>
         <node column='menuids' data_type='hidden'/>
         <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
-        <node column='categoryids' data_type='hidden'/>
+        <node column='categoryids' data_type='hidden' hint='如勾选品目，待办事项中只显示勾选的品目的相关信息。'/>
       }
     end
     %Q{
@@ -204,11 +207,16 @@ class User < ActiveRecord::Base
   # 如果单位不是正常状态的 只能有is_auto=true的权限
   def get_auto_menus
     # 用户状态是冻结 或者单位状态是冻结、已删除的 没有任何权限
-    if self.status == 1 || [4, 404].include?(self.department.status)
+    if self.status == 12 || [12, 404].include?(self.department.status)
       return []
     else
-      ms = Menu.status_not_in(404).by_user_type(self.user_type)
-      return self.department.status == 1 ? ms : ms.where(is_auto: true)
+      # 只有总公司或者分公司的人才有审核权限
+      ms = if self.real_department.is_zgs? || self.real_department.is_fgs?
+        Menu.status_not_in(404).where("find_in_set('#{self.user_type}', menus.user_type) > 0 or menus.user_type = '#{Dictionary.audit_user_type}'") 
+      else
+        Menu.status_not_in(404).by_user_type(self.user_type)
+      end
+      return Department.effective_status.include?(self.department.status) ? ms : ms.where(is_auto: true)
     end
   end
 
@@ -239,12 +247,12 @@ class User < ActiveRecord::Base
     case act
     when "show", "index", "only_show_info", "only_show_logs" 
       true
-    when "edit", "update", "reset_password", "update_reset_password" 
-      [0,1,3].include?(self.department.status) && self.status == 0 && cdt || self.id == current_u.id
+    when "edit", "update", "reset_password", "update_reset_password"
+      self.class.edit_status.include?(self.status) && self.class.edit_status.include?(self.department.status) && cdt || self.id == current_u.id
     when "recover", "update_recover" 
-      [0,1,3].include?(self.department.status) && self.can_opt?("恢复") && cdt
+      self.can_opt?("恢复") && cdt
     when "freeze", "update_freeze" 
-      [0,1,3].include?(self.department.status) && self.can_opt?("冻结") && cdt
+      self.can_opt?("冻结") && cdt
     else false
     end
   end

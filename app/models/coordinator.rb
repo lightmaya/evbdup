@@ -5,38 +5,42 @@ class Coordinator < ActiveRecord::Base
   belongs_to :item
   belongs_to :department
 
+  default_value_for :status, 65
+
   include AboutStatus
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["正常",0,"u",100],
-      ["已删除",404,"light",0]
-    ]
+    # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
+    self.get_status_array(["正常", "已删除"])
+    # [
+    #   ["正常",0,"u",100],
+    #   ["已删除",404,"light",0]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-    # 列表中不允许出现的
-    limited = [404]
-    arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  #   # 列表中不允许出现的
+  #   limited = [404]
+  #   arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
     when "show"
       # 上级单位或者总公司人
-      current_u.department.is_ancestors?(self.department_id) || current_u.department.real_ancestry_level(1)
+      current_u.department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
     when "update", "edit" 
-      [0].include?(self.status) && current_u.try(:id) == self.user_id
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false

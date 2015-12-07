@@ -377,7 +377,7 @@ li:first-child {
 .product-description {
 	padding: 10px;
 	overflow: hidden;
-	min-height: 185px;
+	min-height: 145px;
 }
 
 .product-description-brd {
@@ -386,7 +386,7 @@ li:first-child {
 
 .product-description .title-price {
 	color: #687074;
-	font-size: 18px;
+	font-size: 16px;
 }
 
 .product-description h4.title-price {
@@ -411,7 +411,7 @@ li:first-child {
 }
 
 .product-description .line-through {
-	color: #c9253c;
+	/*color: #c9253c;*/
 	text-decoration: line-through;
 }
 

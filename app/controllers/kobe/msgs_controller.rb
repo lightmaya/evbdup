@@ -31,12 +31,12 @@ class Kobe::MsgsController < KobeController
 
   # 提交
   def commit
-    @msg.change_status_and_write_logs("发布", stateless_logs("发布", "发布成功！", false))
+    @msg.change_status_and_write_logs("提交", stateless_logs("提交", "提交成功！", false))
     Rufus::Scheduler.new.in "1s" do
       @msg.link_users
       ActiveRecord::Base.clear_active_connections!
     end
-    tips_get("发布成功！")
+    tips_get("提交成功！")
     redirect_back_or
   end
 
@@ -73,7 +73,7 @@ class Kobe::MsgsController < KobeController
   end
 
   def destroy
-    @msg.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
+    @msg.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除成功。")
     redirect_to kobe_msgs_path
   end

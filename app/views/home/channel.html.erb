@@ -1,4 +1,4 @@
-<%= render "js" %>
+<%#= render "js" %>
 <div class="owl-carousel-v1 owl-work-v1 margin-bottom-40">
   <div class="headline"><h2 class="pull-left">推荐产品</h2>
     <div class="owl-navigation">
@@ -37,7 +37,7 @@
       <!-- 上部筛选 -->
       <div class="row margin-bottom-5">
         <div class="col-sm-4 result-category">
-          <h2>轿车</h2>
+          <h2><%= @category.name %></h2>
           <small class="shop-bg-red badge-results">共<%= @q.result.count %>个商品</small>
         </div>
         <div class="col-sm-8">
@@ -60,26 +60,29 @@
 
       <div class="filter-results">
         <div class="row illustration-v2 margin-bottom-30">
-          <% @products.each_with_index do |product, i| %>
+        <% @products.each_with_index do |product, i|%>
+          <%= show_product_div(product) %>
+        <% end %>
+          <%# @products.each_with_index do |product, i| %>
             <!-- 产品 -->
-            <div class="col-md-3 h412">
+            <!-- <div class="col-md-3 h412">
                 <div class="product-img product-img-brd">
-                  <%= link_to_blank image_tag(product.cover_url, class: "full-width img-responsive lazy", onerror: "$(this).attr('src', '/assets/no_pic_small.gif')"), product %>
+                  <%#= link_to_blank image_tag(product.cover_url, class: "full-width img-responsive lazy", onerror: "$(this).attr('src', '/assets/no_pic_small.gif')"), product %>
                   <div class="shop-rgba-dark-green rgba-banner">新产品</div>
                 </div> 
                 <div class="product-description product-description-brd margin-bottom-30">
                   <div class="overflow-h margin-bottom-5">
                     <div class="pull-left">
                       <h4 class="title-price">
-                        <%= link_to_blank truncate(product.name, length: 30), product, class: "shop-ui-inner.html" %>
+                        <%#= link_to_blank truncate(product.name, length: 30), product, class: "shop-ui-inner.html" %>
                       </h4>
                       <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
-                      <div class="price_div" id="price_div_<%= product.id %>">
-                        <span class="title-price line-through fl clear">市场价：<b class="b_m hide">请登录查看</b></span>
-                        <span class="title-price fl clear">协议价：<b class="b_b hide">请登录查看</b></span>
+                      <div class="price_div title-price" id="price_div_<%#= product.id %>">
+                        <span class="line-through fl clear font-size-14">市场价：<b class="b_m hide">请登录查看</b></span>
+                        <span class="fl clear color-red">入围价：<b class="b_b hide">请登录查看</b></span>
                       </div>
                     </div>    
-                  </div>    
+                  </div>     -->
                   <!--<ul class="list-inline product-ratings">
                       <li><i class="rating-selected fa fa-star"></i></li>
                       <li><i class="rating-selected fa fa-star"></i></li>
@@ -88,10 +91,10 @@
                       <li><i class="rating fa fa-star"></i></li>
                        <li class="like-icon"><a data-original-title="收藏" data-toggle="tooltip" data-placement="left" class="tooltips" href="#"><i class="fa fa-heart"></i></a></li>
                   </ul>     -->
-                </div>
-            </div>
+                <!-- </div>
+            </div> -->
             <!-- 产品END -->
-          <% end -%>
+          <%# end -%>
         </div>
       </div><!--/end filter resilts-->
       <%= paginate @products, :theme => 'channel' %>

@@ -12,7 +12,7 @@
 <div class="container">
 	<%= @obj_contents %>
 	<%= uploads_html(@bid_project, {title: true}).html_safe %>
-	<% if @bid_project.status == 2 %>
+	<% if @bid_project.status == 16 %>
 		<% if @before_end > 0 %>
 			<div class='bid_project_time tc'>
 		    <span class='seconds hide'><%= @before_end %></span>
@@ -26,7 +26,7 @@
 			  <strong>抱歉!</strong>投标已截止!
 			</div>
 	  <% end %>
-	<% elsif @bid_project.status == 12 %>
+	<% elsif @bid_project.status == 23 %>
 		<h5><i class="fa fa-chevron-circle-down"></i> 中标单位报价信息</h5>
 		<div>
 			<table class="table table-bordered table-hover">

@@ -1,18 +1,16 @@
 class FixedAsset < ActiveRecord::Base
 
-  
   belongs_to :department
 
   has_many :task_queues, -> { where(class_name: "FixedAsset") }, foreign_key: :obj_id
   
   include AboutStatus
 
-  
+  default_value_for :status, 65
 
   after_create do 
     create_no("QC", "sn")
   end
-
 
   #剩余资产价值
   def left_value
@@ -29,18 +27,20 @@ class FixedAsset < ActiveRecord::Base
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["正常",0,"u",100],
-      ["已删除",404,"light",0]
-    ]
+    # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
+    self.get_status_array(["正常", "已删除"])
+    # [
+    #   ["正常",0,"u",100],
+    #   ["已删除",404,"light",0]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    return {
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   return {
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
 
   # 根据action_name 判断obj有没有操作
@@ -49,7 +49,7 @@ class FixedAsset < ActiveRecord::Base
     when "show" 
       current_u.department.is_ancestors?(self.department_id)
     when "update", "edit" 
-      [0,3].include?(self.status) && current_u.try(:id) == self.user_id
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false

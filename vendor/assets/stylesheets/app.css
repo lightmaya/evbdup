@@ -3281,6 +3281,7 @@ img.image-md {
 
 /*Heights
 ------------------------------------*/
+.height-50 { min-height: 50px;}
 .height-100 { min-height: 100px;}
 .height-150 { min-height: 150px;}
 .height-200 { min-height: 200px;}

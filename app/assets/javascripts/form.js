@@ -82,10 +82,10 @@ function input_blur(me,master_table_names,slave_table_names){
     if ( !isNaN(price) && (price != '') && (quantity != '') && !isNaN(quantity) ) {
         $("#"+slave_table_names+"_total_" + id).val(parseFloat(price) * parseFloat(quantity));
     }
-    calc_total(master_table_names,slave_table_names);
+    sum_calc_total(master_table_names,slave_table_names);
 }
 //  计算总金额
-function calc_total(master_table_names,slave_table_names) {
+function sum_calc_total(master_table_names,slave_table_names) {
     var total = 0;
     $("input[name^='"+slave_table_names+"[total]']").each(function () {
         var thisValue = $(this).val();

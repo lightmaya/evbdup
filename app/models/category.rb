@@ -7,8 +7,9 @@ class Category < ActiveRecord::Base
   has_many :users, through: :user_categories
 
   # default_scope -> {order(:ancestry, :sort, :id)}
+  default_value_for :status, 65
 
-  scope :usable, -> {where("categories.status = 0")}
+  scope :usable, -> {where(status: self.effective_status)}
 
   include AboutStatus
   include AboutAncestry
@@ -21,21 +22,23 @@ class Category < ActiveRecord::Base
 
   # 中文意思 状态值 标签颜色 进度 
 	def self.status_array
-		[
-	    ["正常",0,"u",100],
-	    ["冻结",1,"yellow",0],
-	    ["已删除",404,"red",100]
-    ]
+    # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100], ["已冻结", "12", "dark", 100]]
+    self.get_status_array(["正常", "已冻结", "已删除"])
+		# [
+	 #    ["正常",0,"u",100],
+	 #    ["冻结",1,"yellow",0],
+	 #    ["已删除",404,"red",100]
+  #   ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "删除" => { 0 => 404 },
-      "冻结" => { 0 => 1 },
-      "恢复" => { 1 => 0 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "删除" => { 0 => 404 },
+  #     "冻结" => { 0 => 1 },
+  #     "恢复" => { 1 => 0 }
+  #   }
+  # end
 
   # 根据action_name 判断obj有没有操作
   # :index, :delete, :destroy, :freeze, :update_freeze, :recover, :update_recover
@@ -52,11 +55,11 @@ class Category < ActiveRecord::Base
   end
 
   # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-  	# 列表中不允许出现的
-  	limited = [404]
-  	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  # 	# 列表中不允许出现的
+  # 	limited = [404]
+  # 	arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def self.xml(who='',options={})
 	  %Q{
@@ -76,7 +79,7 @@ class Category < ActiveRecord::Base
   # 汽车类品目
   def self.qc
     qc = self.find_by(id: 4)
-    return qc.present? ? qc.subtree.where(status: 0) : qc
+    return qc.present? ? qc.subtree.usable : qc
   end
 
   # 缓存汽车类品目ID
@@ -89,10 +92,54 @@ class Category < ActiveRecord::Base
     Setting.send("category_qc_ids")
   end
 
+  # 建筑工程类品目
+  def self.gc
+    gc = self.find_by(id: 882)
+    return gc.present? ? gc.subtree.usable : gc
+  end
+
+  # 缓存建筑工程类品目ID
+  def self.cache_gc_ids(force = false)
+    if force
+      Setting.send("category_gc_ids=", gc.map(&:id))
+    else
+      Setting.send("category_gc_ids=", gc.map(&:id)) if Setting.send("category_gc_ids").blank?
+    end
+    Setting.send("category_gc_ids")
+  end
+
+  # 包装物类品目
+  def self.bzw
+    bzw = self.find_by(id: 792)
+    return bzw.present? ? bzw.subtree.usable : bzw
+  end
+
+  # 缓存包装物类品目ID
+  def self.cache_bzw_ids(force = false)
+    if force
+      Setting.send("category_bzw_ids=", bzw.map(&:id))
+    else
+      Setting.send("category_bzw_ids=", bzw.map(&:id)) if Setting.send("category_bzw_ids").blank?
+    end
+    Setting.send("category_bzw_ids")
+  end
+
   # 粮机类品目
   def self.lj
-    lj = self.find_by(id: 2)
-    return lj.present? ? lj.subtree.where(status: 0) : lj
+    # lj = self.find_by(id: 2)
+    # return lj.present? ? lj.subtree.usable : lj
+    not_in_ids = []
+    not_in_ids |= self.gc.map(&:id) if self.gc.present?
+    not_in_ids |= self.bzw.map(&:id) if self.bzw.present?
+    cdt = []
+    cdt << "(id = :id or ancestry like :like or ancestry = :id)"
+    value = { id: 2, like: "2/%" }
+    if not_in_ids.present?
+      cdt << "id not in (:not_id)"
+      value[:not_id] = not_in_ids
+    end
+    return self.usable.where([ cdt.join(" and "), value ])
+
   end
 
   # 缓存粮机类品目ID
@@ -108,7 +155,7 @@ class Category < ActiveRecord::Base
   # 职工工装类品目
   def self.gz
     gz = self.find_by(id: 56)
-    return gz.present? ? gz.subtree.where(status: 0) : gz
+    return gz.present? ? gz.subtree.usable : gz
   end
 
   # 缓存职工工装类品目ID
@@ -127,14 +174,13 @@ class Category < ActiveRecord::Base
     not_in_ids |= self.qc.map(&:id) if self.qc.present?
     not_in_ids |= self.gz.map(&:id) if self.gz.present?
     cdt = []
-    cdt << "status = :status"
     cdt << "(id = :id or ancestry like :like or ancestry = :id)"
-    value = { status: 0, id: 1, like: "1/%" }
+    value = { id: 1, like: "1/%" }
     if not_in_ids.present?
       cdt << "id not in (:not_id)"
       value[:not_id] = not_in_ids
     end
-    return self.where([ cdt.join(" and "), value ])
+    return self.usable.where([ cdt.join(" and "), value ])
   end
 
   # 缓存办公用品类品目ID
@@ -150,6 +196,8 @@ class Category < ActiveRecord::Base
   # 清除Setting的category_ids
   def clean_cache_ids
     self.class.cache_qc_ids(true)
+    self.class.cache_gc_ids(true)
+    self.class.cache_bzw_ids(true)
     self.class.cache_lj_ids(true)
     self.class.cache_gz_ids(true)
     self.class.cache_bg_ids(true)

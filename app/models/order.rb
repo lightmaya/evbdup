@@ -8,8 +8,9 @@ class Order < ActiveRecord::Base
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :budget
   
-  scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("buyer_code like '#{dep_real_ancestry}/%' or buyer_code = '#{dep_real_ancestry}'") }
-  scope :not_grcg, -> { where("yw_type <> 'grcg'") }
+  scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("orders.buyer_code like '#{dep_real_ancestry}/%' or orders.buyer_code = '#{dep_real_ancestry}'") }
+  scope :find_all_by_seller, ->(seller_id, seller_name) { where("orders.seller_id = #{seller_id} or orders.seller_name = '#{seller_name}'") }
+  scope :not_grcg, -> { where("orders.yw_type <> 'grcg'") }
   scope :by_seller_id, ->(seller_id) { where("orders.seller_id = #{seller_id}")}
 
   validates_with MyValidator
@@ -19,6 +20,8 @@ class Order < ActiveRecord::Base
     end
 
 
+  default_value_for :status, 0
+
 
 	include AboutStatus
 
@@ -26,6 +29,7 @@ class Order < ActiveRecord::Base
     # 设置rule_id
     self.rule_id = Rule.find_by(yw_type: self.yw_type).try(:id)
     self.rule_id = Rule.find_by(yw_type: 'BidProject').try(:id) if self.yw_type == 'wsjj'
+    self.rule_step = 'start'
   end
 
   after_create do 
@@ -37,6 +41,10 @@ class Order < ActiveRecord::Base
     budget.try(:used!)
   end
 
+  before_save do 
+    self.seller_id = Department.find_by(name: self.seller_name).try(:id) if self.seller_id.blank?
+  end
+
   PTypes = {"xygh" => "单位采购", "grcg" => "个人采购"}
 
 	# 附件的类
@@ -46,50 +54,55 @@ class Order < ActiveRecord::Base
 
 	# 中文意思 状态值 标签颜色 进度 
 	def self.status_array
-		[
-	    ["未提交",0,"orange",10],
-	    ["等待审核",1,"blue",50],
-      ["审核拒绝",2,"red",0],
-      ["自动生效",5,"yellow",60],
-      ["审核通过",6,"yellow",60],
-	    ["已完成",3,"u",80],
-	    ["未评价",4,"purple",100],
-	    ["已删除",404,"light",0],
-      ["等待卖方确认", 10, "aqua", 20],
-      ["等待买方确认", 21, "light-green", 40],
-      ["卖方退回", 15, "orange", 10],
-      ["买方退回", 26, "aqua", 20],
-      ["撤回等待审核", 32, "sea", 30],
-      ["作废等待审核", 43, "sea", 30],
-      ["已作废", 49, "red", 0],
-      ["拒绝撤回", 37, "yellow", 60],
-      ["拒绝作废", 48, "yellow", 60],
-      ["已拆单", 50, "light", 0]
+    # [
+    #   ["暂存", "0", "orange", 10], ["等待审核", "8", "blue", 60],
+    #   ["审核拒绝", "7", "red", 20], ["自动生效", "2", "yellow", 70],
+    #   ["审核通过", "9", "yellow", 70], ["已完成", "100", "u", 100],
+    #   ["等待卖方确认", "3", "brown", 30], ["等待买方确认", "4", "light-green", 40],
+    #   ["卖方退回", "42", "orange", 20], ["买方退回", "10", "brown", 30],
+    #   ["撤回等待审核", "36", "aqua", 30], ["作废等待审核", "43", "aqua", 30],
+    #   ["已作废", "47", "dark", 100], ["已撤回", "35", "orange", 20],
+    #   ["拒绝撤回", "37", "yellow", 60], ["拒绝作废", "44", "yellow", 60],
+    #   ["已拆单", "5", "dark", 100], ["等待收货", "11", "light-green", 50], ["已删除", "404", "dark", 100]
+    # ]
+    self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成", 
+      "等待卖方确认", "等待买方确认", "卖方退回", "买方退回", "已拆单", "等待收货", 
+      "撤回等待审核", "作废等待审核", "已作废", "已撤回", "拒绝撤回", "拒绝作废", "已删除"])
+		# [
+	 #    ["未提交",0,"orange",10], ["等待审核",1,"blue",50],
+  #     ["审核拒绝",2,"red",0], ["自动生效",5,"yellow",60],
+  #     ["审核通过",6,"yellow",60], ["已完成",3,"u",80],
+	 #    ["未评价",4,"purple",100], ["已删除",404,"light",0],
+  #     ["等待卖方确认", 10, "aqua", 20], ["等待买方确认", 21, "light-green", 40],
+  #     ["卖方退回", 15, "orange", 10], ["买方退回", 26, "aqua", 20],
+  #     ["撤回等待审核", 32, "sea", 30], ["作废等待审核", 43, "sea", 30],
+  #     ["已作废", 49, "red", 0], ["拒绝撤回", 37, "yellow", 60],
+  #     ["拒绝作废", 48, "yellow", 60], ["已拆单", 50, "light", 0], ["等待收货", 52, "light", 50]
 
-      # 未下单 正在确认 等待审核 正在发货 已发货 已收货 正在退单 已退单 未评价 已完成
-      # 等待付款 部分付款 已付款 已退款 集中支付
-    ]
+  #     # 未下单 正在确认 等待审核 正在发货 已发货 已收货 正在退单 已退单 未评价 已完成
+  #     # 等待付款 部分付款 已付款 已退款 集中支付
+  #   ]
   end
 
-  def self.effective_status
-    [3,5,6]
-  end
+  # def self.effective_status
+  #   [3,5,6]
+  # end
 
   # 核对电子凭证真伪的状态
   def self.ysd_status
-    [3]
+    [100]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    status_ha = self.find_step_by_rule.blank? ? 5 : 1 
-    return {
-      "提交" => { 2 => status_ha, 0 => status_ha },
-      "通过" => { 1 => 6 },
-      "不通过" => { 1 => 2 },
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   status_ha = self.find_step_by_rule.blank? ? 5 : 1 
+  #   return {
+  #     "提交" => { 2 => status_ha, 0 => status_ha },
+  #     "通过" => { 1 => 6 },
+  #     "不通过" => { 1 => 2 },
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
   # 根据品目创建项目名称
   def self.get_project_name(order, user, category_names, yw_type = 'xygh')
@@ -143,11 +156,11 @@ class Order < ActiveRecord::Base
     # order.items.group_by{|item| item.category.ht_template && item.agent_id}.size
 
     # 先判断seller_id
-    dep = if order.item_type
-      Agent.find(order.seller_id).agent_dep
-    else
-      Department.find(order.seller_id)
-    end
+    # dep = if order.item_type
+    #   Agent.find(order.seller_id).agent_dep
+    # else
+    dep = Department.find(order.seller_id)
+    # end
 
     order.name = Order.get_project_name(nil, user, category_name_ary.uniq.join("、"))
     order.seller_name = dep.name
@@ -180,7 +193,13 @@ class Order < ActiveRecord::Base
       end
     end
 
-    order.total = order.items.map(&:total).sum
+    # order.total = order.items.map(&:total).sum
+    total = order.items.map(&:total).sum
+    total += order.deliver_fee if order.deliver_fee.present?
+    total += order.other_fee if order.other_fee.present?
+
+    order.total = total
+
     order
   end
 
@@ -191,7 +210,7 @@ class Order < ActiveRecord::Base
   # 买方单位
   def buyer
     if self.buyer_id.present?
-      Department.find_by(id: self.buyer_id)
+      Department.find_by(id: self.buyer_id).try(:real_dep)
     else
       Department.find_by(name: self.buyer_name)
     end
@@ -200,7 +219,7 @@ class Order < ActiveRecord::Base
   # 卖方单位
   def seller
     if self.seller_id.present?
-      Department.find_by(id: self.seller_id)
+      Department.find_by(id: self.seller_id).try(:real_dep)
     else
       Department.find_by(name: self.seller_name)
     end
@@ -233,11 +252,11 @@ class Order < ActiveRecord::Base
     when "show" 
       current_u.real_department.is_ancestors?(self.buyer_id)
     when "update", "edit" 
-      [0,2].include?(self.status) && current_u.try(:id) == self.user_id
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" 
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 
-      self.status == 1
+      self.class.audit_status.include?(self.status)
     when "invoice_number"
       self.class.effective_status.include?(self.status)
     when "print" 
@@ -248,7 +267,7 @@ class Order < ActiveRecord::Base
 
   # 流程图的开始数组
   def step_array
-    arr = ["下单", "提交"]
+    arr = ["下单"]
     arr |= self.get_obj_step_names
     return arr
   end
@@ -332,11 +351,17 @@ class Order < ActiveRecord::Base
   end
 
   # 高级搜索的搜索条件数组
-  def self.search_xml
+  def self.search_xml(action_name = '')
     status_ha = {}
     self.status_array.each{ |e| status_ha[e[1]] = e[0] unless e[1] == 404 }
-    yw_type_ha = Dictionary.yw_type
-    yw_type_ha.delete("grcg")
+    ha = Dictionary.yw_type
+    yw_type = (action_name.split("_") & ha.keys)
+    if yw_type.present?
+      key = yw_type.first
+      yw_type_ha = { key: ha[key] }
+    else
+      yw_type_ha = ha.except("grcg")
+    end
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>

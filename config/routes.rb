@@ -110,7 +110,7 @@ namespace :kobe do
 
   resources :orders do
     collection do
-      get :audit_ddcg, :ddcg_list
+      get :audit_ddcg, :ddcg_list, :audit_xygh, :xygh_list, :audit_grcg, :grcg_list, :wsjj_list, :seller_list, :xygh_seller_list
       post :same_template, :create_cart_order
     end
     member do

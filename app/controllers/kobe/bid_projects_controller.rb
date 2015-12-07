@@ -2,22 +2,16 @@
 class Kobe::BidProjectsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_filter :check_bid_project, only: [:choose, :pre_choose]
+  before_action :get_show_arr, :only => [:audit, :show]
+  before_filter :check_bid_project, only: [:choose, :pre_choose, :new, :edit, :create, :update]
 
   def index
-    params[:q][:user_id_eq] = current_user.id unless current_user.admin?
+    params[:q][:user_id_eq] = current_user.id unless current_user.is_zgs?
     @q = BidProject.where(get_conditions("bid_projects")).ransack(params[:q]) 
     @bid_projects = @q.result.includes([:bid_project_bids]).page params[:page]
   end
 
   def show
-    obj_contents = show_obj_info(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
-    @arr  = []
-    @bid_project.items.each_with_index do |item, index|
-      obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
-    end
-    @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
-    @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
     @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC")
   end
 
@@ -52,18 +46,14 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def list
-    arr = []
-    arr << ["bid_projects.status = ? ", 1]
-    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    cdt = get_conditions("bid_projects", arr)
-    @q =  BidProject.joins(:task_queues).where(cdt).ransack(params[:q]) 
-    @bid_projects = @q.result(distinct: true).page params[:page]
-  end
-
-  # 获取审核的menu_ids
-  def get_audit_menu_ids
-    @menu_ids = Menu.get_menu_ids("BidProject|list")
+    @bid_projects = audit_list(BidProject)
+    # arr = []
+    # arr << ["bid_projects.status = ? ", 1]
+    # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    # cdt = get_conditions("bid_projects", arr)
+    # @q =  BidProject.joins(:task_queues).where(cdt).ransack(params[:q]) 
+    # @bid_projects = @q.result(distinct: true).page params[:page]
   end
 
   # 注册提交
@@ -120,18 +110,34 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def destroy
-    @bid_project.change_status_and_write_logs("已删除", stateless_logs("删除",params[:opt_liyou],false))
+    @bid_project.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除成功。")
     redirect_to kobe_bid_projects_path
   end
 
   private  
 
-    # 只允许传递过来的参数
-    def my_params  
-      params.require(:bid_projects).permit(:title, :new_days, :top_type, 
-        :access_permission, :content)  
+    # 获取审核的menu_ids
+    def get_audit_menu_ids
+      @menu_ids = Menu.get_menu_ids("BidProject|list")
     end
+
+    def get_show_arr
+      @arr  = []
+      obj_contents = show_obj_info(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
+      @bid_project.items.each_with_index do |item, index|
+        obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
+      end
+      @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
+      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
+      @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
+      
+    end
+    # 只允许传递过来的参数
+    # def my_params  
+    #   params.require(:bid_projects).permit(:title, :new_days, :top_type, 
+    #     :access_permission, :content)  
+    # end
 
     def get_project_name
       category_names = params[:bid_items][:category_name].values.uniq.join("、")
@@ -140,7 +146,8 @@ class Kobe::BidProjectsController < KobeController
 
     # 只允许自己操作自己的项目
     def check_bid_project
-      @bid_project = current_user.admin? ? BidProject.find_by_id(params[:id]) : current_user.bid_projects.find_by_id(params[:id])
-      return redirect_to not_fount_path unless @bid_project
+      @bid_project = current_user.department.is_zgs? ? BidProject.find_by_id(params[:id]) : current_user.bid_projects.find_by_id(params[:id])
+      # return redirect_to not_fount_path unless @bid_project
+      cannot_do_tips if @bid_project.blank?
     end
 end

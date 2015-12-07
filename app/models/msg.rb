@@ -18,12 +18,12 @@ class Msg < ActiveRecord::Base
   end
 
    # 列表中的状态筛选,current_status当前状态不可以点击
-  def self.status_filter(action='')
-    # 列表中不允许出现的
-    # limited = [404]
-    limited = []
-    arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  end
+  # def self.status_filter(action='')
+  #   # 列表中不允许出现的
+  #   # limited = [404]
+  #   limited = []
+  #   arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
+  # end
 
   def link_users
     return if users.count > 0
@@ -46,26 +46,32 @@ class Msg < ActiveRecord::Base
 
   # 中文意思 状态值 标签颜色 进度 
   def self.status_array
-    [
-      ["暂存", 0, "orange", 50],
-      ["已发布", 2, "u", 100]
-    ]
+    # [["暂存", "0", "orange", 10], ["已发布", "16", "yellow", 40], ["已删除", "404", "dark", 100]]
+    self.get_status_array(["暂存", "已发布", "已删除"])
+    # [
+    #   ["暂存", 0, "orange", 50],
+    #   ["已发布", 2, "u", 100]
+    # ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    {
-      "发布" => { 0 => 2 },
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   {
+  #     "发布" => { 0 => 2 },
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
   # 根据action_name 判断obj有没有操作
   def cando(act='', user)
     return false if user.try(:id) != self.user_id
     case act
-    when "commit", "edit"
-      [0].include?(self.status) # && self.get_tips.blank?
+    when "update", "edit" 
+      self.class.edit_status.include?(self.status)
+    when "commit" 
+      self.can_opt?("提交")
+    when "delete", "destroy" 
+      self.can_opt?("删除")
     else 
       false
     end

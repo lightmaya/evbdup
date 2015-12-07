@@ -62,13 +62,22 @@ module JamesHelper
             </div>
             <a href="#{link_url}" class="btn-more hover-effect" target="_blank" title="#{product.name}">详情 +</a>         
           </div>
-          <div class="caption">
-            <h3><a href="#{link_url}" class="hover-effect" target="_blank" title="#{product.name}">#{text_truncate(product.name, 10)}</a></h3>
-            <p>
-              <strong>市场价：登录查看</strong><br/>
-              <strong>中标价：登录查看</strong>
-            </p>
+
+          <div class="product-description">
+            <div class="overflow-h margin-bottom-5">
+              <div class="pull-left">
+                <h4 class="title-price height-50">
+                  #{link_to_blank truncate(product.name, length: 28), link_url, title: product.name}
+                </h4>
+                <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
+                <div class="price_div title-price" id="price_div_#{product.id}">
+                  <span class="line-through fl clear font-size-14">市场价：<b class="b_m hide">请登录查看</b></span>
+                  <span class="fl clear color-red">入围价：<b class="b_b hide">请登录查看</b></span>
+                </div>
+              </div>    
+            </div>
           </div>
+
         </div>
       </div>
     }.html_safe
@@ -109,6 +118,32 @@ module JamesHelper
         </div>  
       </div>
     }.html_safe
+  end
+
+  # 如果是厂家直销显示厂家联系方式
+  # 如果是代理商供货 显示总协调人信息
+  def get_seller_info(product)
+    title = product.cjzx? ? '' : '总协调人'
+    man = product.cjzx? ? '联系人' : '总协调人'
+    str = %Q{
+      <h5><i class="fa fa-chevron-circle-down"></i> 中标单位#{title}联系信息：</h5>
+      <div class="row p0_25">
+    }
+    user = product.cjzx? ? product.department.users.first : product.coordinators.first
+    str << %Q{
+      <ul class="list-unstyled specifies-list">
+        <li><i class="fa fa-caret-right"></i>中标单位名称：<span>#{user.department.real_dep.name}</span></li>
+        <li><i class="fa fa-caret-right"></i>#{man}姓名: <span>#{user.try(:name)}</span></li>
+        <li><i class="fa fa-caret-right"></i>#{man}电话：<span>#{user.try(:tel)}</span></li>
+        <li><i class="fa fa-caret-right"></i>#{man}手机: <span>#{user.try(:mobile)}</span></li>
+        <li><i class="fa fa-caret-right"></i>#{man}传真: <span>#{user.try(:fax)}</span></li>
+        <li><i class="fa fa-caret-right"></i>#{man}E-Mail: <span>#{user.try(:email)}</span></li>
+        <li><i class="fa fa-caret-right"></i>备注: <span>#{user.try(:summary)}</span></li>
+      </ul>
+      <hr>
+    }
+    str << "</div>"
+    return str.html_safe
   end
 
 end

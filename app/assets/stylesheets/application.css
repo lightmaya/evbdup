@@ -314,7 +314,7 @@ table .money {width:120px; text-align: right;}
 .wizard > .steps .current a:hover,
 .wizard > .steps .current a:active {
   color: #fff;
-    background: #18ba9b;
+    background: #72c02c;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
@@ -337,7 +337,7 @@ table .money {width:120px; text-align: right;}
 .wizard > .steps .done a:hover,
 .wizard > .steps .done a:active {
     color: #fff;
-    background: #2cd5b6;
+    background: #018b3e;
     -webkit-transition: all 0.3s ease-in-out;
     -moz-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
@@ -514,7 +514,7 @@ table .money {width:120px; text-align: right;}
   width:100px;
   height:24px;
   float:left;
-  text-align:right;
+  /*text-align:right;*/
 }
 .newobox .newinfo .new-info-label span {
   color:#ff0000

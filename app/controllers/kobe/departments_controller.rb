@@ -10,7 +10,6 @@ class Kobe::DepartmentsController < KobeController
   skip_authorize_resource :only => [:ztree, :valid_dep_name, :search_bank]
 
   def index
-    @is_hide_dep = (can?(:search, @dep) || current_user.is_admin) ? @dep.real_dep : @dep
   end
 
   def move
@@ -18,7 +17,8 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def ztree
-    ztree_nodes_json(Department,@is_hide_dep)
+
+    ztree_nodes_json(Department, @is_hide_dep)
   end
 
   def new
@@ -107,11 +107,11 @@ class Kobe::DepartmentsController < KobeController
 
   # 修改资质证书
   def upload
-    @myform = SingleForm.new(nil, @dep, { form_id: "edit_upload", button: false, upload_files: true, min_number_of_files: 2, action: update_upload_kobe_department_path(@dep), title: '修改资质证书' })
+    @myform = SingleForm.new(nil, @dep, { form_id: "edit_upload", button: false, upload_files: true, min_number_of_files: 2, action: update_upload_kobe_department_path(@dep), title: '附件' })
   end
 
   def update_upload
-    tips_get("上传资质证书成功。")
+    tips_get("上传附件成功。")
     redirect_to kobe_departments_path(id: @dep)
   end
 
@@ -160,13 +160,14 @@ class Kobe::DepartmentsController < KobeController
 
   # 审核单位
   def list
-    arr = []
-    arr << ["departments.status = ? ", 2]
-    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    cdt = get_conditions("departments", arr)
-    @q =  Department.joins(:task_queues).where(cdt).ransack(params[:q]) 
-    @deps = @q.result(distinct: true).page params[:page]
+    @deps = audit_list(Department)
+    # arr = []
+    # arr << ["departments.status = ? ", 2]
+    # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    # cdt = get_conditions("departments", arr)
+    # @q =  Department.joins(:task_queues).where(cdt).ransack(params[:q]) 
+    # @deps = @q.result(distinct: true).page params[:page]
   end
 
   def audit
@@ -175,7 +176,10 @@ class Kobe::DepartmentsController < KobeController
   def update_audit
     save_audit(@dep)
     # 给刚注册的审核通过的入围供应商加站内消息
-
+    if Department.effective_status.include? @dep.reload.status
+      # 给审核功过的单位用户授权
+      @dep.users.map(&:set_auto_menu)
+    end
     redirect_to list_kobe_departments_path
   end
 
@@ -188,6 +192,7 @@ class Kobe::DepartmentsController < KobeController
       else
         @dep = current_user.department.subtree.find_by(id: params[:id]) if current_user.is_admin && params[:id].present?
       end
+      @is_hide_dep = (can?(:search, @dep) || current_user.is_admin) ? @dep.real_dep : @dep
       unless action_name == "ztree"
         cannot_do_tips unless @dep.present? && @dep.cando(action_name, current_user)
         audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@dep,@menu_ids)

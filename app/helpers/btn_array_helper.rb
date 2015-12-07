@@ -67,7 +67,7 @@ module BtnArrayHelper
     # 修改单位信息
     arr << [obj.class.icon_action("修改"), "javascript:void(0)", onClick: "show_content('#{edit_kobe_department_path(obj)}','#{show_div}')"] if can?(:edit, obj) && obj.cando("edit", current_user)
     # 修改资质证书
-    arr << [obj.class.icon_action("上传资质"), "javascript:void(0)", onClick: "show_content('#{upload_kobe_department_path(obj)}','#{show_div}','edit_upload_fileupload')"] if can?(:upload, obj) && obj.cando("upload", current_user)
+    arr << [obj.class.icon_action("上传附件"), "javascript:void(0)", onClick: "show_content('#{upload_kobe_department_path(obj)}','#{show_div}','edit_upload_fileupload')"] if can?(:upload, obj) && obj.cando("upload", current_user)
     # 维护开户银行
     arr << [obj.class.icon_action("维护开户银行"), "javascript:void(0)", onClick: "show_content('#{show_bank_kobe_department_path(obj)}','#{show_div}')"] if can?(:bank, obj) && obj.cando("show_bank", current_user)
     # 增加下属单位
@@ -113,19 +113,6 @@ module BtnArrayHelper
     if audit_opt.present?
       return [audit_opt] if only_audit
     end
-   #  # 确认
-   #  if [0,1,404].include?(obj.status)
-   #  	arr << [obj.class.icon_action("确认订单"), "/kobe/orders/#{obj.id}/confirm"]
-   #  end
-
-   #  # 删除
-   #  if [0,1,3,4].include?(obj.status)
-	  #   arr << [obj.class.icon_action("删除"), "/kobe/orders/#{obj.id}", method: :delete, data: {confirm: "确定要删除吗?"}]
-	  # end
-   #  # 彻底删除
-   #  if obj.status == 404
-	  #   arr << [obj.class.icon_action("彻底删除"), "/kobe/orders/#{obj.id}", method: :delete, data: {confirm: "删除后不可恢复，确定要删除吗?"}]
-	  # end
 	  return arr
 	end
 
@@ -219,14 +206,12 @@ module BtnArrayHelper
     arr = [] 
     # 查看详细
     arr << [obj.class.icon_action("详细"), "javascript:read_msg(#{obj.id})"]  if can?(:show, obj)
-    if obj.status == 0
-      # 修改
-      arr << [obj.class.icon_action("修改"), edit_kobe_msg_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
-      # 发布
-      arr << [obj.class.icon_action("发布"), commit_kobe_msg_path(obj), method: "post", data: { confirm: "发布后不允许再修改删除，确定发布吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
-      # 删除
-      arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_msg_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
-    end
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_msg_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 发布
+    arr << [obj.class.icon_action("发布"), commit_kobe_msg_path(obj), method: "post", data: { confirm: "发布后不允许再修改删除，确定发布吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
+    # 删除
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_msg_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     return arr
   end
 
@@ -243,7 +228,7 @@ module BtnArrayHelper
     arr = [] 
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_bid_project_path(obj), target: "_blank"]  if can?(:show, obj)
-    arr << [obj.class.icon_action("选择中标人"), pre_choose_kobe_bid_project_path(obj)] if obj.status == 2
+    arr << [obj.class.icon_action("选择中标人"), pre_choose_kobe_bid_project_path(obj)] if obj.status == 16
     # 提交
     arr << [obj.class.icon_action("提交审核"), "#{commit_kobe_bid_project_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
     # 修改
@@ -347,9 +332,9 @@ module BtnArrayHelper
     arr = [] 
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_transfer_path(obj), target: "_blank"]     # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_transfer_path(obj)]  if obj.status==0   # 删除
-    arr << [obj.class.icon_action("提交"), commit_kobe_transfer_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if obj.status==0
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_transfer_path(obj)}', "#opt_dialog") }]  if obj.status!=404
+    arr << [obj.class.icon_action("修改"), edit_kobe_transfer_path(obj)]    # 删除
+    arr << [obj.class.icon_action("提交"), commit_kobe_transfer_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] 
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_transfer_path(obj)}', "#opt_dialog") }]
     return arr
   end
 
@@ -361,12 +346,12 @@ module BtnArrayHelper
       # 修改
       arr << [obj.class.icon_action("修改"), edit_kobe_faq_path(obj)]    
       # 删除
-      arr << [obj.class.icon_action("提交"), commit_kobe_faq_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if obj.status == 0 
+      arr << [obj.class.icon_action("提交"), commit_kobe_faq_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }]
       # 提交
-      arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }] if obj.status == 0
+      arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }]
     end
     # 回复
-      arr << [obj.class.icon_action("回复"), reply_kobe_faq_path(obj)] if ((obj.catalog=='yjjy') && (obj.status==2)) 
+      arr << [obj.class.icon_action("回复"), reply_kobe_faq_path(obj)] 
     return arr
   end
 

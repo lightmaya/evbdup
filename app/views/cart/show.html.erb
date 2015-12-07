@@ -3,7 +3,9 @@
     <% if @cart.items.present? %>
       <%= hidden_field_tag "buy_type", 0 %>
       <div role="application" class="wizard clearfix">
-        <%= render "shared/steps" %>
+        <%#= render "shared/steps" %>
+        <%= show_step(["我的购物车", "下单", "供应商确认", "打印合同<br/>及凭证", "商品及<br/>服务评价"])%>
+
         <div class="content clearfix">
           <section>
             <div class="table-responsive">
@@ -12,7 +14,7 @@
                   <tr>
                     <th></th>
                     <th>产品</th>
-                    <th width="190px">供应商价格</th>
+                    <th width="190px">最高限价</th>
                     <th width="180px">数量</th>
                     <th width="190px">小计</th>
                     <th></th>
@@ -33,7 +35,7 @@
                           <%= check_box_tag "p-#{sid}", "", item.ready.present?, class: "cart_checkbox", cart_item_id: item.id %>
                         </td>
                         <td class="product-in-table">
-                          <img class="img-responsive" src="assets/img/thumb/08.jpg" alt="">
+                          <img class="img-responsive" src="/assets/404.gif" alt="">
                           <div class="product-it-in">
                             <h3><%= link_to_blank item.name, item.product %></h3>
                             <span><%= item.big_category_name %></span>
@@ -49,9 +51,9 @@
                         <td class="shop-red tc">¥<span class="cart-item-total" id="item-total-<%= item.id %>"><%= number_with_precision(item.total, :precision => 2) %></span>
                         </td>
                         <td>
-                          <button type="button" class="delete_from_cart_btn_<%= item.product_id %> close"><span><%= link_to "×", rm_cart_path(item.id), method: :delete, data: { confirm: '你确定吗?' } %></span>
+                          <!-- <button type="button" class="delete_from_cart_btn_<%= item.product_id %> close"> --><span><%= link_to "×", rm_cart_path(item.id), method: :delete, data: { confirm: '你确定吗?' } %></span>
                               <span class="sr-only">Close</span>
-                          </button>
+                          <!-- </button> -->
                         </td>
                       </tr>
                     <% end -%>

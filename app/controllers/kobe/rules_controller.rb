@@ -20,21 +20,21 @@ class Kobe::RulesController < KobeController
 
   def show
     @arr  = []
-    obj_contents = show_obj_info(@rule,Rule.xml,{grid: 3})
-    @rule.create_rule_objs.each_with_index do |step,index|
-      obj_contents << show_obj_info(step,RuleStep.xml,{title: "Step ##{index+1}"})
+    obj_contents = show_obj_info(@rule, Rule.xml, { grid: 3 })
+    @rule.create_rule_objs.each_with_index do |step, index|
+      obj_contents << show_obj_info(step, RuleStep.xml, { title: "Step ##{index+1}", grid: 4 })
     end
     @arr << {title: "详细信息", icon: "fa-info", content: obj_contents} 
     @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@rule)}
   end
 
   def create
-    rule = create_and_write_logs(Rule, Rule.xml, { :action => "新增" }, { "rule" => RuleStep.create_rule_xml(params) })
+    rule = create_and_write_logs(Rule, Rule.xml, { :action => "新增" }, { "rule_xml" => RuleStep.create_rule_xml(params) })
     redirect_to kobe_rules_path
   end
 
   def update
-    update_and_write_logs(@rule, Rule.xml, { :action => "修改" },  { "rule" => RuleStep.create_rule_xml(params) })
+    update_and_write_logs(@rule, Rule.xml, { :action => "修改" },  { "rule_xml" => RuleStep.create_rule_xml(params) })
     redirect_to kobe_rules_path
   end
 

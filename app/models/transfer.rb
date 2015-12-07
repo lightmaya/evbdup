@@ -11,6 +11,7 @@ class Transfer < ActiveRecord::Base
   # default_scope -> {order("id desc")}
   belongs_to :rule
   
+  default_value_for :status, 0
 
 	include AboutStatus
 
@@ -27,20 +28,22 @@ class Transfer < ActiveRecord::Base
 
 	# 中文意思 状态值 标签颜色 进度 
 	def self.status_array
-		[
-	    ["暂存",0,"orange",50],
-	    ["已发布",1,"blue",100],
-	    ["已删除",404,"light",0]
-    ]
+    # [["暂存", "0", "orange", 10], ["已发布", "16", "yellow", 40], ["已删除", "404", "dark", 100]]
+    self.get_status_array(["暂存", "已发布", "已删除"])
+		# [
+	 #    ["暂存",0,"orange",50],
+	 #    ["已发布",1,"blue",100],
+	 #    ["已删除",404,"light",0]
+  #   ]
   end
 
   # 根据不同操作 改变状态
-  def change_status_hash
-    return {
-      "提交" => { 0 => 1 },
-      "删除" => { 0 => 404 }
-    }
-  end
+  # def change_status_hash
+  #   return {
+  #     "提交" => { 0 => 1 },
+  #     "删除" => { 0 => 404 }
+  #   }
+  # end
 
 
   def self.xml(who='',options={})

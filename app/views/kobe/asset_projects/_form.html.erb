@@ -21,7 +21,7 @@ function input_blur(me,table_names){
     });
     total = formatFloat(total,2);
     $("#"+table_names+"_total_" + id).val(total);
-    calc_total('asset_projects','asset_project_items');
+    sum_calc_total('asset_projects','asset_project_items');
 };
 
  $(function() {

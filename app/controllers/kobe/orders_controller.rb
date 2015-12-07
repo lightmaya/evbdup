@@ -5,6 +5,7 @@ class Kobe::OrdersController < KobeController
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
+  before_action :get_audit_menu_ids, :only => [:audit_ddcg, :audit_xygh, :audit_grcg, :audit, :update_audit]
 
   skip_authorize_resource :only => [:same_template]
 
@@ -60,7 +61,7 @@ class Kobe::OrdersController < KobeController
     return redirect_to(not_found_path) unless @order
     @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     write_logs(@order, "供应商确认", "")
-    redirect_to action: :index
+    redirect_to action: :xygh_seller_list
   end
 
   # 采购人确认页面
@@ -128,9 +129,8 @@ class Kobe::OrdersController < KobeController
 
   # 审核定点采购项目
   def audit_ddcg
-    arr = []
-    arr << ["orders.yw_type = ? ", 'ddcg']
-    audit_list(arr)
+    arr = [["orders.yw_type = ? ", 'ddcg']]
+    @orders = audit_list(Order, arr)
   end
   
 
@@ -139,6 +139,55 @@ class Kobe::OrdersController < KobeController
     params[:q][:user_id_eq] = current_user.id
     params[:q][:yw_type_eq] = 'ddcg'
     @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
+    @orders = @q.result.page params[:page]
+  end
+
+  # 审核协议采购项目
+  def audit_xygh
+    arr = [["orders.yw_type = ? ", 'xygh']]
+    @orders = audit_list(Order, arr)
+  end
+  
+
+  # 我的协议采购项目
+  def xygh_list
+    params[:q][:user_id_eq] = current_user.id
+    params[:q][:yw_type_eq] = 'xygh'
+    @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
+    @orders = @q.result.page params[:page]
+  end
+
+  # 审核个人采购项目
+  def audit_grcg
+    arr = [["orders.yw_type = ? ", 'grcg']]
+    @orders = audit_list(Order, arr)
+  end
+  
+  # 我的个人采购项目
+  def grcg_list
+    params[:q][:user_id_eq] = current_user.id
+    params[:q][:yw_type_eq] = 'grcg'
+    @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
+    @orders = @q.result.page params[:page]
+  end
+
+  # 供应商的网上竞价成交采购项目
+  def wsjj_list
+    params[:q][:yw_type_eq] = 'wsjj'
+    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
+    @orders = @q.result.page params[:page]
+  end
+
+  # 销售项目列表
+  def seller_list
+    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
+    @orders = @q.result.page params[:page]
+  end
+
+  # 协议供货销售项目列表 确认订单列表
+  def xygh_seller_list
+    params[:q][:yw_type_eq] = 'xygh'
+    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
     @orders = @q.result.page params[:page]
   end
 
@@ -186,10 +235,14 @@ class Kobe::OrdersController < KobeController
 
   private
 
+    def get_audit_menu_ids
+      @menu_ids = Menu.get_menu_ids("Order|#{action_name}")
+    end
+
     def get_order
       cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
-      menu_ids = Menu.get_menu_ids("Order|audit_#{@order.yw_type}") if @order.present?
-      audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@order, menu_ids)
+      # menu_ids = Menu.get_menu_ids("Order|audit_#{@order.yw_type}") if @order.present?
+      audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@order, @menu_ids)
     end
 
     # show页面的数组
@@ -219,14 +272,14 @@ class Kobe::OrdersController < KobeController
     end
 
     # 审核
-    def audit_list(arr=[])
-      menu_ids = Menu.get_menu_ids("Order|#{action_name}")
-      arr << ["orders.status = ? ", 1]
-      arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{menu_ids.join(",") }) )", current_user.id]
-      arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-      @q =  Order.joins(:task_queues).where(get_conditions("orders", arr)).ransack(params[:q])
-      @orders = @q.result(distinct: true).page params[:page]
-    end
+    # def audit_list(arr=[])
+    #   menu_ids = Menu.get_menu_ids("Order|#{action_name}")
+    #   arr << ["orders.status = ? ", 1]
+    #   arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{menu_ids.join(",") }) )", current_user.id]
+    #   arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    #   @q =  Order.joins(:task_queues).where(get_conditions("orders", arr)).ransack(params[:q])
+    #   @orders = @q.result(distinct: true).page params[:page]
+    # end
 
     def order_from_cart
       return redirect_to cart_path if @cart.ready_items.blank?

@@ -1,7 +1,7 @@
 class FaqsController < JamesController
 
 	def show
-	  @faqs = Faq.where("status= ? and  catalog = ?" , 1 , params[:type]).order("sort, id desc")
+	  @faqs = Faq.where(status: Faq.effective_status, catalog: params[:type]).order("sort, id desc")
     @type = params[:type]
 	end
 	

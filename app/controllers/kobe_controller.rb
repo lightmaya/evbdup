@@ -58,7 +58,7 @@ class KobeController < ApplicationController
   # 准备主界面的素材 ---- #未读短信息
   def init_themes
     # @unread_notifications = current_user.unread_notifications
-    @suggestion_form = SingleForm.new(Suggestion.xml,Suggestion.new,{upload_files: true, grid: 1, form_id: "suggestion_form", action: kobe_suggestions_path})
+    # @suggestion_form = SingleForm.new(Suggestion.xml,Suggestion.new,{upload_files: true, grid: 1, form_id: "suggestion_form", action: kobe_suggestions_path})
   end
 
   # 获取列表的查询条件,arr应该是一个二维数组,类似于[["name = ? ", "xxx"],["user_id = ? ",11]]
@@ -130,12 +130,15 @@ class KobeController < ApplicationController
     cs = obj.get_current_step
     if cs.is_a?(Hash)
       ns = obj.get_next_step
-      if ns.is_a?(Hash) # 确认并转向上级单位审核 状态不变 rule_step改变
-        rule_step = ns["name"]
-        obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
-      else # 确认并结束审核流程 状态改变 rule_step改变
-        obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{ns}'"],false) if ns == "done"
-      end
+      rule_step = ns.is_a?(Hash) ? ns["name"] : ns
+      # 状态根据下一步的start_status 或当前步骤的finish_status 转变
+      obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{rule_step}'"],false)
+      # if ns.is_a?(Hash) # 确认并转向上级单位审核 状态不变 rule_step改变
+      #   rule_step = ns["name"]
+      #   obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
+      # else # 确认并结束审核流程 状态改变 rule_step改变
+      #   obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{ns}'"],false) if ns == "done"
+      # end
     end
     # 插入待办事项
     obj.reload.create_task_queue
@@ -176,6 +179,16 @@ class KobeController < ApplicationController
       return true if menu_ids.present? && tq.find{ |e| menu_ids.include?(e.menu_id) && (current_user.menu_ids & menu_ids).present? }.present?
     end
     return false
+  end
+
+  # 审核列表
+  def audit_list(model_name, arr = [])
+    table_name = model_name.to_s.tableize
+    arr << ["#{table_name}.status in (#{model_name.audit_status.join(',')}) "]
+    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    @q =  model_name.joins(:task_queues).where(get_conditions(table_name, arr)).ransack(params[:q])
+    return @q.result(distinct: true).page params[:page]
   end
 
 end

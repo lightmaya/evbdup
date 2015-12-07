@@ -322,4 +322,13 @@ module ApplicationHelper
     icon_location == 'left' ? "<i class='fa #{icon}'></i> #{name}" : "#{name} <i class='fa #{icon}'></i>"
   end
 
+  def cart_tag
+    %Q{
+      <a href="#{cart_path}">
+        <i class="fa fa-shopping-cart"></i> 购物车
+        <span class="badge badge-red rounded-x">#{@cart.items.size}</span>
+      </a>
+    }.html_safe
+  end
+
 end

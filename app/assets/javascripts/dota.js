@@ -77,7 +77,7 @@ $(function(){
 
     if(price_flag){
       $(".save_price_span").focus();
-      art_alert("请先保存采购人价格");
+      art_alert("请先保存采购单价");
       return false;
     }
     
@@ -414,6 +414,12 @@ function save_real_price(item_id){
   $("#cart-item-total-" + item_id).text((parseInt(num) * parseFloat($t.val())).toFixed(2));
   var current_total = 0.0;
   $(".cart-item-total").each(function(){current_total += parseFloat($(this).text());})
+  // 运费和其他费用
+  var deliver_fee = $("#order_deliver_fee").val().replace(/[^0-9.]/g,'');
+  var other_fee = $("#order_other_fee").val().replace(/[^0-9.]/g,'');
+  if (!isEmpty(deliver_fee)) { current_total += parseFloat(deliver_fee); }
+  if (!isEmpty(other_fee)) { current_total += parseFloat(other_fee); }
+  
   $("#order_total").text(current_total.toFixed(2)).change();
 
   $("#item-price-show-" + item_id).text(parseFloat($t.val()).toFixed(2));
@@ -421,3 +427,49 @@ function save_real_price(item_id){
   $("#show-price-" + item_id).show();
   $("#edit-price-" + item_id).hide();
 }
+
+// 修改附加费用
+function choose_fee(){
+  $("#step_fee").hide();
+  $("#step_fee_current").show();
+}
+
+// 保存附加费用
+function save_fee(){
+  var checkr = true;
+  var deliver_fee = $("#order_deliver_fee").val().replace(/[^0-9.]/g,'');
+  var other_fee = $("#order_other_fee").val().replace(/[^0-9.]/g,'');
+  var other_fee_desc = $("#order_other_fee_desc").val();
+  // 如果填写其他费用必须填写其他费用说明
+  if (!isEmpty(other_fee) && isEmpty(other_fee_desc)) {
+    errorFlag = true;
+    errorMessage = "请填写其他费用说明";
+    $("#order_other_fee_desc_div_error").html(errorMessage);
+    $("#order_other_fee_desc_div").addClass("errorinformation");
+    checkr = false;
+    return;
+  }
+
+  // 计算总价
+  var fee_text = ""
+  var current_total = 0.0;
+  $(".cart-item-total").each(function(){current_total += parseFloat($(this).text());})
+  // 运费和其他费用
+  if (!isEmpty(deliver_fee)) { 
+    current_total += parseFloat(deliver_fee); 
+    fee_text = fee_text + "运费：¥" + parseFloat(deliver_fee) + " 元 ";
+  }
+  if (!isEmpty(other_fee)) { 
+    current_total += parseFloat(other_fee); 
+    fee_text = fee_text + "其他费用：¥" + parseFloat(other_fee) + " 元，其他费用说明：" + other_fee_desc;
+  }
+
+  $("#order_total").text(current_total.toFixed(2)).change();
+
+  $("#current_fee_info").text(fee_text);
+  $("#step_fee").show();
+  $("#step_fee_current").hide();
+}
+
+
+

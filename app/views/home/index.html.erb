@@ -109,7 +109,7 @@
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
                   <% @wsjj_jg.each do |project| %>
-                     <%= li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, 18, true, (project.status == 12 ? '中标' : '废标'), (project.status == 12 ? 'green' : 'blue')) %>
+                     <%= li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, 18, true, (project.status == 23 ? '中标' : '废标'), (project.status == 23 ? 'green' : 'blue')) %>
                   <% end %>
                   <%= (li_blank_tag * (8-@wsjj_jg.size)).html_safe if @wsjj_jg.size < 8 %>
                 </ul>

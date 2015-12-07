@@ -1,0 +1,36 @@
+<div class="step hide" id="step_fee">
+  <div class="headline"><h2>附加费用<span>[<%= link_to_void "修改", onclick: "choose_fee();", id: "choose_fee_link" %>]</span></h2>
+  </div>
+  <p class="step_info" id="current_fee_info"></p>
+</div>
+
+
+<div class="step-current newobox" id="step_fee_current">
+  <div class="headline"><h2>附加费用</h2></div>
+
+  <div class="newinfo" id="order_deliver_fee_div">
+    <div class="new-info-label">运费：</div>
+    <div class="new-info-field">
+      <%= f.text_field :deliver_fee, class: "fiel_inpute" %>
+    </div>
+  </div>
+
+  <div class="newinfo" id="order_other_fee_div">
+    <div class="new-info-label">其他费用：</div>
+    <div class="new-info-field">
+      <%= f.text_field :other_fee, class: "fiel_inpute" %>
+    </div>
+  </div>
+
+  <div class="newinfo" id="order_other_fee_desc_div">
+    <div class="new-info-label">其他费用说明：</div>
+    <div class="new-info-field">
+      <%= f.text_field :other_fee_desc, class: "w350 h30 fiel_inpute" %>
+    </div>
+    <span class="status error" id="order_other_fee_desc_div_error"></span>
+  </div>
+
+  <div class="clear">
+    <%= link_to_void "保存附件费用", onclick: "save_fee();", id: "save_fee_btn", class: "btn-u w120 ml15 mt10 need_close"  %>
+  </div>
+</div>

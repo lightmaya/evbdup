@@ -1,5 +1,6 @@
 <div class="wizard">
-  <%= render "shared/steps", i: 3 %>
+  <%#= render "shared/steps", i: 3 %>
+  <%= show_step(["我的购物车", "下单", "供应商确认", "打印合同<br/>及凭证", "商品及<br/>服务评价"], 2) %>
 </div>
 
 <%= draw_myform(@ms_form) %>

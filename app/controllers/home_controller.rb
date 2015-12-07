@@ -16,7 +16,7 @@ class HomeController < JamesController
     # 网上竞价需求公告
     @wsjj_xq = BidProject.can_bid.order("id desc").limit(8)
     # 网上竞价结果公告
-    @wsjj_jg = BidProject.where(status: [-1, 12]).order("id desc").limit(8)
+    @wsjj_jg = BidProject.where(status: [23, 33]).order("id desc").limit(8)
     # 畅销产品
     @products = Product.show.order("id desc").limit(4)
     # 入围供应商

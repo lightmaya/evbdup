@@ -58,12 +58,13 @@ class Kobe::DailyCostsController < KobeController
   end
 
   def list
-    arr = []
-    arr << ["daily_costs.status = ? ", 2]
-    arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    @q =  DailyCost.joins(:task_queues).where(get_conditions("daily_costs", arr)).ransack(params[:q])
-    @daily_costs = @q.result(distinct: true).page params[:page]
+    @daily_costs = audit_list(DailyCost)
+    # arr = []
+    # arr << ["daily_costs.status = ? ", 2]
+    # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+    # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+    # @q =  DailyCost.joins(:task_queues).where(get_conditions("daily_costs", arr)).ransack(params[:q])
+    # @daily_costs = @q.result(distinct: true).page params[:page]
   end
 
   def audit
