@@ -34,18 +34,13 @@ class Kobe::ArticlesController < KobeController
     # @articles = @q.result(distinct: true).page params[:page]
   end
 
-  # 获取审核的menu_ids
-  def get_audit_menu_ids
-    @menu_ids = Menu.get_menu_ids("Article|list")
-  end
-
   # 注册提交
   def commit
     @article.change_status_and_write_logs("提交",
-      stateless_logs("提交","注册完成，提交审核！", false),
+      stateless_logs("提交","提交成功！", false),
       @article.commit_params, false)
     @article.reload.create_task_queue
-    tips_get("提交成功，请等待审核。")
+    tips_get("提交成功。")
     redirect_to kobe_articles_path(id: @article)
   end
 
@@ -94,9 +89,14 @@ class Kobe::ArticlesController < KobeController
 
   private  
 
-    # 只允许传递过来的参数
-    def my_params  
-      params.require(:articles).permit(:title, :new_days, :top_type, 
-        :access_permission, :content)  
+    # 获取审核的menu_ids
+    def get_audit_menu_ids
+      @menu_ids = Menu.get_menu_ids("Article|list")
     end
+
+    # 只允许传递过来的参数
+    # def my_params  
+    #   params.require(:articles).permit(:title, :new_days, :top_type, 
+    #     :access_permission, :content)  
+    # end
 end

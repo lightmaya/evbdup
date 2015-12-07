@@ -41,7 +41,7 @@ class Kobe::BidProjectsController < KobeController
 
   def update_audit
     save_audit(@bid_project)
-    # 给刚注册的审核通过的入围供应商插入待办事项
+
     redirect_to list_kobe_bid_projects_path
   end
 
@@ -56,13 +56,13 @@ class Kobe::BidProjectsController < KobeController
     # @bid_projects = @q.result(distinct: true).page params[:page]
   end
 
-  # 注册提交
+  # 提交
   def commit
-    @bid_project.change_status_and_write_logs("提交审核",
-      stateless_logs("提交审核","注册完成，提交审核！", false),
+    @bid_project.change_status_and_write_logs("提交",
+      stateless_logs("提交","提交成功！", false),
       @bid_project.commit_params, false)
     @bid_project.reload.create_task_queue
-    tips_get("提交成功，请等待审核。")
+    tips_get("提交成功。")
     redirect_to kobe_bid_projects_path(id: @bid_project)
   end
 

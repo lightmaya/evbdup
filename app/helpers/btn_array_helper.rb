@@ -189,7 +189,7 @@ module BtnArrayHelper
     # 查看详细
     arr << [obj.class.icon_action("详细"), article_path(obj), target: "_blank"]  if can?(:show, obj)
     # 提交
-    arr << [obj.class.icon_action("提交审核"), "#{commit_kobe_article_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
+    arr << [obj.class.icon_action("提交"), "#{commit_kobe_article_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_article_path(obj)] if can?(:update, obj)
     # 删除
@@ -230,7 +230,7 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("详细"), kobe_bid_project_path(obj), target: "_blank"]  if can?(:show, obj)
     arr << [obj.class.icon_action("选择中标人"), pre_choose_kobe_bid_project_path(obj)] if obj.status == 16
     # 提交
-    arr << [obj.class.icon_action("提交审核"), "#{commit_kobe_bid_project_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
+    arr << [obj.class.icon_action("提交"), "#{commit_kobe_bid_project_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_bid_project_path(obj)] if can?(:update, obj) && obj.cando("edit")
     # 删除
