@@ -12,7 +12,7 @@
 <div class="container">
 	<%= @obj_contents %>
 	<%= uploads_html(@bid_project, {title: true}).html_safe %>
-	<% if @bid_project.status == 16 %>
+	<% if @bid_project.status == BidProject.bid_and_choose_status %>
 		<% if @before_end > 0 %>
 			<div class='bid_project_time tc'>
 		    <span class='seconds hide'><%= @before_end %></span>
@@ -42,7 +42,7 @@
 		  <ol>
 		  	<li>未成交单位名称和报价等信息不再显示；</li>
 		  	<li>请交易双方在规定的期限内签订书面采购合同，时间最晚不得超过成交公告发布之日起30日；</li>
-		  	<li>感谢各方的积极参与。如有问题请联系服务热线010-88016801/88016802/88016607。</li>
+		  	<li>感谢各方的积极参与。如有问题请联系服务热线<%= "#{Dictionary.service_bg_tel} / #{Dictionary.service_lj_tel}" %>。</li>
 		  </ol> 
 		</div>
 	<% end -%>

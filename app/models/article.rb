@@ -106,7 +106,7 @@ class Article < ActiveRecord::Base
       self.class.edit_status.include?(self.status) # && self.get_tips.blank?
     when "update_audit", "audit" 
       # change_status_hash中是否有此操作
-      self.can_opt?("通过") && self.can_opt?("不通过")
+      self.class.audit_status.include?(self.status)
     else false
     end
   end

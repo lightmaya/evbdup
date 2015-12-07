@@ -63,9 +63,9 @@ class Kobe::MsgsController < KobeController
   end
 
   # 批处理
-  def batch_task
-    render :text => params[:grid].to_s
-  end
+  # def batch_task
+  #   render :text => params[:grid].to_s
+  # end
 
     # 删除
   def delete

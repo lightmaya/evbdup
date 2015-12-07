@@ -188,7 +188,7 @@ class Department < ActiveRecord::Base
     when "add_user", "update_add_user", "new", "create" 
       self.class.effective_status.include?(self.status) && cdt
     when "update_audit", "audit" 
-      self.can_opt?("通过") && self.can_opt?("不通过")
+      self.class.audit_status.include?(self.status)
     when "delete", "destroy" 
       self.can_opt?("删除")
     when "recover", "update_recover" 

@@ -74,7 +74,7 @@ class DailyCost < ActiveRecord::Base
     when "commit" 
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 
-      self.can_opt?("通过") && self.can_opt?("不通过")
+      self.class.audit_status.include?(self.status)
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false

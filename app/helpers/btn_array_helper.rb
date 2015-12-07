@@ -227,16 +227,17 @@ module BtnArrayHelper
   def bid_projects_btn(obj, only_audit = false)
     arr = [] 
     # 查看详细
-    arr << [obj.class.icon_action("详细"), kobe_bid_project_path(obj), target: "_blank"]  if can?(:show, obj)
-    arr << [obj.class.icon_action("选择中标人"), pre_choose_kobe_bid_project_path(obj)] if obj.status == 16
-    # 提交
-    arr << [obj.class.icon_action("提交"), "#{commit_kobe_bid_project_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit")
+    arr << [obj.class.icon_action("详细"), kobe_bid_project_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
+    # 选择中标人
+    arr << [obj.class.icon_action("选择中标人"), pre_choose_kobe_bid_project_path(obj)] if can?(:choice, obj) && obj.cando("pre_choose", current_user)
     # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_bid_project_path(obj)] if can?(:update, obj) && obj.cando("edit")
+    arr << [obj.class.icon_action("修改"), edit_kobe_bid_project_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 提交
+    arr << [obj.class.icon_action("提交"), "#{commit_kobe_bid_project_path(obj)}", method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
     # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_bid_project_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("edit")
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_bid_project_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
      # 审核
-     audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_bid_project_path(obj)}"] if can?(:audit, obj) && obj.cando("audit")
+     audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_bid_project_path(obj)}"] if can?(:audit, obj) && obj.cando("audit", current_user)
      if audit_opt.present?
       return [audit_opt] if only_audit
     end

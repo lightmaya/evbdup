@@ -15,7 +15,7 @@ class BidProject < ActiveRecord::Base
 
   default_value_for :status, 0
 
-  scope :can_bid, -> { where("bid_projects.status = 16 and now() < bid_projects.end_time") }
+  scope :can_bid, -> { where("bid_projects.status = #{BidProject.bid_and_choose_status} and now() < bid_projects.end_time") }
 
   # 模型名称
   Mname = "网上竞价项目"
@@ -32,6 +32,9 @@ class BidProject < ActiveRecord::Base
   
   include AboutStatus
   
+  def self.bid_and_choose_status
+    16
+  end
  
   # 中文意思 状态值 标签颜色 进度 
 	def self.status_array
@@ -78,12 +81,23 @@ class BidProject < ActiveRecord::Base
 
 
   # 根据action_name 判断obj有没有操作
-  def cando(act='')
+  def cando(act='',current_u=nil)
+    @bid_project = current_u.department.is_zgs? ? BidProject.find_by_id(params[:id]) : current_u.bid_projects.find_by_id(params[:id])
     case act
-    when "edit" 
-      self.class.edit_status.include?(self.status) # && self.get_tips.blank?
+    when "show"
+      true
+    when "update", "edit" 
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+    when "commit" 
+      self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 
-      self.can_opt?("通过") && self.can_opt?("不通过")
+      self.class.audit_status.include?(self.status)
+    when "delete", "destroy" 
+      self.can_opt?("删除") && current_u.try(:id) == self.user_id
+    when "choose", "pre_choose"
+      self.status == BidProject.bid_and_choose_status && self.is_end?
+    when "bid"
+      self.can_bid?
     else false
     end
   end
@@ -93,7 +107,7 @@ class BidProject < ActiveRecord::Base
   end
     
   def can_bid?
-    self.status == 16 && !is_end?
+    self.status == BidProject.bid_and_choose_status && !is_end?
   end
 
   # 判断是否是指定供应商

@@ -3,7 +3,7 @@ class Kobe::BidProjectsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
   before_action :get_show_arr, :only => [:audit, :show]
-  before_filter :check_bid_project, only: [:choose, :pre_choose, :new, :edit, :create, :update]
+  before_filter :check_bid_project, :except => [:index, :bid, :new, :create, :list]
 
   def index
     params[:q][:user_id_eq] = current_user.id unless current_user.is_zgs?
@@ -15,8 +15,8 @@ class Kobe::BidProjectsController < KobeController
     @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC")
   end
 
-  def bid
-  end
+  # def bid
+  # end
 
   def audit
   end
@@ -71,7 +71,7 @@ class Kobe::BidProjectsController < KobeController
     @bid_project.buyer_name = current_user.name
     @bid_project.buyer_phone = current_user.tel
     @bid_project.buyer_mobile = current_user.mobile
-    @bid_project.buyer_email = current_user.email
+    # @bid_project.buyer_email = current_user.email
     @bid_project.buyer_add = current_user.department.address
 
     slave_objs = [@bid_project.items.build]
@@ -85,11 +85,11 @@ class Kobe::BidProjectsController < KobeController
 
   def edit
     slave_objs = @bid_project.items.blank? ? [@bid_project.items.build] : @bid_project.items
-    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project,slave_objs,{upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@order), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project,slave_objs,{upload_files: true, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@order), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
 
   def create
-    other_attrs = {buyer_dep_name: current_user.department.name, department_id: current_user.department.id, department_code: current_user.real_dep_code, name: get_project_name }
+    other_attrs = {department_id: current_user.department.id, department_code: current_user.real_dep_code, name: get_project_name }
     obj = create_msform_and_write_logs(BidProject, BidProject.xml, BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     redirect_to kobe_bid_projects_path
   end
@@ -100,9 +100,9 @@ class Kobe::BidProjectsController < KobeController
   end
 
   # 批处理
-  def batch_task
-    render :text => params[:grid].to_s
-  end
+  # def batch_task
+  #   render :text => params[:grid].to_s
+  # end
 
     # 删除
   def delete
@@ -146,8 +146,9 @@ class Kobe::BidProjectsController < KobeController
 
     # 只允许自己操作自己的项目
     def check_bid_project
-      @bid_project = current_user.department.is_zgs? ? BidProject.find_by_id(params[:id]) : current_user.bid_projects.find_by_id(params[:id])
+      # @bid_project = current_user.department.is_zgs? ? BidProject.find_by_id(params[:id]) : current_user.bid_projects.find_by_id(params[:id])
       # return redirect_to not_fount_path unless @bid_project
-      cannot_do_tips if @bid_project.blank?
+      cannot_do_tips unless @bid_project.present? && @bid_project.cando(action_name,current_user)
+      audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@bid_project,@menu_ids)
     end
 end
