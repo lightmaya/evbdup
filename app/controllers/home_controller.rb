@@ -6,13 +6,13 @@ class HomeController < JamesController
     params[:t] ||= "search_products"
     # 重要通知
     zytz_articles = get_articles('重要通知')
-    @zytz = zytz_articles.present? ? zytz_articles.order("id desc").limit(6) : []
+    @zytz = zytz_articles.present? ? zytz_articles.order("id desc").limit(8) : []
     # 招标公告
     zbgg_articles = get_articles('招标公告')
-    @zbgg = zbgg_articles.present? ? zbgg_articles.order("id desc").limit(6) : []
+    @zbgg = zbgg_articles.present? ? zbgg_articles.order("id desc").limit(8) : []
     # 招标结果公告
     jggg_articles = get_articles('招标结果公告')
-    @jggg = jggg_articles.present? ? jggg_articles.order("id desc").limit(6) : []
+    @jggg = jggg_articles.present? ? jggg_articles.order("id desc").limit(8) : []
     # 网上竞价需求公告
     @wsjj_xq = BidProject.can_bid.order("id desc").limit(8)
     # 网上竞价结果公告

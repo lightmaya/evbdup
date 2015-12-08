@@ -1,25 +1,16 @@
 <!--=== Content Part ===-->
 <div class="row job-content tag-box padding-0 margin-0">
   <div class="col-md-8 padding-0">
-    <div class="carousel slide carousel-v1" id="myCarousel-1">
+<!--     <div class="carousel slide carousel-v1" id="myCarousel-1">
       <div class="carousel-inner">
-        <div class="item">
+        <div class="item active">
           <img alt="" src="/plugins/images/sliders/10.jpg">
-          <div class="carousel-caption">
-            <p>Facilisis odio, dapibus ac justo acilisis gestinas.</p>
-          </div>
         </div>
         <div class="item">
           <img alt="" src="/plugins/images/sliders/4.jpg">
-          <div class="carousel-caption">
-            <p>Cras justo odio, dapibus ac facilisis into egestas.</p>
-          </div>
         </div>
-        <div class="item active">
+        <div class="item">
           <img alt="" src="/plugins/images/sliders/11.jpg">
-          <div class="carousel-caption">
-            <p>Justo cras odio apibus ac afilisis lingestas de.</p>
-          </div>
         </div>
       </div>
 
@@ -31,7 +22,35 @@
           <i class="fa fa-angle-right"></i>
         </a>
       </div>
+    </div> -->
+
+    <div class="carousel slide carousel-v2" id="portfolio-carousel">
+      <ol class="carousel-indicators">
+          <li class="rounded-x" data-target="#portfolio-carousel" data-slide-to="0"></li>
+          <li class="rounded-x" data-target="#portfolio-carousel" data-slide-to="1"></li>
+          <li class="rounded-x active" data-target="#portfolio-carousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+          <div class="item">
+              <img class="img-responsive full-width" src="/plugins/images/ad/11.jpg" alt="">
+          </div>
+          <div class="item active left">
+              <img class="img-responsive full-width" src="/plugins/images/ad/12.jpg" alt="">
+          </div>
+          <div class="item next left">
+              <img class="img-responsive full-width" src="/plugins/images/ad/13.jpg" alt="">
+          </div>
+      </div>
+      <a class="left carousel-control rounded-x" href="#portfolio-carousel" role="button" data-slide="prev">
+          <i class="fa fa-angle-left arrow-prev"></i>
+      </a>
+      <a class="right carousel-control rounded-x" href="#portfolio-carousel" role="button" data-slide="next">
+          <i class="fa fa-angle-right arrow-next"></i>
+      </a>
     </div>
+
+
+
   </div>
   <div class="col-md-4 padding-0">
     <div class="tag-box tag-box-v3 margin-0 padding-bottom-0 padding-top-5">
@@ -45,9 +64,7 @@
     </div>
   </div>
 </div>
-
-<hr class="hr-md">
-<div class="service-block service-block-green">
+<div class="mt20 service-block service-block-green">
   <i>这是一个广告位</i>
 </div>
 <div class="row magazine-page">
@@ -152,18 +169,11 @@
         </div>
       </div>
     </div>
-
-
-
-
-
   </div>
   <!-- End Content -->
 
   <!-- Begin Sidebar -->
   <div class="col-md-3">
-    <!-- Magazine Posts -->
-
 
     <div class="tag-box tag-box-v6 margin-bottom-10">
       <div class="headline"><h2 class="heading-sm"><i class="fa fa-qrcode"></i> 核对电子凭证真伪</h2></div>                                                    
@@ -191,7 +201,7 @@
           <i class="icon-custom icon-sm rounded-x icon-bg-red icon-book-open"></i>
           <div class="content-boxes-in-v3">
             <h3><a href="<%=show_faqs_path(type:'zcfg')%>"> 政策法规</a></h3>
-            <p>集中采购管理办法、采购目录...</p>
+            <p>集中采购相关政策文件</p>
           </div>
         </div>
       </div>
@@ -199,8 +209,8 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-blue icon-directions"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="<%=show_faqs_path(type:'cgzn')%>"> 采购指南</a></h3>
-            <p>采购方式、采购计划、电子凭证</p>
+            <h3><a href="<%=show_faqs_path(type:'cgzn')%>"> 业务指南</a></h3>
+            <p>集中采购的方式及流程</p>
           </div>
         </div>
       </div>
@@ -209,7 +219,7 @@
           <i class="icon-custom icon-sm rounded-x icon-bg-green icon-cloud-download"></i>
           <div class="content-boxes-in-v3">
             <h3><a href="<%=show_faqs_path(type:'xzzx')%>"> 下载中心</a></h3>
-            <p>合同模板、操作手册、业务单据</p>
+            <p>合同模板、系统操作手册...</p>
           </div>
         </div>
       </div>
@@ -232,88 +242,17 @@
         </div>
       </div>
     </div>
-    <hr class="margin-0">
 
 </div>
 <!-- End Sidebar -->
 </div>
 
-<!-- Recent Works -->
-<!-- <div class="owl-carousel-v1 owl-work-v1 margin-bottom-35">
-  <div class="headline"><h2 class="pull-left"><i class="fa fa-signal"></i> 畅销入围产品</h2>
-    <div class="owl-navigation">
-      <div class="customNavigation">
-        <a class="owl-btn prev-v2"><i class="fa fa-angle-left"></i></a>
-        <a class="owl-btn next-v2"><i class="fa fa-angle-right"></i></a>
-      </div>
-    </div><!--/navigation-->
-  <!-- </div> -->
-
 <div class="headline"><h2>畅销入围产品</h2></div>
 
 <div class="row margin-bottom-20">
-  <!-- <div class="owl-recent-works-v1"> -->
   <% @products.each do |product|%>
     <%= show_product_div(product) %>
   <% end %>
-    <!-- <div class="item">
-      <div class="thumbnails thumbnail-style thumbnail-kenburn">
-        <div class="thumbnail-img">
-          <div class="overflow-hidden">
-            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-          </div>
-          <a class="btn-more hover-effect" href="#">详情 +</a>         
-        </div>
-        <div class="caption">
-          <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-          <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-        </div>
-      </div>   
-    </div>
-    <div class="item">
-      <div class="thumbnails thumbnail-style thumbnail-kenburn">
-        <div class="thumbnail-img">
-          <div class="overflow-hidden">
-            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-          </div>
-          <a class="btn-more hover-effect" href="#">详情 +</a>                   
-        </div>
-        <div class="caption">
-          <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-          <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-        </div>
-      </div>   
-    </div>
-    <div class="item">
-      <div class="thumbnails thumbnail-style thumbnail-kenburn">
-        <div class="thumbnail-img">
-          <div class="overflow-hidden">
-            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-          </div>
-          <a class="btn-more hover-effect" href="#">详情 +</a>                   
-        </div>
-        <div class="caption">
-          <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-          <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-        </div>
-      </div>  
-    </div>
-    <div class="item">
-      <div class="thumbnails thumbnail-style thumbnail-kenburn">
-        <div class="thumbnail-img">
-          <div class="overflow-hidden">
-            <img class="img-responsive" src="/plugins/images/zclfww/product.jpg" alt="">
-          </div>
-          <a class="btn-more hover-effect" href="#">详情 +</a>                   
-        </div>
-        <div class="caption">
-         <h3><a class="hover-effect" href="#">叶威 移动升降（登高)式输送机 TDYW550#×6m</a></h3>
-         <p>移动轮采用6.0-16充气轮，防护等级为IP54。</p>
-       </div>
-     </div>   
-   </div> -->
-
-  <!-- </div> -->
 </div>
 <!-- End Recent Works -->
 
@@ -322,8 +261,8 @@
 
 <!-- Easy Blocks v1 -->                
 <div class="row high-rated margin-bottom-20">
-  <% @deps.each do |dep|%>
-    <%= show_dep_div(dep) %>
+  <% @deps.each_with_index do |dep,index|%>
+    <%= show_dep_div(dep,index) %>
   <% end %>
 </div>
 <!-- End Easy Blocks v1 -->                
@@ -334,79 +273,167 @@
 
 
 <div class="partners">
-  <div class="headline"><h2><i class="fa fa- fa-rocket"></i> 站点链接</h2></div>
+  <div class="headline"><h2><i class="fa fa- fa-rocket"></i> 友情链接</h2></div>
   <ul class="list-inline our-clients" id="effect-2">
     <li>
       <figure>
-        <img src="/plugins/images/clients2/ea-canada.png" alt="">
-        <div class="img-hover">
-          <h4>Ea Canada</h4>
-        </div>
+        <a href="http://www.sinograin.com.cn" target="_blank">
+          <img src="/plugins/images/logo/zcl.png" alt="">
+          <div class="img-hover">
+            <h4>中国储备粮管理总公司</h4>
+          </div>
+        </a>
       </figure>
-    </li>    
+    </li> 
     <li>
       <figure>
-        <img src="/plugins/images/clients2/inspiring.png" alt="">
-        <div class="img-hover">
-          <h4>Inspiring</h4>  
-        </div>
-      </figure>
-    </li>    
-    <li>
-      <figure>
-        <img src="/plugins/images/clients2/ucweb.png" alt="">  
-        <div class="img-hover">
-          <h4>UcWeb</h4>  
-        </div>
-      </figure>
-    </li>    
-    <li>
-      <figure>
-        <img src="/plugins/images/clients2/clarks.png" alt="">  
-        <div class="img-hover">
-          <h4>Clarks</h4>
-        </div>
-      </figure>
-    </li>    
-    <li>
-      <figure>
-        <img src="/plugins/images/clients2/corepreserves.png" alt="">  
-        <div class="img-hover">
-          <h4>Core Preserves</h4>
-        </div>
-      </figure>
-    </li>    
-    <li>
-      <figure>
-        <img src="/plugins/images/clients2/finals.png" alt="">  
-        <div class="img-hover">
-          <h4>USL Champions</h4>
-        </div>
-      </figure>
-    </li>    
-    <li>
-      <figure>
-        <img src="/plugins/images/clients2/getaround.png" alt="">  
-        <div class="img-hover">
-          <h4>GetAround</h4>
-        </div>
-      </figure>
-    </li>
-    <li>
-      <figure>
-        <img src="/plugins/images/clients2/baderbrau.png" alt="">  
-        <div class="img-hover">
-          <h4>Baderbrau</h4>
-        </div>
+        <a href="http://www.cngrain.com" target="_blank">
+          <img src="/plugins/images/logo/zhlw.png" alt="">  
+          <div class="img-hover">
+            <h4>中华粮网</h4>  
+          </div>
+        </a>
       </figure>
     </li>      
     <li>
       <figure>
-        <img src="/plugins/images/clients2/emirates.png" alt="">  
-        <div class="img-hover">
-          <h4>Emirates</h4>
-        </div>
+        <a href="http://www.zycg.gov.cn" target="_blank">
+          <img src="/plugins/images/logo/ycg.png" alt="">
+          <div class="img-hover">
+            <h4>中央政府采购网</h4>  
+          </div>
+        </a>
       </figure>
-    </li>    
+    </li>        
+    <li>
+      <figure>
+        <a href="http://www.ctba.org.cn" target="_blank">
+          <img src="/plugins/images/logo/zbtb.png" alt="">  
+          <div class="img-hover">
+            <h4>中国招标投标协会</h4>
+          </div>
+        </a>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a href="http://ecp.sgcc.com.cn" target="_blank">
+          <img src="/plugins/images/logo/gjdw.png" alt="">  
+          <div class="img-hover">
+            <h4>国家电网电子商务平台</h4>
+          </div>
+        </a>
+      </figure>
+    </li> 
+    <li>
+      <figure>
+        <a href="http://www.bidding.csg.cn" target="_blank">
+          <img src="/plugins/images/logo/nfdw.png" alt="">  
+          <div class="img-hover">
+            <h4>中国南方电网阳光电子商务</h4>
+          </div>
+        </a>
+      </figure>
+    </li>      
+    <li>
+      <figure>
+        <a href="http://eportal.energyahead.com" target="_blank">
+          <img src="/plugins/images/logo/zsy.png" alt="">  
+          <div class="img-hover">
+            <h4>中国石油物资采购网</h4>
+          </div>
+        </a>
+      </figure>
+    </li>  
+    <li>
+      <figure>
+        <a href="http://zgsh.sinopec.com" target="_blank">
+          <img src="/plugins/images/logo/zsh.png" alt="">  
+          <div class="img-hover">
+            <h4>中国石化物资采购电子招标平台</h4>
+          </div>
+        </a>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a href="http://b2b.10086.cn" target="_blank">
+          <img src="/plugins/images/logo/zgyd.png" alt="">  
+          <div class="img-hover">
+            <h4>中国移动采购与招标网</h4>
+          </div>
+        </a>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a href="http://www.chinaunicombidding.cn" target="_blank">
+          <img src="/plugins/images/logo/zglt.png" alt="">  
+          <div class="img-hover">
+            <h4>中国联通采购与招标网</h4>
+          </div>
+        </a>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a href="http://www.hnmec.org" target="_blank">
+          <img src="/plugins/images/logo/zghn.png" alt="">  
+          <div class="img-hover">
+            <h4>中国华能物资招标网</h4>
+          </div>
+        </a>
+      </figure>
+    </li>  
+    <li>
+      <figure>
+        <a href="http://www.greenfood.org.cn" target="_blank">
+          <img src="/plugins/images/logo/zgbq.png" alt="">  
+          <div class="img-hover">
+            <h4>兵器工业集团公司采购电子平台</h4>
+          </div>
+        </a>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a href="http://jc.cdtbid.cn" target="_blank">
+          <img src="/plugins/images/logo/zgdt.png" alt="">  
+          <div class="img-hover">
+            <h4>中国大唐集团公司集采平台</h4>
+          </div>
+        </a>
+      </figure>
+    </li>       
+    <li>
+      <figure>
+        <a href="http://www.greenfood.org.cn" target="_blank">
+          <img src="/plugins/images/logo/zgzt.png" alt="">  
+          <div class="img-hover">
+            <h4>中国中铁采购电子商务平台</h4>
+          </div>
+        </a>
+      </figure>
+    </li>
+    <li>
+      <figure>
+        <a href="http://eps.baosteel.net.cn" target="_blank">
+          <img src="/plugins/images/logo/bgjt.png" alt="">  
+          <div class="img-hover">
+            <h4>宝钢集团采购电子商务平台</h4>
+          </div>
+        </a>
+      </figure>
+    </li> 
+    <li>
+      <figure>
+        <a href="http://www.china-tender.com.cn" target="_blank">
+          <img src="/plugins/images/logo/zgty.png" alt="">  
+          <div class="img-hover">
+            <h4>中国通用招标网</h4>
+          </div>
+        </a>
+      </figure>
+    </li>  
   </ul>
 </div>

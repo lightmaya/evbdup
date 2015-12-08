@@ -1,0 +1,60 @@
+# 定点采购流程 rules
+
+# id:1
+# name:定点采购
+# class_name:order
+# rule:
+<root>
+  <step name="中心库审核">
+    <junior>1,2,3</junior>
+    <senior>3,4,5</senior>
+    <inflow>obj.buyer_code.length >= 6 and obj.tottal > 3000</inflow>
+    <outflow>status in (404)</outflow>
+  </step>
+  <step name="分公司审核">
+    <junior>11,12,13</junior>
+    <senior>13,14,15</senior>
+    <inflow>obj.tottal > 3000 and obj.items.select{|i|i.category.level.index("分公司") >= 0}</inflow>
+    <outflow>status in (404,,405)</outflow>
+  </step>
+    <step name="总公司审核">
+    <junior>21,22,23</junior>
+    <senior>23,24,25</senior>
+    <inflow>tottal > 5000 and obj.items.select{|i|i.category.level.index("总公司") >= 0}</inflow>
+    <outflow>status in (404,405,406)</outflow>
+  </step>
+</root>
+
+# id:2
+# name:协议采购
+# class_name:order
+# rule: 
+<root>
+  <step name="供应商确认订单">
+    <junior>1,2,3</junior>
+    <senior>3,4,5</senior>
+    <inflow>obj.dep_s_code = current.department.code</inflow>
+    <outflow>status in (404)</outflow>
+  </step>
+  <step name="分公司审核">
+    <junior>11,12,13</junior>
+    <senior>13,14,15</senior>
+    <inflow>obj.tottal > 3000 and obj.items.select{|i|i.category.level.index("分公司") >= 0}</inflow>
+    <outflow>status in (404,,405)</outflow>
+  </step>
+    <step name="总公司审核">
+    <junior>21,22,23</junior>
+    <senior>23,24,25</senior>
+    <inflow>tottal > 5000 and obj.items.select{|i|i.category.level.index("总公司") >= 0}</inflow>
+    <outflow>status in (404,405,406)</outflow>
+  </step>
+</root>
+
+
+
+# 订单表流程 orders表
+# id: 1
+# project_name: XX库计算机采购项目
+# status: 0
+# rule_id: 1
+# rule_step: 分公司审核 /start /done
