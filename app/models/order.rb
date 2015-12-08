@@ -28,7 +28,6 @@ class Order < ActiveRecord::Base
   before_create do
     # 设置rule_id
     self.rule_id = Rule.find_by(yw_type: self.yw_type).try(:id)
-    self.rule_id = Rule.find_by(yw_type: 'BidProject').try(:id) if self.yw_type == 'wsjj'
     self.rule_step = 'start'
   end
 

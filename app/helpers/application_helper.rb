@@ -135,9 +135,9 @@ module ApplicationHelper
   def get_tips_msg(msg)
     unless msg.blank?
       if msg.is_a?(Array)
-        msg = msg.map{|m|content_tag(:p, m)}.join
+        msg = msg.map{|m|content_tag(:p, m.html_safe)}.join
       else
-        msg = content_tag(:p, msg)
+        msg = content_tag(:p, msg.html_safe)
       end
     end
     return msg

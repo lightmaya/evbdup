@@ -36,7 +36,7 @@ class Kobe::SharedController < KobeController
   end
 
   def item_ztree_json
-    json = Item.all.map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}|}
+    json = Item.usable.order('id desc').map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}|}
     render :json => "[#{json.join(", ")}]" 
   end
 

@@ -1,0 +1,3 @@
+<%= show_tabs(@arr) %>
+
+<%= render partial: 'bid_list', locals: { act: 'show' } if !@bid_project.can_bid? && @bpbs.present? %>

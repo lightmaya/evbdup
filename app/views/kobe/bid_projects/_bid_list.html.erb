@@ -1,0 +1,42 @@
+<div class="panel panel-grey margin-bottom-20 margin-top-20">
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-tasks"></i> 报价信息</h3>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>中标人</th>
+        <th class="index">序号</th>
+        <th>报价单位</th>
+        <th>联系人</th>
+        <th>联系电话</th>
+        <th>报价总金额</th>
+        <th class="date">报价时间</th>
+        <th>操作</th>
+      </tr>
+     </thead>
+    <tbody>
+      <% @bpbs.each_with_index do |bid_project_bid, index| %>
+        <tr>
+          <td class="tc">
+            <%= act == "choose" ? radio_button_tag("bid_project_bid", bid_project_bid.id, index == 0, name: "bid_project_bid_radios") : (@bid_project.bid_project_bid_id == bid_project_bid.id ? label_tag("中标人") : '') %>
+          </td>
+          <td><%= show_index(index) %></td>
+          <td><%= bid_project_bid.com_name %></td>
+          <td><%= bid_project_bid.username %></td>
+          <td><%= bid_project_bid.lx %></td>
+          <td class="money"><%= money bid_project_bid.total %></td>
+          <td><%= bid_project_bid.bid_time %></td>
+          <td><%= link_to_blank "查看报价详情", kobe_bid_project_bid_path(bid_project_bid), target: '_blank' %></td>
+        </tr>
+      <% end -%>
+      <% if act == "show" %>
+        <tr>
+          <th>操作理由</th>
+          <td colspan="7"><%= @bid_project.reason %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

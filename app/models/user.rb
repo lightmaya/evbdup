@@ -287,7 +287,7 @@ class User < ActiveRecord::Base
 
   # 联系方式
   def tel_and_mobile
-    self.tel.present? ? "#{self.tel} / #{self.mobile}" : self.mobile
+    [self.mobile, self.tel].select{|i| i.present?}.join(" / ")
   end
 
 

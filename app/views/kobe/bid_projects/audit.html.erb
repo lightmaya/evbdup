@@ -1,2 +1,4 @@
-<%=show_tabs(@arr)%>
+<%= render partial: 'show_info' %>
+
+
 <%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_bid_project_path(@bid_project), obj: @bid_project, title: "审核网上竞价: #{@bid_project.name}" } %>

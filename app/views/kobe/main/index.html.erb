@@ -2,7 +2,7 @@
 	<div class="row">
         <div class="col-md-3 md-margin-bottom-40">
 
-            <%= render partial: "yw_type" %>
+            <%= render partial: "yw_type" unless current_user.department.root_id == Department.supplier.try(:id) %>
 
             <hr>
 
@@ -19,9 +19,7 @@
 
         <div class="col-md-9">
             <div class="profile-body">
-                <%= render partial: "tongji" %>
-
-                <hr>
+                <%= render partial: "tongji" unless current_user.department.root_id == Department.supplier.try(:id) %>
 
                 <%= render partial: "to_do" %>
 
