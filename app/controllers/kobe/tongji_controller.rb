@@ -58,11 +58,10 @@ class Kobe::TongjiController < KobeController
   def get_department    
   # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
     # 默认没有选品目的话统计第一层 中储粮总公司下的各种分公司
-    dep_p = Department.purchaser
     # 只显示采购单位的条件
     department_sql = %Q{
       select id,name,concat_ws('/',real_ancestry,'0') as code from departments 
-      where  dep_type=0 and find_in_set(#{dep_p.id},replace(real_ancestry,'/',',')) > 0 
+      where  dep_type=0 and find_in_set(#{Dictionary.dep_purchaser_id},replace(real_ancestry,'/',',')) > 0 
     }
     # 求合计
     if params[:category_id].present?

@@ -70,7 +70,7 @@ class Menu < ActiveRecord::Base
         <node name='显示菜单' column='is_show' data_type='radio' data='[[0,"不显示菜单"],[1,"显示菜单"]]'/>
         <node name='自动获取' column='is_auto' data_type='radio' data='[[0,"不自动获取"],[1,"自动获取"]]'/>
         <node name='弹出页面' column='is_blank' data_type='radio' data='[[0,"不弹出页面"],[1,"弹出页面"]]'/>
-        <node name='用户类别' column='user_type' hint='#{Dictionary.manage_user_type}：表示监管用户，#{Department.purchaser.try(:id)}：表示采购用户，#{Department.supplier.try(:id)}：表示供应商，#{Dictionary.audit_user_type}：表示审核用户。例如：1,2,3 或者 7'/>
+        <node name='用户类别' column='user_type' hint='#{Dictionary.manage_user_type}：表示监管用户，#{Dictionary.dep_purchaser_id}：表示采购用户，#{Dictionary.dep_supplier_id}：表示供应商，#{Dictionary.audit_user_type}：表示审核用户。例如：1,2,3 或者 7'/>
 	    </root>
 	  }
 	end

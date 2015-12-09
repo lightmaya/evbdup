@@ -76,12 +76,12 @@ class Department < ActiveRecord::Base
 
   # 判断单位是不是分公司
   def is_fgs?
-    self.root_id == Department.purchaser.try(:id) && self.real_ancestry_id_arr.size == 3
+    self.root_id == Dictionary.dep_purchaser_id && self.real_ancestry_id_arr.size == 3
   end
 
   # 判断单位是不是总公司
   def is_zgs?
-    self.root_id == Department.purchaser.try(:id) && self.real_ancestry_id_arr.size == 2
+    self.root_id == Dictionary.dep_purchaser_id && self.real_ancestry_id_arr.size == 2
   end
 
   # 中文意思 状态值 标签颜色 进度 
@@ -163,11 +163,11 @@ class Department < ActiveRecord::Base
   # end
 
   def self.purchaser
-    Department.find_by(id: 2)
+    Department.find_by(id: Dictionary.dep_purchaser_id)
   end
   
   def self.supplier
-    Department.find_by(id: 3)
+    Department.find_by(id: Dictionary.dep_supplier_id)
   end
 
   # 本单位是不是某单位ID的上级单位
@@ -211,10 +211,6 @@ class Department < ActiveRecord::Base
     return msg
   end
 
-  # @dep.get_tips.blank? ? 'tips' : 'error', 
-  # @dep.get_tips.blank? ? '恭喜您！' : '很抱歉！', 
-  # @dep.get_tips.blank? ? "账户信息已填写完整，请点击[提交]，提交并等待审核。" : @dep.get_tips
-
   def show_tips_arr
     arr = []
     arr << (self.get_tips.present? || self.status == 7 ? 'error' : 'tips')
@@ -236,9 +232,9 @@ class Department < ActiveRecord::Base
   # 根据单位的祖先节点判断单位是采购单位还是供应商
   def get_xml
     case self.try(:root_id)
-    when Department.purchaser.try(:id) 
+    when Dictionary.dep_purchaser_id
       Department.purchaser_xml
-    when Department.supplier.try(:id) 
+    when Dictionary.dep_supplier_id
       Department.supplier_xml
     else 
       Department.other_xml
@@ -298,7 +294,116 @@ class Department < ActiveRecord::Base
 
   # 其他单位XML
   def self.other_xml(who='',options={})
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='parent_id' data_type='hidden'/>
+        <node name='单位名称' column='name' hint='必须与营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:3, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
+        <node name='单位简称' column='short_name'/>
+        <node name='曾用名' column='old_name' display='disabled'/>
+      </root>
+    }
+  end
 
+  # 进入后台的统计数据
+  def get_dep_main
+
+    # 本辖区本年度 采购方式占比
+    type_arr = []
+    cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"
+    total = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).sum(:total)
+    if total.present?
+      type = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
+      type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/total).to_f] }
+    end
+
+    # 粮机类、汽车、办公类采购统计
+    category = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).group('ht_template').select('ht_template, sum(total) as total')
+    category_ha = {}
+    category.map{ |e| category_ha[e.ht_template] = e.total.to_f }
+
+    str = show_header("本年度辖区内采购方式占比", 'fa-bar-chart-o')
+
+    Dictionary.yw_type.each_with_index do |a, i| 
+      next if a[0] == 'grcg'
+      yw_type = type_arr.find{|e| e[0] == a[0]}
+      t = a[1]
+      t << "( #{format_total(yw_type[1])} )" if yw_type.present?
+      str << progress_bar(t, (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
+    end 
+
+    str << "<hr>"
+    str << show_header("粮机物资采购情况", 'fa-vine')
+
+    str << show_category_total("粮机设备", category_ha['lj'])
+
+    str << show_category_total("建筑工程", category_ha['gc'])
+
+    str << show_category_total("包装物采购", category_ha['bzw'])
+
+    str << progress_bar("粮机物资采购占比", ([category_ha['lj'], category_ha['gc'], category_ha['bzw']].compact.sum * 100)/total, 'purple')
+
+    str << show_header("汽车采购情况", 'fa-car')
+
+    str << show_category_total("汽车采购", category_ha['qc'])
+
+    str << progress_bar("汽车采购占比", ([category_ha['qc']].compact.sum * 100)/total, 'brown')
+
+    str << show_header("办公物资采购情况", 'fa-desktop')
+
+    str << show_category_total("办公物资", category_ha['bg'])
+
+    str << show_category_total("电商采购", category_ha['ds'])
+
+    str << show_category_total("职工工装", category_ha['gz'])
+
+    str << progress_bar("办公物资采购占比", ([category_ha['bg'], category_ha['ds'], category_ha['gz']].compact.sum * 100)/total, 'sea')
+  end
+
+  def cache_dep_main(force = false)
+    if force
+      Setting.send("dep_main_#{self.id}=", get_dep_main)
+    else
+      Setting.send("dep_main_#{self.id}=", get_dep_main) if Setting.send("dep_main_#{self.id}").blank?
+    end
+    Setting.send("dep_main_#{self.id}")
+  end
+
+  # 显示main 统计的标题
+  def show_header(title, icon='fa-bar-chart-o')
+    %Q{
+      <div class="panel-heading-v2 overflow-h">
+        <h2 class="heading-xs pull-left"><i class="fa #{icon}"></i> #{title}</h2>
+      </div>
+    }
+  end
+
+  # 后台main 统计采购方式占比
+  def progress_bar(title, num, color='u')
+    percent = num == 0 ? 0 : format("%0.2f", num)
+    %Q{
+      <h3 class="heading-xs">#{title} <span class="pull-right">#{percent}%</span></h3>
+      <div class="progress progress-u progress-xxs">
+        <div style="width: #{percent}%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="#{percent}" role="progressbar" class="progress-bar progress-bar-#{color}">
+        </div>
+      </div>
+    }
+  end
+
+  # 后台main 统计粮机、办公、汽车的采购量
+  def show_category_total(name, total)
+    sum = total.present? ? total : 0
+    %Q{
+      <div class="row margin-bottom-20">
+        <div class="col-xs-6 service-in"><small>#{name}</small></div>
+        <div class="col-xs-6 text-right service-in"><small>#{format_total(sum)}</small></div>
+      </div>
+    }
+  end
+
+  # 格式化显示金额 万元
+  def format_total(total)
+    "¥#{format("%0.2f", total/10000)} 万元"
   end
 
 end

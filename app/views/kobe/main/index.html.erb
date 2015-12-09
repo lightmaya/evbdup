@@ -2,8 +2,7 @@
 	<div class="row">
         <div class="col-md-3 md-margin-bottom-40">
 
-            <%= render partial: "yw_type" unless current_user.department.root_id == Department.supplier.try(:id) %>
-
+            <%= current_user.department.cache_dep_main.html_safe if current_user.department.root_id == Dictionary.dep_purchaser_id %>
             <hr>
 
             <%= render partial: "notification" %>
@@ -19,7 +18,6 @@
 
         <div class="col-md-9">
             <div class="profile-body">
-                <%#= render partial: "tongji" unless current_user.department.root_id == Department.supplier.try(:id) %>
 
                 <%= render partial: "to_do" %>
 
