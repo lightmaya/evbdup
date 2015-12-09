@@ -96,6 +96,10 @@ class Order < ActiveRecord::Base
     [100]
   end
 
+  def self.unfinish_status
+    self.status_array.map(&:second) - self.finish_status - self.ysd_status
+  end
+
   # 根据不同操作 改变状态
   # def change_status_hash
   #   status_ha = self.find_step_by_rule.blank? ? 5 : 1 
