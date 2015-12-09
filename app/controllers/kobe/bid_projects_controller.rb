@@ -28,7 +28,7 @@ class Kobe::BidProjectsController < KobeController
   def choose
     #W status id reason
     # 选择中标人之后转换到网上竞价结果的流程
-    @bid_project.update(rule_id: Rule.find_by(yw_type: 'wsjj').try(:id), rule_step: 'start')
+    @bid_project.update(rule_id: Rule.find_by(yw_type: 'wsjj_jg').try(:id), rule_step: 'start')
     # 保存参数
     @bid_project.update(params.require(:bid_project).permit!)
     @bid_project.bid_project_bid.update(is_bid: true) if @bid_project.bid_project_bid.present?
@@ -47,7 +47,13 @@ class Kobe::BidProjectsController < KobeController
 
   def update_audit
     save_audit(@bid_project)
-
+    # 确定中标人
+    if @bid_project.status == 23
+      Rufus::Scheduler.new.in "1s" do
+        @bid_project.send_to_order
+        ActiveRecord::Base.clear_active_connections!
+      end
+    end
     redirect_to list_kobe_bid_projects_path(r: @bid_project.rule.try(:id))
   end
 
@@ -77,7 +83,7 @@ class Kobe::BidProjectsController < KobeController
     slave_objs = [@bid_project.items.build]
     @ms_form = MasterSlaveForm.new(BidProject.xml(true), BidItem.xml, @bid_project, slave_objs,
       { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true, 
-        upload_files_name: "bid_project", 
+        # upload_files_name: "bid_project", 
         title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 3},
         {title: '产品明细', grid: 3}
       )
@@ -130,6 +136,13 @@ class Kobe::BidProjectsController < KobeController
       end
       @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC, bid_project_bids.bid_time ASC")
       @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
+
+      if current_user.real_department.is_ancestors?(@bid_project.department_id)
+        budget = @bid_project.budget
+        budget_contents = show_obj_info(budget, Budget.xml)
+        budget_contents << show_uploads(budget, { is_picture: true })
+        @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
+      end
       @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
       @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
       

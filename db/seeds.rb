@@ -37,10 +37,27 @@ if Menu.first.blank?
   ddzc = Menu.find_or_initialize_by(name: "订单中心", route_path: "/kobe/orders", can_opt_action: "Order|read", is_show: true, user_type: mp_ut)
   ddzc.parent = yw
   ddzc.save
+  [
+    ["打印订单", "Order|print_order"],
+    ["录入发票", "Order|invoice_number"]
+  ].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
+    tmp.parent = ddzc
+    tmp.save
+  end
 
   seller_ddzc = Menu.find_or_initialize_by(name: "我销售的订单", route_path: "/kobe/orders/seller_list", can_opt_action: "Order|read", is_show: true, user_type: supplier_user_type)
   seller_ddzc.parent = yw
   seller_ddzc.save
+
+  [
+    ["打印凭证", "Order|print_order"],
+    ["录入发票号", "Order|invoice_number"]
+  ].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: supplier_user_type)
+    tmp.parent = seller_ddzc
+    tmp.save
+  end
   
 # ----品目管理-----------------------------------------------------------------------------------------
   category = Menu.find_or_initialize_by(name: "品目管理", route_path: "/kobe/categories", can_opt_action: "Category|read", is_show: true, user_type: manage_user_type)
@@ -251,8 +268,7 @@ if Menu.first.blank?
     ["增加定点采购", "Order|create"], 
     ["修改定点采购", "Order|update"], 
     ["提交定点采购", "Order|commit"], 
-    ["删除定点采购", "Order|update_destroy"], 
-    ["打印定点采购订单", "Order|print"]
+    ["删除定点采购", "Order|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
     tmp.parent = ddcg_list
@@ -284,7 +300,6 @@ if Menu.first.blank?
     ["修改协议采购", "Order|update"], 
     ["提交协议采购", "Order|commit"],
     ["删除协议采购", "Order|update_destroy"],
-    ["打印协议采购订单", "Order|print"],
     ["买方确认", "Order|buyer_confirm_pre"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
@@ -308,7 +323,6 @@ if Menu.first.blank?
   xygh_seller_list.save
 
   [ ["查看协议采购", "Order|read"],
-    ["打印协议采购订单", "Order|print"],
     ["卖方确认", "Order|agent_confirm_pre"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: supplier_user_type)
@@ -337,7 +351,7 @@ if Menu.first.blank?
     ac.save
   end
 
-  wsjj_done_list = Menu.find_or_initialize_by(name: "我成交的网上竞价", route_path: "/kobe/orders/my_list?r=7", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
+  wsjj_done_list = Menu.find_or_initialize_by(name: "我成交的网上竞价", route_path: "/kobe/orders/my_list?r=11", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
   wsjj_done_list.parent = ra_project
   wsjj_done_list.save
 
@@ -358,7 +372,7 @@ if Menu.first.blank?
   is_bid_list.parent = ra_project
   is_bid_list.save
 
-  wsjj_seller_list = Menu.find_or_initialize_by(name: "已成交的竞价项目", route_path: "/kobe/orders/seller_list?r=7", can_opt_action: "Order|seller_list", is_show: true, user_type: supplier_user_type)
+  wsjj_seller_list = Menu.find_or_initialize_by(name: "已成交的竞价项目", route_path: "/kobe/orders/seller_list?r=11", can_opt_action: "Order|seller_list", is_show: true, user_type: supplier_user_type)
   wsjj_seller_list.parent = ra_project
   wsjj_seller_list.save
 
@@ -385,8 +399,7 @@ if Menu.first.blank?
     ["增加个人采购", "Order|create"], 
     ["修改个人采购", "Order|update"], 
     ["提交个人采购", "Order|commit"], 
-    ["删除个人采购", "Order|update_destroy"], 
-    ["打印个人采购订单", "Order|print"]
+    ["删除个人采购", "Order|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: mp_ut)
     tmp.parent = grcg_list

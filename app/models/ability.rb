@@ -12,6 +12,7 @@ class Ability
       alias_action :cart_order, :create_cart_order, :to => :cart
       alias_action :pre_choose, :choose, :to => :choice
       alias_action :pre_bid, :bid, :to => :wsjj_bid
+      alias_action :print, :print_ht, :print_ysd, :to => :print_order
 
 
       user ||= User.new # guest user (not logged in)

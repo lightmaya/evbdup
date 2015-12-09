@@ -32,8 +32,10 @@ class Order < ActiveRecord::Base
   end
 
   after_create do 
-    create_no("ZCL", "contract_sn")
-    create_no(rule.code, "sn") if rule
+    if self.sn.blank?
+      create_no("ZCL", "contract_sn")
+      create_no(rule.code, "sn") if rule
+    end
   end
 
   after_save do 
@@ -64,9 +66,11 @@ class Order < ActiveRecord::Base
     #   ["拒绝撤回", "37", "yellow", 60], ["拒绝作废", "44", "yellow", 60],
     #   ["已拆单", "5", "dark", 100], ["等待收货", "11", "light-green", 50], ["已删除", "404", "dark", 100]
     # ]
-    self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成", 
+    st = self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成", 
       "等待卖方确认", "等待买方确认", "卖方退回", "买方退回", "已拆单", "等待收货", 
       "撤回等待审核", "作废等待审核", "已作废", "已撤回", "拒绝撤回", "拒绝作废", "已删除"])
+
+    return BidProject.status_array | st
 		# [
 	 #    ["未提交",0,"orange",10], ["等待审核",1,"blue",50],
   #     ["审核拒绝",2,"red",0], ["自动生效",5,"yellow",60],
@@ -180,7 +184,7 @@ class Order < ActiveRecord::Base
         order.budget_id = nil
         order.payer = "个人"
       else
-        order.budget_money = order.budget.try(:budget)
+        order.budget_money = order.budget.try(:total)
       end
       order.items.each_with_index do |item, index| 
         if params["item_price_#{item.vid}"].to_f > item.price.to_f
@@ -256,9 +260,9 @@ class Order < ActiveRecord::Base
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "update_audit", "audit" 
       self.class.audit_status.include?(self.status)
-    when "invoice_number"
+    when "invoice_number", "update_invoice_number"
       self.class.effective_status.include?(self.status)
-    when "print" 
+    when "print", "print_ht", "print_ysd"
       self.class.effective_status.include?(self.status) && current_u.real_department.is_ancestors?(self.buyer_id)
     else false
     end

@@ -30,7 +30,7 @@ defaults: &defaults
   category_no_product_tips: "带*标记的品目是没有入围产品的，请通过其他方式采购"
 
   # 颜色样式
-  colors: [["u", "草绿"],["blue", "浅蓝"],["red", "红色"],["green", "绿色"],["sea", "蓝绿色"],["orange", "橙色"],["yellow", "黄色"],["purple", "紫色"],["aqua", "浅蓝色"],["brown", "棕色"],["dark-blue", "深蓝色"],["light-green", "浅绿"],["dark", "黑色"],["light", "灰色"]]
+  colors: [["u", "草绿"],["blue", "浅蓝"],["red", "红色"],["yellow", "黄色"],["purple", "紫色"],["orange", "橙色"],["green", "绿色"],["sea", "蓝绿色"],["aqua", "浅蓝色"],["brown", "棕色"],["dark-blue", "深蓝色"],["light-green", "浅绿"],["dark", "黑色"],["light", "灰色"]]
   # 文章置顶类型
   top_type: [[0, "不置顶"], [1, "普通置顶"], [2, "标红置顶"]]
   # 信息公开类别
@@ -97,7 +97,7 @@ defaults: &defaults
   # 项目类型
   item_type: [[0,"厂家直销"],[1,"代理商供货"]]
   asset_status: [[1,"在用"],[2,"闲置"],[3,"转移"],[4,"报废"]]
-  yw_type:  { ddcg: "定点采购", xygh: "协议供货",  wsjj: "网上竞价" , grcg: "个人采购", dscg: "电商采购"}
+  yw_type:  { xygh: "协议供货", ddcg: "定点采购", wsjj: "网上竞价", dscg: "电商采购", grcg: "个人采购" }
   faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
   manage_user_type: 1
   audit_user_type: 7

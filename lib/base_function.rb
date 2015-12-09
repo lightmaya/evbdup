@@ -119,11 +119,11 @@ module BaseFunction
   end
 
   # 显示总金额
-  def show_total_part(total=0)
+  def show_total_part(total=0, name='总计')
     %Q{
       <div class="show_total">
           <h2 class="text-red">
-            <strong>总计：￥<span id="form_sum_total">#{total}</span></strong>
+            <strong>#{name}：￥<span id="form_sum_total">#{total}</span></strong>
           </h2>
       </div>
     }.html_safe

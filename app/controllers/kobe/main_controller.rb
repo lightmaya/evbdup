@@ -10,19 +10,18 @@ class Kobe::MainController < KobeController
       @orders = current_user.department.seller_orders.status_not_in(Order.ysd_status | Order.finish_status).limit(5).order('id desc')
     else
       # 本辖区本年度 采购方式占比
+      @type_arr = []
       cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"
-      total = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).sum(:total)
-      total = 0 if total.blank?
-      yw_type = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
-      if total == 0 
-        @xygh = @ddcg = @wsjj = 0
-      else
-        @xygh = yw_type.find{ |e| e.yw_type == 'xygh'}.present? ? (yw_type.find{ |e| e.yw_type == 'xygh'}.total*100/total).to_f : 0
-        @ddcg = yw_type.find{ |e| e.yw_type == 'ddcg'}.present? ? (yw_type.find{ |e| e.yw_type == 'ddcg'}.total*100/total).to_f : 0
-        @wsjj = yw_type.find{ |e| e.yw_type == 'wsjj'}.present? ? (yw_type.find{ |e| e.yw_type == 'wsjj'}.total*100/total).to_f : 0
+      @total = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).sum(:total)
+      if @total.present?
+        type = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
+        @type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/@total).to_f] }
       end
 
-      # 粮机类、办公类采购统计
+      # 粮机类、汽车、办公类采购统计
+      category = Order.find_all_by_buyer_code(current_user.real_dep_code).where(cdt).group('ht_template').select('ht_template, sum(total) as total')
+      @category_ha = {}
+      category.map{ |e|  @category_ha[e.ht_template] = e.total.to_f }
 
       # 最近本单位未完成的订单
     	@orders = current_user.department.buyer_orders.status_not_in(Order.ysd_status | Order.finish_status).limit(5).order('id desc')

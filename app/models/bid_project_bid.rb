@@ -4,6 +4,9 @@ class BidProjectBid < ActiveRecord::Base
   has_many :items, class_name: "BidItemBid"
   # has_many :uploads, as: :master
   has_many :uploads, class_name: :BidProjectBidUpload, foreign_key: :master_id
+  
+  belongs_to :user
+  belongs_to :department  
 
   default_value_for :is_bid, 0
 

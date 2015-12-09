@@ -19,7 +19,7 @@
 
         <div class="col-md-9">
             <div class="profile-body">
-                <%= render partial: "tongji" unless current_user.department.root_id == Department.supplier.try(:id) %>
+                <%#= render partial: "tongji" unless current_user.department.root_id == Department.supplier.try(:id) %>
 
                 <%= render partial: "to_do" %>
 

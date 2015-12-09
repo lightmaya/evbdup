@@ -215,8 +215,16 @@ class Kobe::OrdersController < KobeController
       obj_contents << show_total_part(@order.total)
       @arr  = []
       @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
+
+      if current_user.real_department.is_ancestors?(@order.buyer_id)
+        budget = @order.budget
+        budget_contents = show_obj_info(budget, Budget.xml)
+        budget_contents << show_uploads(budget, { is_picture: true })
+        @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
+      end
+
       @arr << {title: "附件", icon: "fa-paperclip", content: show_uploads(@order)}
-      @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
+      # @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
       @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@order)}
     end
 

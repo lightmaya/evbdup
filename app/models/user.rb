@@ -290,6 +290,33 @@ class User < ActiveRecord::Base
     [self.mobile, self.tel].select{|i| i.present?}.join(" / ")
   end
 
+  # 进入后台的统计数据
+  def get_dep_main
+
+    # 本辖区本年度 采购方式占比
+    @type_arr = []
+    cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"
+    @total = Order.find_all_by_buyer_code(self.real_dep_code).where(cdt).sum(:total)
+    if @total.present?
+      type = Order.find_all_by_buyer_code(self.real_dep_code).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
+      @type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/@total).to_f] }
+    end
+
+    # 粮机类、汽车、办公类采购统计
+    category = Order.find_all_by_buyer_code(self.real_dep_code).where(cdt).group('ht_template').select('ht_template, sum(total) as total')
+    @category_ha = {}
+    category.map{ |e| @category_ha[e.ht_template] = e.total.to_f }
+    
+  end
+
+  def cache_dep_main_tongji(force = false)
+    if force
+      Setting.send("dep_main_#{self.real_dep_code}=", get_dep_main)
+    else
+      Setting.send("dep_main_#{self.real_dep_code}=", get_dep_main) if Setting.send("dep_main_#{self.real_dep_code}").blank?
+    end
+    Setting.send("dep_main_#{self.real_dep_code}")
+  end
 
   private
 

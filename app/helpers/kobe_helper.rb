@@ -193,4 +193,26 @@ module KobeHelper
     return result
   end
 
+  # 后台main 统计采购方式占比
+  def progress_bar(title, num, color='u')
+    percent = num == 0 ? 0 : number_with_precision(num, precision: 2)
+    %Q{
+      <h3 class="heading-xs">#{title} <span class="pull-right">#{percent}%</span></h3>
+      <div class="progress progress-u progress-xxs">
+        <div style="width: #{percent}%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="#{percent}" role="progressbar" class="progress-bar progress-bar-#{color}">
+        </div>
+      </div>
+    }.html_safe
+  end
+
+  # 后台main 统计粮机、办公、汽车的采购量
+  def show_category_total(name, total)
+    sum = total.present? ? total : 0
+    %Q{
+      <div class="row margin-bottom-20">
+        <div class="col-xs-6 service-in"><small>#{name}</small></div>
+        <div class="col-xs-6 text-right service-in"><small>#{money sum}</small></div>
+      </div>
+    }.html_safe
+  end
 end

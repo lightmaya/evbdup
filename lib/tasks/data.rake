@@ -1109,7 +1109,7 @@ namespace :data do
       n.updated_at = old.updated_at
       
       if n.save
-        n.update(rule_id: Rule.find_by(yw_type: 'wsjj').try(:id), rule_step: 'start') if [22, 29].include?(n.status)
+        n.update(rule_id: Rule.find_by(yw_type: 'wsjj_jg').try(:id), rule_step: 'start') if [22, 29].include?(n.status)
         succ += 1
         p ".bid_projects succ: #{succ}/#{total} old: #{old.id}"
       else

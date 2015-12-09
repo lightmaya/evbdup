@@ -166,7 +166,7 @@ class BidProject < ActiveRecord::Base
         <node name='采购单位' column='buyer_dep_name' class='required' display= "readonly" />
         <node name='发票抬头' column='invoice_title' />
         <node name='采购人姓名' column='buyer_name' class='required' />
-        <node name='采购人电话' class='buyer_phone' class='required' />
+        <node name='采购人电话' column='buyer_phone' class='required' />
         <node name='采购人手机' column='buyer_mobile' class='required' />
         <node name='采购人地址' column='buyer_add' class='required' />
         <node name='明标或暗标' column='lod' class='required' data='#{Dictionary.lod}' data_type='radio' />
@@ -179,4 +179,60 @@ class BidProject < ActiveRecord::Base
       </root>
     }
   end
+
+  def send_to_order
+    order = Order.new
+    order.name = self.name
+    order.sn = self.code
+    order.contract_sn = self.code.gsub(self.rule.try(:code), 'ZCL')
+    order.buyer_name = self.buyer_dep_name 
+    order.payer = self.invoice_title
+
+    order.buyer_id = self.department_id
+    order.buyer_code = self.department_code
+
+    order.buyer_man = self.buyer_name
+    order.buyer_tel = self.buyer_phone
+    order.buyer_mobile = self.buyer_mobile
+    order.buyer_addr = self.buyer_add
+
+    bid = self.bid_project_bid 
+    order.seller_name = bid.com_name
+    order.seller_id = bid.department_id
+    order.seller_code = bid.department.real_ancestry
+
+    order.seller_man = bid.username
+    order.seller_tel = bid.tel
+    order.seller_mobile = bid.mobile
+    order.seller_addr = bid.add
+
+    order.budget_id = self.budget_id
+    order.budget_money = self.budget_money
+    order.total = bid.total
+
+    order.deliver_at = self.updated_at
+
+    order.summary = self.req
+    order.user_id = self.user_id
+
+    order.details = self.details
+    order.logs = self.logs.to_s
+    order.created_at = self.created_at
+    order.updated_at = self.updated_at
+    order.yw_type = 'wsjj'
+
+    bid.items.each do |item|
+      xq_item = item.bid_item
+      order.items.build(  
+        quantity: xq_item.num, price: item.price,
+        category_id: xq_item.category_id, category_code: xq_item.category.ancestry, 
+        category_name: xq_item.category.name, brand: item.brand_name,
+        version: item.xh, unit: xq_item.unit,  total: item.total, summary: item.req
+        )
+    end
+
+    order.ht_template = self.items.map{ |item| item.category.ht_template }.uniq.compact[0]
+    order.save
+  end
+
 end
