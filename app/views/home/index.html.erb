@@ -32,13 +32,13 @@
       </ol>
       <div class="carousel-inner">
           <div class="item">
-              <img class="img-responsive full-width" src="/plugins/images/ad/11.jpg" alt="">
+              <img class="img-responsive full-width" src="/plugins/images/banners/1.jpg" alt="">
           </div>
           <div class="item active left">
-              <img class="img-responsive full-width" src="/plugins/images/ad/12.jpg" alt="">
+              <img class="img-responsive full-width" src="/plugins/images/banners/2.jpg" alt="">
           </div>
           <div class="item next left">
-              <img class="img-responsive full-width" src="/plugins/images/ad/13.jpg" alt="">
+              <img class="img-responsive full-width" src="/plugins/images/banners/3.jpg" alt="">
           </div>
       </div>
       <a class="left carousel-control rounded-x" href="#portfolio-carousel" role="button" data-slide="prev">
@@ -64,9 +64,7 @@
     </div>
   </div>
 </div>
-<div class="mt20 service-block service-block-green">
-  <i>这是一个广告位</i>
-</div>
+<div class="mt20"></div>
 <div class="row magazine-page">
   <div style="padding-right:3px;" class="col-md-9">
     <div class="row job-content margin-bottom-20">
@@ -97,9 +95,8 @@
       </div>
     </div>
 
-    <div class="service-block service-block-blue">
-      <i class="icon-custom icon-color-light rounded-x icon-line icon-diamond"></i>
-      <h2 class="heading-md">这是一个广告位</h2>
+    <div class="margin-bottom-20">
+      <img alt="" src="/plugins/images/ad/b1.jpg" class="img-responsive full-width">
     </div>
 
     <div class="row job-content">
@@ -248,32 +245,36 @@
 </div>
 
 <div class="headline"><h2>畅销入围产品</h2></div>
-
-<div class="row margin-bottom-20">
-  <% @products.each do |product|%>
-    <%= show_product_div(product) %>
+<%  @products.each_slice(4) do |product| %>
+  <div class="row">
+  <% product.each do |p|%>
+    <%= show_product_div(p) %>
   <% end %>
-</div>
+  </div>
+<% end %>
+
 <!-- End Recent Works -->
+
+<div class="margin-bottom-20">
+  <img alt="" src="/plugins/images/ad/b4.jpg" class="img-responsive full-width">
+</div>
 
 <!--供应商展示-->
 <div class="headline margin-bottom-35"><h2><i class="fa fa-trophy"></i>入围供应商展示</h2></div>
-
-<!-- Easy Blocks v1 -->                
-<div class="row high-rated margin-bottom-20">
-  <% @deps.each_with_index do |dep,index|%>
-    <%= show_dep_div(dep,index) %>
-  <% end %>
-</div>
-<!-- End Easy Blocks v1 -->                
-<hr>
+   
+<% @deps.each_slice(4) do |dep| %>          
+  <div class="row high-rated margin-bottom-20">
+    <% dep.each do |d|%>
+      <%= show_dep_div(d) %>
+    <% end %>
+  </div>
+  <%= "<hr />".html_safe unless @deps.last == dep.last %>
+<% end %>              
 
 <!--供应商展示结束-->
 
-
-
 <div class="partners">
-  <div class="headline"><h2><i class="fa fa- fa-rocket"></i> 友情链接</h2></div>
+  <div class="headline margin-top-35"><h2><i class="fa fa- fa-rocket"></i> 友情链接</h2></div>
   <ul class="list-inline our-clients" id="effect-2">
     <li>
       <figure>

@@ -84,15 +84,16 @@ module JamesHelper
   end
 
   # 首页入围供应商展示
-  def show_dep_div(dep,index)
+  def show_dep_div(dep)
+    cat = dep.items.map{|e| e.categories.where(ancestry_depth: 2).map(&:name)}.flatten.uniq.join('、')
     %Q{
       <div class="col-md-3 md-margin-bottom-40">
         <div class="easy-block-v1">
-          <div id="carouse#{index}-example-generic" class="carousel slide" data-ride="carousel">
+          <div id="carouse#{dep.id}-example-generic" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
-              <li class="rounded-x active" data-target="#carouse#{index}-example-generic" data-slide-to="0"></li>
-              <li class="rounded-x" data-target="#carouse#{index}-example-generic" data-slide-to="1"></li>
-              <li class="rounded-x" data-target="#carouse#{index}-example-generic" data-slide-to="2"></li>
+              <li class="rounded-x active" data-target="#carouse#{dep.id}-example-generic" data-slide-to="0"></li>
+              <li class="rounded-x" data-target="#carouse#{dep.id}-example-generic" data-slide-to="1"></li>
+              <li class="rounded-x" data-target="#carouse#{dep.id}-example-generic" data-slide-to="2"></li>
             </ol>
             <div class="carousel-inner">
               <div class="item active">
@@ -109,12 +110,12 @@ module JamesHelper
               </div>
             </div>
           </div>
-          <div class="margin-top-10 font-size-16">#{text_truncate(dep.name, 13)}</div>     
+          <div class="margin-top-10 font-size-16">#{text_truncate(dep.name, 15)}</div>     
           <ul class="list-unstyled">
             <li><span class="color-green">信用分：</span> #{dep.comment_total}</li>
-            <li><span class="color-green">入围产品：</span> #{text_truncate(dep.items.map{|e| e.categories.where(ancestry_depth: 2).map(&:name)}.flatten.uniq.join('、'), 45)}</li>
+            <li class="h40"><span class="color-green">入围产品：</span> #{text_truncate(cat, 32)}</li>
           </ul>    
-          <a class="btn-u btn-u-sm" href="#">更多产品</a>
+          <a class="btn-u btn-u-sm" href="#">详情 + </a>
         </div>  
       </div>
     }.html_safe

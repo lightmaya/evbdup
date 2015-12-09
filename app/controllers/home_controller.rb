@@ -18,9 +18,9 @@ class HomeController < JamesController
     # 网上竞价结果公告
     @wsjj_jg = BidProject.where(status: [23, 33]).order("id desc").limit(8)
     # 畅销产品
-    @products = Product.show.order("id desc").limit(4)
+    @products = Product.show.order("id desc").limit(8)
     # 入围供应商
-    @deps = Department.order("comment_total desc").limit(4)
+    @deps = Department.order("comment_total desc").limit(8)
     # 协议转让公告
     @xyzr = Transfer.xyzr.order("id desc").limit(8)
     # 无偿划转公告
