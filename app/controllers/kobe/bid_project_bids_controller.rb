@@ -3,7 +3,7 @@ class Kobe::BidProjectBidsController < KobeController
 	before_filter :find_bid_project, only: [:pre_bid, :bid]
 
 	def pre_bid
-		slave_objs = current_user.bid_item_bids(@bid_project).presence || @bid_project.items.map{|item| BidItemBid.new(bid_item_id: item.id, bid_project_id: @bid_project.id, brand_name: item.brand_name, xh: item.xh) }
+		slave_objs = current_user.bid_item_bids(@bid_project).presence || @bid_project.items.map{|item| BidItemBid.new(bid_item_id: item.id, bid_project_id: @bid_project.id, brand_name: item.brand_name, xh: item.xh, req: item.req, remark: item.remark) }
     @ms_form = MasterSlaveForm.new(BidProjectBid.xml, BidItemBid.xml, @bid_project_bid, slave_objs, 
     	{title: "报价", upload_files: true, action: bid_kobe_bid_project_bids_path(bid_project_id: @bid_project.id), show_total: true, grid: 4},
     	{title: '产品明细', grid: 4, modify: false}
@@ -11,11 +11,30 @@ class Kobe::BidProjectBidsController < KobeController
 	end
 
 	def bid
-		other_attrs = {com_name: current_user.real_department.name}
-		info = @bid_project_bid.new_record? ? "报价成功！" : "修改报价成功！"
+		other_attrs = { com_name: current_user.real_department.name, bid_time: Time.now, department_id: current_user.department.id}
+		info = @bid_project_bid.new_record? ? "报价" : "修改报价"
     @bid_project_bid = create_or_update_msform_and_write_logs(@bid_project_bid, BidProjectBid.xml, BidItemBid, BidItemBid.xml, {:action => "报价", :master_title => "基本信息", :slave_title => "产品信息"}, other_attrs)
-    write_logs(@bid_project, "报价", "[#{current_user.real_department.name}]#{info}")
+    write_logs(@bid_project, "#{info}", "[#{current_user.real_department.name}]#{info}成功！")
 		redirect_to action: :index
+	end
+
+	def show
+		project = @bid_project_bid.bid_project
+		# 如果是报价单位 或者是项目截止后 本竞价项目的上级单位 才可以显示报价
+		if current_user.real_department.is_ancestors?(@bid_project_bid.department_id) || (project.is_end? && current_user.real_department.is_ancestors?(project.department_id))
+
+			obj_contents = show_obj_info(@bid_project_bid, BidProjectBid.xml, {title: "基本信息", grid: 3}) 
+	    @bid_project_bid.items.each_with_index do |item, index|
+	      obj_contents << show_obj_info(item, BidItemBid.xml, {title: "产品明细 ##{index+1}", grid: 3})
+	    end
+	    obj_contents << show_total_part(@bid_project_bid.total)
+
+	    @arr  = []
+	    @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
+	    @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project_bid) }
+	  else
+	  	cannot_do_tips
+	  end
 	end
 
 
@@ -43,8 +62,8 @@ class Kobe::BidProjectBidsController < KobeController
 		def find_bid_project
 			@bid_project = BidProject.find_by_id(params[:bid_project_id])
 			return redirect_to not_found_path unless @bid_project
-			return redirect_to bid_project_path(@bid_project) unless @bid_project.can_bid?(current_user)
-			if @bid_project.is_assigned?(current_user)
+			return redirect_to bid_project_path(@bid_project) unless @bid_project.can_bid?
+			unless @bid_project.check_user_can_bid?(current_user)
 				flash_get("您不是指定的入围供应商，无法参与报价！")
 				return redirect_to :back
 			end

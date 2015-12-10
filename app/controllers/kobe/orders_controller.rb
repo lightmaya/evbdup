@@ -5,7 +5,7 @@ class Kobe::OrdersController < KobeController
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
-  before_action :get_audit_menu_ids, :only => [:audit_ddcg, :audit_xygh, :audit_grcg, :audit, :update_audit]
+  before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
 
   skip_authorize_resource :only => [:same_template]
 
@@ -40,7 +40,7 @@ class Kobe::OrdersController < KobeController
     unless @order.id
       redirect_back_or
     else
-      redirect_to eval("#{@order.yw_type}_list_kobe_orders_path")
+      redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
     end
   end
 
@@ -61,7 +61,7 @@ class Kobe::OrdersController < KobeController
     return redirect_to(not_found_path) unless @order
     @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     write_logs(@order, "供应商确认", "")
-    redirect_to action: :xygh_seller_list
+    redirect_to seller_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   # 采购人确认页面
@@ -81,7 +81,7 @@ class Kobe::OrdersController < KobeController
     return redirect_to(not_found_path) unless @order
     @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     write_logs(@order, "采购人确认", "")
-    redirect_to action: :index
+    redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   # 下单
@@ -107,7 +107,7 @@ class Kobe::OrdersController < KobeController
 
   def update
     update_msform_and_write_logs(@order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息"}, { name: Order.get_project_name(@order, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) })
-    redirect_to eval("#{@order.yw_type}_list_kobe_orders_path")
+    redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   def edit
@@ -124,70 +124,30 @@ class Kobe::OrdersController < KobeController
     @order.change_status_and_write_logs("提交", logs, c_arr, false)
     @order.reload.create_task_queue
     tips_get(remark)
-    redirect_to eval("#{@order.yw_type}_list_kobe_orders_path")
+    redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
-  # 审核定点采购项目
-  def audit_ddcg
-    arr = [["orders.yw_type = ? ", 'ddcg']]
+  # 审核订单
+  def list
+    @rule = Rule.find_by(id: params[:r]) if params[:r].present?
+    arr = @rule.present? ? [["orders.yw_type = ? ", @rule.yw_type]] : []
     @orders = audit_list(Order, arr)
   end
-  
 
-  # 我的定点采购项目
-  def ddcg_list
+  # 我的订单
+  def my_list
+    @rule = Rule.find_by(id: params[:r])
     params[:q][:user_id_eq] = current_user.id
-    params[:q][:yw_type_eq] = 'ddcg'
+    params[:q][:yw_type_eq] = @rule.try(:yw_type)
     @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
     @orders = @q.result.page params[:page]
   end
 
-  # 审核协议采购项目
-  def audit_xygh
-    arr = [["orders.yw_type = ? ", 'xygh']]
-    @orders = audit_list(Order, arr)
-  end
-  
-
-  # 我的协议采购项目
-  def xygh_list
-    params[:q][:user_id_eq] = current_user.id
-    params[:q][:yw_type_eq] = 'xygh'
-    @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
-    @orders = @q.result.page params[:page]
-  end
-
-  # 审核个人采购项目
-  def audit_grcg
-    arr = [["orders.yw_type = ? ", 'grcg']]
-    @orders = audit_list(Order, arr)
-  end
-  
-  # 我的个人采购项目
-  def grcg_list
-    params[:q][:user_id_eq] = current_user.id
-    params[:q][:yw_type_eq] = 'grcg'
-    @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
-    @orders = @q.result.page params[:page]
-  end
-
-  # 供应商的网上竞价成交采购项目
-  def wsjj_list
-    params[:q][:yw_type_eq] = 'wsjj'
-    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
-    @orders = @q.result.page params[:page]
-  end
-
-  # 销售项目列表
+  # 销售项目列表 供应商的订单中心
   def seller_list
-    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
-    @orders = @q.result.page params[:page]
-  end
-
-  # 协议供货销售项目列表 确认订单列表
-  def xygh_seller_list
-    params[:q][:yw_type_eq] = 'xygh'
-    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
+    @rule = Rule.find_by(id: params[:r])
+    params[:q][:yw_type_eq] = @rule.try(:yw_type)
+    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).ransack(params[:q]) 
     @orders = @q.result.page params[:page]
   end
 
@@ -196,7 +156,7 @@ class Kobe::OrdersController < KobeController
 
   def update_audit
     save_audit(@order)
-    redirect_to eval("audit_#{@order.yw_type}_kobe_orders_path")
+    redirect_to list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   # 根据category_id判断模版是否相同
@@ -230,7 +190,7 @@ class Kobe::OrdersController < KobeController
   def update_invoice_number
      @order.update(invoice_number: params[:number] )
      write_logs(@order, '填写发票')
-     redirect_to kobe_orders_path
+     redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   private
@@ -255,8 +215,16 @@ class Kobe::OrdersController < KobeController
       obj_contents << show_total_part(@order.total)
       @arr  = []
       @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
+
+      if current_user.real_department.is_ancestors?(@order.buyer_id)
+        budget = @order.budget
+        budget_contents = show_obj_info(budget, Budget.xml)
+        budget_contents << show_uploads(budget, { is_picture: true })
+        @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
+      end
+
       @arr << {title: "附件", icon: "fa-paperclip", content: show_uploads(@order)}
-      @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
+      # @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
       @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@order)}
     end
 
@@ -270,16 +238,6 @@ class Kobe::OrdersController < KobeController
     def get_templates(category_ids)
       Category.where(id: category_ids).map(&:ht_template).uniq
     end
-
-    # 审核
-    # def audit_list(arr=[])
-    #   menu_ids = Menu.get_menu_ids("Order|#{action_name}")
-    #   arr << ["orders.status = ? ", 1]
-    #   arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{menu_ids.join(",") }) )", current_user.id]
-    #   arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    #   @q =  Order.joins(:task_queues).where(get_conditions("orders", arr)).ransack(params[:q])
-    #   @orders = @q.result(distinct: true).page params[:page]
-    # end
 
     def order_from_cart
       return redirect_to cart_path if @cart.ready_items.blank?

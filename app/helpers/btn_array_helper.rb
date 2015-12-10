@@ -105,7 +105,7 @@ module BtnArrayHelper
     # 提交
     arr << [obj.class.icon_action("提交"), commit_kobe_order_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit",current_user)
     # 打印
-    arr << [obj.class.icon_action("打印"), "#opt_dialog", "data-toggle" => "modal",onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("打印 合同/凭证")}", "#{print_kobe_order_path(obj)}", '#opt_dialog') } ] if can?(:print, obj) && obj.cando("print",current_user)
+    arr << [obj.class.icon_action("打印"), "#opt_dialog", "data-toggle" => "modal",onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("打印 合同/凭证")}", "#{print_kobe_order_path(obj)}", '#opt_dialog') } ] if can?(:print_order, obj) && obj.cando("print",current_user)
     #是否开发票
     arr << [obj.class.icon_action(name), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("发票编号")}" , "#{invoice_number_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:invoice_number, obj) && obj.cando("invoice_number",current_user)
     # 审核
@@ -380,8 +380,11 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("详细"), obj, target: "_blank"]
     
     # 报价
-    title = current_user.bid_item_bids(obj).present? ? "我要修改" : "我要报价"
-    arr << [obj.class.icon_action(title), pre_bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:show, obj) && obj.can_bid?
+    title = current_user.bid_project_bid(obj).new_record? ? "我要报价" : "修改报价"
+    arr << [obj.class.icon_action(title), pre_bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:wsjj_bid, BidProjectBid) && obj.can_bid? && obj.check_user_can_bid?(current_user)
+
+
+    arr << [obj.class.icon_action("报价明细"), kobe_bid_project_bid_path(current_user.bid_project_bid(obj)), target: "_blank"] if can?(:show, BidProjectBid) && !current_user.bid_project_bid(obj).new_record?
     return arr
   end
   

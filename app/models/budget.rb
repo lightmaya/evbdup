@@ -82,14 +82,14 @@ class Budget < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='预算审批单名称' column='name' class='required' hint='例如：****2015年输送机预算审批单'/>
-        <node name='总预算金额（元）' column='budget' class='required number'/>
+        <node name='总预算金额（元）' column='total' class='required number'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
       </root>
     }
   end
 
   def name_with_budget
-    "#{self.name} [预算金额: #{self.budget}]"
+    "#{self.name} [预算金额: #{self.total}]"
   end
 
 end

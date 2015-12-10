@@ -39,7 +39,7 @@
                     <td><%= show_index(index) %></td>
                     <td><%= budget.department.present? ? budget.department.real_dep.name : "" %></td>
                     <td><%= budget.name %></td>
-                    <td class="money"><%= money budget.budget %></td>
+                    <td class="money"><%= money budget.total %></td>
                     <td><%= budget.status_badge %></td>
                     <td><%= show_date(budget.created_at) %></td>
                     <td><%= btn_group(budgets_btn(budget,action_name == "list")) %></td>

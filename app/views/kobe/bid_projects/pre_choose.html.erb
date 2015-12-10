@@ -1,55 +1,38 @@
-<%= title "选择中标人" %>
-<%= @obj_contents %>
+<%= show_tabs(@arr) %>
 
-<div class="panel panel-grey margin-bottom-40">
-  <div class="panel-heading">
-      <h3 class="panel-title"><i class="fa fa-tasks"></i> 报价信息</h3>
-  </div>
+<%= render partial: 'bid_list', locals: { act: 'choose' } %>
 
+<%= form_for @bid_project, :url => choose_kobe_bid_project_path(@bid_project), :html => {id: "choose_form"} do |f| %>
+  <%= f.hidden_field :bid_project_bid_id %>
+  <%= hidden_field_tag :choose_who %>
   <table class="table table-bordered table-hover">
-    <thead>
-      <tr>
-      	<th>中标人</th>
-        <th class="index">序号</th>
-        <th>报价单位</th>
-        <th>联系人</th>
-        <th>联系电话</th>
-        <th>报价总金额</th>
-        <th>报价时间</th>
-        <th>操作</th>
-      </tr>
-     </thead>
-    <tbody>
-    	<% @bpbs.each_with_index do |bid_project_bid, index| %>
-    		<tr>
-    			<td class="tc"><%= radio_button_tag "bid_project_bid", bid_project_bid.id, index == 0, name: "bid_project_bid_radios" %></td>
-    			<td><%= show_index(index) %></td>
-    			<td><%= bid_project_bid.com_name %></td>
-    			<td><%= bid_project_bid.username %></td>
-    			<td><%= bid_project_bid.lx %></td>
-    			<td><%= money bid_project_bid.total %></td>
-    			<td><%= bid_project_bid.updated_at %></td>
-    			<td><%= link_to_blank "查看报价详情", "" %></td>
-    		</tr>
-    	<% end -%>
-    </tbody>
-  </table>
-  <%= form_for @bid_project, :url => choose_kobe_bid_project_path(@bid_project), :html => {id: "choose_form"} do |f| %>
-    <%= f.hidden_field :bid_project_bid_id %>
-    <%= f.hidden_field :status %>
-    <table class="table table-bordered table-hover">
-      <tr>
-      	<th>操作理由</th>
-      	<td><%= f.text_area :reason, class: "w90p" %></td>
-      </tr>
-    </table> 
-  <% end -%>
-</div> 
+    <tr>
+    	<th>操作理由</th>
+    	<td><%= f.text_area :reason, class: "form-control" %></td>
+    </tr>
+  </table> 
+<% end -%>
 
-<%= link_to_void "选择中标人", onclick: "choose_who(1);", class: "btn-u btn-u-large" %>
+<%= link_to_void "选择中标人", onclick: "choose_who(1);", class: "btn-u btn-u-large" if @bpbs.size >= 3 && @bpbs.first.total <= @bid_project.budget_money %>
 <%= link_to_void "选择废标", onclick: "choose_who(2);", class: "btn-u btn-u-large btn-u-red" %>
 
 <script type="text/javascript">
+  $(function() {
+    var msg = ''
+    if(<%= @bpbs.size < 3 %>){
+      msg += "投标单位不足三家。";
+    }
+    if(<%= @bpbs.first.total > @bid_project.budget_money %>){
+      msg += "最低报价超出预算。";
+    }
+    if(!isEmpty(msg)){
+      $("input:radio[name='bid_project_bid_radios']").each(function(){
+        $(this).attr('checked',false).attr('disabled', 'disabled');
+      });
+      $("#bid_project_reason").text(msg);
+    }
+  });
+  
   function choose_who(i){
     if(i==1){
       var bid_id = $("input:radio[name='bid_project_bid_radios']:checked").val();
@@ -65,7 +48,7 @@
           return false;
         }
       } 
-      $("#bid_project_status").val(23); 
+      $("#choose_who").val("选择中标人"); 
     }else{
       $("#bid_project_bid_project_bid_id").val("");
       if(isEmpty($("#bid_project_reason").val())){
@@ -73,7 +56,7 @@
         $("#bid_project_reason").focus();
         return false;
       }
-      $("#bid_project_status").val(33); 
+      $("#choose_who").val("选择废标"); 
     }
     // alert("submit");
     $("#choose_form").submit();

@@ -84,7 +84,7 @@
       </div>
       <div class='modal-footer'>
         <button class='btn btn-primary' type='button' data-dismiss='modal' id="agree_btn">同意</button>
-        <button class='btn btn-default' type='button' data-dismiss='modal'>不同意</button>
+        <button class='btn btn-default' type='button' data-dismiss='modal' id="disagree_btn">不同意</button>
       </div>
     </div>
   </div>
@@ -105,6 +105,10 @@ $(document).ready(function() {
   // 注册 点击用户注册条款的我同意 勾选checkbox
   $("#user_agreements #agree_btn").on("click", function(){
     $("#user_agree").attr("checked",true);
+  });
+
+  $("#user_agreements #disagree_btn").on("click", function(){
+    $("#user_agree").attr("checked",false);
   });
   
 });

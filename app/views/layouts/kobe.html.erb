@@ -34,16 +34,8 @@
         <!--=== End Header ===-->     
 
         <!--=== Breadcrumbs ===-->
-        <div class="breadcrumbs">
-            <div class="container">
-                <h1 class="pull-left"> <%= yield(:title) %></h1>
-                <ul class="pull-right breadcrumb">
-                    <li><a href="index-2.html">首页</a></li>
-                    <li><a href="#">单位及人员管理</a></li>
-                    <li class="active">单位管理</li>
-                </ul>
-            </div>
-        </div><!--/breadcrumbs-->
+        <%= breadcrumbs_tag %>
+        <!--/breadcrumbs-->
         <!--=== End Breadcrumbs ===-->
 
         <!--=== Content Part ===-->

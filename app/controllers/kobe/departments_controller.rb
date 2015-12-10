@@ -28,7 +28,7 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def create
-    p_id = params[:departments][:parent_id].present? ? params[:departments][:parent_id] : Department.purchaser.try(:id)
+    p_id = params[:departments][:parent_id].present? ? params[:departments][:parent_id] : Dictionary.dep_purchaser_id
     parent_dep = Department.find_by(id: p_id) 
     dep = create_and_write_logs(Department, parent_dep.get_xml)
     if dep

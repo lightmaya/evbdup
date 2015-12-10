@@ -1,2 +1,2 @@
-<%= show_tips('warning','',@item.tips)%>
+<%= show_tips('warning','',@item.tips) if current_user.id == @item.user_id %>
 <%=show_tabs(@arr)%>

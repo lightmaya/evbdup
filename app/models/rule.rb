@@ -88,4 +88,30 @@ class Rule < ActiveRecord::Base
     return arr
   end
 
+  # 检查流程对应的状态和菜单是否正确
+  def check_status_and_menus
+    p "...#{self.name}.........................."
+    Nokogiri::XML(self.rule_xml).css("step").each_with_index do |step, i|
+      name = step["name"].to_str
+      junior = Menu.find_by(id: step.at_css('junior').to_str).try(:name)
+      senior = Menu.find_by(id: step.at_css('senior').to_str).try(:name)
+      start_status = Dictionary.all_status.keys.find{ |e| e[1] == step.at_css('start_status').to_str }[0]
+      return_status = Dictionary.all_status.keys.find{ |e| e[1] == step.at_css('return_status').to_str }[0]
+      finish_status = Dictionary.all_status.keys.find{ |e| e[1] == step.at_css('finish_status').to_str }[0]
+      to_do_id = ToDoList.find_by(id: step.at_css('to_do_id').to_str).try(:name)
+
+      p "#{i+1}. #{name}"
+      p "  junior:        #{junior}"
+      p "  senior:        #{senior}"
+      p "  start_status:  #{start_status}"
+      p "  return_status: #{return_status}"
+      p "  finish_status: #{finish_status}"
+      p "  to_do_id:      #{to_do_id}"
+
+    end
+
+  end
+
+
+
 end

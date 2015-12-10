@@ -56,7 +56,7 @@ class Kobe::AgentsController < KobeController
 
   def search_dep_name
     @q = Department.supplier.descendants.limit(20).ransack(params[:q]) 
-    @deps = @q.result if params[:q].present?
+    @deps = @q.result if params[:q][:name_cont].present?
     render partial: '/kobe/shared/search_dep_name', locals: { search_url: search_dep_name_kobe_agents_path, title: "查找代理商", deps: @deps, input_id: "agents_name" }
   end
 

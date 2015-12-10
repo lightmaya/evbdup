@@ -25,9 +25,9 @@ class Kobe::MsgsController < KobeController
   end
 
   # 获取审核的menu_ids
-  def get_audit_menu_ids
-    @menu_ids = Menu.get_menu_ids("Msg|list")
-  end
+  # def get_audit_menu_ids
+  #   @menu_ids = Menu.get_menu_ids("Msg|list")
+  # end
 
   # 提交
   def commit

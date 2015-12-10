@@ -181,6 +181,10 @@ module AboutStatus
 	  		ha["通过"] = { start_status => finish_status }
 	  		# 不通过 状态转向 本步的退回状态
 	  		ha["不通过"] = { start_status => return_status }
+
+	  		# 网上竞价选择中标人
+	  		ha["选择中标人"] = { self.class.bid_and_choose_status => start_status } if self.class == BidProject
+	  		
 	  	end
 	  end
   	return ha

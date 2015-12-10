@@ -2,17 +2,16 @@
 class Kobe::BidProjectsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_action :get_show_arr, :only => [:audit, :show]
+  before_action :get_show_arr, :only => [:show, :audit, :pre_choose]
   before_filter :check_bid_project, :except => [:index, :bid, :new, :create, :list]
 
   def index
-    params[:q][:user_id_eq] = current_user.id unless current_user.is_zgs?
+    params[:q][:user_id_eq] = current_user.id unless current_user.department.is_zgs?
     @q = BidProject.where(get_conditions("bid_projects")).ransack(params[:q]) 
     @bid_projects = @q.result.includes([:bid_project_bids]).page params[:page]
   end
 
   def show
-    @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC")
   end
 
   # def bid
@@ -22,48 +21,55 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def pre_choose
-    @obj_contents = show_obj_info(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
-    @bid_project.items.each_with_index do |item, index|
-      @obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
-    end
-    @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC")
     # 默认第一中标人
     @bid_project.bid_project_bid_id = @bpbs.first.id
   end
 
   def choose
     #W status id reason
+    # 选择中标人之后转换到网上竞价结果的流程
+    @bid_project.update(rule_id: Rule.find_by(yw_type: 'wsjj_jg').try(:id), rule_step: 'start')
+    # 保存参数
     @bid_project.update(params.require(:bid_project).permit!)
-    write_logs(@bid_project, BidProject.get_status_attributes(@bid_project.status, 1)[0], @bid_project.reason)
+    @bid_project.bid_project_bid.update(is_bid: true) if @bid_project.bid_project_bid.present?
+    # 写日志
+    # write_logs(@bid_project, BidProject.get_status_attributes(@bid_project.status, 1)[0], @bid_project.reason)
+    remark = "#{params[:choose_who]}成功！"
+    remark << "选择[#{@bid_project.bid_project_bid.com_name}]为中标单位。" if @bid_project.bid_project_bid.present?
+    remark << "操作理由：#{@bid_project.reason}" if @bid_project.reason.present?
+    logs = stateless_logs("选择中标人", remark, false)
+    @bid_project.change_status_and_write_logs("选择中标人", logs, @bid_project.commit_params, false)
+    @bid_project.reload.create_task_queue
+    tips_get(remark)
     redirect_to action: :index
     # @bid_project.update(params[:bid_project].permit(:bid_project_bid_id, :reason))
   end
 
   def update_audit
     save_audit(@bid_project)
-
-    redirect_to list_kobe_bid_projects_path
+    # 确定中标人
+    if @bid_project.status == 23
+      Rufus::Scheduler.new.in "1s" do
+        @bid_project.send_to_order
+        ActiveRecord::Base.clear_active_connections!
+      end
+    end
+    redirect_to list_kobe_bid_projects_path(r: @bid_project.rule.try(:id))
   end
 
   def list
-    @bid_projects = audit_list(BidProject)
-    # arr = []
-    # arr << ["bid_projects.status = ? ", 1]
-    # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
-    # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
-    # cdt = get_conditions("bid_projects", arr)
-    # @q =  BidProject.joins(:task_queues).where(cdt).ransack(params[:q]) 
-    # @bid_projects = @q.result(distinct: true).page params[:page]
+    @rule = Rule.find_by(id: params[:r]) if params[:r].present?
+    to_do_list_ids = @rule.create_rule_objs.map{ |e| e.attributes["to_do_id"] }.uniq if @rule.present?
+    arr = to_do_list_ids.present? ? [["task_queues.to_do_list_id in (?) ", to_do_list_ids]] : []
+    @bid_projects = audit_list(BidProject, arr)
   end
 
   # 提交
   def commit
-    @bid_project.change_status_and_write_logs("提交",
-      stateless_logs("提交","提交成功！", false),
-      @bid_project.commit_params, false)
+    @bid_project.change_status_and_write_logs("提交", stateless_logs("提交","提交成功！", false), @bid_project.commit_params, false)
     @bid_project.reload.create_task_queue
     tips_get("提交成功。")
-    redirect_to kobe_bid_projects_path(id: @bid_project)
+    redirect_to action: :index
   end
 
   def new
@@ -75,27 +81,27 @@ class Kobe::BidProjectsController < KobeController
     @bid_project.buyer_add = current_user.department.address
 
     slave_objs = [@bid_project.items.build]
-    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project, slave_objs,
+    @ms_form = MasterSlaveForm.new(BidProject.xml(true), BidItem.xml, @bid_project, slave_objs,
       { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true, 
-        upload_files_name: "bid_project", 
-        title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 4},
-        {title: '产品明细', grid: 4}
+        # upload_files_name: "bid_project", 
+        title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 3},
+        {title: '产品明细', grid: 3}
       )
   end
 
   def edit
     slave_objs = @bid_project.items.blank? ? [@bid_project.items.build] : @bid_project.items
-    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project,slave_objs,{upload_files: true, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@order), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    @ms_form = MasterSlaveForm.new(BidProject.xml(true), BidItem.xml, @bid_project,slave_objs,{upload_files: true, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@bid_project), method: "patch", grid: 3},{title: '产品明细', grid: 3})
   end
 
   def create
     other_attrs = {department_id: current_user.department.id, department_code: current_user.real_dep_code, name: get_project_name }
-    obj = create_msform_and_write_logs(BidProject, BidProject.xml, BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
+    obj = create_msform_and_write_logs(BidProject, BidProject.xml(true), BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     redirect_to kobe_bid_projects_path
   end
 
   def update
-    update_and_write_logs(@bid_project, BidProject.xml)
+    update_msform_and_write_logs(@bid_project, BidProject.xml(true), BidItem, BidItem.xml, {:action => "修改竞价", :slave_title => "产品明细"})
     redirect_to kobe_bid_projects_path
   end
 
@@ -124,11 +130,19 @@ class Kobe::BidProjectsController < KobeController
 
     def get_show_arr
       @arr  = []
-      obj_contents = show_obj_info(@bid_project, BidProject.xml, {title: "基本信息", grid: 3}) 
+      obj_contents = show_obj_info(@bid_project, BidProject.xml(current_user.real_department.is_ancestors?(@bid_project.department_id)), {title: "基本信息", grid: 3}) 
       @bid_project.items.each_with_index do |item, index|
-        obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 4})
+        obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 3})
       end
+      @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC, bid_project_bids.bid_time ASC")
       @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
+
+      if current_user.real_department.is_ancestors?(@bid_project.department_id)
+        budget = @bid_project.budget
+        budget_contents = show_obj_info(budget, Budget.xml)
+        budget_contents << show_uploads(budget, { is_picture: true })
+        @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
+      end
       @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
       @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
       

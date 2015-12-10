@@ -193,4 +193,22 @@ module KobeHelper
     return result
   end
 
+  def breadcrumbs_tag
+    menu = Menu.find_by(route_path: request.fullpath.gsub('.html',''))
+    menu = Menu.find_by(route_path: "/kobe/#{controller_name}/#{action_name}") if menu.blank?
+    if menu.present?
+      str = "<li>#{link_to '首页', root_path}</li>"
+      menu.ancestors.each do |m|
+        str << "<li>#{m.route_path.present? ? link_to(m.name, m.route_path) : m.name}</li>"
+      end
+      str << "<li class='active'>#{menu.name}</li>"
+    end
+
+    %Q{
+      <div class="breadcrumbs">
+        <div class="container"><ul class="breadcrumb">#{str}</ul></div>
+      </div>
+    }.html_safe
+  end
+
 end

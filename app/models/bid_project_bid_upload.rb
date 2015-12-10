@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
-class BudgetUpload < ActiveRecord::Base
-	belongs_to :master, class_name: "Budget", foreign_key: "master_id"
+class BidProjectBidUpload < ActiveRecord::Base
+	belongs_to :master, class_name: "BidProjectBid", foreign_key: "master_id"
 
   has_attached_file :upload, :styles => {thumbnail: "45x45", md: "240x180", lg: "1024x768"}
   validates_attachment_content_type :upload, :content_type => ['image/jpeg','image/png','application/pdf'], :message => "文件格式有误"

@@ -15,6 +15,8 @@ class Item < ActiveRecord::Base
   has_many :orders, -> { distinct }, through: :orders_items
 	# default_scope -> {order("id desc")}
   
+  scope :usable, -> { where("items.status = #{Item.effective_status.join(', ')} and now() < items.end_time") }
+
   default_value_for :status, 0 
 
 	before_save do 
@@ -39,6 +41,11 @@ class Item < ActiveRecord::Base
   end
 
 	include AboutStatus
+
+  # 是否过了有效期
+  def is_end?
+    Time.now > self.end_time
+  end
 
 	# 中文意思 状态值 标签颜色 进度 
 	def self.status_array
@@ -106,11 +113,11 @@ class Item < ActiveRecord::Base
 
   # 保存后提示哪些供应商已经注册 哪些没有注册
   def tips
-		unregistered_names = self.unregistered_departments.map(&:name).join(", ")
-		registered_names = self.registered_departments.map(&:name).join(", ")
+		unregistered_names = self.unregistered_departments.map(&:name).join("<br/> ")
+		registered_names = self.registered_departments.map(&:name).join("<br/> ")
 		tips = []
-		tips << "[#{unregistered_names}] 还未注册，请联系供应商注册" if unregistered_names.present?
-		tips << "[#{registered_names}] 已注册，提交项目后给这些供应商插入待办事项" if registered_names.present?
+		tips << "<span class='red'>以下单位还未注册，请联系供应商注册：</span><br/> #{unregistered_names}" if unregistered_names.present?
+		tips << "<span class='red'>以下单位已注册，提交项目后给这些供应商发送站内消息：</span><br/> #{registered_names}" if registered_names.present?
 		return tips
 	end
 

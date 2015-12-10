@@ -1,14 +1,19 @@
 # -*- encoding : utf-8 -*-
 class BidProject < ActiveRecord::Base
-  has_many :uploads, as: :master
+  # has_many :uploads, as: :master
+  
+  has_many :uploads, class_name: :BidProjectUpload, foreign_key: :master_id
+
   has_many :items, class_name: "BidItem"
   has_many :bid_item_bids
   has_many :bid_project_bids
-  has_one :bid_project_bid
+  belongs_to :bid_project_bid
+
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "BidProject") }, foreign_key: :obj_id
+
   belongs_to :user
-  has_one :item
+  belongs_to :item
   belongs_to :department  
 
   belongs_to :budget
@@ -19,23 +24,34 @@ class BidProject < ActiveRecord::Base
 
   # 模型名称
   Mname = "网上竞价项目"
+  
+  # 附件的类
+  def self.upload_model
+    BidProjectUpload
+  end
 
   before_create do
     # 设置rule_id和rule_step
-    init_rule
+    self.rule_id = Rule.find_by(yw_type: 'wsjj_xq').try(:id)
+    self.rule_step = 'start'
   end
 
   after_create do 
     create_no
 
   end
+
+  after_save do 
+    budget.try(:used!)
+  end
   
   include AboutStatus
   
+  # 可投标 可选择中标人的状态
   def self.bid_and_choose_status
     16
   end
- 
+
   # 中文意思 状态值 标签颜色 进度 
 	def self.status_array
     # [
@@ -82,7 +98,6 @@ class BidProject < ActiveRecord::Base
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
-    @bid_project = current_u.department.is_zgs? ? BidProject.find_by_id(params[:id]) : current_u.bid_projects.find_by_id(params[:id])
     case act
     when "show"
       true
@@ -95,11 +110,14 @@ class BidProject < ActiveRecord::Base
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "choose", "pre_choose"
-      self.status == BidProject.bid_and_choose_status && self.is_end?
-    when "bid"
-      self.can_bid?
+      self.can_choose? && current_u.try(:id) == self.user_id
     else false
     end
+  end
+
+  # 可以选择中标人
+  def can_choose?
+    self.status == BidProject.bid_and_choose_status && self.is_end?
   end
 
   def is_end?
@@ -110,9 +128,9 @@ class BidProject < ActiveRecord::Base
     self.status == BidProject.bid_and_choose_status && !is_end?
   end
 
-  # 判断是否是指定供应商
-  def is_assigned?(user)
-    item.blank? || item.departments.include?(user.department)
+  # 判断用户是否可以报价 主要判断是否是指定的入围供应商
+  def check_user_can_bid?(user)
+    (item.present? && item.departments.include?(user.department)) || item.blank?
   end
 
   def show_logs
@@ -137,26 +155,84 @@ class BidProject < ActiveRecord::Base
   #   return msg
   # end
 
-  def self.xml(who = '',options = {})
+  def self.xml(show_budget=false)
+    bm = show_budget ? %Q{
+      <node name='预算金额（元）' column='budget_money' class='number box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
+      <node column='budget_id' data_type='hidden'/>
+    } : ''
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='采购单位' column='buyer_dep_name' class='required' display= "readonly" />
         <node name='发票抬头' column='invoice_title' />
         <node name='采购人姓名' column='buyer_name' class='required' />
-        <node name='采购人电话' class='buyer_phone' class='required' />
+        <node name='采购人电话' column='buyer_phone' class='required' />
         <node name='采购人手机' column='buyer_mobile' class='required' />
         <node name='采购人地址' column='buyer_add' class='required' />
         <node name='明标或暗标' column='lod' class='required' data='#{Dictionary.lod}' data_type='radio' />
         <node name='投标截止时间' column='end_time' class='required datetime_select datetime' />
-        <node name='预算金额（元）' column='budget' class='required number' display="skip" />
         <node name='资质要求' column='req' data_type='textarea' class='required' />
         <node column='item_id' data_type='hidden'/>
         <node name='指定入围供应商' hint='粮机设备必须从入围项目中选择' class='box_radio' json_url='/kobe/shared/item_ztree_json' partner='item_id'/>
-        <node name='预算金额（元）' column='budget_money' class='number box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
-        <node column='budget_id' data_type='hidden'/>
+        #{bm}
         <node name='备注信息' column='remark' data_type='textarea' />
       </root>
     }
   end
+
+  def send_to_order
+    order = Order.new
+    order.name = self.name
+    order.sn = self.code
+    order.contract_sn = self.code.gsub(self.rule.try(:code), 'ZCL')
+    order.buyer_name = self.buyer_dep_name 
+    order.payer = self.invoice_title
+
+    order.buyer_id = self.department_id
+    order.buyer_code = self.department_code
+
+    order.buyer_man = self.buyer_name
+    order.buyer_tel = self.buyer_phone
+    order.buyer_mobile = self.buyer_mobile
+    order.buyer_addr = self.buyer_add
+
+    bid = self.bid_project_bid 
+    order.seller_name = bid.com_name
+    order.seller_id = bid.department_id
+    order.seller_code = bid.department.real_ancestry
+
+    order.seller_man = bid.username
+    order.seller_tel = bid.tel
+    order.seller_mobile = bid.mobile
+    order.seller_addr = bid.add
+
+    order.budget_id = self.budget_id
+    order.budget_money = self.budget_money
+    order.total = bid.total
+
+    order.deliver_at = self.updated_at
+
+    order.summary = self.req
+    order.user_id = self.user_id
+
+    order.details = self.details
+    order.logs = self.logs.to_s
+    order.created_at = self.created_at
+    order.updated_at = self.updated_at
+    order.yw_type = 'wsjj'
+
+    bid.items.each do |item|
+      xq_item = item.bid_item
+      order.items.build(  
+        quantity: xq_item.num, price: item.price,
+        category_id: xq_item.category_id, category_code: xq_item.category.ancestry, 
+        category_name: xq_item.category.name, brand: item.brand_name,
+        version: item.xh, unit: xq_item.unit,  total: item.total, summary: item.req
+        )
+    end
+
+    order.ht_template = self.items.map{ |item| item.category.ht_template }.uniq.compact[0]
+    order.save
+  end
+
 end

@@ -34,7 +34,7 @@
             <th>项目编号</th>
             <th>项目名称</th>
             <th>明标/暗标</th>
-            <th>投标截止时间</th>
+            <th class="date">投标截止时间</th>
             <th>项目状态</th>
             <th>投标状态</th>
             <th class="cando">操作</th>
@@ -49,7 +49,7 @@
             <td class="tc"><%= bid_project.dict_value("lod") %></td>
             <td class="tc"><%= bid_project.end_time %></td>
             <td class="tc"><%= bid_project.status_badge %></td>
-            <td class="tc"><%= bid_project.bid_item_bids.map(&:user_id).include?(current_user.id) ? label_tag("已投标") : label_tag("未投标", "warning") %></td>
+            <td class="tc"><%= bid_project.bid_project_bids.map(&:user_id).include?(current_user.id) ? label_tag("已投标") : label_tag("未投标", "warning") %></td>
             <td class="tc"><%= btn_group(bid_project_bids_btn(bid_project)) %></td>
           </tr>
         <% end %>

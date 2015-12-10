@@ -39,7 +39,7 @@ class UsersController < JamesController
 
   # 注册 department表和user表占位子
   def create_user_dep
-    dep = Department.create(name: params[:user][:dep], parent_id: Department.supplier.try(:id), dep_type: false)
+    dep = Department.create(name: params[:user][:dep], parent_id: Dictionary.dep_supplier_id, dep_type: false)
     user = User.create(params.require(:user).permit(:login, :email, :password, :password_confirmation))
     if dep.present? && user.present?
       user.update(department_id: dep.id, is_admin: true)

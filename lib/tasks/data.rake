@@ -233,7 +233,6 @@ namespace :data do
       n.end_time = old.end_time 
       n.categoryids = old.category_id
 
-
       n.status = case old.status
       when "停止申请"
         68
@@ -247,7 +246,7 @@ namespace :data do
         404
       end
 
-
+      n.user_id = old.user_id
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
       n.created_at = old.created_at
@@ -288,6 +287,24 @@ namespace :data do
 
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
   end
+
+  desc '根据截止时间更新协议供货项目'
+  task :update_items => :environment do
+    p "#{begin_time = Time.now} in items....."
+
+    succ = 0
+    items = Item.where(status: Item.effective_status)
+    items.each do |i|
+      next unless i.is_end?
+      # ["已过期", "54"]: ["dark", 100]
+      i.change_status_and_write_logs("已过期", save_logs(i.logs, "过期", 54, "系统自动更新过期的项目"))
+      succ += 1 
+      p ".item_departments succ: #{succ}/#{items.size} old: #{i.id}"
+    end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
 
   desc '导入代理商'
   task :agents => :environment do
@@ -825,7 +842,7 @@ namespace :data do
       # 清除历史遗留项目
       if o.status == 8 and o.created_at < '2015-01-01'
         clean_left += 1
-        o.change_status_and_write_logs("已删除", save_logs(o.logs))
+        o.change_status_and_write_logs("已删除", save_logs(o.logs, "删除", 404, "清除历史遗留项目"))
         clean_id << o.id
       else
         next if o.yw_type == 'wsjj'
@@ -1093,6 +1110,7 @@ namespace :data do
       n.updated_at = old.updated_at
       
       if n.save
+        n.update(rule_id: Rule.find_by(yw_type: 'wsjj_jg').try(:id), rule_step: 'start') if [22, 29].include?(n.status)
         succ += 1
         p ".bid_projects succ: #{succ}/#{total} old: #{old.id}"
       else
@@ -1245,7 +1263,7 @@ namespace :data do
       # 清除历史遗留项目
       if o.status == 15 and o.created_at < '2015-01-01'
         clean_left += 1
-        o.change_status_and_write_logs("已删除", save_logs(o.logs))
+        o.change_status_and_write_logs("已删除", save_logs(o.logs, "删除", 404, "清除历史遗留项目"))
         clean_id << o.id
       else
         # 插入待办事项
@@ -1361,16 +1379,16 @@ namespace :data do
   end
 
   # 清除历史遗留数据 插入日志
-  def save_logs(xml)
+  def save_logs(xml, action, status, remark)
     user = User.find_by(login: 'zcl001')
     node = Nokogiri::XML(xml).root.add_child("<node>").first
     node["操作时间"] = Time.now.to_s(:db)
     node["操作人ID"] = user.id.to_s
     node["操作人姓名"] = user.name.to_s
     node["操作人单位"] = user.department.nil? ? "暂无" : user.department.name.to_s
-    node["操作内容"] = "删除"
-    node["当前状态"] = "已删除"
-    node["备注"] = "清除历史遗留项目"
+    node["操作内容"] = action 
+    node["当前状态"] = status 
+    node["备注"] = remark 
     return node.to_s
   end
 
