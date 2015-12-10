@@ -98,15 +98,15 @@ module JamesHelper
             <div class="carousel-inner">
               <div class="item active">
                 <div class="easy-block-v1-badge rgba-default">办公楼外景</div> 
-                <img alt="" src="/plugins/images/ad/agents/0_1.jpg">
+                <img alt="" src="/plugins/images/ad/agents/thumb/#{dep.old_id}_1.jpg">
               </div>
               <div class="item">
                 <div class="easy-block-v1-badge rgba-default">车间外景</div> 
-                <img alt="" src="/plugins/images/ad/agents/0_2.jpg">
+                <img alt="" src="/plugins/images/ad/agents/thumb/#{dep.old_id}_2.jpg">
               </div>
               <div class="item">
                 <div class="easy-block-v1-badge rgba-default">车间内景</div> 
-                <img alt="" src="/plugins/images/ad/agents/0_3.jpg">
+                <img alt="" src="/plugins/images/ad/agents/thumb/#{dep.old_id}_3.jpg">
               </div>
             </div>
           </div>
