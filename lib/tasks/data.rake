@@ -246,6 +246,7 @@ namespace :data do
         404
       end
 
+      n.user_id = old.user_id
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
       n.created_at = old.created_at

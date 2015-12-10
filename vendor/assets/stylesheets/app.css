@@ -3685,3 +3685,7 @@ img.img-center,
 .font-size-20 {font-size:20px;}
 .font-size-22 {font-size:22px;}
 .font-size-24 {font-size:24px;}
+
+
+.border-top-1 {border-top: 1px solid rgba(0, 0, 0, 0.1)}
+.bordre-bottom-1 {border-bottom: 1px solid rgba(0, 0, 0, 0.1);}

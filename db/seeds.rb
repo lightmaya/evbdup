@@ -81,14 +81,14 @@ if Menu.first.blank?
   item.parent = yw
   item.save
 
-  [ ["增加项目", "Item|create"], 
-    ["修改项目", "Item|update"], 
-    ["提交项目", "Item|commit"], 
-    ["停止项目", "Item|pause"], 
-    ["恢复项目", "Item|recover"], 
-    ["删除项目", "Item|update_destroy"]
+  [ ["增加项目", "Item|create", "/kobe/items/new"], 
+    ["修改项目", "Item|update", "/kobe/items/edit"], 
+    ["提交项目", "Item|commit", ""], 
+    ["停止项目", "Item|pause", ""], 
+    ["恢复项目", "Item|recover", ""], 
+    ["删除项目", "Item|update_destroy", ""]
   ].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
     tmp.parent = item
     tmp.save
   end
@@ -106,14 +106,14 @@ if Menu.first.blank?
   item_list.parent = item_manage
   item_list.save
 
-  [ ["查看项目", "Item|show"],
-    ["录入产品", "Product|item_list"],
-    ["新增产品", "Product|create"], 
-    ["修改产品", "Product|update"], 
-    ["提交产品", "Product|commit"], 
-    ["删除产品", "Product|update_destroy"]
+  [ ["查看项目", "Item|show", "/kobe/items/show"],
+    ["录入产品", "Product|item_list", "/kobe/products/item_list"],
+    ["新增产品", "Product|create", "/kobe/products/new"], 
+    ["修改产品", "Product|update", "/kobe/products/edit"], 
+    ["提交产品", "Product|commit", ""], 
+    ["删除产品", "Product|update_destroy", ""]
   ].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: supplier_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
     tmp.parent = item_list
     tmp.save
   end
@@ -122,12 +122,12 @@ if Menu.first.blank?
   agent.parent = item_manage
   agent.save
 
-  [ ["维护代理商", "Agent|list"], 
-    ["新增代理商", "Agent|create"], 
-    ["修改代理商", "Agent|update"], 
-    ["删除代理商", "Agent|update_destroy"]
+  [ ["维护代理商", "Agent|list", "/kobe/agents/list"], 
+    ["新增代理商", "Agent|create", "/kobe/agents/new"], 
+    ["修改代理商", "Agent|update", "/kobe/agents/edit"], 
+    ["删除代理商", "Agent|update_destroy", ""]
   ].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: supplier_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
     tmp.parent = agent
     tmp.save
   end
@@ -136,12 +136,12 @@ if Menu.first.blank?
   coordinator.parent = item_manage
   coordinator.save
 
-  [ ["维护总协调人", "Coordinator|list"], 
-    ["新增总协调人", "Coordinator|create"], 
-    ["修改总协调人", "Coordinator|update"], 
-    ["删除总协调人", "Coordinator|update_destroy"]
+  [ ["维护总协调人", "Coordinator|list", ""], 
+    ["新增总协调人", "Coordinator|create", ""], 
+    ["修改总协调人", "Coordinator|update", ""], 
+    ["删除总协调人", "Coordinator|update_destroy", ""]
   ].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: supplier_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
     tmp.parent = coordinator
     tmp.save
   end

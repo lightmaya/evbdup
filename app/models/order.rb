@@ -257,7 +257,7 @@ class Order < ActiveRecord::Base
   def cando(act='',current_u=nil)
     case act
     when "show" 
-      current_u.real_department.is_ancestors?(self.buyer_id)
+      current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id
     when "update", "edit" 
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" 
@@ -267,7 +267,7 @@ class Order < ActiveRecord::Base
     when "invoice_number", "update_invoice_number"
       self.class.effective_status.include?(self.status)
     when "print", "print_ht", "print_ysd"
-      self.class.effective_status.include?(self.status) && current_u.real_department.is_ancestors?(self.buyer_id)
+      (self.class.effective_status.include?(self.status) && current_u.real_department.is_ancestors?(self.buyer_id)) || current_u.real_department.id == self.seller_id
     else false
     end
   end

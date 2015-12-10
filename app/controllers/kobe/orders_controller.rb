@@ -61,7 +61,7 @@ class Kobe::OrdersController < KobeController
     return redirect_to(not_found_path) unless @order
     @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     write_logs(@order, "供应商确认", "")
-    redirect_to seller_list_kobe_orders_paht(r: @order.rule.try(:id))
+    redirect_to seller_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   # 采购人确认页面
@@ -190,7 +190,7 @@ class Kobe::OrdersController < KobeController
   def update_invoice_number
      @order.update(invoice_number: params[:number] )
      write_logs(@order, '填写发票')
-     redirect_to my_list_kobe_orders_path
+     redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   private
