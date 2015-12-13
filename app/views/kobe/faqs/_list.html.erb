@@ -1,14 +1,15 @@
 <div class="panel panel-grey margin-bottom-40">
-    <div class="panel-heading">
-        <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
-    </div>
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-8 pull-left padding-top-5">
-              <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择类别', '#{get_catalog_kobe_faqs_path}', '#opt_dialog') }) if action_name == 'index' %>
-            </div>
-        <div class="col-md-4 pull-right">
-         <%= search_form_for @q, url: kobe_faqs_path, html: { method: :get } do |f| %>
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= title %></h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-8 pull-left padding-top-5">
+        <%= link_to '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_faq_path(catalog: 'yjjy') if action_name == 'yjjy_list' %>
+        <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择类别', '#{get_catalog_kobe_faqs_path}', '#opt_dialog') }) if action_name == 'index' %>
+      </div>
+      <div class="col-md-4 pull-right">
+        <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
         <div class="margin-bottom-10">
           <div class="input-group">
             <%= f.search_field :title_cont, class: "form-control input-sm", placeholder: "请输入标题..." %>
@@ -16,39 +17,43 @@
               <button class="btn btn-success btn-sm" type="submit">搜索</button>
             </span>
 
-            <span class="margin-left-10 pull-left">
+            <!-- <span class="margin-left-10 pull-left">
               <button class="btn btn-success btn-sm accordion-toggle" data-target="#advanced_search" data-toggle="collapse" type="button" aria-expanded="true">高级搜索</button>
             </span>
-          </div>
+ -->          </div>
         </div>
         <% end %>
-       </div>
+      </div>
     </div>
-        <%= modal_dialog("opt_dialog") %>
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th class="index">序号</th>
-                    <th>标题</th>
-                    <th>类别</th>
-                    <th class="status_badge"><%= status_filter(Faq) %></th>
-                    <th class="date"><%= date_filter %></th>
-                    <th class="cando">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% @faqs.each_with_index do |faq,index| %>
-                <tr>
-                    <td><%= show_index(index) %></td>
-                    <td><%= text_truncate(faq.title,30) %></td>
-                    <td><%= Dictionary.faq_catalog[faq.catalog]%></td>
-                    <td><%= faq.status_badge %></td>
-                    <td><%= show_date(faq.created_at) %></td>
-                    <td><%= btn_group(faqs_btn(faq)) %></td>
-                </tr>
-                <% end %>
-            </tbody>
-        </table>
-        <%= paginate @faqs %> 
-    </div>                     
+    <%= modal_dialog("opt_dialog") %>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th class="index">序号</th>
+          <th>标题</th>
+          <% if action_name == 'index' %>
+          <th>类别</th>
+          <% end -%>
+          <th class="status_badge"><%= status_filter(Faq) %></th>
+          <th class="date"><%= date_filter %></th>
+          <th class="cando">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @faqs.each_with_index do |faq,index| %>
+        <tr>
+          <td><%= show_index(index) %></td>
+          <td><%= text_truncate(faq.title,30) %></td>
+          <% if action_name == 'index' %>
+          <td><%= Dictionary.faq_catalog[faq.catalog]%></td>
+          <% end %>
+          <td><%= faq.status_badge %></td>
+          <td><%= show_date(faq.created_at) %></td>
+          <td><%= btn_group(faqs_btn(faq)) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= paginate @faqs %> 
+  </div>                     
 </div>

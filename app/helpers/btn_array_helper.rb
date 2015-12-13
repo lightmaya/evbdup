@@ -342,17 +342,17 @@ module BtnArrayHelper
    def faqs_btn(obj)
     arr = [] 
     # 查看详细
-    arr << [obj.class.icon_action("详细"), kobe_faq_path(obj), target: "_blank"] 
-    unless  obj.catalog == 'yjjy'
-      # 修改
-      arr << [obj.class.icon_action("修改"), edit_kobe_faq_path(obj)]    
-      # 删除
-      arr << [obj.class.icon_action("提交"), commit_kobe_faq_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }]
-      # 提交
-      arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }]
-    end
+    arr << [obj.class.icon_action("详细"), kobe_faq_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
+    
+    # 修改
+    arr << [obj.class.icon_action("修改"), edit_kobe_faq_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
+    # 删除
+    arr << [obj.class.icon_action("提交"), commit_kobe_faq_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
+    # 提交
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    
     # 回复
-      arr << [obj.class.icon_action("回复"), reply_kobe_faq_path(obj)] 
+      arr << [obj.class.icon_action("回复"), reply_kobe_faq_path(obj)] if can?(:reply, obj) && obj.cando("reply", current_user)
     return arr
   end
 

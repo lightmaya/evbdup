@@ -53,8 +53,7 @@ class Kobe::PlanItemsController < KobeController
 
   # 可上报的采购计划
   def list
-    params[:q][:status_eq] = PlanItem.effective_status
-    @q = PlanItem.where(get_conditions("plan_items")).ransack(params[:q])
+    @q = PlanItem.where(status: PlanItem.effective_status).ransack(params[:q])
     @plan_items = @q.result.page params[:page]
   end
 

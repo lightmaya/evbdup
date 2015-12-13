@@ -8,7 +8,7 @@
             <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_transfer_path) if action_name =='index' %>
             </div>
         <div class="col-md-4 pull-right">
-         <%= search_form_for @q, url: kobe_transfers_path, html: { method: :get } do |f| %>
+         <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
         <div class="margin-bottom-10">
           <div class="input-group">
             <%= f.search_field :sn_cont, class: "form-control input-sm", placeholder: "请输入标题..." %>
@@ -16,9 +16,9 @@
               <button class="btn btn-success btn-sm" type="submit">搜索</button>
             </span>
 
-            <span class="margin-left-10 pull-left">
+            <!-- <span class="margin-left-10 pull-left">
               <button class="btn btn-success btn-sm accordion-toggle" data-target="#advanced_search" data-toggle="collapse" type="button" aria-expanded="true">高级搜索</button>
-            </span>
+            </span> -->
           </div>
         </div>
         <% end %>

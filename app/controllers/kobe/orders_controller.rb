@@ -216,8 +216,8 @@ class Kobe::OrdersController < KobeController
       @arr  = []
       @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
 
-      if current_user.real_department.is_ancestors?(@order.buyer_id)
-        budget = @order.budget
+      budget = @order.budget
+      if budget.present? && current_user.real_department.is_ancestors?(@order.buyer_id)
         budget_contents = show_obj_info(budget, Budget.xml)
         budget_contents << show_uploads(budget, { is_picture: true })
         @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }

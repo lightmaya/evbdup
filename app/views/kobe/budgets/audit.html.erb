@@ -1,2 +1,2 @@
-<%=show_tabs(@arr)%>
+<%= show_tabs_with_name(@budget.name, @arr, 'budget_tab') %>
 <%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_budget_path(@budget), obj: @budget, title: "审核预算审批单" } %>

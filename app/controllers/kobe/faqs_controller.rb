@@ -1,6 +1,8 @@
 class Kobe::FaqsController < KobeController
 
-
+  before_action :get_faq, :except => [:index, :new, :create, :yjjy_list, :get_catalog]
+  skip_before_action :verify_authenticity_token, :only => [:commit, :get_catalog]
+  skip_load_and_authorize_resource :only => :get_catalog
 
 	def index
 		@q = Faq.ransack(params[:q]) 
@@ -67,7 +69,7 @@ class Kobe::FaqsController < KobeController
     
   end
 
-  def  create_reply
+  def update_reply
      status = @faq.change_status_hash["回复"][@faq.status]
      @faq.update(content: params[:reply], status: status )
      write_logs(@faq, '回复')
@@ -76,9 +78,12 @@ class Kobe::FaqsController < KobeController
 
   def yjjy_list
      @q = current_user.yjjy.ransack(params[:q]) 
-     @yjjys = @q.result.status_not_in(404).page params[:page]
-
+     @faqs = @q.result.status_not_in(404).page params[:page]
   end
 
+  #是否有权限操作项目
+  def get_faq
+    cannot_do_tips unless @faq.present? && @faq.cando(action_name,current_user)
+  end
 
 end

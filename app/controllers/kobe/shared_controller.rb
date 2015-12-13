@@ -60,7 +60,7 @@ class Kobe::SharedController < KobeController
     if name.blank?
       nodes = Category.where(status: status)
     else
-      cdt = "and a.status = #{status} and b.status = #{status}" 
+      cdt = "and a.status in (#{status.join(', ')}) and b.status in (#{status.join(', ')})" 
       sql = ztree_box_sql(Category, cdt)
       # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
       nodes = Category.find_by_sql([sql,"%#{name}%"])
@@ -76,7 +76,7 @@ class Kobe::SharedController < KobeController
     if name.blank?
       nodes = dep_p.descendants.where(status: status, dep_type: false) 
     else
-      cdt = "and a.status = #{status} and b.status = #{status} and a.dep_type is false and b.dep_type is false and (b.ancestry like '#{dep_p.id}/%' or  b.ancestry = #{dep_p.id})" 
+      cdt = "and a.status in (#{status.join(', ')}) and b.status in (#{status.join(', ')}) and a.dep_type is false and b.dep_type is false and (b.ancestry like '#{dep_p.id}/%' or  b.ancestry = #{dep_p.id})" 
       sql = ztree_box_sql(Department, cdt)
       # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
       nodes = Department.find_by_sql([sql,"%#{name}%"])

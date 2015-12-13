@@ -79,7 +79,7 @@ class Product < ActiveRecord::Base
   end
 
   def show
-    self.status == self.class.effective_status
+    self.class.effective_status.include? self.status
   end
 
   # 产品全称 品牌+型号+版本号

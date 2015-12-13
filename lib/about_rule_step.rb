@@ -126,7 +126,7 @@ module AboutRuleStep
 				end
 	    else
 	    	user = User.find_by(id: user_id)
-	    	if (user.menu_ids & (rs["junior"] | rs["senior"])).present?
+	    	if user.present? && (user.menu_ids & (rs["junior"] | rs["senior"])).present?
 	    		tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, user_id: user_id, to_do_list_id: to_do_id, dep_id: dep.id)
 	    	end
 	    end
