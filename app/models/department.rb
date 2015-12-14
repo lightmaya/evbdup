@@ -327,9 +327,7 @@ class Department < ActiveRecord::Base
     Dictionary.yw_type.each_with_index do |a, i| 
       next if a[0] == 'grcg'
       yw_type = type_arr.find{|e| e[0] == a[0]}
-      t = a[1]
-      t << "( #{format_total(yw_type[1])} )" if yw_type.present?
-      str << progress_bar(t, (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
+      str << progress_bar("#{a[1]}#{"( #{format_total(yw_type[1])} )" if yw_type.present?}", (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
     end 
 
     str << "<hr>"

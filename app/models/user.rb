@@ -124,7 +124,7 @@ class User < ActiveRecord::Base
   # 显示菜单
   def show_menus
     str = ""
-    Menu.roots.each do |menu|
+    Menu.roots.where(is_show: true).each do |menu|
       str << menu.show_top(self.menus.uniq)
     end
     str
