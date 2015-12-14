@@ -1,4 +1,3 @@
-
 # -*- encoding : utf-8 -*-
 class Kobe::ArticlesController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit]
@@ -21,7 +20,8 @@ class Kobe::ArticlesController < KobeController
 
   def update_audit
     save_audit(@article)
-    # 给刚注册的审核通过的入围供应商插入待办事项
+    # 如果需要审核 更新发布时间 
+    @article.publish_time!
     redirect_to list_kobe_articles_path
   end
 
@@ -41,6 +41,8 @@ class Kobe::ArticlesController < KobeController
     @article.change_status_and_write_logs("提交",
       stateless_logs("提交","提交成功！", false),
       @article.commit_params, false)
+    # 如果不需要审核 更新发布时间 
+    @article.publish_time!
     @article.reload.create_task_queue
     tips_get("提交成功。")
     redirect_to kobe_articles_path(id: @article)
@@ -69,7 +71,7 @@ class Kobe::ArticlesController < KobeController
   end
 
   def update
-    update_and_write_logs(@article, Article.xml)
+    update_and_write_logs(@article, Article.xml, { action: '修改公告' }, { status: 0 })
     redirect_to kobe_articles_path
   end
 

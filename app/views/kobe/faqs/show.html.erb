@@ -1,1 +1,13 @@
 <%= show_tabs_with_name(@faq.title, @arr, 'faq_tab') %>
+
+<% if @faq.catalog == 'yjjy' %>
+<blockquote class="margin-top-30">
+  <div>                
+    <h2 class="heading-sm">
+        <i class="icon-custom rounded icon-sm icon-color-u fa fa-lightbulb-o"></i>
+        <span>意见回复</span>
+    </h2>
+    <p><%= @faq.content.present? ? @faq.content : '暂无回复' %></p>
+  </div>
+</blockquote>
+<% end -%>

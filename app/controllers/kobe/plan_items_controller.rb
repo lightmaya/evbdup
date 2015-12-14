@@ -29,7 +29,7 @@ class Kobe::PlanItemsController < KobeController
   end
 
   def update
-    update_and_write_logs(@plan_item, PlanItem.xml)
+    update_and_write_logs(@plan_item, PlanItem.xml, { action: '修改项目' }, { status: 0 })
     redirect_to kobe_plan_items_path
   end
 

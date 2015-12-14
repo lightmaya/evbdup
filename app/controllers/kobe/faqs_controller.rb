@@ -31,13 +31,13 @@ class Kobe::FaqsController < KobeController
   end
 
   def update 
-    update_and_write_logs(@faq, Faq.xml)
+    update_and_write_logs(@faq, Faq.xml(@faq.catalog))
     redirect_to kobe_faqs_path
   end
 
   def show 
     @arr  = []
-    obj_contents = show_obj_info(@faq,Faq.xml,{title: "基本信息" , grid: 3})
+    obj_contents = show_obj_info(@faq,Faq.xml(@faq.catalog),{title: "基本信息" , grid: 3})
     @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
     @arr << {title: "附件", icon: "fa-paperclip", content: show_uploads(@faq)}
     @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@faq)}

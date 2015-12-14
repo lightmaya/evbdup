@@ -49,13 +49,13 @@ class Faq < ActiveRecord::Base
     when "show" 
       true
     when "update", "edit" 
-      obj.catalog != 'yjjy' && self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+      self.catalog != 'yjjy' && self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" 
-      obj.catalog != 'yjjy' && self.can_opt?("提交") && current_u.try(:id) == self.user_id
+      self.catalog != 'yjjy' && self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "delete", "destroy" 
-      obj.catalog != 'yjjy' && self.can_opt?("删除") && current_u.try(:id) == self.user_id
+      self.catalog != 'yjjy' && self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "reply", "update_reply"
-      obj.catalog == 'yjjy' && self.can_opt?("回复") && current_u.department.is_zgs?
+      self.catalog == 'yjjy' && self.can_opt?("回复") && current_u.department.is_zgs?
     else false
     end
   end

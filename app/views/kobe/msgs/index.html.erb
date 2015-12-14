@@ -11,7 +11,7 @@
         <%= search_form_for @q, url: kobe_msgs_path, html: { method: :get } do |f| %>
             <div class="margin-bottom-10">
               <div class="input-group">
-                <%= f.search_field :title_cont, class: "form-control input-sm", placeholder: "请输入公告名称..." %>
+                <%= f.search_field :title_cont, class: "form-control input-sm", placeholder: "请输入标题..." %>
                 <span class="input-group-btn">
                   <button class="btn btn-success btn-sm" type="submit">搜索</button>
                 </span>

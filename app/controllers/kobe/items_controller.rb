@@ -30,7 +30,7 @@ class Kobe::ItemsController < KobeController
   end
 
   def update
-    update_and_write_logs(@item, Item.xml)
+    update_and_write_logs(@item, Item.xml, { action: '修改项目' }, { status: 0 })
     flash_get(@item.tips)
     redirect_to kobe_items_path
   end

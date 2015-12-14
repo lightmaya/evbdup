@@ -216,7 +216,8 @@ class HomeController < JamesController
 
     # 根据公告类别获取公告
     def get_articles(catalog='')
-      ArticleCatalog.find_by(name: catalog).try(:articles)
+      as = ArticleCatalog.find_by(name: catalog).try(:articles)
+      as.where(status: Article.effective_status) if as.present?
     end
 
 end

@@ -34,7 +34,7 @@ class Kobe::ProductsController < KobeController
   end
 
   def update
-    update_and_write_logs(@product, @product.category.params_xml)
+    update_and_write_logs(@product, @product.category.params_xml, { action: '修改产品' }, { status: 0 })
     redirect_to item_list_kobe_products_path(item_id: @product.item.id) 
   end
 
