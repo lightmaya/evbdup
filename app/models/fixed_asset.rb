@@ -2,8 +2,6 @@ class FixedAsset < ActiveRecord::Base
 
   belongs_to :department
 
-  has_many :task_queues, -> { where(class_name: "FixedAsset") }, foreign_key: :obj_id
-  
   include AboutStatus
 
   default_value_for :status, 65
@@ -47,7 +45,7 @@ class FixedAsset < ActiveRecord::Base
   def cando(act='',current_u=nil)
     case act
     when "show" 
-      current_u.department.is_ancestors?(self.department_id)
+      true
     when "update", "edit" 
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "delete", "destroy" 

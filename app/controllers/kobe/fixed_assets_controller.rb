@@ -1,9 +1,9 @@
 class Kobe::FixedAssetsController < KobeController
-  # protect_from_forgery :except => :index
-  before_action :get_category, :only => [:new, :create]
 
+  before_action :get_fixed_asset, :except => [:index, :new, :create, :get_category]
+  skip_before_action :verify_authenticity_token, :only => [:commit, :get_category]
+  skip_load_and_authorize_resource :only => :get_category
 
-   
 	def index
 		@q = FixedAsset.ransack(params[:q]) 
     @fixed_assets = @q.result.status_not_in(404).page params[:page]
@@ -11,7 +11,7 @@ class Kobe::FixedAssetsController < KobeController
 
   def new 
     @fixed_asset.dep_name = current_user.department.name
-    @myform = SingleForm.new(FixedAsset.xml, @fixed_asset, { form_id: "asset_form", title: "<i class='fa fa-pencil-square-o'></i> 新增车辆费用", action: kobe_fixed_assets_path(category_id: @category.id ), grid: 3 })
+    @myform = SingleForm.new(FixedAsset.xml, @fixed_asset, { form_id: "asset_form", title: "<i class='fa fa-pencil-square-o'></i> 新增车辆费用", action: kobe_fixed_assets_path(category_id: params[:category_id] ), grid: 3 })
   end
 
   def edit
@@ -26,7 +26,8 @@ class Kobe::FixedAssetsController < KobeController
   end
 
   def create
-  	create_and_write_logs(FixedAsset, FixedAsset.xml, {} , { category_id: @category.id, category_code: @category.ancestry, category_name: @category.name, department_id: current_user.department.id})
+    category = Category.find_by(id: params[:category_id]) 
+  	create_and_write_logs(FixedAsset, FixedAsset.xml, {} , { category_id: category.try(:id), category_code: category.try(:ancestry), category_name: category.try(:name), department_id: current_user.department.id, sn: Time.now.to_s })
     redirect_to kobe_fixed_assets_path
   end
 
@@ -46,11 +47,17 @@ class Kobe::FixedAssetsController < KobeController
     redirect_to kobe_fixed_assets_path
   end
 
+  def get_category
+    ca = Category.find_by(id: 6)
+    @categories = ca.present? ? ca.descendants.usable : []
+    render layout: false
+  end
+
  private
 
-   def get_category
-      @category = Category.find_by(id: params[:category_id]) if params[:category_id].present?
-      cannot_do_tips if @category.blank?
-   end
+  #是否有权限操作项目
+  def get_fixed_asset
+    cannot_do_tips unless @fixed_asset.present? && @fixed_asset.cando(action_name,current_user)
+  end   
 
 end

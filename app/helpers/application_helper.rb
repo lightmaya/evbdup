@@ -98,7 +98,7 @@ module ApplicationHelper
 
   # 项目名称+多标签显示 用于show和audit
   def show_tabs_with_name(name, arr, tag = 'mytab')
-    str = show_tips("warning", "<i class='fa fa-paint-brush font_24px'></i> #{name}")
+    str = show_tips("warning", "<i class='fa fa-paper-plane font_24px'></i> #{name}")
     str << show_tabs(arr, tag)
     str.html_safe
   end

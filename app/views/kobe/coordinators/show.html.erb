@@ -1,1 +1,1 @@
-<%=show_tabs(@arr)%>
+<%= show_tabs_with_name("#{@coordinator.item.name} [#{@coordinator.department.real_dep.name}] 总协调人", @arr, 'coordinator_tab') %>

@@ -1,17 +1,17 @@
 <%#= render "js" %>
-<div class="owl-carousel-v1 owl-work-v1 margin-bottom-40">
+
+<!-- <div class="owl-carousel-v1 owl-work-v1 margin-bottom-40">
   <div class="headline"><h2 class="pull-left">推荐产品</h2>
     <div class="owl-navigation">
       <div class="customNavigation">
         <a class="owl-btn prev-v2"><i class="fa fa-angle-left"></i></a>
         <a class="owl-btn next-v2"><i class="fa fa-angle-right"></i></a>
       </div>
-    </div><!--/navigation-->
+    </div>
   </div>
 
   <div id= "owl-carousel" class="owl-recent-works-v1 owl-carousel owl-theme">
-    <% 12.times do |i| %>
-      <!-- 畅销产品 -->
+    <%# 12.times do |i| %>
       <div class="owl-item" style="width: 380px;">
         <div class="item">
           <a href="#">
@@ -19,19 +19,18 @@
               <img class="img-responsive" src="http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/001/298/small_C30.JPG" alt="">
             </em>    
             <span>
-              <strong>H<%= i + 1 %></strong>
+              <strong>H<%#= i + 1 %></strong>
               <i>Anim pariatur cliche reprehenderit</i>
             </span>
           </a>    
         </div>
       </div>
-      <!-- 畅销产品END -->
-    <% end -%>
+    <%# end -%>
   </div>
-</div>
+</div> -->
 
 
-<div class="content container">
+<!-- <div class="content container"> -->
   <div class="row">
     <div class="col-md-12">
       <!-- 上部筛选 -->
@@ -101,11 +100,11 @@
       <!-- 产品列表END -->
     </div>
   </div><!--/end row-->
-</div><!--/end container-->    
+<!-- </div> --><!--/end container-->    
 
 
 <script type="text/javascript">
-  jQuery(document).ready(function() {
-    $("#owl-carousel").owlCarousel();
-  });
+  // jQuery(document).ready(function() {
+  //   $("#owl-carousel").owlCarousel();
+  // });
 </script>

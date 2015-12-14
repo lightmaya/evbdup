@@ -5,7 +5,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-8 pull-left padding-top-5">
-              <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增产品的品目', '#{get_item_category_kobe_shared_index_path(item_id: 7, url: "new_kobe_fixed_asset_path", model_name: "Item")}', '#opt_dialog') }) if action_name == 'index' %>
+              <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择类别', '#{get_category_kobe_fixed_assets_path}', '#opt_dialog') }) if action_name == 'index' %>
             </div>
             <div class="col-md-4 pull-right">
                 <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
@@ -55,7 +55,7 @@
                     <td> <%= fixed_asset.left_value.present? && fixed_asset.left_value > 0 ? money(fixed_asset.left_value) : "<font color='red'>#{money(fixed_asset.left_value)}</font>".html_safe%>
                     </td>
                     <td><%= show_date(fixed_asset.created_at) %></td>
-                    <td><%= btn_group(fixed_assets_btn(fixed_asset,action_name == "list")) %></td>
+                    <td><%= btn_group(fixed_assets_btn(fixed_asset)) %></td>
                 </tr>
                 <% end %>
             </tbody>

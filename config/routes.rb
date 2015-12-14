@@ -250,6 +250,9 @@ namespace :kobe do
     member do
       get :delete
     end
+    collection do
+      get  :get_category
+     end
   end  
   
   resources :asset_projects do 

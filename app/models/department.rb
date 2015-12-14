@@ -276,7 +276,7 @@ class Department < ActiveRecord::Base
         <node name='组织机构代码' column='org_code' hint='请参照组织机构代码证上的代码' rules='{required:true, minlength:10}' messages='请输入10个字符'/>
         <node name='单位法人姓名' column='legal_name' class='required'/>
         <node name='单位法人证件类型' class='required' data_type='radio' data='["居民身份证","驾驶证","护照"]'/>
-        <node name='单位法人证件号码' column='legal_number' class='required'/>
+        <node name='单位法人证件号码' column='legal_number' class='required' rules='{maxlength:18, minlength:18}'/>
         <node name='注册资金' column='capital' class='required'/>
         <node name='年营业额' column='turnover' class='required'/>
         <node name='单位人数' column='employee' data_type='radio' class='required' data='["20人以下","21-100人","101-500人","501-1001人","1001-10000人","1000人以上"]'/>

@@ -14,8 +14,9 @@ class DepartmentsUpload < ActiveRecord::Base
     '<ol>
       <li>请上传清晰有效的营业执照、组织机构代码证、税务登记证、法人身份证（正反面）扫描件；</li>
       <li>仅支持jpg、jpeg、png、gif等格式的图片文件；</li>
-      <li>单个文件大小不能超过1M；</li>
       <li>上传文件个数不超过10个。</li>
+      <li>上传文件个数不少于2个。</li>
+      <li>单个文件大小不能超过1M；</li>
     </ol>'
   end
 
@@ -25,6 +26,7 @@ class DepartmentsUpload < ActiveRecord::Base
       autoUpload: true,
       acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
       maxNumberOfFiles: 10,
+      minNumberOfFiles: 2,
       maxFileSize: 1024000
     }'
   end
