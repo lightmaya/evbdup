@@ -2,7 +2,7 @@
 
 <div class="container">
   <div class="headline-center">
-    <h2><%= @bid_project.name %>
+    <h2><%= "#{@bid_project.name}#{'中标' if @bid_project.status == 23}#{'废标' if @bid_project.status == 33}公告" %>
       <div class="service-block-v5">
 				<p> 时间：<%= @bid_project.created_at %></p>
 		  </div>
@@ -39,12 +39,32 @@
 		    	<td><%= money @bid_project.bid_project_bid.total %></td>
 		    </tr>
 		  </table>
-		  <ol>
-		  	<li>未成交单位名称和报价等信息不再显示；</li>
+		  <ul>
+		  	<li>采购人意见: <%= @bid_project.reason %></li>
+		  </ul> 
+		</div>
+
+		<h5><i class="fa fa-chevron-circle-down"></i> 提示</h5>
+		<div>
+			<ol>
+				<li>未成交单位名称和报价等信息不再显示；</li>
 		  	<li>请交易双方在规定的期限内签订书面采购合同，时间最晚不得超过成交公告发布之日起30日；</li>
 		  	<li>感谢各方的积极参与。如有问题请联系服务热线 <%= "#{Dictionary.service_bg_tel} / #{Dictionary.service_lj_tel}" %>。</li>
-		  </ol> 
+				<li>报价截止时间之后，平台将自动按以下原则确定中标（成交）供应商候选人排序：符合采购需求，质量和服务相等，报价最低的排序在先；当出现相同报价时，信用等级高的排序在先；如信用等级也相同，先报价的排序在先。</li>
+				<li>采购人选择中标（成交）供应商时因遵循以下原则：采购人应按中标（成交）供应商候选人排序确认排名第一的中标（成交）供应商为中标（成交）供应商。</li>
+				<li>但出现以下情形时，采购人可按照中标（成交）供应商候选人排序选择排名在次的候选人为中标（成交）供应商，依此类推：1、排名在先的中标（成交）供应商候选人放弃中标的；2、排名在先的中标（成交）供应商候选人未实质性响应采购人的竞价要求的，采购人可拒绝该中标候选人的报价，但应对拒绝原因予以详细说明。3、排名在先的中标（成交）供应商候选人曾存在不良信用纪录的。</li>	
+		  	<li>中标资格被拒绝的供应商可在中标（成交）公告发布之日起七个工作日内按照平台中公告的联系方式向采购人的纪检监察或其集中采购管理部门反映。</li>
+	  	</ol>
 		</div>
+
+	<% elsif @bid_project.status == 33 %>
+		<h5><i class="fa fa-chevron-circle-down"></i> 废标理由</h5>
+		<div>
+		  <ul>
+		  	<li><%= @bid_project.reason %></li>
+		  </ul> 
+		</div>
+
 	<% end -%>
 </div>
 

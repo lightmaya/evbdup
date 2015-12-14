@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Article < ActiveRecord::Base
   # 模型名称
-  Mname = "文章"
+  Mname = "公告"
 
 	belongs_to :author, class_name: "User", foreign_key: "user_id"
   has_many :uploads
@@ -101,6 +101,10 @@ class Article < ActiveRecord::Base
   # 用于前台的操作按钮，在BtnArrayHelper.rb中配置，与cancancan结合使用
   def cando(act='')
     case act
+    when "show"
+      true
+    when "update", "edit" 
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit" 
       # 必须是0状态并且没有数据合法才能commit
       self.class.edit_status.include?(self.status) # && self.get_tips.blank?
@@ -145,5 +149,9 @@ class Article < ActiveRecord::Base
 
   def incr_hit!
     update(hits: self.hits + 1)
+  end
+
+  def publish_time!
+    update(publish_time: Time.now) if self.class.effective_status.include?(self.status)
   end
 end

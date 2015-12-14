@@ -1,6 +1,8 @@
 class Kobe::FaqsController < KobeController
 
-
+  before_action :get_faq, :except => [:index, :new, :create, :yjjy_list, :get_catalog]
+  skip_before_action :verify_authenticity_token, :only => [:commit, :get_catalog]
+  skip_load_and_authorize_resource :only => :get_catalog
 
 	def index
 		@q = Faq.ransack(params[:q]) 
@@ -29,13 +31,13 @@ class Kobe::FaqsController < KobeController
   end
 
   def update 
-    update_and_write_logs(@faq, Faq.xml)
+    update_and_write_logs(@faq, Faq.xml(@faq.catalog))
     redirect_to kobe_faqs_path
   end
 
   def show 
     @arr  = []
-    obj_contents = show_obj_info(@faq,Faq.xml,{title: "基本信息" , grid: 3})
+    obj_contents = show_obj_info(@faq,Faq.xml(@faq.catalog),{title: "基本信息" , grid: 3})
     @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
     @arr << {title: "附件", icon: "fa-paperclip", content: show_uploads(@faq)}
     @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@faq)}
@@ -67,7 +69,7 @@ class Kobe::FaqsController < KobeController
     
   end
 
-  def  create_reply
+  def update_reply
      status = @faq.change_status_hash["回复"][@faq.status]
      @faq.update(content: params[:reply], status: status )
      write_logs(@faq, '回复')
@@ -76,9 +78,12 @@ class Kobe::FaqsController < KobeController
 
   def yjjy_list
      @q = current_user.yjjy.ransack(params[:q]) 
-     @yjjys = @q.result.status_not_in(404).page params[:page]
-
+     @faqs = @q.result.status_not_in(404).page params[:page]
   end
 
+  #是否有权限操作项目
+  def get_faq
+    cannot_do_tips unless @faq.present? && @faq.cando(action_name,current_user)
+  end
 
 end

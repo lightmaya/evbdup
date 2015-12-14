@@ -358,17 +358,14 @@ class Order < ActiveRecord::Base
   end
 
   # 高级搜索的搜索条件数组
-  def self.search_xml(action_name = '')
+  def self.search_xml(rule_id)
     status_ha = {}
     self.status_array.each{ |e| status_ha[e[1]] = e[0] unless e[1] == 404 }
+
+    rule = Rule.find_by(id: rule_id).try(:yw_type)
     ha = Dictionary.yw_type
-    yw_type = (action_name.split("_") & ha.keys)
-    if yw_type.present?
-      key = yw_type.first
-      yw_type_ha = { key: ha[key] }
-    else
-      yw_type_ha = ha.except("grcg")
-    end
+    yw_type_ha = (rule.present? &&  ha.key?(rule)) ? { rule: ha[rule] } : ha.except("grcg")
+
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>

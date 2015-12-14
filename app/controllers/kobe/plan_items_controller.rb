@@ -29,7 +29,7 @@ class Kobe::PlanItemsController < KobeController
   end
 
   def update
-    update_and_write_logs(@plan_item, PlanItem.xml)
+    update_and_write_logs(@plan_item, PlanItem.xml, { action: '修改项目' }, { status: 0 })
     redirect_to kobe_plan_items_path
   end
 
@@ -53,8 +53,7 @@ class Kobe::PlanItemsController < KobeController
 
   # 可上报的采购计划
   def list
-    params[:q][:status_eq] = PlanItem.effective_status
-    @q = PlanItem.where(get_conditions("plan_items")).ransack(params[:q])
+    @q = PlanItem.where(status: PlanItem.effective_status).ransack(params[:q])
     @plan_items = @q.result.page params[:page]
   end
 

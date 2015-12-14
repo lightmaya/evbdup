@@ -1,2 +1,2 @@
-<%=show_tabs(@arr)%>
+<%= show_tabs_with_name(@daily_cost.name, @arr, 'daily_cost_tab') %>
 <%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_daily_cost_path(@daily_cost), obj: @daily_cost, title: "审核采购计划" } %>

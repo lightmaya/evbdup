@@ -738,7 +738,25 @@ namespace :data do
 
       if n.save
         # 协议供货 等待审核
-        n.update(rule_step: '卖方确认') if n.yw_type == 'xygh' && n.status == 8
+        # if n.yw_type == 'xygh' && n.status == 8
+        #   n.update(rule_step: '卖方确认') 
+        #   n.update(rule_step: n.reload.get_next_step["name"]) 
+        # end
+        n.update(rule_step: 'done') if [2, 9, 100].include?(n.status)
+        if n.status == 8
+          node = Nokogiri::XML(n.logs).css('node').last
+          if node.present?
+            c_step = node["操作内容"]
+            c_remark = node["备注"]
+            if c_step == '分公司审核'
+              step = c_remark.include?("确认并转向总公司审核") ? '总公司审核' : '分公司审核'
+            end
+            if c_step == '总公司审核'
+              step = '总公司审核'
+            end
+          end
+        end
+        n.update(rule_step: step) if step.present?
         succ += 1
         p ".orders succ: #{succ}/#{total} old: #{old.id}"
       else
@@ -834,7 +852,8 @@ namespace :data do
   task :order_tqs => :environment do
     p "#{begin_time = Time.now} in order_tqs....."
 
-    orders = Order.where(status: [8, 3, 36, 43])
+    # 等待审核、等待卖方确认
+    orders = Order.where(status: [8, 3])
     succ = clean_left = 0
     clean_id = []
     orders.each do |o|
@@ -845,9 +864,8 @@ namespace :data do
         o.change_status_and_write_logs("已删除", save_logs(o.logs, "删除", 404, "清除历史遗留项目"))
         clean_id << o.id
       else
-        next if o.yw_type == 'wsjj'
         # 插入待办事项
-        o.create_task_queue(o.audit_user_ids) 
+        o.create_task_queue(o.audit_user_id) 
         if o.reload.task_queues.present?
           succ += 1
           p ".order_tqs succ: #{succ}/#{orders.size} order_id: #{o.id}"
@@ -1108,6 +1126,14 @@ namespace :data do
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
       n.created_at = old.created_at
       n.updated_at = old.updated_at
+
+      if n.status == 33
+        doc = Nokogiri::XML(n.logs)
+        node = doc.present? ? doc.xpath('//node[@操作内容="选择废标"]').last : ''
+        arr = node.present? ? node["备注"].split("操作理由：") : []
+        reason = arr.size == 2 ? arr.last : ''
+        n.reason = reason
+      end
       
       if n.save
         n.update(rule_id: Rule.find_by(yw_type: 'wsjj_jg').try(:id), rule_step: 'start') if [22, 29].include?(n.status)
@@ -1351,7 +1377,60 @@ namespace :data do
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
   end
 
+  desc '生成采购单位后台main统计数据'
+  task :create_cache_dep_main => :environment do
+    p "#{begin_time = Time.now} in create_cache_dep_main....."
 
+    deps = Department.purchaser.descendants
+    succ = 0
+    deps.each do |d| 
+      if d.cache_dep_main true
+        succ += 1
+        p ".create_cache_dep_main succ: #{succ}/#{deps.size} old: #{d.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"create_cache_dep_main.log"
+      end
+    end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+
+  desc '导入日常费用类别'
+  task :daily_categories => :environment do
+    p "#{begin_time = Time.now} in daily_categories....."
+
+    Dragon.table_name = "zcl_cost_category" 
+    max = 1000 ; succ = i = 0
+    total = Dragon.count
+    Dragon.find_each do |old|
+      n = DailyCategory.find_or_initialize_by(id: old.id)
+      n.name = old.name
+      n.status = 65
+      n.sort = old.sort
+      
+      if n.save
+        succ += 1
+        p ".daily_categories succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"daily_categories.log"
+      end
+    end
+
+    # 导入层级关系
+    Dragon.order("code asc").each do |old|
+      n = DailyCategory.find_or_initialize_by(id: old.id)
+      next if n.ancestry.present?
+      n.parent_id = DailyCategory.find_by(id: old.parent_id)  
+      if n.save
+        p ".daily_categories ancestry: #{n.ancestry} succ: #{succ}/#{total} old: #{old.id}"
+      else
+        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"daily_categories.log"
+      end
+    end
+
+    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
 
 
   # 输出日志到文件和控制台

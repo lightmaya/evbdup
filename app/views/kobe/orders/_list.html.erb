@@ -5,13 +5,13 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-md-8 pull-left padding-top-5">
-        <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_order_path) if action_name.include?('list') %>
+        <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_order_path) if params[:r].to_i == Rule.find_by(yw_type: 'ddcg').try(:id) && action_name == "my_list" %>
       </div>
       <div class="col-md-4 pull-right">
         <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
         <div class="margin-bottom-10">
           <div class="input-group">
-            <%= f.search_field :sn_or_contract_sn_or_name_cont, class: "form-control input-sm", placeholder: "请输入项目名称、凭证编号、合同编号..." %>
+            <%= f.search_field :sn_cont, class: "form-control input-sm", placeholder: "请输入订单号..." %>
             <span class="input-group-btn">
               <button class="btn btn-success btn-sm" type="submit">搜索</button>
             </span>
@@ -26,7 +26,7 @@
     </div>
     <!-- 高级搜索的form -->
     <div class="panel-collapse collapse" id="advanced_search" aria-expanded="true">
-      <%= get_advanced_search_form(search_url, Order, Order.search_xml(action_name)) %>
+      <%= get_advanced_search_form(search_url, Order, Order.search_xml(params[:r])) %>
     </div>
     <!-- 高级搜索form end -->
   <%= modal_dialog("opt_dialog") %>
@@ -41,13 +41,13 @@
           </th>
           <th class="index">序号</th>
           <th><%= sort_link(@q, :sn, '凭证编号', default_order: :desc) %></th>
-          <% unless action_name.include?('list') %>
+          <% unless action_name == 'my_list' %>
           <th>采购单位</th>
           <% end %>
           <th>名称</th>
           <th><%= sort_link(@q, :total, '总金额（元）', default_order: :desc) %></th>
           <!-- <th>最近操作</th>             -->
-          <th class="status_bar"><%= action_name.include?('audit') ? "状态" : status_filter(Order) %></th>
+          <th class="status_bar"><%= action_name == 'list' ? "状态" : status_filter(Order) %></th>
           <th class="cando">操作</th>
         </tr>
       </thead>
@@ -61,14 +61,14 @@
           </td>
           <td><%= show_index(index) %></td>
           <td><%= order.sn %></td>
-          <% unless action_name.include?('list') %>
+          <% unless action_name == 'my_list' %>
           <td><%= order.buyer_name %></td>
           <% end %>
           <td><%= order.name %></td>
           <td class="money"><%= money order.total %></td>
           <!-- <td><%#= show_last_user(order) %></td> -->
           <td><%= "#{order.status_bar}#{show_last_user(order)}".html_safe %></td>
-          <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
+          <td><%= btn_group(orders_btn(order, action_name == 'list')) %></td>
         </tr>
         <% end %>
       </tbody>

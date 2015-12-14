@@ -32,7 +32,7 @@ class Kobe::TongjiController < KobeController
     ca_select = "c.id,c.name,sum(orders_items.total)as total"
     category_sql = %Q{
       select id,name,concat_ws('/',ancestry,id,'') as code from categories 
-      where status = 0
+      where status = 65
     }
     # 求合计
     @category_total = Order.joins(:items).where(@cdt).sum("orders_items.total")

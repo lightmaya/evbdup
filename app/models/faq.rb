@@ -10,6 +10,10 @@ class Faq < ActiveRecord::Base
     self.status = (self.catalog=='yjjy' ?  58 : 0) if self.new_record?
   end
 
+  # 附件的类
+  def self.upload_model
+    FaqUpload
+  end
   
   	# 中文意思 状态值 标签颜色 进度 
 	def self.status_array
@@ -38,6 +42,23 @@ class Faq < ActiveRecord::Base
   #     "回复" => { 2 => 3 }
   #   }
   # end
+  
+  # 根据action_name 判断obj有没有操作
+  def cando(act='',current_u=nil)
+    case act
+    when "show" 
+      true
+    when "update", "edit" 
+      self.catalog != 'yjjy' && self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+    when "commit" 
+      self.catalog != 'yjjy' && self.can_opt?("提交") && current_u.try(:id) == self.user_id
+    when "delete", "destroy" 
+      self.catalog != 'yjjy' && self.can_opt?("删除") && current_u.try(:id) == self.user_id
+    when "reply", "update_reply"
+      self.catalog == 'yjjy' && self.can_opt?("回复") && current_u.department.is_zgs?
+    else false
+    end
+  end
 
 	# 从表的XML加ID是为了修改的时候能找到记录
 	def self.xml(catalog='')

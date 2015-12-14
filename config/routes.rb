@@ -272,7 +272,7 @@ namespace :kobe do
    resources :faqs do 
      member do 
        get :delete ,:reply
-       post :commit, :create_reply 
+       post :commit, :update_reply 
      end
      collection do
       get  :get_catalog,:yjjy_list

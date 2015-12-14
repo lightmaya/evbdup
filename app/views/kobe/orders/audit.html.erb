@@ -1,2 +1,2 @@
-<%=show_tabs(@arr)%>
+<%= show_tabs_with_name(@order.name, @arr, 'order_tab') %>
 <%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_order_path(@order), obj: @order, title: "审核: #{@order.name}" } %>

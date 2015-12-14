@@ -98,7 +98,7 @@ class Kobe::CategoriesController < KobeController
   # 验证品目名称
   def valid_name
     params[:obj_id] ||= 0
-    render :text => valid_remote(Category, ["name = ? and id != ?", params[:categories][:name], params[:obj_id]])
+    render :text => valid_remote(Category, ["name = ? and id != ? and status <> 404", params[:categories][:name], params[:obj_id]])
   end
 
   private

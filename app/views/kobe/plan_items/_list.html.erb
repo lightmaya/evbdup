@@ -28,7 +28,7 @@
                     <th>项目名称</th>
                     <th>品目</th>
                     <th>截止时间</th>
-                    <th class="status_badge"><%= status_filter(PlanItem) %></th>
+                    <th class="status_badge"><%= action_name == 'list' ? "状态" : status_filter(PlanItem) %></th>
                     <th class="cando">操作</th>
                 </tr>
             </thead>

@@ -1,2 +1,3 @@
-<%= @article.title %>
+<%= show_tabs_with_name(@article.title, @arr, 'article_tab') %>
+
 <%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_article_path(@article), obj: @article, title: "审核单位: #{@article.title}" } %>

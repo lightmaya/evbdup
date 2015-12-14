@@ -166,13 +166,19 @@ module KobeHelper
           <ul role="tablist">
     }
     arr.each_with_index do |step, index|
+      li_cls = index == current_index ? 'current' : (index < current_index ? 'done' : '')
+      i_cls = index == current_index ? 'fa-info' : (index < current_index ? 'fa-check' : 'fa-history')
+      if current_index == arr.size-1
+        li_cls = 'done' 
+        i_cls = 'fa-check'
+      end
       str << %Q{
-        <li role="tab" style="width: #{89/arr.size}%" class="#{index == current_index ? 'current' : (index < current_index ? 'done' : '') }" aria-disabled="false" aria-selected="true">
+        <li role="tab" style="width: #{89/arr.size}%" class="#{li_cls}" aria-disabled="false" aria-selected="true">
         <a id="steps-uid-0-t-0" href="#steps-uid-0-h-0" aria-controls="steps-uid-0-p-0">
           <span class="number">#{index + 1}.</span>             
           <div class="overflow-h">
               <h2 class='col-sm-10'>#{step}</h2>
-              <i class="rounded-x fa #{index == current_index ? 'fa-info' : (index < current_index ? 'fa-check' : 'fa-history') }"></i>
+              <i class="rounded-x fa #{i_cls}"></i>
            </div>    
         </a>
         </li>
@@ -194,8 +200,9 @@ module KobeHelper
   end
 
   def breadcrumbs_tag
-    menu = Menu.find_by(route_path: request.fullpath.gsub('.html',''))
-    menu = Menu.find_by(route_path: "/kobe/#{controller_name}/#{action_name}") if menu.blank?
+    cdt = "(find_in_set(#{current_user.user_type}, user_type) > 0 or find_in_set(#{Dictionary.audit_user_type}, user_type) > 0)"
+    menu = Menu.find_by("route_path = ? and #{cdt}", request.fullpath.gsub('.html',''))
+    menu = Menu.find_by("route_path = ? and #{cdt}", "/kobe/#{controller_name}/#{action_name}") if menu.blank?
     if menu.present?
       str = "<li>#{link_to '首页', root_path}</li>"
       menu.ancestors.each do |m|
