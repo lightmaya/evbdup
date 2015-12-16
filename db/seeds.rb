@@ -571,16 +571,16 @@ if Menu.first.blank?
   dep_list.parent = dep
   dep_list.save
 
-  audit_dep = Menu.find_or_initialize_by(name: "审核单位列表", route_path: "/kobe/departments/list", can_opt_action: "Department|list", is_show: true, user_type: audit_user_type)
+  audit_dep = Menu.find_or_initialize_by(name: "审核单位列表", route_path: "/kobe/departments/list", can_opt_action: "Department|list", is_show: true, user_type: manage_user_type)
   audit_dep.parent = dep
   audit_dep.save
 
-  audit_dep_obj = Menu.find_or_initialize_by(name: "单位审核", route_path: "/kobe/departments/audit", user_type: audit_user_type)
+  audit_dep_obj = Menu.find_or_initialize_by(name: "单位审核", route_path: "/kobe/departments/audit", user_type: manage_user_type)
   audit_dep_obj.parent = audit_dep
   audit_dep_obj.save
 
   [["单位初审", "Department|first_audit"], ["单位终审", "Department|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
     tmp.parent = audit_dep_obj
     tmp.save
   end
