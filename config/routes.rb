@@ -92,31 +92,27 @@ namespace :kobe do
       get :list
     end
     member do 
-      get :pre_choose
-      patch :choose
-      get :audit
-      get :bid
-      get :delete
+      get :choose, :audit, :bid, :delete
+      patch :update_choose
       post :commit, :update_audit
     end
   end
 
   resources :bid_project_bids do 
     collection do 
-      get :pre_bid
-      post :bid
+      get :bid
+      post :update_bid
     end
   end
 
   resources :orders do
     collection do
       get  :my_list, :seller_list, :list
-      post :same_template, :create_cart_order
+      post :same_template, :update_cart_order
     end
     member do
-      get :agent_confirm_pre, :buyer_confirm_pre
-      get :audit, :print, :print_ht, :print_ysd, :invoice_number
-      post :commit, :update_audit, :agent_confirm, :buyer_confirm, :update_invoice_number
+      get :agent_confirm, :buyer_confirm, :audit, :print, :print_ht, :print_ysd, :invoice_number
+      post :commit, :update_audit, :update_agent_confirm, :update_buyer_confirm, :update_invoice_number
     end
   end
   resources :departments do 

@@ -2,7 +2,7 @@
 class Kobe::BidProjectsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_action :get_show_arr, :only => [:show, :audit, :pre_choose]
+  before_action :get_show_arr, :only => [:show, :audit, :choose]
   before_filter :check_bid_project, :except => [:index, :bid, :new, :create, :list]
 
   def index
@@ -20,12 +20,12 @@ class Kobe::BidProjectsController < KobeController
   def audit
   end
 
-  def pre_choose
+  def choose
     # 默认第一中标人
     @bid_project.bid_project_bid_id = @bpbs.first.id
   end
 
-  def choose
+  def update_choose
     #W status id reason
     # 选择中标人之后转换到网上竞价结果的流程
     @bid_project.update(rule_id: Rule.find_by(yw_type: 'wsjj_jg').try(:id), rule_step: 'start')
@@ -49,10 +49,10 @@ class Kobe::BidProjectsController < KobeController
     save_audit(@bid_project)
     # 确定中标人
     if @bid_project.status == 23
-      Rufus::Scheduler.new.in "1s" do
+      # Rufus::Scheduler.new.in "1s" do
         @bid_project.send_to_order
-        ActiveRecord::Base.clear_active_connections!
-      end
+      #   ActiveRecord::Base.clear_active_connections!
+      # end
     end
     redirect_to list_kobe_bid_projects_path(r: @bid_project.rule.try(:id))
   end

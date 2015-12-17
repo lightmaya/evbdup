@@ -19,7 +19,7 @@
 		    <h4>据截止：</h4>
 		    <div class='time_str'></div>
 		    <hr>
-		    <%= link_to "我要报价", pre_bid_kobe_bid_project_bids_path(bid_project_id: @bid_project), class: "btn-u btn-u-lg btn-u-purple" if current_user %>
+		    <%= link_to "我要报价", bid_kobe_bid_project_bids_path(bid_project_id: @bid_project), class: "btn-u btn-u-lg btn-u-purple" if current_user && @bid_project.check_user_can_bid?(current_user) %>
 		  </div>
 		<% else %>
 	  	<div class="alert alert-danger fade in tc center">

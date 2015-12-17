@@ -4,7 +4,7 @@
 </div>
 
 <div class="container content"> 
-<%= simple_form_for @order, remote: true, url: create_cart_order_kobe_orders_path, html: {id: "order_create_form"} do |f| %>
+<%= simple_form_for @order, remote: true, url: update_cart_order_kobe_orders_path, html: {id: "order_create_form"} do |f| %>
   <!-- 收货地址 -->
   <%= render 'address', f: f %>
   <!-- 采购方式 -->

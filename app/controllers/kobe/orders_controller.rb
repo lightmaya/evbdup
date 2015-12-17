@@ -9,7 +9,7 @@ class Kobe::OrdersController < KobeController
 
   skip_authorize_resource :only => [:same_template]
 
-  before_filter :order_from_cart, :only => [:cart_order, :create_cart_order]
+  before_filter :order_from_cart, :only => [:cart_order, :update_cart_order]
   # 辖区内采购项目
   def index
     @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
@@ -45,18 +45,18 @@ class Kobe::OrdersController < KobeController
   end
 
   # 供应商确认页面
-  def agent_confirm_pre
+  def agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
     return redirect_to(not_found_path) unless @order
     slave_objs = @order.items
     @ms_form = MasterSlaveForm.new(Order.agent_xml, OrdersItem.confirm_xml, @order, slave_objs, 
-      {title: "基本信息", action: agent_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
+      {title: "基本信息", action: update_agent_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
       {title: '产品明细', grid: 4, modify: false}
     )
   end
 
   # 供应商确认
-  def agent_confirm
+  def update_agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
     return redirect_to(not_found_path) unless @order
     @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
@@ -65,18 +65,18 @@ class Kobe::OrdersController < KobeController
   end
 
   # 采购人确认页面
-  def buyer_confirm_pre
+  def buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
     return redirect_to(not_found_path) unless @order
     slave_objs = @order.items
     @ms_form = MasterSlaveForm.new(Order.buyer_xml, OrdersItem.confirm_xml, @order, slave_objs, 
-      {title: "基本信息", action: agent_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
+      {title: "基本信息", action: update_buyer_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
       {title: '产品明细', grid: 4, modify: false}
     )
   end
 
   # 采购人确认
-  def buyer_confirm
+  def update_buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
     return redirect_to(not_found_path) unless @order
     @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
@@ -85,7 +85,7 @@ class Kobe::OrdersController < KobeController
   end
 
   # 下单
-  def create_cart_order
+  def update_cart_order
     begin
       if @order.save
         # 清理购物车
@@ -252,7 +252,7 @@ class Kobe::OrdersController < KobeController
         return redirect_to cart_path
       end
 
-      @order = if action_name == "create_cart_order"
+      @order = if action_name == "update_cart_order"
         Order.from(@cart, current_user, params)
       else
         Order.from(@cart, current_user)

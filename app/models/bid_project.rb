@@ -109,7 +109,7 @@ class BidProject < ActiveRecord::Base
       self.class.audit_status.include?(self.status)
     when "delete", "destroy" 
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
-    when "choose", "pre_choose"
+    when "choose", "update_choose"
       self.can_choose? && current_u.try(:id) == self.user_id
     else false
     end
@@ -136,7 +136,8 @@ class BidProject < ActiveRecord::Base
   def show_logs
     if can_bid?
       doc = Nokogiri::XML(self.logs)
-      note = doc.search("/root/node[(@操作内容='报价')]") # find all tags with the node_name "note"
+      # note = doc.search("/root/node[(@操作内容='报价')]") # find all tags with the node_name "note"
+      note = doc.search("/root/node[(@操作内容='报价')] | /root/node[(@操作内容='修改报价')]")
       note.remove
       doc
     else
@@ -214,6 +215,7 @@ class BidProject < ActiveRecord::Base
 
     order.summary = self.req
     order.user_id = self.user_id
+    order.status = self.status
 
     order.details = self.details
     order.logs = self.logs.to_s

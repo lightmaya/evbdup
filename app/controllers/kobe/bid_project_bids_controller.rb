@@ -1,16 +1,16 @@
 # -*- encoding : utf-8 -*-
 class Kobe::BidProjectBidsController < KobeController
-	before_filter :find_bid_project, only: [:pre_bid, :bid]
+	before_filter :find_bid_project, only: [:bid, :update_bid]
 
-	def pre_bid
+	def bid
 		slave_objs = current_user.bid_item_bids(@bid_project).presence || @bid_project.items.map{|item| BidItemBid.new(bid_item_id: item.id, bid_project_id: @bid_project.id, brand_name: item.brand_name, xh: item.xh, req: item.req, remark: item.remark) }
     @ms_form = MasterSlaveForm.new(BidProjectBid.xml, BidItemBid.xml, @bid_project_bid, slave_objs, 
-    	{title: "报价", upload_files: true, action: bid_kobe_bid_project_bids_path(bid_project_id: @bid_project.id), show_total: true, grid: 4},
+    	{title: "报价", upload_files: true, action: update_bid_kobe_bid_project_bids_path(bid_project_id: @bid_project.id), show_total: true, grid: 4},
     	{title: '产品明细', grid: 4, modify: false}
     )
 	end
 
-	def bid
+	def update_bid
 		other_attrs = { com_name: current_user.real_department.name, bid_time: Time.now, department_id: current_user.department.id}
 		info = @bid_project_bid.new_record? ? "报价" : "修改报价"
     @bid_project_bid = create_or_update_msform_and_write_logs(@bid_project_bid, BidProjectBid.xml, BidItemBid, BidItemBid.xml, {:action => "报价", :master_title => "基本信息", :slave_title => "产品信息"}, other_attrs)

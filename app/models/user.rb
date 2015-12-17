@@ -163,7 +163,7 @@ class User < ActiveRecord::Base
       if a.length == 2
         rs[a[0]] = [] unless rs.key?(a[0])
         rs[a[0]] << a[1].to_sym
-        rs[a[0]] << "update_#{a[1]}".to_sym unless ["create", "read", "update", "update_destroy", "search", "list", "move", "first_audit", "last_audit"].include?(a[1])
+        rs[a[0]] << "update_#{a[1]}".to_sym unless ["create", "read", "update", "update_destroy", "commit", "show", "print_order", "search", "move", "first_audit", "last_audit", "tongji"].include?(a[1]) || a[1].include?("list")
         # 审核
         if ["first_audit", "last_audit"].include?(a[1])
           rs[a[0]] << "audit".to_sym

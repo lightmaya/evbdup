@@ -9,9 +9,6 @@ class Ability
       alias_action :show_bank, :edit_bank, :to => :bank # 用于单位管理的维护开户银行
       alias_action :show, :only_show_logs, :only_show_info, :index , :to => :read #用于用户管理
       alias_action :read, :to => :admin
-      alias_action :cart_order, :create_cart_order, :to => :cart
-      alias_action :pre_choose, :choose, :to => :choice
-      alias_action :pre_bid, :bid, :to => :wsjj_bid
       alias_action :print, :print_ht, :print_ysd, :to => :print_order
 
 

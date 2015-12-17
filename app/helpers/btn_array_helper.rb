@@ -229,7 +229,7 @@ module BtnArrayHelper
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_bid_project_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 选择中标人
-    arr << [obj.class.icon_action("选择中标人"), pre_choose_kobe_bid_project_path(obj)] if can?(:choice, obj) && obj.cando("pre_choose", current_user)
+    arr << [obj.class.icon_action("选择中标人"), choose_kobe_bid_project_path(obj)] if can?(:choose, obj) && obj.cando("choose", current_user)
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_bid_project_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 提交
@@ -381,7 +381,7 @@ module BtnArrayHelper
     
     # 报价
     title = current_user.bid_project_bid(obj).new_record? ? "我要报价" : "修改报价"
-    arr << [obj.class.icon_action(title), pre_bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:wsjj_bid, BidProjectBid) && obj.can_bid? && obj.check_user_can_bid?(current_user)
+    arr << [obj.class.icon_action(title), bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:bid, BidProjectBid) && obj.can_bid? && obj.check_user_can_bid?(current_user)
 
 
     arr << [obj.class.icon_action("报价明细"), kobe_bid_project_bid_path(current_user.bid_project_bid(obj)), target: "_blank"] if can?(:show, BidProjectBid) && !current_user.bid_project_bid(obj).new_record?

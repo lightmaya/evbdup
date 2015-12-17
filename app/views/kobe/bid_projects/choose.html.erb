@@ -2,7 +2,7 @@
 
 <%= render partial: 'bid_list', locals: { act: 'choose' } %>
 
-<%= form_for @bid_project, :url => choose_kobe_bid_project_path(@bid_project), :html => {id: "choose_form"} do |f| %>
+<%= form_for @bid_project, :url => update_choose_kobe_bid_project_path(@bid_project), :html => {id: "choose_form"} do |f| %>
   <%= f.hidden_field :bid_project_bid_id %>
   <%= hidden_field_tag :choose_who %>
   <table class="table table-bordered table-hover">
