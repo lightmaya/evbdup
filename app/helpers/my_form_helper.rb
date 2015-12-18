@@ -16,13 +16,13 @@ module MyFormHelper
     content_tag(:div, raw(myform.html_code).html_safe, :class=>'tag-box tag-box-v6')
   end
 
-	def set_top_part(myform)
+  def set_top_part(myform)
     # kobe_articles_path
     obj = myform.obj
     form_action = myform.options[:action].present? ? myform.options[:action] : (obj.new_record? ? send("kobe_#{obj.class.to_s.tableize}_path") : send("kobe_#{obj.class.to_s.tableize}_path", obj) )
     form_method = myform.obj.new_record? ? "post" : "patch"
     myform.html_code << form_tag(form_action, method: myform.options[:method], class: 'sky-form no-border', id: myform.options[:form_id]).to_str
-    
+
     # 自动生成标题，根据model中的Mname
     if myform.options[:title].blank?
       # {title: false} 表示不需要标题
@@ -36,23 +36,23 @@ module MyFormHelper
       myform.html_code << "<div class='headline'><h2><strong>#{myform.options[:title]}</strong></h2></div>"
     end
 
-	end
+  end
 
-	def set_input_part(myform)
+  def set_input_part(myform)
     myform.html_code << myform.get_input_part
-	end
+  end
 
-	def set_upload_part(myform)
+  def set_upload_part(myform)
     opts ||= {}
-		myform.html_code << %Q|
-		<input id='#{myform.options[:form_id]}_uploaded_file_ids' name='uploaded_file_ids' type='hidden' />
-		</form>|
-		# 插入上传组件HTML
-		myform.html_code << render(:partial => '/shared/myform/fileupload',:locals => {myform: myform})
-	end
+    myform.html_code << %Q|
+    <input id='#{myform.options[:form_id]}_uploaded_file_ids' name='uploaded_file_ids' type='hidden' />
+    </form>|
+    # 插入上传组件HTML
+    myform.html_code << render(:partial => '/shared/myform/fileupload',:locals => {myform: myform})
+  end
 
-	def set_bottom_part(myform)
-	  myform.html_code << myform.get_form_button
+  def set_bottom_part(myform)
+    myform.html_code << myform.get_form_button
     myform.html_code << %Q|
     </form>
     <script type="text/javascript">
@@ -95,5 +95,5 @@ module MyFormHelper
       </script>
     |
   end
-	
+
 end
