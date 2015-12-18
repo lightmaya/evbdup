@@ -5,7 +5,7 @@ module BaseFunction
   def get_node_value(obj, node, for_form=false)
     # 父节点特殊处理
     if obj.attributes.include?("ancestry")
-    	return obj.parent_id if node["name"] == "parent_id" 
+    	return obj.parent_id if node["name"] == "parent_id"
     	return obj.parent_name if node["name"] == "父节点名称"
     end
     # 一般情况
@@ -28,8 +28,8 @@ module BaseFunction
 
   # 如果是二维数组的选择类型的，需要转换KEY和VALUE
   def transform_node_value(node,result,for_form=false)
-    unless for_form 
-      if node.attributes.has_key?("data") 
+    unless for_form
+      if node.attributes.has_key?("data")
         arr = eval(node.attributes["data"].to_str)
         if arr[0].is_a?(Array)
           tmp = arr.find{|d|d[0] == tranform_boolean(result,true)}
@@ -46,7 +46,7 @@ module BaseFunction
   def tranform_boolean(s,show_num=true)
     if show_num
       if s == true || s.to_s == "1"
-        return 1 
+        return 1
       elsif s == false || s.to_s == "0"
         return 0
       else
@@ -86,15 +86,15 @@ module BaseFunction
 
     html = ""
     tbody = ""
-    
+
     # 标题
     if options[:title].present?
       html << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
-    end 
-    
+    end
+
     # 根据xml生成table
     doc = Nokogiri::XML(xml)
-    
+
     # 先生成输入框--针对没有data_type属性或者data_type属性不包括'大文本'、'富文本'的
     tds = doc.xpath("/root/node[not(@data_type='textarea')][not(@data_type='richtext')][not(@data_type='hidden')][not(@display='skip')]")
     tds.each_slice(grid).with_index do |node, i|
@@ -130,10 +130,10 @@ module BaseFunction
   end
 
   alias_method :info_html, :show_obj_info
- 
 
 
-  # 显示评价记录 -- 订单或产品 
+
+  # 显示评价记录 -- 订单或产品
   def show_estimates(obj)
     something_not_found
   end
@@ -177,23 +177,23 @@ module BaseFunction
         options[:title] = "附件信息"
       end
       result << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
-    end 
+    end
     return result + something_not_found if obj.uploads.blank?
     # 图片类型
-    if options[:is_picture] 
+    if options[:is_picture]
       tmp = obj.uploads.map do |file|
         %Q|<div class="col-md-#{12/options[:grid]}">
             <div class="thumbnails thumbnail-style thumbnail-kenburn">
               <div class="thumbnail-img">
                 <div class="overflow-hidden">
                   <a href="#{file.upload.url(:lg)}" title="#{file.upload_file_name}" rel="#{obj.class.to_s.tableize}" class="fancybox">
-                    <span><img alt="" src="#{file.upload.url(:md)}" class="img-responsive"></span>                                              
+                    <span><img alt="" src="#{file.upload.url(:md)}" class="img-responsive"></span>
                   </a>
                 </div>
               </div>
               <div class="caption">
                 <p class="word_break">#{file.upload_file_name}<br>[#{number_to_human_size(file.upload_file_size)}]</p>
-              </div>                  
+              </div>
             </div>
           </div>|.html_safe
       end
@@ -205,7 +205,7 @@ module BaseFunction
             <a href="#{file.upload.url(:original)}" title="#{file.upload_file_name}" target="_blank">
               <img alt="" src="#{file.to_jq_upload["thumbnail_url"]}">
               <p class="word_break">#{file.upload_file_name}<br>[#{number_to_human_size(file.upload_file_size)}]</p>
-            </a>                          
+            </a>
           </div>
         </div>|.html_safe
       end
