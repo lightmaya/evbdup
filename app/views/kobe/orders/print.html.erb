@@ -21,8 +21,8 @@
     <div class="margin-top-30 row textc">
     <span class="col-md-6 textr"><%=link_to '打印合同' , print_ht_kobe_order_path(@order), target: "_blank" ,class: "btn-u"%></span>
     <span class="col-md-6 textl">
-    <%= @order.invoice_number.present? ? (link_to '打印凭证', print_ysd_kobe_order_path(@order), target: "_blank" ,class: "btn-u") :  (link_to '无法打印' , 'javascript:void(0)' , class: "btn-u btn-u-default", id: "print_no" ,target: "_blank") %></span>
+    <%= @order.invoice_number.present? ? (link_to '打印凭证', print_ysd_kobe_order_path(@order), target: "_blank" ,class: "btn-u") :  (link_to '无法打印' , 'javascript:void(0)' , class: "btn-u btn-u-default", id: "print_no" ) %></span>
      </div>
 
-</div>      
+</div>
 

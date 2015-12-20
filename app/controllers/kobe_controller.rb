@@ -34,13 +34,13 @@ class KobeController < ApplicationController
     else
       begin
         # str = obj_class.constantize.get_json(params[:name])
-      rescue 
+      rescue
         str = '[]'
       end
     end
     return render :json => str
   end
-  
+
   # 以下是公用方法
   protected
 
@@ -53,8 +53,8 @@ class KobeController < ApplicationController
   end
 
   # 以下是私有方法
-  private 
-  
+  private
+
   # 准备主界面的素材 ---- #未读短信息
   def init_themes
     # @unread_notifications = current_user.unread_notifications
@@ -70,11 +70,11 @@ class KobeController < ApplicationController
     arr << ["#{table_name}.status != ?", 404]
     unless arr.blank?
       keys = []
-      arr.each{|a| 
+      arr.each{|a|
         keys << a.delete_at(0)
       }
       return arr.flatten!.unshift(keys.join(" and "))
-    else 
+    else
       return []
     end
   end
@@ -84,7 +84,7 @@ class KobeController < ApplicationController
     arr = []
     unless params[:status_filter].blank? || params[:status_filter] == "all"
       arr << ["#{table_name}.status = ?", params[:status_filter].to_i]
-    end 
+    end
     unless params[:date_filter].blank? || params[:date_filter] == "all"
       arr << ["#{table_name}.created_at >= ?", translate_cn_date(params[:date_filter])]
     end
@@ -107,7 +107,7 @@ class KobeController < ApplicationController
 
   # 自定义条件判断没有某权限的提示
   def cannot_do_tips(msg=Dictionary.tips.custom_default_cannot)
-    raise CanCan::AccessDenied.new(msg) 
+    raise CanCan::AccessDenied.new(msg)
   end
 
   # 审核提示
@@ -125,14 +125,20 @@ class KobeController < ApplicationController
   end
 
   # 审核的下一步操作 确认并转向上级单位审核、确认并结束审核流程
-  def go_to_audit_next(obj)
-    logs = create_audit_logs(obj)
+  def go_to_audit_next(obj, logs='')
+    logs = create_audit_logs(obj) if logs.blank?
     cs = obj.get_current_step
     if cs.is_a?(Hash)
       ns = obj.get_next_step
       rule_step = ns.is_a?(Hash) ? ns["name"] : ns
-      # 状态根据下一步的start_status 或当前步骤的finish_status 转变
-      obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{rule_step}'"],false)
+      next_status = obj.get_change_status(params[:audit_yijian])
+      if obj.status == next_status
+        # 状态相同的 例如分公司转总公司的
+        obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
+      else
+        # 状态根据下一步的start_status 或当前步骤的finish_status 转变
+        obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{rule_step}'"],false)
+      end
       # if ns.is_a?(Hash) # 确认并转向上级单位审核 状态不变 rule_step改变
       #   rule_step = ns["name"]
       #   obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
@@ -145,26 +151,26 @@ class KobeController < ApplicationController
   end
 
   # 审核 退回发起人 状态改变 rule_step改变
-  def go_to_audit_return(obj)
-    logs = create_audit_logs(obj)
+  def go_to_audit_return(obj, logs='')
+    logs = create_audit_logs(obj) if logs.blank?
     obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = null"],false)
     # 删除待办事项
     obj.reload.delete_task_queue
     # 发送站内消息
-    
+
   end
 
   # 审核 转向下一人 状态不变 rule_step不变
-  def go_to_audit_turn(obj)
-    logs = create_audit_logs(obj)
+  def go_to_audit_turn(obj, logs='')
+    logs = create_audit_logs(obj) if logs.blank?
     obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,[],false)
     # 插入待办事项
     obj.reload.create_task_queue(params[:audit_next_user_id].split("_")[1])
   end
 
   # 审核 1.更新rule_step、status、logs 2.插入待办事项
-  def save_audit(obj)
-    eval("go_to_audit_#{params[:audit_next]}(obj)")
+  def save_audit(obj, logs='')
+    eval("go_to_audit_#{params[:audit_next]}(obj, logs)")
     tips_get("审核#{params[:audit_yijian]}，审核理由：#{params[:audit_liyou]}")
   end
 

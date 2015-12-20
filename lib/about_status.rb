@@ -5,7 +5,7 @@ module AboutStatus
 
 	def self.included(base)
 		base.extend ClassMethods
-		base.class_eval do 
+		base.class_eval do
 			scope :status_not_in, lambda { |status| where(["status not in (?) ", status]) }
 		end
 	end
@@ -156,35 +156,36 @@ module AboutStatus
   def change_status_hash
   	ha = {
   		"删除" => { 0 => 404, 65 => 404 },
-      
-      "下架" => { 65 => 26 },
-      "冻结" => { 65 => 12 },
-      "停止" => { 65 => 68 },
-      "恢复" => { 12 => 65, 26 => 65, 68 => 65 },
-      
-      "回复" => { 58 => 75 }
-    }
+
+  		"下架" => { 65 => 26 },
+  		"冻结" => { 65 => 12 },
+  		"停止" => { 65 => 68 },
+  		"恢复" => { 12 => 65, 26 => 65, 68 => 65 },
+
+  		"回复" => { 58 => 75 }
+  	}
 
   	auto_status = self.class.auto_effective_status.first
-    ha["提交"] = { 0 => auto_status, 7 => auto_status, 14 => 16 } if auto_status.present?
+  	ha["提交"] = { 0 => auto_status, 7 => auto_status, 14 => 16 } if auto_status.present?
 
-    if self.class.attribute_method? "rule"
-	  	rs = self.find_step_by_rule
-	  	if rs.present? 
-	  		start_status = rs["start_status"].to_i
-	  		return_status = rs["return_status"].to_i
-	  		ns = self.get_next_step
-	  		finish_status = ns.is_a?(Hash) ? ns["start_status"].to_i : rs["finish_status"].to_i
+  	if self.class.attribute_method? "rule"
+  		cs = self.get_current_step
+  		rs = cs.is_a?(Hash) ? cs : self.find_step_by_rule
+  		if rs.present?
+  			start_status = rs["start_status"].to_i
+  			return_status = rs["return_status"].to_i
+  			ns = self.get_next_step
+  			finish_status = ns.is_a?(Hash) ? ns["start_status"].to_i : rs["finish_status"].to_i
 	  		# 如果当前状态是修改状态，提交后变成开始某流程步骤的状态 start_status
 	  		ha["提交"] = { self.status => start_status } if self.class.only_edit_status.include? self.status
 	  		# 通过本步骤 状态转向 下一步的开始状态 如果没有下一步则是本部的结束状态
-	  		ha["通过"] = { start_status => finish_status }
+	  		ha["通过"] = { start_status => finish_status, 10 =>  finish_status, 42 => finish_status }
 	  		# 不通过 状态转向 本步的退回状态
-	  		ha["不通过"] = { start_status => return_status }
+	  		ha["不通过"] = { start_status => return_status, 10 =>  return_status, 42 => return_status }
 
 	  		# 网上竞价选择中标人
 	  		ha["选择中标人"] = { self.class.bid_and_choose_status => start_status } if self.class == BidProject
-	  		
+
 	  	end
 	  end
   	return ha
@@ -197,7 +198,7 @@ module AboutStatus
 
     #   "确定中标人" => { 16 => 22 },
     #   "废标" => { 16 => 29},
-      
+
       # "删除" => { 0 => 404, 65 => 404 },
 
       # "下架" => { 65 => 26 },
@@ -205,7 +206,7 @@ module AboutStatus
       # "停止" => { 65 => 68 },
 
       # "恢复" => { 12 => 65, 26 => 65, 68 => 65 },
-      
+
       # "回复" => { 58 => 75 }
     # }
   end

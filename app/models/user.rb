@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   has_many :yjjy , class_name:'Faq' , foreign_key: 'ask_user_id'
   # 收到的消息
   has_many :msg_users
-  # has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"  
+  # has_many :unread_notifications, -> { where "status=0" }, class_name: "Notification", foreign_key: "receiver_id"
   has_many :bid_projects
   has_many :bid_project_bids
 
@@ -27,17 +27,17 @@ class User < ActiveRecord::Base
 
   # before_save {self.email = email.downcase}
   before_create :create_remember_token
-  
+
   default_value_for :status, 65
 
-  after_save do 
+  after_save do
     self.reset_menus_cache if self.previous_changes["menuids"].present?
   end
   # 为了在Model层使用current_user
   # def self.current
   #   Thread.current[:user]
   # end
-  
+
   # def self.current=(user)
   #   Thread.current[:user] = user
   # end
@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
   end
 
   def cgr?
-    [1,2].include? self.department.root_id 
+    [1,2].include? self.department.root_id
   end
 
   # 获取当前人的菜单
@@ -78,7 +78,7 @@ class User < ActiveRecord::Base
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100], ["已冻结", "12", "dark", 100]]
     self.get_status_array(["正常", "已冻结", "已删除"])
     # [
-    #   ["正常",0,"u",100], 
+    #   ["正常",0,"u",100],
     #   ["冻结",1,"yellow",100]
     # ]
   end
@@ -97,7 +97,7 @@ class User < ActiveRecord::Base
       if current_u.user_type == Dictionary.manage_user_type
         tmp << %Q{
         <node name='是否单位管理员' column='is_admin' data_type='radio' data='[[0,"否"],[1,"是"]]'/>
-        } 
+        }
       end
       tmp << %Q{
         <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/user_ztree_json' partner='menuids' json_params='{"id":"#{obj.id}"}' hint='如果没有可选项，请先查看单位状态和用户状态是否正常！'/>
@@ -159,11 +159,14 @@ class User < ActiveRecord::Base
     rs = {}
     arr.uniq.each do |e| # e = Department|create
       next if e.blank?
-      a = e.split("|") 
+      a = e.split("|")
       if a.length == 2
         rs[a[0]] = [] unless rs.key?(a[0])
         rs[a[0]] << a[1].to_sym
         rs[a[0]] << "update_#{a[1]}".to_sym unless ["create", "read", "update", "update_destroy", "commit", "show", "print_order", "search", "move", "first_audit", "last_audit", "tongji"].include?(a[1]) || a[1].include?("list")
+        if a[1].include?("list_r")
+          rs[a[0]] << "list".to_sym
+        end
         # 审核
         if ["first_audit", "last_audit"].include?(a[1])
           rs[a[0]] << "audit".to_sym
@@ -203,7 +206,7 @@ class User < ActiveRecord::Base
     self.reset_menus_cache
   end
 
-  # 根据user_type判断用户的权限 
+  # 根据user_type判断用户的权限
   # 如果单位不是正常状态的 只能有is_auto=true的权限
   def get_auto_menus
     # 用户状态是冻结 或者单位状态是冻结、已删除的 没有任何权限
@@ -212,7 +215,7 @@ class User < ActiveRecord::Base
     else
       # 只有总公司或者分公司的人才有审核权限
       ms = if self.real_department.is_zgs? || self.real_department.is_fgs?
-        Menu.status_not_in(404).where("find_in_set('#{self.user_type}', menus.user_type) > 0 or menus.user_type = '#{Dictionary.audit_user_type}'") 
+        Menu.status_not_in(404).where("find_in_set('#{self.user_type}', menus.user_type) > 0 or menus.user_type = '#{Dictionary.audit_user_type}'")
       else
         Menu.status_not_in(404).by_user_type(self.user_type)
       end
@@ -245,13 +248,13 @@ class User < ActiveRecord::Base
   def cando(act='',current_u)
     cdt = current_u.is_admin || current_u.user_type == Dictionary.manage_user_type
     case act
-    when "show", "index", "only_show_info", "only_show_logs" 
+    when "show", "index", "only_show_info", "only_show_logs"
       true
     when "edit", "update", "reset_password", "update_reset_password"
       self.class.edit_status.include?(self.status) && self.class.edit_status.include?(self.department.status) && cdt || self.id == current_u.id
-    when "recover", "update_recover" 
+    when "recover", "update_recover"
       self.can_opt?("恢复") && cdt
-    when "freeze", "update_freeze" 
+    when "freeze", "update_freeze"
       self.can_opt?("冻结") && cdt
     else false
     end
@@ -308,7 +311,7 @@ class User < ActiveRecord::Base
   #   if menu.icon.blank?
   #     case menu.depth
   #     when 0
-  #       menu.icon = "icon-caret-right"  
+  #       menu.icon = "icon-caret-right"
   #     when 1
   #       menu.icon = "icon-chevron-right"
   #     else

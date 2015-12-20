@@ -2,7 +2,7 @@
 module BtnArrayHelper
 
 	def users_btn(obj)
-    arr = [] 
+    arr = []
     dialog = "#opt_dialog"
     # 详细
     if can?(:read, obj) && obj.cando("show", current_user)
@@ -33,7 +33,7 @@ module BtnArrayHelper
 
 
   def to_do_lists_btn(obj)
-    arr = [] 
+    arr = []
     # 查看
     arr << [obj.class.icon_action("详细"), kobe_to_do_list_path(obj), target: "_blank"]  if can?(:read, obj)
     # 修改
@@ -44,7 +44,7 @@ module BtnArrayHelper
   end
 
   def rules_btn(obj)
-    arr = [] 
+    arr = []
     # 查看
     arr << [obj.class.icon_action("详细"), kobe_rule_path(obj), target: "_blank"]  if can?(:read, obj)
     # 修改
@@ -59,7 +59,7 @@ module BtnArrayHelper
   def departments_btn(obj,only_audit=false)
     show_div = '#show_ztree_content #ztree_content'
     dialog = "#opt_dialog"
-    arr = [] 
+    arr = []
     # 查看单位信息
     arr << [obj.class.icon_action("详细"), "javascript:void(0)", onClick: "show_content('#{kobe_department_path(obj)}', '#{show_div}')"] if can?(:read, obj) && obj.cando("show", current_user)
     # 提交
@@ -84,7 +84,7 @@ module BtnArrayHelper
   end
 
   def contract_templates_btn(obj)
-    arr = [] 
+    arr = []
     # 查看
     arr << [obj.class.icon_action("详细"), kobe_contract_template_path(obj), target: "_blank"]  if can?(:show, obj)
     # 修改
@@ -108,6 +108,10 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("打印"), "#opt_dialog", "data-toggle" => "modal",onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("打印 合同/凭证")}", "#{print_kobe_order_path(obj)}", '#opt_dialog') } ] if can?(:print_order, obj) && obj.cando("print",current_user)
     #是否开发票
     arr << [obj.class.icon_action(name), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("发票编号")}" , "#{invoice_number_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:invoice_number, obj) && obj.cando("invoice_number",current_user)
+    # 卖方确认
+    arr << [obj.class.icon_action("卖方确认"), agent_confirm_kobe_order_path(obj)] if can?(:agent_confirm, obj) && obj.cando("agent_confirm",current_user)
+    # 买方确认
+    arr << [obj.class.icon_action("买方确认"), buyer_confirm_kobe_order_path(obj)] if can?(:buyer_confirm, obj) && obj.cando("buyer_confirm",current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_order_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
     if audit_opt.present?
@@ -117,7 +121,7 @@ module BtnArrayHelper
 	end
 
   def items_btn(obj)
-    arr = [] 
+    arr = []
     # 查看
     arr << [obj.class.icon_action("详细"), kobe_item_path(obj), target: "_blank"]  if can?(:show, obj)
     # 修改
@@ -140,7 +144,7 @@ module BtnArrayHelper
   end
 
   def products_btn(obj,only_audit=false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_product_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -162,7 +166,7 @@ module BtnArrayHelper
   end
 
   def agents_btn(obj)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_agent_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -174,7 +178,7 @@ module BtnArrayHelper
 
   # 总协调人
   def coordinators_btn(obj)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_coordinator_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -185,7 +189,7 @@ module BtnArrayHelper
   end
 
   def articles_btn(obj, only_audit = false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), article_path(obj), target: "_blank"]  if can?(:show, obj)
     # 提交
@@ -203,7 +207,7 @@ module BtnArrayHelper
   end
 
   def msgs_btn(obj)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), "javascript:read_msg(#{obj.id})"]  if can?(:show, obj)
     # 修改
@@ -216,7 +220,7 @@ module BtnArrayHelper
   end
 
   def msg_users_btn(obj)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.msg.class.icon_action("查看"), "javascript:read_msg(#{obj.msg.id})"]  if obj.msg.present? && obj.user_id == current_user.id
     # 删除
@@ -225,7 +229,7 @@ module BtnArrayHelper
   end
 
   def bid_projects_btn(obj, only_audit = false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_bid_project_path(obj), target: "_blank"]  if can?(:show, obj) && obj.cando("show", current_user)
     # 选择中标人
@@ -246,7 +250,7 @@ module BtnArrayHelper
 
   # 采购计划
   def plan_items_btn(obj)
-    arr = [] 
+    arr = []
     # 查看
     arr << [obj.class.icon_action("详细"), kobe_plan_item_path(obj), target: "_blank"]  if can?(:show, obj)
     # 修改
@@ -261,7 +265,7 @@ module BtnArrayHelper
   end
 
   def plans_btn(obj,only_audit=false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_plan_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -281,7 +285,7 @@ module BtnArrayHelper
 
   # 预算审批单
   def budgets_btn(obj,only_audit=false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_budget_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -301,7 +305,7 @@ module BtnArrayHelper
 
 
   def daily_costs_btn(obj, only_audit=false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_daily_cost_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -319,7 +323,7 @@ module BtnArrayHelper
   end
 
   def fixed_assets_btn(obj, only_audit=false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_fixed_asset_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -330,34 +334,34 @@ module BtnArrayHelper
   end
 
   def  transfers_btn(obj)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_transfer_path(obj), target: "_blank"]     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_transfer_path(obj)]    # 删除
-    arr << [obj.class.icon_action("提交"), commit_kobe_transfer_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] 
+    arr << [obj.class.icon_action("提交"), commit_kobe_transfer_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }]
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_transfer_path(obj)}', "#opt_dialog") }]
     return arr
   end
 
    def faqs_btn(obj)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_faq_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
-    
+
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_faq_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 删除
     arr << [obj.class.icon_action("提交"), commit_kobe_faq_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
     # 提交
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_faq_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
-    
+
     # 回复
       arr << [obj.class.icon_action("回复"), reply_kobe_faq_path(obj)] if can?(:reply, obj) && obj.cando("reply", current_user)
     return arr
   end
 
   def asset_projects_btn(obj, only_audit=false)
-    arr = [] 
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_asset_project_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
     # 修改
@@ -373,12 +377,12 @@ module BtnArrayHelper
     end
     return arr
   end
-  
+
     def bid_project_bids_btn(obj)
-      arr = [] 
+      arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), obj, target: "_blank"]
-    
+
     # 报价
     title = current_user.bid_project_bid(obj).new_record? ? "我要报价" : "修改报价"
     arr << [obj.class.icon_action(title), bid_kobe_bid_project_bids_path(bid_project_id: obj.id), target: "_blank"] if can?(:bid, BidProjectBid) && obj.can_bid? && obj.check_user_can_bid?(current_user)
@@ -387,5 +391,5 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("报价明细"), kobe_bid_project_bid_path(current_user.bid_project_bid(obj)), target: "_blank"] if can?(:show, BidProjectBid) && !current_user.bid_project_bid(obj).new_record?
     return arr
   end
-  
+
 end

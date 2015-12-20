@@ -1,5 +1,5 @@
 <div class='col-md-12'>
-<%= draw_myform(myform) %>
+  <%= draw_myform(myform) %>
 </div>
 
 <script type="text/javascript">
@@ -11,47 +11,47 @@
       $("#new_order #orders_budget_money").val(budget_money);
     });
 
-  	$('#new_order').on('submit',function(){
+    $('#new_order').on('submit',function(){
       $("#new_order_submit").text("保存中...");
       $("#new_order_submit").addClass("btn-u-default");
 
-  		var msg = []
+      var msg = []
       // 填写其他费用 没有填写其他费用说明
       var other_fee = $("input#orders_other_fee").val();
       var orders_other_fee_desc = $("input#orders_other_fee_desc").val();
       if(!isEmpty(other_fee) && isEmpty(orders_other_fee_desc)){
         msg.push("其他费用说明不能为空！");
       }
-      
-  		// 判断品目模板是否相同
-  		var ca_ids = $("input[name^='orders_items[category_id]']").map(function(){ 
-  			if ($(this).val() != "") { return $(this).val(); };  			
-  		}).get().join(",");
-  		$.ajax({
+
+	// 判断品目模板是否相同
+	var ca_ids = $("input[name^='orders_items[category_id]']").map(function(){
+		if ($(this).val() != "") { return $(this).val(); };
+	}).get().join(",");
+	$.ajax({
         type: "post",
         url: '/kobe/orders/same_template',
         async:false,
         data: { category_ids: ca_ids },
         success: function(rs){ if(parseInt(rs) != 1){ msg.push("请选择同一大类的品目！"); }	}
-    	});
+      });
 
-  		// 判断预算是否大于总金额
-  		var total = parseFloat($("input#orders_total").val());
-  		var budget = parseFloat($("input#orders_budget_money").val());
-  		if (budget < total) {
-  			// flash_dialog("订单总金额不能超过预算！");
-  			msg.push("订单总金额不能超过预算！");
-  			// return false;
-  		};
+	// 判断预算是否大于总金额
+	var total = parseFloat($("input#orders_total").val());
+	var budget = parseFloat($("input#orders_budget_money").val());
+	if (budget < total) {
+		// flash_dialog("订单总金额不能超过预算！");
+		msg.push("订单总金额不能超过预算！");
+		// return false;
+	};
 
       // 办公用品类定点采购限额（Setting配置额度）
 
-  		if (msg.length != 0) {
-  			flash_dialog(msg.join("<br/>"));
-        $("#new_order_submit").html("<i class='fa fa-floppy-o'></i> 保 存 ");
-        $("#new_order_submit").removeClass("btn-u-default");
-  			return false;
-  		};
-  	});
-  });
+      if (msg.length != 0) {
+       flash_dialog(msg.join("<br/>"));
+       $("#new_order_submit").html("<i class='fa fa-floppy-o'></i> 保 存 ");
+       $("#new_order_submit").removeClass("btn-u-default");
+       return false;
+     };
+   });
+});
 </script>

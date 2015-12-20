@@ -59,7 +59,7 @@ module SaveXmlForm
       tips_get("修改成功。")
       return master_obj
     else
-      flash_get(obj.errors.full_messages)
+      flash_get(master_obj.errors.full_messages)
       return false
     end
   end
@@ -146,7 +146,7 @@ module SaveXmlForm
         value = params_arr[column][i]
         case column
         when "data"
-          # node[column] = value.split("|") 
+          # node[column] = value.split("|")
           node[column] = "['#{value.gsub('|',"','")}']"
         when "is_required"
           rule << "required" if value == "1"
@@ -205,7 +205,7 @@ private
     name_params = []
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
-      next if node.attributes.has_key?("delegate") 
+      next if node.attributes.has_key?("delegate")
       if node.attributes.has_key?("column")
         column_params << node.attributes["column"].to_s
       else
@@ -243,7 +243,7 @@ private
     return doc.to_s
   end
 
-  # 日志的节点信息,为了和批量修改状态共用一个方法，stauts设定为传入值。 
+  # 日志的节点信息,为了和批量修改状态共用一个方法，stauts设定为传入值。
   def get_logs_node(doc,action,status,remark)
     node = doc.root.add_child("<node>").first
     node["操作时间"] = Time.now.to_s(:db)
@@ -267,7 +267,7 @@ private
         new_value = all_params[node.attributes["column"].to_str]
       else
         new_value = all_params[node.attributes["name"].to_str]
-      end 
+      end
       new_value = transform_node_value(node,new_value)
       spoor << "<tr><td>#{attr_name.to_str}</td><td>#{new_value}</td></tr>" unless new_value.to_s.blank?
     }
@@ -300,7 +300,7 @@ private
         new_value = all_params[node.attributes["column"].to_str]
       else
         new_value = all_params[node.attributes["name"].to_str]
-      end 
+      end
       new_value = transform_node_value(node,new_value)
       old_value = get_node_value(obj,node)
       spoor << "<tr><td>#{attr_name.to_str}</td><td>#{old_value}</td><td>#{new_value}</td></tr>" unless old_value.to_s == new_value.to_s || new_value.nil?

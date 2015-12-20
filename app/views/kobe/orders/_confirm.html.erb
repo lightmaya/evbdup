@@ -1,0 +1,118 @@
+<div style="display: none;" id="<%= form_id %>_confirm_div">
+  <div class="tag-box tag-box-v1 margin-top-20" >
+    <h2><%= title %></h2>
+    <fieldset>
+      <section>
+        <label class="label">当前状态 <span class="color-red padding-left-5"><%= @order.class.get_status_attributes(@order.status,1)[0] %></span></label>
+      </section>
+
+      <section>
+        <label class="label">确认意见 <span class="color-red">*</span></label>
+        <div class="inline-group">
+          <label class="radio">
+            <input type="radio" name="audit_yijian" value="通过"><i class="rounded-x"></i> 通过
+          </label>
+          <label class="radio">
+            <input type="radio" name="audit_yijian" value="不通过"><i class="rounded-x"></i> 不通过
+          </label>
+        </div>
+      </section>
+
+      <section>
+        <label class="label">操作理由 <span class="color-red">*</span></label>
+        <label class="textarea textarea-resizable">
+          <textarea rows="2" name="audit_liyou" id="audit_liyou" placeholder="操作理由"></textarea>
+        </label>
+      </section>
+
+      <section>
+        <label class="label">下一步 <span class="color-red">*</span></label>
+        <div class="col" id="audit_next_step">
+          <%= audit_next_step_label("next", "确认无误转向下一步") %>
+
+        </div>
+      </section>
+    </fieldset>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    // 页面加载之前把confirm_div 插在button的div前面
+    $('#<%= form_id %> button[type="submit"]').parent('div').before(document.getElementById("<%= form_id %>_confirm_div"));
+    $("#<%= form_id %>_confirm_div").css('display', 'block');
+
+
+    // 点确认意见 选择通过不通过
+    $('#<%= form_id %> input[name="audit_yijian"]').on("click", function () {
+      var yijian = $(this).val();
+      var yes_yijian = '<%= audit_next_step_label("next", "确认无误转向下一步")  %>';
+      var no_yijian = '<%= audit_next_step_label("return", "退回上一步")  %>';
+      if (yijian == "通过") {
+        $("#<%= form_id %> #audit_next_step").html(yes_yijian);
+      }else {
+        $("#<%= form_id %> #audit_next_step").html(no_yijian);
+      };
+    });
+
+    // 修改成交单价判断是否高于入围单价
+    $("input[name^='orders_items[price]']").live('change blur',function(){
+      var id = $(this).attr("id").split("_").pop();
+      var price = $(this).val();
+      var bid_price = $("#orders_items_bid_price_" + id).val();
+      if (parseFloat(price) > parseFloat(bid_price)) {
+        flash_dialog("成交单价不能高于入围单价！");
+        return false;
+      };
+    });
+
+    $("#<%= form_id %>").on('submit',function(){
+      var msg = []
+      // 填写其他费用 没有填写其他费用说明
+      var other_fee = $("input#orders_other_fee").val();
+      var orders_other_fee_desc = $("input#orders_other_fee_desc").val();
+      if(!isEmpty(other_fee) && isEmpty(orders_other_fee_desc)){
+        msg.push("其他费用说明不能为空！");
+      }
+
+      // 判断每个产品的成交价不高于入围价
+      $("input[name^='orders_items[price]']").each(function(){
+        var id = $(this).attr("id").split("_").pop();
+        var price = $(this).val();
+        var bid_price = $("#orders_items_bid_price_" + id).val();
+        if (parseFloat(price) > parseFloat(bid_price)) {
+          msg.push("产品 [" + id + "] 成交单价不能高于入围单价！");
+        };
+      });
+
+      // 判断预算是否大于总金额
+      var total = parseFloat($("input#orders_total").val());
+      var budget = parseFloat($("input#orders_budget_money").val());
+      if (budget < total) {
+        msg.push("订单总金额不能超过预算！");
+      };
+
+      // 确认意见、理由、下一步
+      if (!$("input[name='audit_yijian']").is(':checked')){
+        msg.push("请选择确认意见！");
+      };
+
+      if (!$("#audit_next_step input[name='audit_next']").is(':checked')){
+        msg.push("请选择下一步操作！");
+      };
+
+      if ($("input[name='audit_yijian']:checked").val() == "不通过" && isEmpty($("#audit_liyou").val())){
+        msg.push("请填写操作理由！");
+      };
+
+      if (msg.length != 0) {
+       flash_dialog(msg.join("<br/>"));
+     }else {
+      var rs = confirm("请仔细核对订单信息，保存后不能修改。\n订单总金额：" + parseFloat($("#orders_total").val()) + "元。\n确认意见：" + $("input[name='audit_yijian']:checked").val()  + "。\n确认无误，请点击[确定]，如需修改请点击[取消]。");
+      if (rs) {
+        return true;
+      };
+     };
+     return false;
+   });
+});
+</script>

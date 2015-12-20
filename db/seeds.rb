@@ -39,7 +39,7 @@ if Menu.first.blank?
   ddzc.save
   [
     ["查看订单", "Order|show", "/kobe/orders/show"],
-    ["修改订单", "Order|update", "/kobe/orders/edit"], 
+    ["修改订单", "Order|update", "/kobe/orders/edit"],
     ["提交订单", "Order|commit"],
     ["删除订单", "Order|update_destroy"],
     ["打印订单", "Order|print_order"],
@@ -71,17 +71,17 @@ if Menu.first.blank?
     tmp.parent = seller_ddzc
     tmp.save
   end
-  
+
 # ----品目管理-----------------------------------------------------------------------------------------
   category = Menu.find_or_initialize_by(name: "品目管理", route_path: "/kobe/categories", can_opt_action: "Category|read", is_show: true, user_type: manage_user_type)
   category.parent = yw
   category.save
 
-  [ ["增加品目", "Category|create"], 
-    ["修改品目", "Category|update"], 
+  [ ["增加品目", "Category|create"],
+    ["修改品目", "Category|update"],
     ["删除品目", "Category|update_destroy"],
     ["冻结品目", "Category|freeze"],
-    ["恢复品目", "Category|recover"], 
+    ["恢复品目", "Category|recover"],
     ["移动品目", "Category|move"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
@@ -94,12 +94,12 @@ if Menu.first.blank?
   item.parent = yw
   item.save
 
-  [ ["增加项目", "Item|create", "/kobe/items/new"], 
+  [ ["增加项目", "Item|create", "/kobe/items/new"],
     ["修改项目", "Item|update", "/kobe/items/edit"],
-    ["查看项目", "Item|show", "/kobe/items/show"],  
-    ["提交项目", "Item|commit"], 
-    ["停止项目", "Item|pause"], 
-    ["恢复项目", "Item|recover"], 
+    ["查看项目", "Item|show", "/kobe/items/show"],
+    ["提交项目", "Item|commit"],
+    ["停止项目", "Item|pause"],
+    ["恢复项目", "Item|recover"],
     ["删除项目", "Item|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
@@ -118,7 +118,7 @@ if Menu.first.blank?
 
   [ ["查看项目", "Item|show", "/kobe/items/show"],
     ["录入产品", "Product|item_list", "/kobe/products/item_list"],
-    ["维护代理商", "Agent|list", "/kobe/agents/list"], 
+    ["维护代理商", "Agent|list", "/kobe/agents/list"],
     ["维护总协调人", "Coordinator|list", "/kobe/coordinators/list"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
@@ -130,24 +130,24 @@ if Menu.first.blank?
   item_list.parent = item_manage
   item_list.save
 
-  [ ["查看产品", "Product|show", "/kobe/products/show"], 
-    ["新增产品", "Product|create", "/kobe/products/new"], 
-    ["修改产品", "Product|update", "/kobe/products/edit"], 
-    ["提交产品", "Product|commit"], 
+  [ ["查看产品", "Product|show", "/kobe/products/show"],
+    ["新增产品", "Product|create", "/kobe/products/new"],
+    ["修改产品", "Product|update", "/kobe/products/edit"],
+    ["提交产品", "Product|commit"],
     ["删除产品", "Product|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
     tmp.parent = item_list
     tmp.save
   end
-  
+
   agent = Menu.find_or_initialize_by(name: "我的代理商", route_path: "/kobe/agents", can_opt_action: "Agent|read", is_show: true, user_type: supplier_user_type)
   agent.parent = item_manage
   agent.save
 
-  [ ["查看代理商", "Agent|show", "/kobe/agents/show"], 
-    ["新增代理商", "Agent|create", "/kobe/agents/new"], 
-    ["修改代理商", "Agent|update", "/kobe/agents/edit"], 
+  [ ["查看代理商", "Agent|show", "/kobe/agents/show"],
+    ["新增代理商", "Agent|create", "/kobe/agents/new"],
+    ["修改代理商", "Agent|update", "/kobe/agents/edit"],
     ["删除代理商", "Agent|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
@@ -159,16 +159,16 @@ if Menu.first.blank?
   coordinator.parent = item_manage
   coordinator.save
 
-  [ ["查看总协调人", "Coordinator|show", "/kobe/coordinators/show"], 
-    ["新增总协调人", "Coordinator|create", "/kobe/coordinators/new"], 
-    ["修改总协调人", "Coordinator|update", "/kobe/coordinators/edit"], 
+  [ ["查看总协调人", "Coordinator|show", "/kobe/coordinators/show"],
+    ["新增总协调人", "Coordinator|create", "/kobe/coordinators/new"],
+    ["修改总协调人", "Coordinator|update", "/kobe/coordinators/edit"],
     ["删除总协调人", "Coordinator|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
     tmp.parent = coordinator
     tmp.save
   end
-  
+
   audit_product = Menu.find_or_initialize_by(name: "审核产品列表", route_path: "/kobe/products/list", can_opt_action: "Product|list", is_show: true, user_type: manage_user_type)
   audit_product.parent = item_manage
   audit_product.save
@@ -187,7 +187,7 @@ if Menu.first.blank?
   product_manage.parent = item_manage
   product_manage.save
 
-  [ ["下架产品", "Product|freeze"], 
+  [ ["下架产品", "Product|freeze"],
     ["恢复产品", "Product|recover"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
@@ -209,9 +209,9 @@ if Menu.first.blank?
   plan_item.save
 
   [ ["查看采购计划项目", "PlanItem|show", "/kobe/plan_items/show"],
-    ["增加采购计划项目", "PlanItem|create", "/kobe/plan_items/new"], 
-    ["修改采购计划项目", "PlanItem|update", "/kobe/plan_items/edit"], 
-    ["提交采购计划项目", "PlanItem|commit"], 
+    ["增加采购计划项目", "PlanItem|create", "/kobe/plan_items/new"],
+    ["修改采购计划项目", "PlanItem|update", "/kobe/plan_items/edit"],
+    ["提交采购计划项目", "PlanItem|commit"],
     ["删除采购计划项目", "PlanItem|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
@@ -241,10 +241,10 @@ if Menu.first.blank?
   plan_list.save
 
   [ ["查看采购计划", "Plan|show", "/kobe/plans/show"],
-    ["新增采购计划", "Plan|create", "/kobe/plans/new"], 
-    ["修改采购计划", "Plan|update", "/kobe/plans/edit"], 
-    ["提交采购计划", "Plan|commit"], 
-    ["删除采购计划", "Plan|update_destroy"] 
+    ["新增采购计划", "Plan|create", "/kobe/plans/new"],
+    ["修改采购计划", "Plan|update", "/kobe/plans/edit"],
+    ["提交采购计划", "Plan|commit"],
+    ["删除采购计划", "Plan|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
     tmp.parent = plan_list
@@ -275,10 +275,10 @@ if Menu.first.blank?
   budget_list.save
 
   [ ["查看预算审批单", "Budget|show", "/kobe/budgets/show"],
-    ["新增预算审批单", "Budget|create", "/kobe/budgets/new"], 
-    ["修改预算审批单", "Budget|update", "/kobe/budgets/edit"], 
-    ["提交预算审批单", "Budget|commit"], 
-    ["删除预算审批单", "Budget|update_destroy"] 
+    ["新增预算审批单", "Budget|create", "/kobe/budgets/new"],
+    ["修改预算审批单", "Budget|update", "/kobe/budgets/edit"],
+    ["提交预算审批单", "Budget|commit"],
+    ["删除预算审批单", "Budget|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
     tmp.parent = budget_list
@@ -304,11 +304,11 @@ if Menu.first.blank?
   ddcg.parent = yw
   ddcg.save
 
-  ddcg_list = Menu.find_or_initialize_by(name: "我的定点采购项目", route_path: "/kobe/orders/my_list?r=2", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
+  ddcg_list = Menu.find_or_initialize_by(name: "我的定点采购订单", route_path: "/kobe/orders/my_list?r=2", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
   ddcg_list.parent = ddcg
   ddcg_list.save
 
-  [ 
+  [
     ["增加定点采购", "Order|create", "/kobe/orders/new"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
@@ -316,7 +316,7 @@ if Menu.first.blank?
     tmp.save
   end
 
-  audit_ddcg = Menu.find_or_initialize_by(name: "审核定点采购", route_path: "/kobe/orders/list?r=2", can_opt_action: "Order|list", is_show: true, user_type: audit_user_type)
+  audit_ddcg = Menu.find_or_initialize_by(name: "审核定点采购", route_path: "/kobe/orders/list?r=2", can_opt_action: "Order|list_r2", is_show: true, user_type: audit_user_type)
   audit_ddcg.parent = ddcg
   audit_ddcg.save
 
@@ -331,12 +331,12 @@ if Menu.first.blank?
   xygh.parent = yw
   xygh.save
 
-  xygh_list = Menu.find_or_initialize_by(name: "我的协议采购项目", route_path: "/kobe/orders/my_list?r=3", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
+  xygh_list = Menu.find_or_initialize_by(name: "我的协议供货订单", route_path: "/kobe/orders/my_list?r=3", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
   xygh_list.parent = xygh
   xygh_list.save
 
-  [ 
-    ["协议采购下单", "Order|cart_order", "/kobe/orders/cart_order"], 
+  [
+    ["协议采购下单", "Order|cart_order", "/kobe/orders/cart_order"],
     ["买方确认", "Order|buyer_confirm", "/kobe/orders/buyer_confirm"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
@@ -344,7 +344,7 @@ if Menu.first.blank?
     tmp.save
   end
 
-  audit_xygh = Menu.find_or_initialize_by(name: "审核协议采购", route_path: "/kobe/orders/list?r=3", can_opt_action: "Order|list", is_show: true, user_type: audit_user_type)
+  audit_xygh = Menu.find_or_initialize_by(name: "审核协议采购", route_path: "/kobe/orders/list?r=3", can_opt_action: "Order|list_r3", is_show: true, user_type: audit_user_type)
   audit_xygh.parent = xygh
   audit_xygh.save
 
@@ -359,7 +359,7 @@ if Menu.first.blank?
   xygh_seller_list.parent = xygh
   xygh_seller_list.save
 
-  [ 
+  [
     ["卖方确认", "Order|agent_confirm", "/kobe/orders/agent_confirm"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: supplier_user_type)
@@ -376,8 +376,8 @@ if Menu.first.blank?
   wsjj_list.parent = ra_project
   wsjj_list.save
 
-  [ ["增加网上竞价", "BidProject|create", "/kobe/bid_projects/new"], 
-    ["修改网上竞价", "BidProject|update", "/kobe/bid_projects/edit"], 
+  [ ["增加网上竞价", "BidProject|create", "/kobe/bid_projects/new"],
+    ["修改网上竞价", "BidProject|update", "/kobe/bid_projects/edit"],
     ["删除网上竞价", "BidProject|update_destroy"],
     ["提交网上竞价", "BidProject|commit"],
     ["选择中标人", "BidProject|choose", "/kobe/bid_projects/choose"],
@@ -388,7 +388,7 @@ if Menu.first.blank?
     ac.save
   end
 
-  wsjj_done_list = Menu.find_or_initialize_by(name: "我成交的网上竞价", route_path: "/kobe/orders/my_list?r=11", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
+  wsjj_done_list = Menu.find_or_initialize_by(name: "我的网上竞价成交订单", route_path: "/kobe/orders/my_list?r=11", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
   wsjj_done_list.parent = ra_project
   wsjj_done_list.save
 
@@ -432,11 +432,11 @@ if Menu.first.blank?
   grcg.parent = yw
   grcg.save
 
-  grcg_list = Menu.find_or_initialize_by(name: "我的个人采购项目", route_path: "/kobe/orders/my_list?r=9", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
+  grcg_list = Menu.find_or_initialize_by(name: "我的个人采购订单", route_path: "/kobe/orders/my_list?r=9", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
   grcg_list.parent = grcg
   grcg_list.save
 
-  audit_grcg = Menu.find_or_initialize_by(name: "审核个人采购", route_path: "/kobe/orders/list?r=9", can_opt_action: "Order|list", is_show: true, user_type: manage_user_type)
+  audit_grcg = Menu.find_or_initialize_by(name: "审核个人采购", route_path: "/kobe/orders/list?r=9", can_opt_action: "Order|list_r9", is_show: true, user_type: manage_user_type)
   audit_grcg.parent = grcg
   audit_grcg.save
 
@@ -456,9 +456,9 @@ if Menu.first.blank?
   daily_cost_category.parent = daily_cost
   daily_cost_category.save
 
-  [ ["增加费用类别", "DailyCategory|create"], 
-    ["修改费用类别", "DailyCategory|update"], 
-    ["删除费用类别", "DailyCategory|update_destroy"], 
+  [ ["增加费用类别", "DailyCategory|create"],
+    ["修改费用类别", "DailyCategory|update"],
+    ["删除费用类别", "DailyCategory|update_destroy"],
     ["移动费用类别", "DailyCategory|move"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
@@ -471,11 +471,11 @@ if Menu.first.blank?
   cost_index.parent = daily_cost
   cost_index.save
 
-  [  
-    ["新增日常报销", "DailyCost|create", "/kobe/daily_costs/new"], 
-    ["修改日常报销", "DailyCost|update", "/kobe/daily_costs/edit"], 
-    ["提交日常报销", "DailyCost|commit"], 
-    ["删除日常报销", "DailyCost|update_destroy"] 
+  [
+    ["新增日常报销", "DailyCost|create", "/kobe/daily_costs/new"],
+    ["修改日常报销", "DailyCost|update", "/kobe/daily_costs/edit"],
+    ["提交日常报销", "DailyCost|commit"],
+    ["删除日常报销", "DailyCost|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
     tmp.parent = cost_index
@@ -505,9 +505,9 @@ if Menu.first.blank?
   fixed_asset_list.parent = fixed_asset
   fixed_asset_list.save
 
-  [ ["增加车辆信息", "FixedAsset|create", "/kobe/fixed_assets/new"], 
-    ["修改车辆信息", "FixedAsset|update", "/kobe/fixed_assets/edit"], 
-    ["删除车辆信息", "FixedAsset|update_destroy"] 
+  [ ["增加车辆信息", "FixedAsset|create", "/kobe/fixed_assets/new"],
+    ["修改车辆信息", "FixedAsset|update", "/kobe/fixed_assets/edit"],
+    ["删除车辆信息", "FixedAsset|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
     tmp.parent = fixed_asset_list
@@ -519,11 +519,11 @@ if Menu.first.blank?
   asset_index.parent = fixed_asset
   asset_index.save
 
-  [  
-    ["新增车辆报销", "AssetProject|create", "/kobe/asset_projects/new"], 
-    ["修改车辆报销", "AssetProject|update", "/kobe/asset_projects/edit"], 
-    ["提交车辆报销", "AssetProject|commit"], 
-    ["删除车辆报销", "AssetProject|update_destroy"] 
+  [
+    ["新增车辆报销", "AssetProject|create", "/kobe/asset_projects/new"],
+    ["修改车辆报销", "AssetProject|update", "/kobe/asset_projects/edit"],
+    ["提交车辆报销", "AssetProject|commit"],
+    ["删除车辆报销", "AssetProject|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
     tmp.parent = asset_index
@@ -551,22 +551,22 @@ if Menu.first.blank?
   dep_p.parent = dep
   dep_p.save
 
-  [ ["增加下属单位", "Department|create", false, all_ut], 
-    ["修改单位信息", "Department|update", true, all_ut], 
-    ["上传附件", "Department|upload", true, all_ut], 
-    ["分配人员账号", "Department|add_user", false, all_ut], 
-    ["维护开户银行", "Department|bank", true, all_ut], 
-    ["提交", "Department|commit", true, all_ut], 
-    ["删除单位", "Department|update_destroy", false, manage_user_type], 
-    ["冻结单位", "Department|freeze", false, manage_user_type], 
-    ["恢复单位", "Department|recover", false, manage_user_type], 
+  [ ["增加下属单位", "Department|create", false, all_ut],
+    ["修改单位信息", "Department|update", true, all_ut],
+    ["上传附件", "Department|upload", true, all_ut],
+    ["分配人员账号", "Department|add_user", false, all_ut],
+    ["维护开户银行", "Department|bank", true, all_ut],
+    ["提交", "Department|commit", true, all_ut],
+    ["删除单位", "Department|update_destroy", false, manage_user_type],
+    ["冻结单位", "Department|freeze", false, manage_user_type],
+    ["恢复单位", "Department|recover", false, manage_user_type],
     ["移动单位", "Department|move", false, manage_user_type]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], is_auto: m[2], user_type: m[3])
     tmp.parent = dep_p
     tmp.save
   end
-  
+
   dep_list = Menu.find_or_initialize_by(name: "供应商单位管理", route_path: "/kobe/departments/search", can_opt_action: "Department|search", is_show: true, user_type: manage_user_type)
   dep_list.parent = dep
   dep_list.save
@@ -617,8 +617,8 @@ if Menu.first.blank?
   article_list.parent = article
   article_list.save
 
-  [ ["增加公告", "Article|create", "/kobe/articles/new"], 
-    ["修改公告", "Article|update", "/kobe/articles/edit"], 
+  [ ["增加公告", "Article|create", "/kobe/articles/new"],
+    ["修改公告", "Article|update", "/kobe/articles/edit"],
     ["删除公告", "Article|update_destroy"],
     ["提交公告", "Article|commit"]
   ].each do |m|
@@ -645,8 +645,8 @@ if Menu.first.blank?
   article_catalog.parent = article
   article_catalog.save
 
-  [ ["增加公告目录", "ArticleCatalog|create"], 
-    ["修改公告目录", "ArticleCatalog|update"], 
+  [ ["增加公告目录", "ArticleCatalog|create"],
+    ["修改公告目录", "ArticleCatalog|update"],
     ["删除公告目录", "ArticleCatalog|update_destroy"],
     ["移动公告目录", "ArticleCatalog|move"]
   ].each do |m|
@@ -660,8 +660,8 @@ if Menu.first.blank?
   faq_list.parent = article
   faq_list.save
 
-  [ ["增加Q&A", "Faq|create", manage_user_type, "/kobe/faqs/new"], 
-    ["修改Q&A", "Faq|update", manage_user_type, "/kobe/faqs/edit"], 
+  [ ["增加Q&A", "Faq|create", manage_user_type, "/kobe/faqs/new"],
+    ["修改Q&A", "Faq|update", manage_user_type, "/kobe/faqs/edit"],
     ["删除Q&A", "Faq|update_destroy", manage_user_type],
     ["提交Q&A", "Faq|commit", manage_user_type],
     ["回复意见建议", "Faq|reply", manage_user_type, "/kobe/faqs/reply"]
@@ -690,9 +690,9 @@ if Menu.first.blank?
   menu.parent = setting
   menu.save
 
-  [ ["增加菜单", "Menu|create"], 
-    ["修改菜单", "Menu|update"], 
-    ["删除菜单", "Menu|update_destroy"], 
+  [ ["增加菜单", "Menu|create"],
+    ["修改菜单", "Menu|update"],
+    ["删除菜单", "Menu|update_destroy"],
     ["移动菜单", "Menu|move"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
@@ -704,8 +704,8 @@ if Menu.first.blank?
   # contract_template.parent = setting
   # contract_template.save
 
-  # [ ["增加合同", "ContractTemplate|create"], 
-  #   ["修改合同", "ContractTemplate|update"], 
+  # [ ["增加合同", "ContractTemplate|create"],
+  #   ["修改合同", "ContractTemplate|update"],
   #   ["删除合同", "ContractTemplate|update_destroy"]
   # ].each do |m|
   #   tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: manage_user_type)
@@ -717,8 +717,8 @@ if Menu.first.blank?
   to_do_list.parent = setting
   to_do_list.save
 
-  [ ["增加待办事项", "ToDoList|create", "/kobe/to_do_lists/new"], 
-    ["修改待办事项", "ToDoList|update", "/kobe/to_do_lists/edit"], 
+  [ ["增加待办事项", "ToDoList|create", "/kobe/to_do_lists/new"],
+    ["修改待办事项", "ToDoList|update", "/kobe/to_do_lists/edit"],
     ["删除待办事项", "ToDoList|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
@@ -730,9 +730,9 @@ if Menu.first.blank?
   rule.parent = setting
   rule.save
 
-  [ ["增加", "Rule|create", "/kobe/rules/new"], 
-    ["修改", "Rule|update", "/kobe/rules/edit"], 
-    ["删除", "Rule|update_destroy"], 
+  [ ["增加", "Rule|create", "/kobe/rules/new"],
+    ["修改", "Rule|update", "/kobe/rules/edit"],
+    ["删除", "Rule|update_destroy"],
     ["维护审核理由", "Rule|audit_reason"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
@@ -743,8 +743,8 @@ if Menu.first.blank?
  end
 
 # if Category.first.blank?
-  # a = Category.create(name: "办公物资", :status => 1) 
-  # b = Category.create(name: "粮机物资", :status => 1) 
+  # a = Category.create(name: "办公物资", :status => 1)
+  # b = Category.create(name: "粮机物资", :status => 1)
   # ["计算机","打印机","复印机","服务器"].each do |option|
   #   Category.create(name: option, :status => 1, :parent => a)
   # end
@@ -769,19 +769,19 @@ if Bank.first.blank?
 end
 
 if ToDoList.first.blank?
-  [ ["审核注册供应商", "/kobe/departments/list", "/kobe/departments/$$obj_id$$/audit"], 
-    ["审核采购计划", "/kobe/plans/list", "/kobe/plans/$$obj_id$$/audit"], 
-    ["审核网上竞价需求", "/kobe/bid_projects/list?r=6", "/kobe/bid_projects/$$obj_id$$/audit"], 
-    ["审核网上竞价结果", "/kobe/bid_projects/list?r=7", "/kobe/bid_projects/$$obj_id$$/audit"], 
-    ["审核公告", "/kobe/articles/list", "/kobe/articles/$$obj_id$$/audit"], 
-    ["审核产品", "/kobe/products/list", "/kobe/products/$$obj_id$$/audit"], 
-    ["审核预算审批单", "/kobe/budgets/list", "/kobe/budgets/$$obj_id$$/audit"], 
-    ["审核定点采购项目", "/kobe/orders/list?r=2", "/kobe/orders/$$obj_id$$/audit"], 
-    ["审核协议供货项目", "/kobe/orders/list?r=3", "/kobe/orders/$$obj_id$$/audit"], 
-    ["卖方确认", "/kobe/orders/seller_list?r=3", "/kobe/orders/$$obj_id$$/agent_confirm"], 
+  [ ["审核注册供应商", "/kobe/departments/list", "/kobe/departments/$$obj_id$$/audit"],
+    ["审核采购计划", "/kobe/plans/list", "/kobe/plans/$$obj_id$$/audit"],
+    ["审核网上竞价需求", "/kobe/bid_projects/list?r=6", "/kobe/bid_projects/$$obj_id$$/audit"],
+    ["审核网上竞价结果", "/kobe/bid_projects/list?r=7", "/kobe/bid_projects/$$obj_id$$/audit"],
+    ["审核公告", "/kobe/articles/list", "/kobe/articles/$$obj_id$$/audit"],
+    ["审核产品", "/kobe/products/list", "/kobe/products/$$obj_id$$/audit"],
+    ["审核预算审批单", "/kobe/budgets/list", "/kobe/budgets/$$obj_id$$/audit"],
+    ["审核定点采购项目", "/kobe/orders/list?r=2", "/kobe/orders/$$obj_id$$/audit"],
+    ["审核协议供货项目", "/kobe/orders/list?r=3", "/kobe/orders/$$obj_id$$/audit"],
+    ["卖方确认", "/kobe/orders/seller_list?r=3", "/kobe/orders/$$obj_id$$/agent_confirm"],
     ["买方确认", "/kobe/orders/my_list?r=3", "/kobe/orders/$$obj_id$$/buyer_confirm"],
-    ["审核个人采购订单", "/kobe/orders/list?r=9", "/kobe/orders/$$obj_id$$/audit"], 
-    ["审核日常费用报销", "/kobe/daily_costs/list", "/kobe/daily_costs/$$obj_id$$/audit"], 
+    ["审核个人采购订单", "/kobe/orders/list?r=9", "/kobe/orders/$$obj_id$$/audit"],
+    ["审核日常费用报销", "/kobe/daily_costs/list", "/kobe/daily_costs/$$obj_id$$/audit"],
     ["审核车辆费用报销", "/kobe/asset_projects/list", "/kobe/asset_projects/$$obj_id$$/audit"]
   ].each do |m|
     ToDoList.find_or_create_by(name: m[0], list_url: m[1], audit_url: m[2])

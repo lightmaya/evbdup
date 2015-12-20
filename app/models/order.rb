@@ -7,7 +7,7 @@ class Order < ActiveRecord::Base
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :budget
-  
+
   scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("orders.buyer_code like '#{dep_real_ancestry}/%' or orders.buyer_code = '#{dep_real_ancestry}'") }
   scope :find_all_by_seller, ->(seller_id, seller_name) { where("orders.seller_id = #{seller_id} or orders.seller_name = '#{seller_name}'") }
   scope :not_grcg, -> { where("orders.yw_type <> 'grcg'") }
@@ -16,7 +16,7 @@ class Order < ActiveRecord::Base
   validates_with MyValidator
   validate :check_budget
     def check_budget
-      errors.add(:base, "订单金额#{self.total.to_f}应小于预算金额#{self.budget_money}") if self.budget_money.to_f > 0 && self.total > self.budget_money 
+      errors.add(:base, "订单金额#{self.total.to_f}应小于预算金额#{self.budget_money}") if self.budget_money.to_f > 0 && self.total > self.budget_money
     end
 
 
@@ -31,18 +31,18 @@ class Order < ActiveRecord::Base
     self.rule_step = 'start'
   end
 
-  after_create do 
+  after_create do
     if self.sn.blank?
       create_no("ZCL", "contract_sn")
       create_no(rule.code, "sn") if rule
     end
   end
 
-  after_save do 
+  after_save do
     budget.try(:used!)
   end
 
-  before_save do 
+  before_save do
     self.seller_id = Department.find_by(name: self.seller_name).try(:id) if self.seller_id.blank?
   end
 
@@ -53,7 +53,7 @@ class Order < ActiveRecord::Base
     OrdersUpload
   end
 
-	# 中文意思 状态值 标签颜色 进度 
+	# 中文意思 状态值 标签颜色 进度
 	def self.status_array
     # [
     #   ["暂存", "0", "orange", 10], ["等待审核", "8", "blue", 60],
@@ -66,8 +66,8 @@ class Order < ActiveRecord::Base
     #   ["拒绝撤回", "37", "yellow", 60], ["拒绝作废", "44", "yellow", 60],
     #   ["已拆单", "5", "dark", 100], ["等待收货", "11", "light-green", 50], ["已删除", "404", "dark", 100]
     # ]
-    st = self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成", 
-      "等待卖方确认", "等待买方确认", "卖方退回", "买方退回", "已拆单", "等待收货", 
+    st = self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成",
+      "等待卖方确认", "等待买方确认", "卖方退回", "买方退回", "已拆单", "等待收货",
       "撤回等待审核", "作废等待审核", "已作废", "已撤回", "拒绝撤回", "拒绝作废", "已删除"])
 
     return BidProject.status_array | st
@@ -96,13 +96,21 @@ class Order < ActiveRecord::Base
     [100]
   end
 
+  def self.buyer_status
+    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 4) } & self.status_array).map{ |e| e[1] }
+  end
+
+  def self.seller_status
+    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 3) } & self.status_array).map{ |e| e[1] }
+  end
+
   def self.unfinish_status
     self.status_array.map(&:second) - self.finish_status - self.ysd_status
   end
 
   # 根据不同操作 改变状态
   # def change_status_hash
-  #   status_ha = self.find_step_by_rule.blank? ? 5 : 1 
+  #   status_ha = self.find_step_by_rule.blank? ? 5 : 1
   #   return {
   #     "提交" => { 2 => status_ha, 0 => status_ha },
   #     "通过" => { 1 => 6 },
@@ -150,13 +158,14 @@ class Order < ActiveRecord::Base
       product = item.product
       order.item_type ||= product.item.item_type
       order.seller_id ||= item.seller_id
-      order.items.build(market_price: item.market_price,  
+      order.items.build(market_price: item.market_price,
         product_id: item.product_id, quantity: item.num, price: item.price,
-        category_id: product.category_id, category_code: product.category_code, 
+        category_id: product.category_id, category_code: product.category_code,
         category_name: product.category.name, brand: product.brand, model: product.model,
         version: product.version, unit: product.unit, bid_price: product.bid_price,
         item_id: product.item_id, total: item.num * item.price, vid: item.id
         )
+      cart.destroy(item.id) # 清空购物车
       category_name_ary << product.category.name
     end
 
@@ -179,7 +188,7 @@ class Order < ActiveRecord::Base
       order.seller_tel = top_user.tel
       order.seller_mobile = top_user.mobile
     end
-    
+
     order.deliver_at = Date.today + 3
 
     if params.present?
@@ -190,12 +199,12 @@ class Order < ActiveRecord::Base
       else
         order.budget_money = order.budget.try(:total)
       end
-      order.items.each_with_index do |item, index| 
+      order.items.each_with_index do |item, index|
         if params["item_price_#{item.vid}"].to_f > item.price.to_f
           order.errors.add(:base, "商品采购人报价只能往下调整")
           next
         end
-        item.price = params["item_price_#{item.vid}"].to_f; 
+        item.price = params["item_price_#{item.vid}"].to_f;
         item.total = item.quantity * item.price
       end
     end
@@ -247,7 +256,7 @@ class Order < ActiveRecord::Base
   def ht
     "/kobe/orders/ht/#{self.ht_template}"
   end
-  
+
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
     self.items.map{|e| e.category.user_ids}.flatten.uniq
@@ -256,18 +265,22 @@ class Order < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show" 
+    when "show"
       current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
-    when "commit" 
+    when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "update_audit", "audit" 
+    when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
     when "invoice_number", "update_invoice_number"
       self.class.effective_status.include?(self.status)
     when "print", "print_ht", "print_ysd"
-      (self.class.effective_status.include?(self.status) && current_u.real_department.is_ancestors?(self.buyer_id)) || current_u.real_department.id == self.seller_id
+      self.class.effective_status.include?(self.status) && (current_u.real_department.is_ancestors?(self.buyer_id)|| current_u.real_department.id == self.seller_id)
+    when "update_agent_confirm", "agent_confirm" # 等待卖方确认
+      self.class.seller_status.include?(self.status) && self.seller_id == current_u.real_department.id
+    when "update_buyer_confirm", "buyer_confirm" # 等待卖方确认
+      self.class.buyer_status.include?(self.status) && self.user_id == current_u.id
     else false
     end
   end
@@ -389,7 +402,7 @@ class Order < ActiveRecord::Base
         <node name='其他费用说明' column='other_fee_desc'/>
       </root>
     }
-    
+
   end
 
 end

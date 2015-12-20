@@ -12,7 +12,7 @@ class Kobe::OrdersController < KobeController
   before_filter :order_from_cart, :only => [:cart_order, :update_cart_order]
   # 辖区内采购项目
   def index
-    @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders")).not_grcg.ransack(params[:q]) 
+    @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders")).not_grcg.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -32,9 +32,9 @@ class Kobe::OrdersController < KobeController
   end
 
   def create
-    other_attrs = { 
-      buyer_id: current_user.department.id, buyer_code: current_user.real_dep_code, 
-      name: Order.get_project_name(nil, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) 
+    other_attrs = {
+      buyer_id: current_user.department.id, buyer_code: current_user.real_dep_code,
+      name: Order.get_project_name(nil, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type])
     }
     @order = create_msform_and_write_logs(Order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "下单", :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     unless @order.id
@@ -47,10 +47,11 @@ class Kobe::OrdersController < KobeController
   # 供应商确认页面
   def agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
-    return redirect_to(not_found_path) unless @order
+    # return redirect_to(not_found_path) unless @order
+    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     slave_objs = @order.items
-    @ms_form = MasterSlaveForm.new(Order.agent_xml, OrdersItem.confirm_xml, @order, slave_objs, 
-      {title: "基本信息", action: update_agent_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
+    @ms_form = MasterSlaveForm.new(Order.agent_xml, OrdersItem.confirm_xml, @order, slave_objs,
+      {form_id: 'agent_confirm_order', title: "基本信息", action: update_agent_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
       {title: '产品明细', grid: 4, modify: false}
     )
   end
@@ -58,19 +59,21 @@ class Kobe::OrdersController < KobeController
   # 供应商确认
   def update_agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
-    return redirect_to(not_found_path) unless @order
-    @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
-    write_logs(@order, "供应商确认", "")
+    # return redirect_to(not_found_path) unless @order
+    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+    # @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
+    update_confirm_and_write_logs(Order.agent_xml, OrdersItem.confirm_xml)
     redirect_to seller_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   # 采购人确认页面
   def buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
-    return redirect_to(not_found_path) unless @order
+    # return redirect_to(not_found_path) unless @order
+    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     slave_objs = @order.items
-    @ms_form = MasterSlaveForm.new(Order.buyer_xml, OrdersItem.confirm_xml, @order, slave_objs, 
-      {title: "基本信息", action: update_buyer_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
+    @ms_form = MasterSlaveForm.new(Order.buyer_xml, OrdersItem.confirm_xml, @order, slave_objs,
+      {form_id: 'buyer_confirm_order', title: "基本信息", action: update_buyer_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
       {title: '产品明细', grid: 4, modify: false}
     )
   end
@@ -78,9 +81,11 @@ class Kobe::OrdersController < KobeController
   # 采购人确认
   def update_buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
-    return redirect_to(not_found_path) unless @order
-    @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
-    write_logs(@order, "采购人确认", "")
+    # return redirect_to(not_found_path) unless @order
+    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+    # @order = create_or_update_msform_and_write_logs(@order, Order.buyer_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
+    # write_logs(@order, "采购人确认", "")
+    update_confirm_and_write_logs(Order.buyer_xml, OrdersItem.confirm_xml)
     redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
@@ -88,13 +93,23 @@ class Kobe::OrdersController < KobeController
   def update_cart_order
     begin
       if @order.save
+        # 购物车的订单下单后直接按照流程 到供应商确认 不用修改和提交
+        status = @order.get_change_status("提交")
+        rule = @order.find_step_by_rule
+        rule_step = rule.blank? ? "done" : "start"
+        ht_template = @order.get_ht_template
+        @order.update(status: status, rule_step: rule_step, ht_template: ht_template)
+        @order.reload.create_task_queue
+        # 写日志
+        write_logs(@order, "下单", "购物车下单成功！#{"请等待#{rule['name']}" if rule.present?}")
         # 清理购物车
+        save_cart
         # @order.items.each{|item| @cart.destroy(item.product_id, item.seller_id)}
         # current_user.update(cart: @cart.to_yaml)
         return render :json => {"success" => true}
       else
         return render :json => {"success" => false, "msg" => "订单保存失败: #{@order.errors.full_messages}"}
-      end 
+      end
     rescue Exception => e
       return render :json => {"success" => false, "msg" => "订单保存失败！#{e}"}
     end
@@ -139,7 +154,7 @@ class Kobe::OrdersController < KobeController
     @rule = Rule.find_by(id: params[:r])
     params[:q][:user_id_eq] = current_user.id
     params[:q][:yw_type_eq] = @rule.try(:yw_type)
-    @q = Order.where(get_conditions("orders")).ransack(params[:q]) 
+    @q = Order.where(get_conditions("orders")).ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -147,7 +162,7 @@ class Kobe::OrdersController < KobeController
   def seller_list
     @rule = Rule.find_by(id: params[:r])
     params[:q][:yw_type_eq] = @rule.try(:yw_type)
-    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).ransack(params[:q]) 
+    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -169,22 +184,22 @@ class Kobe::OrdersController < KobeController
     str = "合同编号：#{@order.contract_sn}"
     str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{@order.contract_sn}?m=#{@order.total}"
     @qr = qrcode(str)
-    render partial: @order.ht , layout: 'print'  
+    render partial: @order.ht , layout: 'print'
   end
-  
+
   def print_ysd
     str = "凭证编号：#{@order.sn}"
     str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{@order.sn}?m=#{@order.total}"
     @qr = qrcode(str)
-    render  partial: 'print_ysd',layout: 'print'  
+    render  partial: 'print_ysd',layout: 'print'
   end
 
   def print
     render layout: false
   end
-  
+
   def invoice_number
-    render layout: false 
+    render layout: false
   end
 
   def update_invoice_number
@@ -196,7 +211,9 @@ class Kobe::OrdersController < KobeController
   private
 
     def get_audit_menu_ids
-      @menu_ids = Menu.get_menu_ids("Order|#{action_name}")
+      r = params[:r] if params[:r].present?
+      r = @order.rule.try(:id) if @order.present?
+      @menu_ids = Menu.get_menu_ids("Order|list_r#{r}")
     end
 
     def get_order
@@ -256,6 +273,49 @@ class Kobe::OrdersController < KobeController
         Order.from(@cart, current_user, params)
       else
         Order.from(@cart, current_user)
-      end 
+      end
     end
+
+    # 更新主从表并写日志
+    def update_confirm_and_write_logs(master_xml, slave_xml)
+      cs = @order.get_current_step
+      act = cs.is_a?(Hash) ? cs["name"] : "确认订单"
+      master_title = "基本信息"
+      slave_title = "产品信息"
+      attribute = prepare_params_for_save(Order,master_xml) # 获取并整合主表参数信息
+      # 保存附加费用
+      if Order.respond_to?(:fee_xml)
+        attribute = attribute.merge(prepare_params_for_save(Order, Order.fee_xml))
+      end
+      logs_remark = prepare_edit_logs_remark(@order,master_xml,"修改#{master_title}") #主表日志--修改痕迹 先取日志再更新主表，否则无法判断修改前后的变化情况
+      if @order.update_attributes(attribute) #更新主表
+        logs_remark << save_slaves(@order,OrdersItem,slave_xml,slave_title) # 保存从表并将日志添加到主表日志
+        # "audit_yijian"=>"通过", "audit_liyou"=>"", "audit_next"=>"next"
+        ns = @order.get_next_step
+        if params[:audit_next] == "next"
+          st = Order.get_status_attributes(ns.is_a?(Hash) ? ns["start_status"].to_i : cs["finish_status"].to_i,1)[0]
+        opt = "确认无误转向下一步[#{st}]"
+        else
+          st = Order.get_status_attributes(cs.is_a?(Hash) ? cs["return_status"].to_i : cs["start_status"].to_i,1)[0]
+        opt = "退回上一步[#{st}]"
+        end
+        remark = "确认#{params[:audit_yijian]}，#{opt}。"
+        remark << "操作理由：#{params[:audit_liyou]}" if params[:audit_liyou].present?
+        remark << logs_remark if logs_remark.present?
+        logs = stateless_logs(act, remark, false)
+        if params[:audit_next] == "next"
+          go_to_audit_next(@order, logs)
+        else
+          ps = @order.get_prev_step
+          rule_step = ps.is_a?(Hash) ? ps["name"] : ps
+          @order.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{rule_step}'"],false)
+          # 插入待办事项
+          @order.reload.create_task_queue
+        end
+        tips_get(remark)
+      else
+        flash_get(@order.errors.full_messages)
+      end
+    end
+
 end

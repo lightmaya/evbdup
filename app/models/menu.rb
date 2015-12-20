@@ -14,10 +14,10 @@ class Menu < ActiveRecord::Base
 
 	include AboutAncestry
 	include AboutStatus
-  
+
   default_value_for :status, 65
 
-  after_save do 
+  after_save do
     Setting.where("var like 'user_options_%' or var like 'menus_%'").delete_all if changes["id"].blank? && changes["can_opt_action"].present?
     if changes[:route_path].present?
       users.map{|user| user.cache_menus(true)}
@@ -27,7 +27,7 @@ class Menu < ActiveRecord::Base
     end
   end
 
-	# 中文意思 状态值 标签颜色 进度 
+	# 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
@@ -79,7 +79,7 @@ class Menu < ActiveRecord::Base
   def show_top(arr=[])
     return '' if (self.subtree & arr).blank?
     # 如果有孩子
-    if self.has_visible_children? 
+    if self.has_visible_children?
       substr = "<ul class=\"dropdown-menu\">"
       self.visible_children.each{|c|substr << c.show_top(arr)}
       substr << "</ul>"
@@ -117,8 +117,13 @@ class Menu < ActiveRecord::Base
   # 根据can_opt_action找到menu 返回menu的subtree的id数组 can_act="Department|update"
   def self.get_menu_ids(can_act='')
     return [] if can_act.blank?
-    menu = self.find_by(can_opt_action: can_act)
-    return menu.present? ? menu.subtree.map(&:id) : []
+    if can_act == "Order|list_r"
+      menu = self.where('can_opt_action like ?', "#{can_act}%")
+      return menu.present? ? menu.map(&:subtree_ids).flatten.uniq : [0]
+    else
+      menu = self.find_by(can_opt_action: can_act)
+      return menu.present? ? menu.subtree_ids : [0]
+    end
   end
 
 end

@@ -58,7 +58,7 @@ module KobeHelper
   # 审核下一步
   def audit_next_step(obj, yijian='通过')
     # ha = { "next" => (obj.get_next_step.is_a?(Hash) ? "确认并转向上级单位审核" : "确认并结束审核流程"), "return" => "退回发起人", "turn" => "转向本单位下一位审核人" }
-    ha = obj.audit_next_hash 
+    ha = obj.audit_next_hash
     str = ""
     step = yijian == "通过" ? (can?(:last_audit, obj) ? "next" : "") : "return"
     str << audit_next_step_label(step, ha[step]) if step.present?
@@ -66,9 +66,9 @@ module KobeHelper
     return str.html_safe
   end
 
-  # 审核下一步的label 标签 
+  # 审核下一步的label 标签
   def audit_next_step_label(key,value)
-    %Q{ <label class="radio"><input type="radio" name="audit_next" value="#{key}"><i class="rounded-x"></i> #{value}</label> }
+    %Q{ <label class="radio"><input type="radio" name="audit_next" value="#{key}"><i class="rounded-x"></i> #{value}</label> }.html_safe
   end
 
   # 审核理由的弹框
@@ -80,7 +80,7 @@ module KobeHelper
     str << "</section></fieldset></div>"
     return str.html_safe
   end
-  
+
   # 待办事项显示
   # 当前用户有超过10条的待办事项 用list方式显示 不足10条全部显示
   def show_to_do_list
@@ -169,17 +169,17 @@ module KobeHelper
       li_cls = index == current_index ? 'current' : (index < current_index ? 'done' : '')
       i_cls = index == current_index ? 'fa-info' : (index < current_index ? 'fa-check' : 'fa-history')
       if current_index == arr.size-1
-        li_cls = 'done' 
+        li_cls = 'done'
         i_cls = 'fa-check'
       end
       str << %Q{
         <li role="tab" style="width: #{89/arr.size}%" class="#{li_cls}" aria-disabled="false" aria-selected="true">
         <a id="steps-uid-0-t-0" href="#steps-uid-0-h-0" aria-controls="steps-uid-0-p-0">
-          <span class="number">#{index + 1}.</span>             
+          <span class="number">#{index + 1}.</span>
           <div class="overflow-h">
               <h2 class='col-sm-10'>#{step}</h2>
               <i class="rounded-x fa #{i_cls}"></i>
-           </div>    
+           </div>
         </a>
         </li>
       }
