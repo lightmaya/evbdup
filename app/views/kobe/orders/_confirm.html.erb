@@ -25,13 +25,6 @@
         </label>
       </section>
 
-      <section>
-        <label class="label">下一步 <span class="color-red">*</span></label>
-        <div class="col" id="audit_next_step">
-          <%= audit_next_step_label("next", "确认无误转向下一步") %>
-
-        </div>
-      </section>
     </fieldset>
   </div>
 </div>
@@ -40,19 +33,6 @@
     // 页面加载之前把confirm_div 插在button的div前面
     $('#<%= form_id %> button[type="submit"]').parent('div').before(document.getElementById("<%= form_id %>_confirm_div"));
     $("#<%= form_id %>_confirm_div").css('display', 'block');
-
-
-    // 点确认意见 选择通过不通过
-    $('#<%= form_id %> input[name="audit_yijian"]').on("click", function () {
-      var yijian = $(this).val();
-      var yes_yijian = '<%= audit_next_step_label("next", "确认无误转向下一步")  %>';
-      var no_yijian = '<%= audit_next_step_label("return", "退回上一步")  %>';
-      if (yijian == "通过") {
-        $("#<%= form_id %> #audit_next_step").html(yes_yijian);
-      }else {
-        $("#<%= form_id %> #audit_next_step").html(no_yijian);
-      };
-    });
 
     // 修改成交单价判断是否高于入围单价
     $("input[name^='orders_items[price]']").live('change blur',function(){
@@ -94,10 +74,6 @@
       // 确认意见、理由、下一步
       if (!$("input[name='audit_yijian']").is(':checked')){
         msg.push("请选择确认意见！");
-      };
-
-      if (!$("#audit_next_step input[name='audit_next']").is(':checked')){
-        msg.push("请选择下一步操作！");
       };
 
       if ($("input[name='audit_yijian']:checked").val() == "不通过" && isEmpty($("#audit_liyou").val())){

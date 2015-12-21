@@ -291,19 +291,12 @@ class Kobe::OrdersController < KobeController
       if @order.update_attributes(attribute) #更新主表
         logs_remark << save_slaves(@order,OrdersItem,slave_xml,slave_title) # 保存从表并将日志添加到主表日志
         # "audit_yijian"=>"通过", "audit_liyou"=>"", "audit_next"=>"next"
-        ns = @order.get_next_step
-        if params[:audit_next] == "next"
-          st = Order.get_status_attributes(ns.is_a?(Hash) ? ns["start_status"].to_i : cs["finish_status"].to_i,1)[0]
-        opt = "确认无误转向下一步[#{st}]"
-        else
-          st = Order.get_status_attributes(cs.is_a?(Hash) ? cs["return_status"].to_i : cs["start_status"].to_i,1)[0]
-        opt = "退回上一步[#{st}]"
-        end
-        remark = "确认#{params[:audit_yijian]}，#{opt}。"
-        remark << "操作理由：#{params[:audit_liyou]}" if params[:audit_liyou].present?
+        tips = "确认#{params[:audit_yijian]}。"
+        tips << "操作理由：#{params[:audit_liyou]}" if params[:audit_liyou].present?
+        remark = tips.clone
         remark << logs_remark if logs_remark.present?
         logs = stateless_logs(act, remark, false)
-        if params[:audit_next] == "next"
+        if params[:audit_yijian] == "通过"
           go_to_audit_next(@order, logs)
         else
           ps = @order.get_prev_step
@@ -312,7 +305,7 @@ class Kobe::OrdersController < KobeController
           # 插入待办事项
           @order.reload.create_task_queue
         end
-        tips_get(remark)
+        tips_get(tips)
       else
         flash_get(@order.errors.full_messages)
       end
