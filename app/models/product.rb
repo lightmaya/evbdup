@@ -17,12 +17,12 @@ class Product < ActiveRecord::Base
     # 设置rule_id和rule_step
     init_rule
   end
-  
+
   QS = ["category_id_eq", "brand_eq", "sort", "page"]
 
   # 全文检索
   if Rails.env.production?
-    searchable do      
+    searchable do
       text :brand, :stored => true, :boost => 10.0
       text :model, :stored => true, :boost => 10.0
       text :version, :stored => true, :boost => 10.0
@@ -30,7 +30,7 @@ class Product < ActiveRecord::Base
       text :category do
         category.name if category
       end
-      text :department do 
+      text :department do
         department.name if department
       end
       integer :department_id
@@ -87,13 +87,13 @@ class Product < ActiveRecord::Base
     "#{self.brand} #{self.model} #{self.version}"
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [
     #   ["暂存", "0", "orange", 10],
-    #   ["正常", "65", "yellow", 100], 
+    #   ["正常", "65", "yellow", 100],
     #   ["等待审核", "8", "blue", 60],
-    #   ["审核拒绝", "7", "red", 20],  
+    #   ["审核拒绝", "7", "red", 20],
     #   ["已下架", "26", "dark", 100],
     #   ["已删除", "404", "dark", 100]
     # ]
@@ -148,17 +148,17 @@ class Product < ActiveRecord::Base
     when "show"
       # 上级单位或者总公司人
       current_u.department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
-    when "update", "edit" 
-      self.class.edit_status.include?(self.status) #&& current_u.try(:id) == self.user_id
-    when "commit" 
+    when "update", "edit"
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+    when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "update_audit", "audit" 
+    when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
-    when "recover", "update_recover" 
+    when "recover", "update_recover"
       self.can_opt?("恢复") && current_u.department.is_zgs?
-    when "freeze", "update_freeze" 
+    when "freeze", "update_freeze"
       self.can_opt?("下架") && current_u.department.is_zgs?
     else false
     end

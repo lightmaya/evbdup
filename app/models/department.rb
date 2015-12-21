@@ -3,7 +3,7 @@ class Department < ActiveRecord::Base
 	has_many :users, dependent: :destroy
   has_many :uploads, class_name: :DepartmentsUpload, foreign_key: :master_id
   # validates :name, presence: true, length: { in: 2..30 }, uniqueness: { case_sensitive: false }
-  
+
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Department") }, foreign_key: :obj_id
 
@@ -19,7 +19,7 @@ class Department < ActiveRecord::Base
   default_value_for :is_secret, true
   default_value_for :comment_total, 0
   default_value_for :is_blacklist, false
-  
+
 
   include AboutAncestry
   include AboutStatus
@@ -35,16 +35,16 @@ class Department < ActiveRecord::Base
     real_ancestry_arr = []
     real_ancestry_arr << self.ancestors.where(dep_type: false).map(&:id) if self.ancestors.present?
     real_ancestry_arr << self.id unless self.dep_type
-    
+
     unless self.real_ancestry == real_ancestry_arr.join("/")
       self.real_ancestry = real_ancestry_arr.join("/") # 祖先和自己中是独立核算单位的id
-      self.save 
+      self.save
     end
 
     # 判断是不是入围供应商
     item_deps = ItemDepartment.where(name: self.name, department_id: nil)
     item_deps.update_all(department_id: self.id) if item_deps.present?
-      
+
   end
 
   # 有效的入围项目
@@ -84,14 +84,14 @@ class Department < ActiveRecord::Base
     self.root_id == Dictionary.dep_purchaser_id && self.real_ancestry_id_arr.size == 2
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     #  [
-    #   ["暂存", "0", "orange", 10], 
-    #   ["正常", "65", "yellow", 100], 
+    #   ["暂存", "0", "orange", 10],
+    #   ["正常", "65", "yellow", 100],
     #   ["等待审核", "8", "blue", 60],
-    #   ["审核拒绝", "7", "red", 20],  
-    #   ["已冻结", "12", "dark", 100], 
+    #   ["审核拒绝", "7", "red", 20],
+    #   ["已冻结", "12", "dark", 100],
     #   ["已删除", "404", "dark", 100]
     # ]
     self.get_status_array(["暂存", "正常", "等待审核", "审核拒绝", "已冻结", "已删除"])
@@ -106,8 +106,8 @@ class Department < ActiveRecord::Base
   end
 
   # 全文检索
-  if Rails.env.production? 
-    searchable do      
+  if Rails.env.production?
+    searchable do
       text :name, :stored => true, :boost => 10.0
       integer :status
       boolean :is_secret
@@ -165,7 +165,7 @@ class Department < ActiveRecord::Base
   def self.purchaser
     Department.find_by(id: Dictionary.dep_purchaser_id)
   end
-  
+
   def self.supplier
     Department.find_by(id: Dictionary.dep_supplier_id)
   end
@@ -179,21 +179,21 @@ class Department < ActiveRecord::Base
   def cando(act='',current_u)
     cdt = current_u.is_admin || current_u.user_type == Dictionary.manage_user_type
     case act
-    when "show", "index" 
+    when "show", "index"
       true
-    when "update", "edit", "upload", "update_upload", "show_bank", "edit_bank", "update_bank" 
+    when "update", "edit", "upload", "update_upload", "show_bank", "edit_bank", "update_bank"
       self.class.edit_status.include?(self.status) && cdt
-    when "commit" 
+    when "commit"
       self.get_tips.blank? && self.can_opt?("提交") && cdt
-    when "add_user", "update_add_user", "new", "create" 
+    when "add_user", "update_add_user", "new", "create"
       self.class.effective_status.include?(self.status) && cdt
-    when "update_audit", "audit" 
+    when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除")
-    when "recover", "update_recover" 
+    when "recover", "update_recover"
       self.can_opt?("恢复")
-    when "freeze", "update_freeze" 
+    when "freeze", "update_freeze"
       self.can_opt?("冻结")
     else false
     end
@@ -236,7 +236,7 @@ class Department < ActiveRecord::Base
       Department.purchaser_xml
     when Dictionary.dep_supplier_id
       Department.supplier_xml
-    else 
+    else
       Department.other_xml
     end
   end
@@ -324,11 +324,11 @@ class Department < ActiveRecord::Base
 
     str = show_header("本年度辖区内采购方式占比", 'fa-bar-chart-o')
 
-    Dictionary.yw_type.each_with_index do |a, i| 
+    Dictionary.yw_type.each_with_index do |a, i|
       next if a[0] == 'grcg'
       yw_type = type_arr.find{|e| e[0] == a[0]}
       str << progress_bar("#{a[1]}#{"( #{format_total(yw_type[1])} )" if yw_type.present?}", (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
-    end 
+    end
 
     str << "<hr>"
     str << show_header("粮机物资采购情况", 'fa-vine')
@@ -339,13 +339,15 @@ class Department < ActiveRecord::Base
 
     str << show_category_total("包装物采购", category_ha['bzw'])
 
-    str << progress_bar("粮机物资采购占比", ([category_ha['lj'], category_ha['gc'], category_ha['bzw']].compact.sum * 100)/total, 'purple')
+    lj_per = total == 0 ? 0 : ([category_ha['lj'], category_ha['gc'], category_ha['bzw']].compact.sum * 100)/total
+    str << progress_bar("粮机物资采购占比", lj_per, 'purple')
 
     str << show_header("汽车采购情况", 'fa-car')
 
     str << show_category_total("汽车采购", category_ha['qc'])
 
-    str << progress_bar("汽车采购占比", ([category_ha['qc']].compact.sum * 100)/total, 'brown')
+    qc_per = total == 0 ? 0 : ([category_ha['qc']].compact.sum * 100)/total
+    str << progress_bar("汽车采购占比", qc_per, 'brown')
 
     str << show_header("办公物资采购情况", 'fa-desktop')
 
@@ -355,7 +357,8 @@ class Department < ActiveRecord::Base
 
     str << show_category_total("职工工装", category_ha['gz'])
 
-    str << progress_bar("办公物资采购占比", ([category_ha['bg'], category_ha['ds'], category_ha['gz']].compact.sum * 100)/total, 'sea')
+    bg_per = total == 0 ? 0 : ([category_ha['bg'], category_ha['ds'], category_ha['gz']].compact.sum * 100)/total
+    str << progress_bar("办公物资采购占比", bg_per, 'sea')
   end
 
   def cache_dep_main(force = false)

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class CreateOrdersUploads < ActiveRecord::Migration
   def change
-    create_table :Orders_uploads do |t|
+    create_table :orders_uploads do |t|
     	t.belongs_to :master, :default => 0
       t.string   "upload_file_name"   , :comment => "文件名称"
       t.string   "upload_content_type", :comment => "文件类型"
@@ -9,6 +9,6 @@ class CreateOrdersUploads < ActiveRecord::Migration
       t.datetime "upload_updated_at"  , :comment => "时间戳"
       t.timestamps
     end
-    add_index :Orders_uploads, [:master_id]
+    add_index :orders_uploads, [:master_id]
   end
 end

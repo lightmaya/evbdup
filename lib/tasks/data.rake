@@ -45,13 +45,14 @@ namespace :data do
       end
       pr.details = zcl_product.detail.to_s.gsub("param", "node")
       pr.logs = zcl_product.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      pr.logs = replace_status_in_logs(pr.logs, [["未提交", 0], ["有效", 65], ["新增审核通过", 65], ["新增等待审核", 8], ["新增审核拒绝", 7], ["已删除", 404], ["已撤销", 26], ["撤销审核通过", 26], ["撤销审核拒绝", 26], ["撤销等待审核", 26]])
       pr.created_at = zcl_product.created_at
       pr.updated_at = zcl_product.updated_at
       if pr.save
         # 如果状态是等待审核 插入待办事项
         if pr.status == 8
           audit_total += 1
-          pr.create_task_queue(get_user_id_in_audit_log(zcl_product)) 
+          pr.create_task_queue(get_user_id_in_audit_log(zcl_product))
         end
         succ += 1
         p "succ: #{succ}/#{total} zcl_product_id: #{zcl_product.id}"
@@ -77,7 +78,7 @@ namespace :data do
       end
     end
 
-    old_table_name = "dep_purchaser" 
+    old_table_name = "dep_purchaser"
     Dragon.table_name = old_table_name
     max = 1000 ; succ = i = 0
     total = Dragon.count
@@ -110,6 +111,7 @@ namespace :data do
       d.sort = old.name == "中国储备粮管理总公司" ? 0 : old.sort
       d.details = old.detail.to_s.gsub("param", "node")
       d.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      d.logs = replace_status_in_logs(d.logs, [["正常", 65], ["有效", 65], ["已删除", 404]])
       d.created_at = old.created_at
       d.updated_at = old.updated_at
       if d.save
@@ -124,7 +126,7 @@ namespace :data do
     Dragon.order("code asc").each do |old|
       n = Department.find_or_initialize_by(old_id: old.id, old_table: old_table_name)
       next if old.id == 144 || n.ancestry.present?
-      n.parent_id = Department.find_by(old_id: old.parent_id, old_table: old_table_name)  
+      n.parent_id = Department.find_by(old_id: old.parent_id, old_table: old_table_name)
       if n.save
         p ".departments ancestry: #{n.ancestry} succ: #{succ}/#{total} old: #{old.id}"
       else
@@ -133,7 +135,7 @@ namespace :data do
     end
 
     # 导入供应商单位
-    old_table_name = "dep_supplier" 
+    old_table_name = "dep_supplier"
     Dragon.table_name = old_table_name
     max = 1000 ; succ = i = 0
     total = Dragon.count
@@ -185,6 +187,7 @@ namespace :data do
       d.sort = old.sort
       d.details = old.detail.to_s.gsub("param", "node")
       d.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      d.logs = replace_status_in_logs(d.logs, [["正常", 65], ["有效", 65], ["已删除", 404], ["审核不通过", 7], ["注册未完成", 0], ["已冻结", 12], ["等待审核", 8]])
       d.created_at = old.created_at
       d.updated_at = old.updated_at
 
@@ -203,7 +206,7 @@ namespace :data do
         # 如果状态是等待审核 插入待办事项
         if d.status == 8
           audit_total += 1
-          d.create_task_queue(get_user_id_in_audit_log(old)) 
+          d.create_task_queue(get_user_id_in_audit_log(old))
         end
         succ += 1
         p ".departments succ: #{succ}/#{total} old: #{old.id}"
@@ -230,7 +233,7 @@ namespace :data do
       n = Item.find_or_initialize_by(id: old.id)
       n.name = old.item_name
       n.begin_time = old.begin_time
-      n.end_time = old.end_time 
+      n.end_time = old.end_time
       n.categoryids = old.category_id
 
       n.status = case old.status
@@ -249,6 +252,7 @@ namespace :data do
       n.user_id = old.user_id
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["有效", 65], ["已删除", 404], ["已停止", 54], ["停止申请", 68]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -261,7 +265,7 @@ namespace :data do
 
     end
 
-    Dragon.table_name = "zcl_item_factory" 
+    Dragon.table_name = "zcl_item_factory"
     max = 1000 ; succ = i = 0
     total = Dragon.count
     Dragon.find_each do |old|
@@ -298,7 +302,7 @@ namespace :data do
       next unless i.is_end?
       # ["已过期", "54"]: ["dark", 100]
       i.change_status_and_write_logs("已过期", save_logs(i.logs, "过期", 54, "系统自动更新过期的项目"))
-      succ += 1 
+      succ += 1
       p ".item_departments succ: #{succ}/#{items.size} old: #{i.id}"
     end
 
@@ -347,6 +351,7 @@ namespace :data do
 
       n.user_id = old.user_id
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["自动生效", 65], ["有效", 65], ["新增审核通过", 65], ["已暂停", 404], ["新增审核拒绝", 404], ["未提交", 404], ["新增等待审核", 404]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -387,9 +392,10 @@ namespace :data do
       n.details = old.detail.to_s.gsub("param", "node")
       n.user_id = old.user_id
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["自动生效", 65], ["已删除", 404]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
-      
+
       n.category_id = old.category_id
       ca_ids = old.category_id.split(",")
       n.department.items.each do |item|
@@ -416,7 +422,7 @@ namespace :data do
     set_menu_total = 0
     Dragon.find_each do |old|
       n = User.find_or_initialize_by(id: old.id)
-      
+
       dep = case old.user_type
       when 1
         Department.find_by(name: "总公司机关")
@@ -437,7 +443,7 @@ namespace :data do
       n.tel = old.telephone
       n.fax = old.fax
 
-      # ["正常",0,"u",100], 
+      # ["正常",0,"u",100],
       # ["冻结",1,"yellow",100]
       n.status = case old.status
       when "正常"
@@ -451,6 +457,7 @@ namespace :data do
       n.duty = old.user_duty
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["正常", 65], ["1", 65], ["4", 65], ["已冻结", 12]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -476,7 +483,7 @@ namespace :data do
   task :categories => :environment do
     p "#{begin_time = Time.now} in categories....."
 
-    Dragon.table_name = "zcl_category" 
+    Dragon.table_name = "zcl_category"
     max = 1000 ; succ = i = 0
     total = Dragon.count
     Dragon.find_each do |old|
@@ -484,7 +491,7 @@ namespace :data do
       n.name = old.name
       n.audit_type = case old.audit_type
       when "1"
-        1 
+        1
       when "2"
         -1
       when "1,2"
@@ -511,7 +518,7 @@ namespace :data do
         case old_node["type"]
         when "字符类型"
           if old_node.has_attribute? "dropdata"
-            n_node["data_type"] = 'select' 
+            n_node["data_type"] = 'select'
             n_node["data"] = old_node['dropdata'].split('|').to_s
           end
         when "大文本型"
@@ -557,7 +564,7 @@ namespace :data do
     Dragon.order("code asc").each do |old|
       n = Category.find_or_initialize_by(id: old.id)
       next if n.ancestry.present?
-      n.parent_id = Category.find_by(id: old.parent_id)  
+      n.parent_id = Category.find_by(id: old.parent_id)
       if n.save
         p ".categories ancestry: #{n.ancestry} succ: #{succ}/#{total} old: #{old.id}"
       else
@@ -572,8 +579,8 @@ namespace :data do
     gz = Category.gz.update_all(ht_template: 'gz') if Category.gz.present?
     p "update ht_template gz: #{gz}..."
 
-    gc = Category.gc.update_all(ht_template: 'gc') if Category.gc.present?  
-    p "update ht_template gc: #{gc}..."  
+    gc = Category.gc.update_all(ht_template: 'gc') if Category.gc.present?
+    p "update ht_template gc: #{gc}..."
 
     bzw = Category.bzw.update_all(ht_template: 'bzw') if Category.bzw.present?
     p "update ht_template bzw: #{bzw}..."
@@ -602,7 +609,7 @@ namespace :data do
       n.name = old.project_name.present? ? old.project_name : '-'
       n.sn = old.sn
       n.contract_sn = old.ht_code
-      n.buyer_name = old.dep_p_name 
+      n.buyer_name = old.dep_p_name
       n.payer = get_value_in_xml(old.detail, "发票单位").blank? ? old.dep_p_name : get_value_in_xml(old.detail, "发票单位")
 
       dep = Department.find_by(name: old.dep_p_name, old_table: "dep_purchaser")
@@ -620,8 +627,8 @@ namespace :data do
       n.buyer_code = dep.try(:real_ancestry)
 
       n.buyer_man = old.dep_p_man.present? ? old.dep_p_man : '-'
-      n.buyer_tel = old.dep_p_tel.present? ? old.dep_p_tel : '-' 
-      n.buyer_mobile = old.dep_p_mobile.present? ? old.dep_p_mobile : '-' 
+      n.buyer_tel = old.dep_p_tel.present? ? old.dep_p_tel : '-'
+      n.buyer_mobile = old.dep_p_mobile.present? ? old.dep_p_mobile : '-'
       n.buyer_addr = old.dep_p_add.present? ? old.dep_p_add : '-'
 
       n.seller_name = old.dep_s_name
@@ -664,7 +671,7 @@ namespace :data do
       # ["拒绝作废", 48, "yellow", 60],
       # ["已拆单", 50, "light", 0],
       # ["等待收货", 52, "light", 50]
-      # 
+      #
       n.status = case old.status
       when "未提交"
         0
@@ -704,6 +711,7 @@ namespace :data do
 
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["未提交", 0], ["新增等待审核", 8], ["新增审核拒绝", 7], ["自动生效", 2], ["新增审核通过", 9], ["已完成", 100], ["已删除", 404], ["订单等待确认", old.mall_id.present? ? 11 : 3], ["供应商反馈", 42], ["撤回等待审核", 36], ["作废等待审核", 43], ["已作废", 47], ["撤回审核拒绝", 37], ["作废审核拒绝", 44], ["已拆单", 5], ["等待收货", 11], ["需求未提交", 0], ["需求等待审核", 15], ["需求审核拒绝", 14], ["接受投标", 16], ["接受报价", 16], ["结果等待审核", 22], ["结果审核拒绝", 21], ["确定中标人", 23], ["废标等待审核", 29], ["废标审核拒绝", 28], ["已删除", 404], ["已废标", 33], ["撤销等待审核", 36], ["撤销审核拒绝", 37], ["已撤销", 35]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -731,7 +739,7 @@ namespace :data do
       when 56
         "gz"
       when 44
-        "ds"          
+        "ds"
       else
         "bg"
       end
@@ -739,8 +747,8 @@ namespace :data do
       if n.save
         # 协议供货 等待审核
         # if n.yw_type == 'xygh' && n.status == 8
-        #   n.update(rule_step: '卖方确认') 
-        #   n.update(rule_step: n.reload.get_next_step["name"]) 
+        #   n.update(rule_step: '卖方确认')
+        #   n.update(rule_step: n.reload.get_next_step["name"])
         # end
         n.update(rule_step: 'done') if [2, 9, 100].include?(n.status)
         if n.status == 8
@@ -865,7 +873,7 @@ namespace :data do
         clean_id << o.id
       else
         # 插入待办事项
-        o.create_task_queue(o.audit_user_id) 
+        o.create_task_queue(o.audit_user_id)
         if o.reload.task_queues.present?
           succ += 1
           p ".order_tqs succ: #{succ}/#{orders.size} order_id: #{o.id}"
@@ -881,6 +889,15 @@ namespace :data do
     p ".task_queues succ: #{tqs.size} [user_id, dep_id]: #{tqs.group(:user_id, :dep_id).count(:id)}"
 
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc "订单"
+  task :os => :environment do
+    Rake::Task["data:orders"].invoke
+    p "========================================================="
+    Rake::Task["data:orders_items"].invoke
+    p "========================================================="
+    Rake::Task["data:order_tqs"].invoke
   end
 
   desc '创建文章公告类别'
@@ -979,6 +996,7 @@ namespace :data do
       node["value"] = ca_name.join(",")
       n.details = doc.to_s
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["审核通过", 16], ["未提交", 0], ["审核拒绝", 7], ["已删除", 404], ["等待审核", 8]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -986,7 +1004,7 @@ namespace :data do
         # 如果状态是等待审核 插入待办事项
         if n.status == 8
           audit_total += 1
-          n.create_task_queue(get_user_id_in_audit_log(old)) 
+          n.create_task_queue(get_user_id_in_audit_log(old))
         end
         succ += 1
         p ".articles succ: #{succ}/#{total} old: #{old.id}"
@@ -1010,7 +1028,7 @@ namespace :data do
     total = Dragon.count
     Dragon.find_each do |old|
       next unless ['下载栏目','供应商须知','用户指南','采购人须知'].include?(old.catalog)
-        
+
       n = Faq.find_or_initialize_by(id: old.id)
 
       # { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
@@ -1019,7 +1037,7 @@ namespace :data do
         "xzzx"
       when "供应商须知", "采购人须知", "用户指南"
         "cgzn"
-      end        
+      end
 
       n.title = old.title
       n.content = old.content
@@ -1085,7 +1103,7 @@ namespace :data do
       dep = Department.find_by(old_id: old.user_dep, old_table: "dep_purchaser")
       n.department_id = dep.try(:id)
       n.department_code = dep.try(:real_ancestry)
-      
+
       # ["暂存", 0, "orange", 20],
       # ["需求等待审核", 1, "blue", 40],
       # ["需求审核拒绝",3,"red", 0],
@@ -1124,6 +1142,7 @@ namespace :data do
 
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["需求未提交", 0], ["需求等待审核", 15], ["需求审核拒绝", 14], ["接受报价", 16], ["结果等待审核", 22], ["结果审核拒绝", 21], ["确定中标人", 23], ["废标等待审核", 29], ["废标审核拒绝", 28], ["已删除", 404], ["已废标", 33]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -1134,7 +1153,7 @@ namespace :data do
         reason = arr.size == 2 ? arr.last : ''
         n.reason = reason
       end
-      
+
       if n.save
         n.update(rule_id: Rule.find_by(yw_type: 'wsjj_jg').try(:id), rule_step: 'start') if [22, 29].include?(n.status)
         succ += 1
@@ -1259,7 +1278,7 @@ namespace :data do
       n.bid_project_id = n.bid_project_bid.try(:bid_project).try(:id)
       n.user_id = n.bid_project_bid.try(:user_id)
       items = n.bid_project_bid.try(:bid_project).try(:items)
-      if items.present? 
+      if items.present?
         n.bid_item_id = items.first.id if items.size == 1
         n_item = items.find{ |i| i.brand_name == n.brand_name && i.xh == n.xh && i.req == n.req }
         n.bid_item_id = n_item.id if n_item.present?
@@ -1293,7 +1312,7 @@ namespace :data do
         clean_id << o.id
       else
         # 插入待办事项
-        o.create_task_queue 
+        o.create_task_queue
         if o.reload.task_queues.present?
           succ += 1
           p ".bid_project_tqs succ: #{succ}/#{bid_projects.size} bid_project_id: #{o.id}"
@@ -1309,6 +1328,19 @@ namespace :data do
     p ".task_queues succ: #{tqs.size} [user_id, dep_id]: #{tqs.group(:user_id, :dep_id).count(:id)}"
 
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+  end
+
+  desc "网上竞价"
+  task :bids => :environment do
+    Rake::Task["data:bid_projects"].invoke
+    p "========================================================="
+    Rake::Task["data:bid_items"].invoke
+    p "========================================================="
+    Rake::Task["data:bid_project_bids"].invoke
+    p "========================================================="
+    Rake::Task["data:bid_item_bids"].invoke
+    p "========================================================="
+    Rake::Task["data:bid_project_tqs"].invoke
   end
 
   desc '导入资产划转'
@@ -1346,6 +1378,7 @@ namespace :data do
       end
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
+      n.logs = replace_status_in_logs(n.logs, [["未提交", 0], ["已发布", 16], ["已报废", 404]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -1383,7 +1416,7 @@ namespace :data do
 
     deps = Department.purchaser.descendants
     succ = 0
-    deps.each do |d| 
+    deps.each do |d|
       if d.cache_dep_main true
         succ += 1
         p ".create_cache_dep_main succ: #{succ}/#{deps.size} old: #{d.id}"
@@ -1400,7 +1433,7 @@ namespace :data do
   task :daily_categories => :environment do
     p "#{begin_time = Time.now} in daily_categories....."
 
-    Dragon.table_name = "zcl_cost_category" 
+    Dragon.table_name = "zcl_cost_category"
     max = 1000 ; succ = i = 0
     total = Dragon.count
     Dragon.find_each do |old|
@@ -1408,7 +1441,7 @@ namespace :data do
       n.name = old.name
       n.status = 65
       n.sort = old.sort
-      
+
       if n.save
         succ += 1
         p ".daily_categories succ: #{succ}/#{total} old: #{old.id}"
@@ -1421,7 +1454,7 @@ namespace :data do
     Dragon.order("code asc").each do |old|
       n = DailyCategory.find_or_initialize_by(id: old.id)
       next if n.ancestry.present?
-      n.parent_id = DailyCategory.find_by(id: old.parent_id)  
+      n.parent_id = DailyCategory.find_by(id: old.parent_id)
       if n.save
         p ".daily_categories ancestry: #{n.ancestry} succ: #{succ}/#{total} old: #{old.id}"
       else
@@ -1436,7 +1469,7 @@ namespace :data do
   # 输出日志到文件和控制台
   def self.log_p(msg, log_path = "data.log")
     @logger ||= Logger.new(Rails.root.join('log', log_path))
-    @logger.info msg 
+    @logger.info msg
   end
 
   # 取detail里面 某字段的值
@@ -1465,10 +1498,18 @@ namespace :data do
     node["操作人ID"] = user.id.to_s
     node["操作人姓名"] = user.name.to_s
     node["操作人单位"] = user.department.nil? ? "暂无" : user.department.name.to_s
-    node["操作内容"] = action 
-    node["当前状态"] = status 
-    node["备注"] = remark 
+    node["操作内容"] = action
+    node["当前状态"] = status
+    node["备注"] = remark
     return node.to_s
   end
 
+  # 替换日志中的中文状态 arr = [["正常", 65 ], ["已删除", 404]]
+  def replace_status_in_logs(logs, arr)
+    arr.each do |a|
+      logs.gsub!("当前状态=\"#{a[0]}\"", "当前状态=\"#{a[1]}\"")
+      logs.gsub!("当前状态='#{a[0]}'", "当前状态='#{a[1]}'")
+    end
+    return logs
+  end
 end

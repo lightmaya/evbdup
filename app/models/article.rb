@@ -10,21 +10,21 @@ class Article < ActiveRecord::Base
   has_many :task_queues, -> { where(class_name: "Article") }, foreign_key: :obj_id
 
   belongs_to :department
-  
+
   default_value_for :hits, 0
   default_value_for :status, 0
 
   ####### status及审核相关 ############
   # 有status字段的需要加载AboutStatus
-  include AboutStatus  
+  include AboutStatus
 
-  before_save do 
+  before_save do
     self.catalog_ids = self.catalogids.split(",")
   end
 
   # 审核流程必须有rule
   belongs_to :rule
-  
+
   before_create do
     # 设置rule_id和rule_step
     init_rule
@@ -41,7 +41,7 @@ class Article < ActiveRecord::Base
       integer :user_id
       integer :status
       time :created_at
-      time :updated_at  
+      time :updated_at
       integer :id
       # boost { index_date*10000000 }
     end
@@ -65,14 +65,14 @@ class Article < ActiveRecord::Base
     Sunspot.search(Article, &conditions)
   end
 
-  
-  # status各状态的中文意思 状态值 标签颜色 进度 
+
+  # status各状态的中文意思 状态值 标签颜色 进度
   def self.status_array
     # [
-    #   ["暂存", "0", "orange", 10], 
-    #   ["审核拒绝", "7", "red", 20], 
-    #   ["等待审核", "8", "blue", 60], 
-    #   ["已发布", "16", "yellow", 40], 
+    #   ["暂存", "0", "orange", 10],
+    #   ["审核拒绝", "7", "red", 20],
+    #   ["等待审核", "8", "blue", 60],
+    #   ["已发布", "16", "yellow", 40],
     #   ["已删除", "404", "dark", 100]
     #   ]
     self.get_status_array(["暂存", "等待审核", "已发布", "审核拒绝", "已删除"])
@@ -103,12 +103,11 @@ class Article < ActiveRecord::Base
     case act
     when "show"
       true
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
-    when "commit" 
-      # 必须是0状态并且没有数据合法才能commit
+    when "commit"
       self.class.edit_status.include?(self.status) # && self.get_tips.blank?
-    when "update_audit", "audit" 
+    when "update_audit", "audit"
       # change_status_hash中是否有此操作
       self.class.audit_status.include?(self.status)
     else false

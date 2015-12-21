@@ -15,17 +15,17 @@ class AssetProject < ActiveRecord::Base
     init_rule
   end
 
-  after_create do 
+  after_create do
     create_no(rule.code, "sn")
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [
-    #   ["暂存", "0", "orange", 10], 
-    #   ["已生效", "72", "yellow", 100], 
+    #   ["暂存", "0", "orange", 10],
+    #   ["已生效", "72", "yellow", 100],
     #   ["等待审核", "8", "blue", 60],
-    #   ["审核拒绝", "7", "red", 20],  
+    #   ["审核拒绝", "7", "red", 20],
     #   ["已删除", "404", "dark", 100]]
     self.get_status_array(["暂存", "已生效", "等待审核", "审核拒绝", "已删除"])
     # [
@@ -65,15 +65,15 @@ class AssetProject < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show" 
+    when "show"
       current_u.department.is_ancestors?(self.department_id)
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
-    when "commit" 
+    when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "update_audit", "audit" 
+    when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false
     end
