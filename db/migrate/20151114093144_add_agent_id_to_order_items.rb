@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddAgentIdToOrderItems < ActiveRecord::Migration
   def change
     add_column :orders_items, :agent_id, :integer

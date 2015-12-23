@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class FaqUpload < ActiveRecord::Base
 	belongs_to :master, class_name: "Faq", foreign_key: "master_id"
 

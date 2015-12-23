@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddCatalogidsToArticles < ActiveRecord::Migration
   def change
     add_column :articles, :catalogids, :text

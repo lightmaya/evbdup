@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddIndexToOrders < ActiveRecord::Migration
   def change
 
@@ -9,7 +10,7 @@ class AddIndexToOrders < ActiveRecord::Migration
     add_index :orders, :yw_type
     add_index :orders, :status
     add_index :orders, :contract_sn
-    
+
     add_index :departments, :real_ancestry
   end
 end

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Kobe::AssetProjectsController < KobeController
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit,:get_fixed_asset_json]
@@ -7,7 +8,7 @@ class Kobe::AssetProjectsController < KobeController
 
   # 辖区内采购计划
   def index
-    @q = AssetProject.where(get_conditions("asset_projects")).ransack(params[:q]) 
+    @q = AssetProject.where(get_conditions("asset_projects")).ransack(params[:q])
     @asset_projects = @q.result.page params[:page]
   end
 
@@ -26,7 +27,7 @@ class Kobe::AssetProjectsController < KobeController
 
   def update
     update_msform_and_write_logs(@asset_project, AssetProject.xml, AssetProjectItem, AssetProjectItem.xml, {:action => "修改费用信息", :slave_title => "费用信息"})
-    redirect_to kobe_asset_projects_path 
+    redirect_to kobe_asset_projects_path
   end
 
   def edit
@@ -82,7 +83,7 @@ class Kobe::AssetProjectsController < KobeController
 
 
   private
- 
+
     def get_audit_menu_ids
       @menu_ids = Menu.get_menu_ids("AssetProject|list")
     end

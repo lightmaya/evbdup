@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddIndexToMenus < ActiveRecord::Migration
   def change
     add_column :items, :user_id, :integer

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddAuditUserIdToOrders < ActiveRecord::Migration
   def change
     add_column :orders, :audit_user_id, :integer

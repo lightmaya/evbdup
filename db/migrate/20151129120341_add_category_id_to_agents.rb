@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddCategoryIdToAgents < ActiveRecord::Migration
   def change
     add_column :agents, :category_id, :text

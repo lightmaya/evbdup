@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AssetProjectItem < ActiveRecord::Base
 	belongs_to :asset_project
 	belongs_to :fixed_asset

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class FixedAsset < ActiveRecord::Base
 
   belongs_to :department
@@ -6,7 +7,7 @@ class FixedAsset < ActiveRecord::Base
 
   default_value_for :status, 65
 
-  after_create do 
+  after_create do
     create_no("QC", "sn")
   end
 
@@ -23,7 +24,7 @@ class FixedAsset < ActiveRecord::Base
     end
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
@@ -44,11 +45,11 @@ class FixedAsset < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show" 
+    when "show"
       true
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false
     end
@@ -79,7 +80,7 @@ class FixedAsset < ActiveRecord::Base
         <node name='报废日期' column='baofei_riqi' hint='已报废的请填写报废时间。' class='date_select dateISO'/>
         <node name='转移日期' column='zhuanyi_riqi' class='date_select dateISO'/>
         <node name='转移单位' column='zhuanyi_danwei'/>
-        <node name='状态' column='asset_status' class='required' data_type='select' data='#{Dictionary.asset_status}'/> 
+        <node name='状态' column='asset_status' class='required' data_type='select' data='#{Dictionary.asset_status}'/>
       </root>
     }
   end

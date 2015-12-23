@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddDetailsToBidProjects < ActiveRecord::Migration
   def change
     add_column :bid_projects, :details, :text

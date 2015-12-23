@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateAssetProjects < ActiveRecord::Migration
 	def change
 		create_table :asset_projects do |t|
@@ -15,8 +16,8 @@ class CreateAssetProjects < ActiveRecord::Migration
 			t.belongs_to :user               , :comment => "用户ID", :null => false, :default => 0
 			t.integer :status                , :comment => "状态", :limit => 2, :default => 0 ,:null => false
 			t.text :details                  , :comment => "明细"
-			t.text :logs 			
-			t.timestamps			
+			t.text :logs
+			t.timestamps
 		end
 	end
 end

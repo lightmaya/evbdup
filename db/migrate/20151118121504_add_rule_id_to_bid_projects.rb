@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddRuleIdToBidProjects < ActiveRecord::Migration
   def change
     add_column :bid_projects, :rule_id, :integer

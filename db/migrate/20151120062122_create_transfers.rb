@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class CreateTransfers < ActiveRecord::Migration
   def change
     create_table :transfers do |t|
@@ -46,7 +47,7 @@ class CreateTransfers < ActiveRecord::Migration
       t.datetime "upload_updated_at"  , :comment => "时间戳"
       t.timestamps
     end
-    
+
 
     add_index :transfers, :sn, :unique => true
     add_index :transfer_items, :transfer_id

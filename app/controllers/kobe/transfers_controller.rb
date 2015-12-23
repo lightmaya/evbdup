@@ -1,7 +1,8 @@
+# -*- encoding : utf-8 -*-
 class Kobe::TransfersController < KobeController
 
 	def index
-		@q = Transfer.ransack(params[:q]) 
+		@q = Transfer.ransack(params[:q])
     @transfers = @q.result.page params[:page]
 	end
 
@@ -23,7 +24,7 @@ class Kobe::TransfersController < KobeController
 
    def update
     update_msform_and_write_logs(@transfer, Transfer.xml, TransferItem, TransferItem.xml, {:action => "修改项目信息", :slave_title => "产品信息"}, {name: create_name})
-    redirect_to kobe_transfers_path 
+    redirect_to kobe_transfers_path
   end
 
   def edit
@@ -66,7 +67,7 @@ class Kobe::TransfersController < KobeController
        # 根据品目创建项目名称
     def create_name
       category = {}
-      transfer_type = params[:transfers][:total].to_i==0 ? '无偿划转'  : '协议转让' 
+      transfer_type = params[:transfers][:total].to_i==0 ? '无偿划转'  : '协议转让'
       params[:transfer_items][:category_name].each  do |k,v|
         num = params[:transfer_items][:num][k]
         unit = params[:transfer_items][:unit][k]
@@ -86,5 +87,5 @@ class Kobe::TransfersController < KobeController
 
 
 
-  
+
 end

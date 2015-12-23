@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddItemIdToOrdersItems < ActiveRecord::Migration
   def change
   	add_column :orders_items, :item_id, :integer

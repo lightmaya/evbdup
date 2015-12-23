@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddHtTemplateToOrders < ActiveRecord::Migration
   def change
     add_column :orders, :ht_template, :string

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Kobe::FaqsController < KobeController
 
   before_action :get_faq, :except => [:index, :new, :create, :yjjy_list, :get_catalog]
@@ -5,16 +6,16 @@ class Kobe::FaqsController < KobeController
   skip_load_and_authorize_resource :only => :get_catalog
 
 	def index
-		@q = Faq.ransack(params[:q]) 
+		@q = Faq.ransack(params[:q])
     @faqs = @q.result.status_not_in(404).page params[:page]
 	end
 
 
-  def new 
+  def new
     if params[:catalog]=='yjjy'
       @faq.ask_user_name = current_user.name
       @faq.ask_dep_name = current_user.real_department.name
-    end 
+    end
     type = Dictionary.faq_catalog[params[:catalog]]
     @myform = SingleForm.new(Faq.xml(params[:catalog]), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faqs_path(catalog: params[:catalog]), grid: 3 })
   end
@@ -24,18 +25,18 @@ class Kobe::FaqsController < KobeController
     create_and_write_logs(Faq, Faq.xml(params[:catalog]),{},{catalog: params[:catalog], ask_user_id: current_user.id })
     redirect_to kobe_faqs_path
   end
-  
+
   def edit
     type = Dictionary.faq_catalog[@faq.catalog]
     @myform = SingleForm.new(Faq.xml(@faq.catalog), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faq_path(@faq), method: "patch", grid: 3 })
   end
 
-  def update 
+  def update
     update_and_write_logs(@faq, Faq.xml(@faq.catalog))
     redirect_to kobe_faqs_path
   end
 
-  def show 
+  def show
     @arr  = []
     obj_contents = show_obj_info(@faq,Faq.xml(@faq.catalog),{title: "基本信息" , grid: 3})
     @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
@@ -66,7 +67,7 @@ class Kobe::FaqsController < KobeController
   end
 
   def reply
-    
+
   end
 
   def update_reply
@@ -77,7 +78,7 @@ class Kobe::FaqsController < KobeController
   end
 
   def yjjy_list
-     @q = current_user.yjjy.ransack(params[:q]) 
+     @q = current_user.yjjy.ransack(params[:q])
      @faqs = @q.result.status_not_in(404).page params[:page]
   end
 

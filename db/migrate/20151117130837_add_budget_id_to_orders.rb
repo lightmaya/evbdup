@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddBudgetIdToOrders < ActiveRecord::Migration
   def change
     add_column :orders, :budget_id, :integer

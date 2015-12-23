@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ChangeEndTimeForItems < ActiveRecord::Migration
   def change
     change_column :items, :begin_time, :datetime

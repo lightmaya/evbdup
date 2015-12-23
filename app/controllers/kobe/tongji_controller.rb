@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Kobe::TongjiController < KobeController
   before_action :set_default_params
   before_action :get_common_cdt, only: [:index,:item_dep_sales]
@@ -8,11 +9,11 @@ class Kobe::TongjiController < KobeController
       # 按照品目查询
       get_categories
       get_department
-      get_yw_type      
-      render layout: (params[:show_type] == 'shape' ? 'tongji' : 'kobe') 
+      get_yw_type
+      render layout: (params[:show_type] == 'shape' ? 'tongji' : 'kobe')
     end
   end
- 
+
  #入围供应商销量统计
   def item_dep_sales
     if params[:search_btn].present?
@@ -26,12 +27,12 @@ class Kobe::TongjiController < KobeController
     end
   end
 
-  def get_categories    
+  def get_categories
   # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
-    # 默认没有选品目的话统计第一层 办公类 ，粮机类 
+    # 默认没有选品目的话统计第一层 办公类 ，粮机类
     ca_select = "c.id,c.name,sum(orders_items.total)as total"
     category_sql = %Q{
-      select id,name,concat_ws('/',ancestry,id,'') as code from categories 
+      select id,name,concat_ws('/',ancestry,id,'') as code from categories
       where status = 65
     }
     # 求合计
@@ -55,13 +56,13 @@ class Kobe::TongjiController < KobeController
     end
   end
 
-  def get_department    
+  def get_department
   # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
     # 默认没有选品目的话统计第一层 中储粮总公司下的各种分公司
     # 只显示采购单位的条件
     department_sql = %Q{
-      select id,name,concat_ws('/',real_ancestry,'0') as code from departments 
-      where  dep_type=0 and find_in_set(#{Dictionary.dep_purchaser_id},replace(real_ancestry,'/',',')) > 0 
+      select id,name,concat_ws('/',real_ancestry,'0') as code from departments
+      where  dep_type=0 and find_in_set(#{Dictionary.dep_purchaser_id},replace(real_ancestry,'/',',')) > 0
     }
     # 求合计
     if params[:category_id].present?
@@ -99,7 +100,7 @@ class Kobe::TongjiController < KobeController
     end
     @yw_types =[]
     yw = Dictionary.yw_type
-    yw.each {|k,v| @yw_types << [v,rs.find{|w| w.yw_type== k}.try(:total).to_f]}   
+    yw.each {|k,v| @yw_types << [v,rs.find{|w| w.yw_type== k}.try(:total).to_f]}
   end
 
   def get_dep_supplier
@@ -108,7 +109,7 @@ class Kobe::TongjiController < KobeController
       @common_value << params[:item_id]
       cdt = [@common_cdt.join(' and ')]+@common_value
       select = "orders.seller_id,orders.seller_name,sum(orders_items.total) as total"
-      group = params[:dep_s_name].present? ? 'orders.seller_name' : 'orders.seller_id' 
+      group = params[:dep_s_name].present? ? 'orders.seller_name' : 'orders.seller_id'
       rs = Order.select(select).joins(items: :product_item).where(cdt).group(group)
       if params[:dep_s_name].blank?
         @dep_infos = []
@@ -131,12 +132,12 @@ class Kobe::TongjiController < KobeController
   def set_default_params
   	params[:begin] ||= Time.now.beginning_of_month.strftime('%Y-%m-%d')
     params[:end] ||=  Time.now.strftime('%Y-%m-%d')
-    params[:show_type] ||= 'shape' 
+    params[:show_type] ||= 'shape'
   end
 
   def get_category_joins(sql)
      %Q{
-      inner join orders_items on orders.id= orders_items.order_id 
+      inner join orders_items on orders.id= orders_items.order_id
       inner join (#{sql}) c on c.code = left(concat_ws('/',orders_items.category_code,orders_items.category_id,''), length(c.code))
     }
   end
@@ -155,7 +156,7 @@ class Kobe::TongjiController < KobeController
     @common_cdt << 'orders.status in (?)'
     @common_value << Order.effective_status
     @common_cdt << 'orders.created_at between ? and ?'
-    @common_value << params[:begin] 
+    @common_value << params[:begin]
     @common_value << params[:end]
     if params[:category_id].present?
       @common_cdt << "find_in_set(?,replace(concat_ws('/',orders_items.category_code,orders_items.category_id),'/',','))>0"
@@ -172,4 +173,4 @@ class Kobe::TongjiController < KobeController
     @cdt = [@common_cdt.join(' and ')] + @common_value
   end
 
-end 
+end

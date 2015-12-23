@@ -1,8 +1,9 @@
+# -*- encoding : utf-8 -*-
 class Transfer < ActiveRecord::Base
 	has_many :items, class_name: :TransferItem
 
 	has_many :uploads, class_name: :TransferUpload, foreign_key: :master_id
-  
+
   # 协议转让
   scope :xyzr, -> {where("transfers.total <> 0")}
   # 无偿划转
@@ -10,12 +11,12 @@ class Transfer < ActiveRecord::Base
 
   # default_scope -> {order("id desc")}
   belongs_to :rule
-  
+
   default_value_for :status, 0
 
 	include AboutStatus
 
-  after_create do 
+  after_create do
     create_no("TRA", "sn")
   end
 
@@ -26,7 +27,7 @@ class Transfer < ActiveRecord::Base
 
 
 
-	# 中文意思 状态值 标签颜色 进度 
+	# 中文意思 状态值 标签颜色 进度
 	def self.status_array
     # [["暂存", "0", "orange", 10], ["已发布", "16", "yellow", 40], ["已删除", "404", "dark", 100]]
     self.get_status_array(["暂存", "已发布", "已删除"])

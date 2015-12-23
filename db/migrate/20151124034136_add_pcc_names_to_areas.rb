@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class AddPccNamesToAreas < ActiveRecord::Migration
   def change
     add_column :areas, :pcc_name, :string
