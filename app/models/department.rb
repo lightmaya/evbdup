@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Department < ActiveRecord::Base
-	has_many :users, dependent: :destroy
+  has_many :users, dependent: :destroy
   has_many :uploads, class_name: :DepartmentsUpload, foreign_key: :master_id
   # validates :name, presence: true, length: { in: 2..30 }, uniqueness: { case_sensitive: false }
 

@@ -3,7 +3,7 @@ module LvUp
 
   extend ActiveSupport::Concern
 
-  included do 
+  included do
     # has_many :attenders
   end
 
@@ -17,7 +17,7 @@ module LvUp
     # 当前id格式化为4位
     uniq_id = ('%04d' % self.id)[-4...self.id.size]
     if send(column_name).blank?
-      update(column_name => "#{prefix}-#{Time.now.to_s(:number)[0...10]}#{uniq_id}") 
+      update(column_name => "#{prefix}-#{Time.now.to_s(:number)[0...10]}#{uniq_id}")
     end
   end
 
@@ -41,7 +41,7 @@ module LvUp
       cname = I18n.t("simple_form.labels.defaults.#{k}")
       cname = I18n.t("simple_form.labels.#{self.class.to_s.downcase}.#{k}") if cname.include?("translation missing")
       cname = "" if cname.include?("translation missing")
-      msg += "#{v.join('')} #{cname} 。" 
+      msg += "#{v.join('')} #{cname} 。"
     end
     msg += "）"
   end
@@ -107,7 +107,7 @@ module LvUp
 
     def log_p(msg, log_path = "log_p.log")
       @logger ||= Logger.new(Rails.root.join('log', "log_p.log"))
-      @logger.info msg 
+      @logger.info msg
     end
   end
 end

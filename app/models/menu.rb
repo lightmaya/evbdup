@@ -12,8 +12,8 @@ class Menu < ActiveRecord::Base
 
   scope :by_user_type, ->(user_type) { where("find_in_set('#{user_type}', menus.user_type) > 0") }
 
-	include AboutAncestry
-	include AboutStatus
+  include AboutAncestry
+  include AboutStatus
 
   default_value_for :status, 65
 
@@ -27,7 +27,7 @@ class Menu < ActiveRecord::Base
     end
   end
 
-	# 中文意思 状态值 标签颜色 进度
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
@@ -57,23 +57,23 @@ class Menu < ActiveRecord::Base
   # end
 
   def self.xml(who='',options={})
-	  %Q{
-	    <?xml version='1.0' encoding='UTF-8'?>
-	    <root>
-	    	<node name='parent_id' data_type='hidden'/>
-	    	<node name='父节点名称' display='disabled'/>
-	      <node name='名称' column='name' class='required'/>
-	      <node name='相对路径' column='route_path'/>
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='parent_id' data_type='hidden'/>
+        <node name='父节点名称' display='disabled'/>
+        <node name='名称' column='name' class='required'/>
+        <node name='相对路径' column='route_path'/>
         <node name='权限判断' column='can_opt_action' hint='用于cancancan判断用户是否有这个操作 默认read,create,update,update_destroy 也可自定义action 例如：Department|update'/>
-	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
-	      <node name='图标' column='icon'/>
+        <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
+        <node name='图标' column='icon'/>
         <node name='显示菜单' column='is_show' data_type='radio' data='[[0,"不显示菜单"],[1,"显示菜单"]]'/>
         <node name='自动获取' column='is_auto' data_type='radio' data='[[0,"不自动获取"],[1,"自动获取"]]'/>
         <node name='弹出页面' column='is_blank' data_type='radio' data='[[0,"不弹出页面"],[1,"弹出页面"]]'/>
         <node name='用户类别' column='user_type' hint='#{Dictionary.manage_user_type}：表示监管用户，#{Dictionary.dep_purchaser_id}：表示采购用户，#{Dictionary.dep_supplier_id}：表示供应商，#{Dictionary.audit_user_type}：表示审核用户。例如：1,2,3 或者 7'/>
-	    </root>
-	  }
-	end
+      </root>
+    }
+  end
 
   # 显示菜单
   def show_top(arr=[])

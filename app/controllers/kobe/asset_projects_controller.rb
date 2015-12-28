@@ -88,7 +88,7 @@ class Kobe::AssetProjectsController < KobeController
       @menu_ids = Menu.get_menu_ids("AssetProject|list")
     end
 
-   #是否有权限操作项目
+    #是否有权限操作项目
     def get_asset_project
       cannot_do_tips unless @asset_project.present? && @asset_project.cando(action_name,current_user)
       audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@asset_project,@menu_ids)

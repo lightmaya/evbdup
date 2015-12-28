@@ -6,7 +6,7 @@ class Kobe::DepartmentsController < KobeController
   layout :false, :only => [:show, :edit, :new, :add_user, :delete, :freeze, :recover, :upload, :commit, :show_bank, :edit_bank, :search_bank]
 
   # cancancan验证 如果有before_action cancancan放最后
-  # load_and_authorize_resource 
+  # load_and_authorize_resource
   skip_authorize_resource :only => [:ztree, :valid_dep_name, :search_bank]
 
   def index
@@ -17,7 +17,6 @@ class Kobe::DepartmentsController < KobeController
   end
 
   def ztree
-
     ztree_nodes_json(Department, @is_hide_dep)
   end
 
@@ -29,7 +28,7 @@ class Kobe::DepartmentsController < KobeController
 
   def create
     p_id = params[:departments][:parent_id].present? ? params[:departments][:parent_id] : Dictionary.dep_purchaser_id
-    parent_dep = Department.find_by(id: p_id) 
+    parent_dep = Department.find_by(id: p_id)
     dep = create_and_write_logs(Department, parent_dep.get_xml)
     if dep
       redirect_to kobe_departments_path(id: dep)
@@ -57,7 +56,7 @@ class Kobe::DepartmentsController < KobeController
   def delete
     render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_dep_form', action: kobe_department_path(@dep), method: 'delete' }
   end
-  
+
   def destroy
     @dep.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除单位成功。")
@@ -154,7 +153,7 @@ class Kobe::DepartmentsController < KobeController
 
   # 单位查询 供应商管理
   def search
-    @q = Department.supplier.subtree.where(get_conditions("departments")).ransack(params[:q]) 
+    @q = Department.supplier.subtree.where(get_conditions("departments")).ransack(params[:q])
     @deps = @q.result.page params[:page] if params[:q][:name_cont].present?
   end
 
@@ -166,7 +165,7 @@ class Kobe::DepartmentsController < KobeController
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
     # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
     # cdt = get_conditions("departments", arr)
-    # @q =  Department.joins(:task_queues).where(cdt).ransack(params[:q]) 
+    # @q =  Department.joins(:task_queues).where(cdt).ransack(params[:q])
     # @deps = @q.result(distinct: true).page params[:page]
   end
 
@@ -183,7 +182,7 @@ class Kobe::DepartmentsController < KobeController
     redirect_to list_kobe_departments_path
   end
 
-  private  
+  private
 
     def get_dep
       @dep = current_user.department

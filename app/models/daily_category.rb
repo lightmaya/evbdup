@@ -9,8 +9,8 @@ class DailyCategory < ActiveRecord::Base
 
   default_value_for :status, 65
 
-  # 中文意思 状态值 标签颜色 进度 
-	def self.status_array
+  # 中文意思 状态值 标签颜色 进度
+  def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
 		# [
@@ -39,14 +39,14 @@ class DailyCategory < ActiveRecord::Base
   # end
 
   def self.xml(who='',options={})
-	  %Q{
-	    <?xml version='1.0' encoding='UTF-8'?>
-	    <root>
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
         <node name='父节点名称'  display='disabled'/>
-	    	<node name='parent_id' data_type='hidden'/>
-	    	<node name='名称' column='name' class='required' rules='{ remote: { url:"/kobe/daily_categories/valid_name", type:"post" }}'/>
-	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
+        <node name='parent_id' data_type='hidden'/>
+        <node name='名称' column='name' class='required' rules='{ remote: { url:"/kobe/daily_categories/valid_name", type:"post" }}'/>
+        <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
       </root>
-	  }
-	end
+    }
+  end
 end

@@ -4,13 +4,13 @@ class ArticleCatalog < ActiveRecord::Base
   has_ancestry :cache_depth => true
   # default_scope -> {order(:ancestry, :sort, :id)}
   has_and_belongs_to_many :articles
-  
+
   include AboutAncestry
   include AboutStatus
 
   default_value_for :status, 65
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
@@ -40,14 +40,14 @@ class ArticleCatalog < ActiveRecord::Base
   # end
 
   def self.xml(who='',options={})
-	  %Q{
-	    <?xml version='1.0' encoding='UTF-8'?>
-	    <root>
-	    	<node name='parent_id' data_type='hidden'/>
-	    	<node name='父节点名称' display='disabled'/>
-	      <node name='名称' column='name' class='required'/>
-	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
-	    </root>
-	  }
-	end
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='parent_id' data_type='hidden'/>
+        <node name='父节点名称' display='disabled'/>
+        <node name='名称' column='name' class='required'/>
+        <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
+      </root>
+    }
+  end
 end

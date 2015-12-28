@@ -3,10 +3,10 @@ class Kobe::ToDoListsController < KobeController
 
   before_action :get_to_do_list, :only => [:delete, :destroy]
 
-	def index
-		@q = ToDoList.ransack(params[:q]) 
+  def index
+    @q = ToDoList.ransack(params[:q])
     @to_do_lists = @q.result.status_not_in(404).page params[:page]
-	end
+  end
 
   def new
     @myform = SingleForm.new(ToDoList.xml, @to_do_list, { form_id: "to_do_list_form", action: kobe_to_do_lists_path, grid: 2 })
@@ -23,7 +23,7 @@ class Kobe::ToDoListsController < KobeController
   end
 
   def create
-  	create_and_write_logs(ToDoList, ToDoList.xml)
+    create_and_write_logs(ToDoList, ToDoList.xml)
     redirect_to kobe_to_do_lists_path
   end
 
@@ -43,7 +43,7 @@ class Kobe::ToDoListsController < KobeController
     redirect_to kobe_to_do_lists_path
   end
 
-  private  
+  private
 
     def get_to_do_list
       cannot_do_tips unless @to_do_list.present? && @to_do_list.cando(action_name)

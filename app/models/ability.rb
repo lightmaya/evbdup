@@ -55,6 +55,6 @@ class Ability
     #
     # See the wiki for details:
     # https://github.com/bryanrite/cancancan/wiki/Defining-Abilities
-    
+
   end
 end

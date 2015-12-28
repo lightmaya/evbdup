@@ -1,14 +1,14 @@
 # -*- encoding : utf-8 -*-
 class Rule < ActiveRecord::Base
 
-	has_many :departments
-	has_many :orders
+  has_many :departments
+  has_many :orders
 
-	include AboutStatus
-  
+  include AboutStatus
+
   default_value_for :status, 65
 
-	# 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
@@ -38,23 +38,23 @@ class Rule < ActiveRecord::Base
   # end
 
   def self.xml(who='',options={})
-	  %Q{
-	    <?xml version='1.0' encoding='UTF-8'?>
-	    <root>
-	      <node name='名称' column='name' class='required'/>
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='名称' column='name' class='required'/>
         <node name='编码' column='code'/>
         <node name='业务类型' column='yw_type' hint='用于区分订单的类型：ddcg、xygh、wsjj、Department、Product、ItemDepartment'/>
-	    </root>
-	  }
-	end
+      </root>
+    }
+  end
 
   def self.tips
     Dictionary.tips.rule
-	end
+  end
 
-	# 根据rule xml 生成的n个实例 返回数组
-	def create_rule_objs
-		return [RuleStep.new] if self.rule_xml.blank?
+  # 根据rule xml 生成的n个实例 返回数组
+  def create_rule_objs
+    return [RuleStep.new] if self.rule_xml.blank?
     arr = []
     Nokogiri::XML(self.rule_xml).xpath("/root/step").each do |step|
       obj = RuleStep.new
@@ -68,7 +68,7 @@ class Rule < ActiveRecord::Base
     return arr
   end
 
-  # 获取整个流程的实例数组 
+  # 获取整个流程的实例数组
   # 返回数组 [{"name"=>"总公司审核", "dep"=>"self.real_ancestry_level(2)","junior"=>[19], "senior"=>[20], "inflow"=>"self.status == 2", "outflow"=>"self.status == 404", "first_audit"=>"单位初审", "last_audit"=>"单位终审", "to_do_id"=>"1"}, {}, {}]
   def get_step_objs
     objs = []
@@ -114,14 +114,12 @@ class Rule < ActiveRecord::Base
         p "  to_do_id:      #{to_do_id}"
         p "................................................................................."
 
-        str << "...#{r.name}....junior: #{junior} | step.at_css('first_audit'): #{first_audit}" if first_audit != junior 
+        str << "...#{r.name}....junior: #{junior} | step.at_css('first_audit'): #{first_audit}" if first_audit != junior
         str << "...#{r.name}....senior: #{senior}  | step.at_css('last_audit'): #{last_audit}" if last_audit != senior
 
       end
     end
     str.each{ |e| p e }
   end
-
-
 
 end

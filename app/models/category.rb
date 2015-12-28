@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Category < ActiveRecord::Base
-	has_many :products
+  has_many :products
   validates_with MyValidator
 
   has_many :user_categories, :dependent => :destroy
@@ -14,14 +14,14 @@ class Category < ActiveRecord::Base
   include AboutStatus
   include AboutAncestry
 
-  after_save do 
+  after_save do
     if changes["id"].present? || changes["ancestry"].present?
       clean_cache_ids
     end
   end
 
-  # 中文意思 状态值 标签颜色 进度 
-	def self.status_array
+  # 中文意思 状态值 标签颜色 进度
+  def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100], ["已冻结", "12", "dark", 100]]
     self.get_status_array(["正常", "已冻结", "已删除"])
 		# [
@@ -44,11 +44,11 @@ class Category < ActiveRecord::Base
   # :index, :delete, :destroy, :freeze, :update_freeze, :recover, :update_recover
   def cando(act='')
     case act
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除")
-    when "recover", "update_recover" 
+    when "recover", "update_recover"
       self.can_opt?("恢复")
-    when "freeze", "update_freeze" 
+    when "freeze", "update_freeze"
       self.can_opt?("冻结")
     else false
     end
@@ -62,19 +62,19 @@ class Category < ActiveRecord::Base
   # end
 
   def self.xml(who='',options={})
-	  %Q{
-	    <?xml version='1.0' encoding='UTF-8'?>
-	    <root>
-	    	<node name='parent_id' data_type='hidden'/>
-	    	<node name='品目名称' column='name' class='required' rules='{ remote: { url:"/kobe/categories/valid_name", type:"post" }}'/>
-	    	<node name='合同模板' column='ht_template' class='required' data_type='select' data='#{Dictionary.ht_template}'/>
-	    	<node name='是否显示在首页' column='show_mall' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
-	      <node name='是否采购计划显示' column='show_plan' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
-	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='parent_id' data_type='hidden'/>
+        <node name='品目名称' column='name' class='required' rules='{ remote: { url:"/kobe/categories/valid_name", type:"post" }}'/>
+        <node name='合同模板' column='ht_template' class='required' data_type='select' data='#{Dictionary.ht_template}'/>
+        <node name='是否显示在首页' column='show_mall' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
+        <node name='是否采购计划显示' column='show_plan' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
+        <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
         <node name='审核部门' column='audit_type' class='digits' hint='-1：分公司审核，0：分公司和总公司都审核，1：总公司审核'/>
-	    </root>
-	  }
-	end
+      </root>
+    }
+  end
 
   # 汽车类品目
   def self.qc

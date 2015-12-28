@@ -3,10 +3,10 @@ class Kobe::RulesController < KobeController
 
   before_action :get_rule, :only => [:delete, :destroy]
 
-	def index
-		@q = Rule.ransack(params[:q]) 
+  def index
+    @q = Rule.ransack(params[:q])
     @rules = @q.result.status_not_in(404).page params[:page]
-	end
+  end
 
   def new
     slave_objs = @rule.create_rule_objs
@@ -24,7 +24,7 @@ class Kobe::RulesController < KobeController
     @rule.create_rule_objs.each_with_index do |step, index|
       obj_contents << show_obj_info(step, RuleStep.xml, { title: "Step ##{index+1}", grid: 4 })
     end
-    @arr << {title: "详细信息", icon: "fa-info", content: obj_contents} 
+    @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
     @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@rule)}
   end
 
@@ -54,7 +54,7 @@ class Kobe::RulesController < KobeController
     render partial: '/kobe/shared/show_xml_column', locals: { obj: @rule, column: "audit_reason" }
   end
 
-  private  
+  private
 
     def get_rule
       cannot_do_tips unless @rule.present? && @rule.cando(action_name)

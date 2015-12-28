@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 class ErrorsController < ApplicationController
-	layout false 
-	
+  layout false
+
   def index
   end
 
   def test
-  	asdfad
+    asdfad
   end
 end

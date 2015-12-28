@@ -35,7 +35,6 @@ module MyFormHelper
       # 自定义标题
       myform.html_code << "<div class='headline'><h2><strong>#{myform.options[:title]}</strong></h2></div>"
     end
-
   end
 
   def set_input_part(myform)

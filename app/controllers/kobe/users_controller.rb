@@ -81,20 +81,21 @@ class Kobe::UsersController < KobeController
     redirect_to kobe_departments_path(id: @user.department.id)
   end
 
-  private  
+  private
 
-  def get_user
-    @user = current_user
-    if can? :admin, @user
-      @user = User.find_by(id: params[:id]) if params[:id].present?
-    else
-      if current_user.is_admin && params[:id].present?
-        current_user.department.subtree.each do |d|
-          u = d.users.find_by(id: params[:id])
-          @user = u if u.present?
+    def get_user
+      @user = current_user
+      if can? :admin, @user
+        @user = User.find_by(id: params[:id]) if params[:id].present?
+      else
+        if current_user.is_admin && params[:id].present?
+          current_user.department.subtree.each do |d|
+            u = d.users.find_by(id: params[:id])
+            @user = u if u.present?
+          end
         end
       end
+      cannot_do_tips unless @user.present? && @user.cando(action_name, current_user)
     end
-    cannot_do_tips unless @user.present? && @user.cando(action_name, current_user)
-  end
+
 end

@@ -199,6 +199,7 @@ module KobeHelper
     return result
   end
 
+  # 面包屑
   def breadcrumbs_tag
     cdt = "(find_in_set(#{current_user.user_type}, user_type) > 0 or find_in_set(#{Dictionary.audit_user_type}, user_type) > 0)"
     menu = Menu.find_by("route_path = ? and #{cdt}", request.fullpath.gsub('.html',''))

@@ -17,9 +17,9 @@ module BaseFunction
     	result = obj.attributes[node["column"]]
     else
     	if obj.class.attribute_method?("details") && !obj.attributes["details"].blank?
-    		doc = Nokogiri::XML(obj["details"])
-    		tmp = doc.xpath("/root/node[@name='#{node["name"]}']").first
-    		result = tmp.blank? ? "" : tmp["value"]
+        doc = Nokogiri::XML(obj["details"])
+        tmp = doc.xpath("/root/node[@name='#{node["name"]}']").first
+        result = tmp.blank? ? "" : tmp["value"]
     	end
     end
     result = "%g" % result if result.is_a?(Float)
@@ -65,17 +65,17 @@ module BaseFunction
 
   # 哈希转成syml格式的字符串，供JS调用
   def hash_to_string(ha)
-  	if ha.is_a?(Hash)
-  		arr = []
-  		ha.each do |key,value|
-  			arr << "#{key}:#{hash_to_string(value)}"
-  		end
-  		return "{#{arr.join(',')}}"
-  	elsif ha.is_a?(String)
-  		return "'#{ha}'"
-  	else
-  		return ha
-  	end
+    if ha.is_a?(Hash)
+      arr = []
+      ha.each do |key,value|
+        arr << "#{key}:#{hash_to_string(value)}"
+      end
+      return "{#{arr.join(',')}}"
+    elsif ha.is_a?(String)
+      return "'#{ha}'"
+    else
+      return ha
+    end
   end
 
 
@@ -130,8 +130,6 @@ module BaseFunction
   end
 
   alias_method :info_html, :show_obj_info
-
-
 
   # 显示评价记录 -- 订单或产品
   def show_estimates(obj)

@@ -18,12 +18,12 @@ class Kobe::OrdersController < KobeController
 
   def new
     @order = Order.init_order(current_user, 'ddcg')
-   #  @order.yw_type = 'ddcg'
-  	# @order.buyer_name = @order.payer = current_user.real_department.name
-   #  @order.buyer_man = current_user.name
-   #  @order.buyer_tel = current_user.tel
-   #  @order.buyer_mobile = current_user.mobile
-   #  @order.buyer_addr = current_user.department.address
+    #  @order.yw_type = 'ddcg'
+    # @order.buyer_name = @order.payer = current_user.real_department.name
+    #  @order.buyer_man = current_user.name
+    #  @order.buyer_tel = current_user.tel
+    #  @order.buyer_mobile = current_user.mobile
+    #  @order.buyer_addr = current_user.department.address
     slave_objs = [OrdersItem.new(order_id: @order.id)]
     @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
@@ -276,7 +276,7 @@ class Kobe::OrdersController < KobeController
       end
     end
 
-    # 更新主从表并写日志
+    # 确认订单并写日志
     def update_confirm_and_write_logs(master_xml, slave_xml)
       cs = @order.get_current_step
       act = cs.is_a?(Hash) ? cs["name"] : "确认订单"

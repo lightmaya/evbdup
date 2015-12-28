@@ -40,7 +40,7 @@ class UploadsController < ApplicationController
     # 加一个权限判断
     if verify_authority(@upload.master_id == params[:master_id].to_i)
       write_upload_logs("destroy")
-      @upload.destroy 
+      @upload.destroy
     end
     respond_to do |format|
       format.html { redirect_to uploads_path }
@@ -50,31 +50,31 @@ class UploadsController < ApplicationController
 
   private
 
-  # 从参数中获得附件的Model
-  def upload_model
-    params[:upload_model].constantize
-  end
+    # 从参数中获得附件的Model
+    def upload_model
+      params[:upload_model].constantize
+    end
 
-  # 从参数中获得主表的Model
-  def master_model
-    params[:upload_model].gsub("Upload","").singularize.constantize
-  end
+    # 从参数中获得主表的Model
+    def master_model
+      params[:upload_model].gsub("Upload","").singularize.constantize
+    end
 
-  # 附件参数过滤
-  def form_params
-    params.require(:upload_file).permit!
-  end
+    # 附件参数过滤
+    def form_params
+      params.require(:upload_file).permit!
+    end
 
-  # 在修改表单或者删除附件时记录日志到主表
-  def write_upload_logs(action="create")
-    unless params[:master_id].blank? || params[:master_id] == 0
-      title = action == "create" ? "上传附件" : "删除附件"
-      master_obj = master_model.find(params[:master_id])
-      logs_remark = prepare_upload_logs_remark([@upload],action)
-      unless logs_remark.blank?
-        write_logs(master_obj,title,logs_remark) # 写日志
+    # 在修改表单或者删除附件时记录日志到主表
+    def write_upload_logs(action="create")
+      unless params[:master_id].blank? || params[:master_id] == 0
+        title = action == "create" ? "上传附件" : "删除附件"
+        master_obj = master_model.find(params[:master_id])
+        logs_remark = prepare_upload_logs_remark([@upload],action)
+        unless logs_remark.blank?
+          write_logs(master_obj,title,logs_remark) # 写日志
+        end
       end
     end
-  end
 
 end

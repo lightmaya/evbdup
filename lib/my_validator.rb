@@ -15,42 +15,42 @@ class MyValidator < ActiveModel::Validator
     end
   end
 
-  private 
+  private
 
-  # 获取节点属性的值
-  def attr_value(node,record)
-    if node.attributes.has_key?("column")
-      return record.send(node.attributes["column"].to_str)
-    else
-      return record.details[node.attributes["name"].to_str] if record.details
+    # 获取节点属性的值
+    def attr_value(node,record)
+      if node.attributes.has_key?("column")
+        return record.send(node.attributes["column"].to_str)
+      else
+        return record.details[node.attributes["name"].to_str] if record.details
+      end
     end
-  end
 
-  def is_required?(s)
-    return s.blank? && s != false # 布尔型判断的时候 false.blank? => true
-  end
+    def is_required?(s)
+      return s.blank? && s != false # 布尔型判断的时候 false.blank? => true
+    end
 
-  def is_email?(s)
-    return /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i.match(s)
-  end
+    def is_email?(s)
+      return /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i.match(s)
+    end
 
-  def is_date?(s)
-  end
+    def is_date?(s)
+    end
 
-  def is_url?(s)
-  end
+    def is_url?(s)
+    end
 
-  def is_number?(s)
-  end
+    def is_number?(s)
+    end
 
   # 请对应form.js的校验函数来完善
     # required: {required: true},
     # email: {email: true},
     # url: {url: true},
     # date: {date: true},
-    # dateISO: {dateISO: true}, 
+    # dateISO: {dateISO: true},
     # number: {number: true},
-    # digits: {digits: true},  
+    # digits: {digits: true},
     # minlength_6: {minlength: 6},
     # maxlength_800: {maxlength: 800},
     # rangelength_6_20: {rangelength: [6,20]},

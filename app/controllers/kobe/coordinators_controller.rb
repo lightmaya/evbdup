@@ -6,14 +6,14 @@ class Kobe::CoordinatorsController < KobeController
 
   def index
     params[:q][:user_id_eq] = current_user.id if cannot?(:admin, Coordinator)
-    @q = Coordinator.where(get_conditions("coordinators")).ransack(params[:q]) 
+    @q = Coordinator.where(get_conditions("coordinators")).ransack(params[:q])
     @coordinators = @q.result.page params[:page]
   end
 
   def list
     params[:q][:user_id_eq] = current_user.id
     params[:q][:item_id_eq] = @item.id
-    @q = Coordinator.where(get_conditions("coordinators")).ransack(params[:q]) 
+    @q = Coordinator.where(get_conditions("coordinators")).ransack(params[:q])
     @coordinators = @q.result.page params[:page]
   end
 
@@ -23,12 +23,12 @@ class Kobe::CoordinatorsController < KobeController
 
   def create
     create_and_write_logs(Coordinator, Coordinator.xml, {}, { item_id: @item.id, department_id: current_user.department.id })
-    redirect_to list_kobe_coordinators_path(item_id: @item.id) 
+    redirect_to list_kobe_coordinators_path(item_id: @item.id)
   end
 
   def update
     update_and_write_logs(@coordinator, Coordinator.xml)
-    redirect_to list_kobe_coordinators_path(item_id: @coordinator.item.id) 
+    redirect_to list_kobe_coordinators_path(item_id: @coordinator.item.id)
   end
 
   def edit

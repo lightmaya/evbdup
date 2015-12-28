@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module BtnArrayHelper
 
-	def users_btn(obj)
+  def users_btn(obj)
     arr = []
     dialog = "#opt_dialog"
     # 详细
@@ -77,9 +77,7 @@ module BtnArrayHelper
     arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '#{add_user_kobe_department_path(obj)}', '#{dialog}') }] if can?(:add_user, obj) && obj.cando("add_user", current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_department_path(obj)}"] if can?(:audit, obj) && obj.cando("audit", current_user)
-    if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+    return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
 
@@ -93,7 +91,6 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_contract_template_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete")
     return arr
   end
-
 
   def orders_btn(obj,only_audit=false)
     arr = []
@@ -114,11 +111,9 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("买方确认"), buyer_confirm_kobe_order_path(obj)] if can?(:buyer_confirm, obj) && obj.cando("buyer_confirm",current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_order_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
-    if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
-	  return arr
-	end
+    return [audit_opt] if audit_opt.present? && only_audit
+    return arr
+  end
 
   def items_btn(obj)
     arr = []
@@ -159,9 +154,7 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_product_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_product_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
-    if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+    return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
 
@@ -200,9 +193,7 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_article_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj)
      # 审核
      audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_article_path(obj)}"] if can?(:audit, obj) && obj.cando("audit")
-     if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+     return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
 
@@ -242,9 +233,7 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_bid_project_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
      # 审核
      audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_bid_project_path(obj)}"] if can?(:audit, obj) && obj.cando("audit", current_user)
-     if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+     return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
 
@@ -276,9 +265,7 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_plan_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_plan_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
-    if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+    return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
 
@@ -296,13 +283,9 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_budget_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_budget_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
-    if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+    return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
-
-
 
   def daily_costs_btn(obj, only_audit=false)
     arr = []
@@ -316,9 +299,7 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_daily_cost_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_daily_cost_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
-    if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+    return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
 
@@ -343,7 +324,7 @@ module BtnArrayHelper
     return arr
   end
 
-   def faqs_btn(obj)
+  def faqs_btn(obj)
     arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_faq_path(obj), target: "_blank"] if can?(:show, obj) && obj.cando("show", current_user)
@@ -372,14 +353,12 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_asset_project_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_asset_project_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
-    if audit_opt.present?
-      return [audit_opt] if only_audit
-    end
+    return [audit_opt] if audit_opt.present? && only_audit
     return arr
   end
 
-    def bid_project_bids_btn(obj)
-      arr = []
+  def bid_project_bids_btn(obj)
+    arr = []
     # 查看详细
     arr << [obj.class.icon_action("详细"), obj, target: "_blank"]
 

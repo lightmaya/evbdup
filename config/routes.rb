@@ -7,7 +7,7 @@ Evbdup::Application.routes.draw do
   # You can have the root of your site routed with "root"
    #root 'home#index'
    root :to => 'home#index'
-   
+
   # captcha_route
 
   get 'errors' => 'errors#index'
@@ -18,13 +18,13 @@ Evbdup::Application.routes.draw do
   get 'not_found' => "home#not_found", as: :not_found
   get 'cart_order' => "kobe/orders#cart_order", as: :cart_order
   get "search", :to => 'home#search', :as => "search"
-  
+
   get 'show_faqs' => "faqs#show"
 
-  post 'check_ysd' => "home#check_ysd" 
+  post 'check_ysd' => "home#check_ysd"
 
   # 检查是否登录
-  get "check_login" => "home#check_login" 
+  get "check_login" => "home#check_login"
   resources  :transfers
   # 产品列表
   get 'channel/(:combo)' => "home#channel", :as => :channel
@@ -46,7 +46,7 @@ Evbdup::Application.routes.draw do
 
   resources :products
 
-  resources :home, :only => :index  do 
+  resources :home, :only => :index  do
     collection do
       get :form_test, :ajax_test, :test, :json_test
       post :form_test
@@ -77,7 +77,7 @@ namespace :kobe do
     end
   end
 
-  resources :msgs do 
+  resources :msgs do
     member do
       post :commit
     end
@@ -91,15 +91,15 @@ namespace :kobe do
     collection do
       get :list
     end
-    member do 
+    member do
       get :choose, :audit, :bid, :delete
       patch :update_choose
       post :commit, :update_audit
     end
   end
 
-  resources :bid_project_bids do 
-    collection do 
+  resources :bid_project_bids do
+    collection do
       get :bid
       post :update_bid
     end
@@ -115,22 +115,22 @@ namespace :kobe do
       post :commit, :update_audit, :update_agent_confirm, :update_buyer_confirm, :update_invoice_number
     end
   end
-  resources :departments do 
+  resources :departments do
     collection do
       get :search, :list
       post :move, :valid_dep_name, :search_bank
     end
-    member do 
+    member do
       get :ztree, :add_user, :freeze, :upload, :delete, :recover, :show_bank, :audit
       post :update_add_user, :update_freeze, :update_upload, :commit, :update_recover, :edit_bank, :update_bank, :update_audit
     end
   end
-  resources :articles do 
+  resources :articles do
     collection do
       post :batch_task
       get :list
     end
-    member do 
+    member do
       get :audit
       get :delete
       post :commit, :update_audit
@@ -141,7 +141,7 @@ namespace :kobe do
       get :ztree
       post :move
     end
-    member do 
+    member do
       get :delete
     end
   end
@@ -150,12 +150,12 @@ namespace :kobe do
       get :ztree
       post :move
     end
-    member do 
+    member do
       get :delete
     end
   end
   resources :contract_templates do
-    member do 
+    member do
       get :delete
     end
   end
@@ -163,7 +163,7 @@ namespace :kobe do
     collection do
       get :list
     end
-    member do 
+    member do
       get :delete, :pause, :recover
       post :commit, :update_pause, :update_recover
     end
@@ -172,7 +172,7 @@ namespace :kobe do
     collection do
       get :list
     end
-    member do 
+    member do
       get :delete
       post :commit
     end
@@ -207,16 +207,16 @@ namespace :kobe do
     end
   end
   resources :to_do_lists do
-    member do 
+    member do
       get :delete
     end
   end
   resources :rules do
-    member do 
+    member do
       get :delete, :audit_reason
     end
   end
-  resources :users do 
+  resources :users do
     member do
       get :reset_password, :freeze, :recover, :only_show_info, :only_show_logs
       post :update_reset_password, :update_freeze, :update_recover
@@ -227,7 +227,7 @@ namespace :kobe do
       get :ztree
       post :move, :valid_name
     end
-    member do 
+    member do
       get :freeze, :delete, :recover
       post :update_freeze, :update_recover
     end
@@ -237,7 +237,7 @@ namespace :kobe do
       get :ztree
       post :move, :valid_name
     end
-    member do 
+    member do
       get :delete
     end
   end
@@ -249,9 +249,9 @@ namespace :kobe do
     collection do
       get  :get_category
      end
-  end  
-  
-  resources :asset_projects do 
+  end
+
+  resources :asset_projects do
     collection do
       get :list
       post :get_fixed_asset_json
@@ -260,28 +260,28 @@ namespace :kobe do
       get :delete, :audit
       post :commit, :update_audit
     end
-  end 
+  end
 
-  resources :tongji, only: :index do 
-     collection do 
+  resources :tongji, only: :index do
+     collection do
        get :item_dep_sales
      end
   end
-  
-   resources :faqs do 
-     member do 
+
+   resources :faqs do
+     member do
        get :delete ,:reply
-       post :commit, :update_reply 
+       post :commit, :update_reply
      end
      collection do
       get  :get_catalog,:yjjy_list
      end
- 
+
    end
 
-   resources :transfers do 
-     member do 
-       get :delete 
+   resources :transfers do
+     member do
+       get :delete
        post :commit
      end
    end
@@ -364,7 +364,7 @@ end
   #       get 'recent', on: :collection
   #     end
   #   end
-  
+
   # Example resource route with concerns:
   #   concern :toggleable do
   #     post 'toggle'

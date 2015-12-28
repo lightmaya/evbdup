@@ -5,10 +5,10 @@ class ToDoList < ActiveRecord::Base
 
   default_value_for :status, 65
 
-	# default_scope -> {order(:sort, :id)}
-	include AboutStatus
+  # default_scope -> {order(:sort, :id)}
+  include AboutStatus
 
-	# 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
@@ -38,16 +38,16 @@ class ToDoList < ActiveRecord::Base
   # end
 
   def self.xml(who='',options={})
-	  %Q{
-	    <?xml version='1.0' encoding='UTF-8'?>
-	    <root>
-	      <node name='待办事项名称' column='name' class='required' hint='例如：审核注册供应商'/>
-	      <node name='列表URL' column='list_url' class='required' hint='例如：/kobe/orders/list 。'/>
-	      <node name='审核URL' column='audit_url' class='required' hint='实例id用 $$obj_id$$ 代替，例如：/kobe/orders/$$obj_id$$/audit 。'/>
-	      <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
-	    </root>
-	  }
-	end
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='待办事项名称' column='name' class='required' hint='例如：审核注册供应商'/>
+        <node name='列表URL' column='list_url' class='required' hint='例如：/kobe/orders/list 。'/>
+        <node name='审核URL' column='audit_url' class='required' hint='实例id用 $$obj_id$$ 代替，例如：/kobe/orders/$$obj_id$$/audit 。'/>
+        <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
+      </root>
+    }
+  end
 
   # 替换 audit_url 中的 $$obj_id$$
   def get_audit_url(obj_id)

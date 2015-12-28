@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Order < ActiveRecord::Base
-	has_many :items, class_name: :OrdersItem
+  has_many :items, class_name: :OrdersItem
   accepts_nested_attributes_for :items
-	has_many :uploads, class_name: :OrdersUpload, foreign_key: :master_id
+  has_many :uploads, class_name: :OrdersUpload, foreign_key: :master_id
   # default_scope -> {order("id desc")}
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
@@ -15,15 +15,13 @@ class Order < ActiveRecord::Base
 
   validates_with MyValidator
   validate :check_budget
-    def check_budget
-      errors.add(:base, "订单金额#{self.total.to_f}应小于预算金额#{self.budget_money}") if self.budget_money.to_f > 0 && self.total > self.budget_money
-    end
-
+  def check_budget
+    errors.add(:base, "订单金额#{self.total.to_f}应小于预算金额#{self.budget_money}") if self.budget_money.to_f > 0 && self.total > self.budget_money
+  end
 
   default_value_for :status, 0
 
-
-	include AboutStatus
+  include AboutStatus
 
   before_create do
     # 设置rule_id
@@ -53,8 +51,8 @@ class Order < ActiveRecord::Base
     OrdersUpload
   end
 
-	# 中文意思 状态值 标签颜色 进度
-	def self.status_array
+  # 中文意思 状态值 标签颜色 进度
+  def self.status_array
     # [
     #   ["暂存", "0", "orange", 10], ["等待审核", "8", "blue", 60],
     #   ["审核拒绝", "7", "red", 20], ["自动生效", "2", "yellow", 70],
@@ -402,7 +400,6 @@ class Order < ActiveRecord::Base
         <node name='其他费用说明' column='other_fee_desc'/>
       </root>
     }
-
   end
 
 end

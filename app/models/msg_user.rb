@@ -8,6 +8,6 @@ class MsgUser < ActiveRecord::Base
   Is_read = {0 => "未读", 1 => "已读"}
 
   def read!
-  	update(is_read: true)
+    update(is_read: true)
   end
 end

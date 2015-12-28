@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Product < ActiveRecord::Base
-	has_many :uploads, class_name: :ProductsUpload, foreign_key: :master_id
-	belongs_to :category
+  has_many :uploads, class_name: :ProductsUpload, foreign_key: :master_id
+  belongs_to :category
   belongs_to :item
   belongs_to :department
 
@@ -62,7 +62,7 @@ class Product < ActiveRecord::Base
     Sunspot.search(Product, &conditions)
   end
 
-	# 附件的类
+  # 附件的类
   def self.upload_model
     ProductsUpload
   end

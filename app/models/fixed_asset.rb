@@ -86,8 +86,3 @@ class FixedAsset < ActiveRecord::Base
   end
 
 end
-
-
-
-
-

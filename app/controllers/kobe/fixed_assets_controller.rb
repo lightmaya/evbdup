@@ -5,10 +5,10 @@ class Kobe::FixedAssetsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit, :get_category]
   skip_load_and_authorize_resource :only => :get_category
 
-	def index
-		@q = FixedAsset.ransack(params[:q])
+  def index
+    @q = FixedAsset.ransack(params[:q])
     @fixed_assets = @q.result.status_not_in(404).page params[:page]
-	end
+  end
 
   def new
     @fixed_asset.dep_name = current_user.department.name
@@ -28,7 +28,7 @@ class Kobe::FixedAssetsController < KobeController
 
   def create
     category = Category.find_by(id: params[:category_id])
-  	create_and_write_logs(FixedAsset, FixedAsset.xml, {} , { category_id: category.try(:id), category_code: category.try(:ancestry), category_name: category.try(:name), department_id: current_user.department.id, sn: Time.now.to_s })
+    create_and_write_logs(FixedAsset, FixedAsset.xml, {} , { category_id: category.try(:id), category_code: category.try(:ancestry), category_name: category.try(:name), department_id: current_user.department.id, sn: Time.now.to_s })
     redirect_to kobe_fixed_assets_path
   end
 
@@ -54,11 +54,11 @@ class Kobe::FixedAssetsController < KobeController
     render layout: false
   end
 
- private
+  private
 
-  #是否有权限操作项目
-  def get_fixed_asset
-    cannot_do_tips unless @fixed_asset.present? && @fixed_asset.cando(action_name,current_user)
-  end
+    #是否有权限操作项目
+    def get_fixed_asset
+      cannot_do_tips unless @fixed_asset.present? && @fixed_asset.cando(action_name,current_user)
+    end
 
 end
