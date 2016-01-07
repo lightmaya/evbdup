@@ -2,16 +2,16 @@
 class Kobe::PlansController < KobeController
   before_action :get_item, :only => [:item_list, :new, :create]
   before_action :get_category, :only => [:new, :create]
-  before_action :get_plan, :except => [:index, :item_list, :new, :create, :list]
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
   before_action :get_audit_plan, :only => [:audit, :update_audit]
+  before_action :get_plan, :except => [:index, :item_list, :new, :create, :list]
 
   skip_before_action :verify_authenticity_token, :only => [:commit]
 
   # 辖区内采购计划
   def index
-    @q = Plan.find_all_by_dep_code(current_user.real_dep_code).where(get_conditions("plans")).ransack(params[:q]) 
+    @q = Plan.find_all_by_dep_code(current_user.real_dep_code).where(get_conditions("plans")).ransack(params[:q])
     @plans = @q.result.page params[:page]
   end
 
@@ -19,7 +19,7 @@ class Kobe::PlansController < KobeController
   def item_list
     params[:q][:user_id_eq] = current_user.id
     params[:q][:plan_item_id_eq] = @item.id
-    @q = Plan.where(get_conditions("plans")).ransack(params[:q]) 
+    @q = Plan.where(get_conditions("plans")).ransack(params[:q])
     @plans = @q.result.page params[:page]
   end
 
@@ -35,12 +35,12 @@ class Kobe::PlansController < KobeController
   def create
     other_attrs = { plan_item_id: @item.id, category_id: @category.id, category_code: @category.ancestry, department_id: current_user.department.id, dep_code: current_user.real_dep_code }
     create_msform_and_write_logs(Plan, Plan.xml, PlanProduct, PlanProduct.xml(@category), {:action => "录入采购计划", :slave_title => "产品信息"}, other_attrs)
-    redirect_to item_list_kobe_plans_path(item_id: @item.id) 
+    redirect_to item_list_kobe_plans_path(item_id: @item.id)
   end
 
   def update
     update_msform_and_write_logs(@plan, Plan.xml, PlanProduct, PlanProduct.xml(@plan.category), {:action => "修改采购计划", :slave_title => "产品信息"})
-    redirect_to item_list_kobe_plans_path(item_id: @plan.plan_item.id) 
+    redirect_to item_list_kobe_plans_path(item_id: @plan.plan_item.id)
   end
 
   def edit

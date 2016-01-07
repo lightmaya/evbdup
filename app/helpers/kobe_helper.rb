@@ -92,7 +92,8 @@ module KobeHelper
           #{ link_to obj.to_do_list.name, obj.to_do_list.list_url }
           <span class="label rounded-2x label-red">#{obj.num}</span>
         |
-        desc = "暂时忽略 <i class='fa fa-minus-circle'></i>"
+        # desc = "暂时忽略 <i class='fa fa-minus-circle'></i>"
+        desc = ""
         str << show_to_do_div(title,desc,index)
         num = index + 1
       end

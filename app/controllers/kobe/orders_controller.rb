@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 class Kobe::OrdersController < KobeController
 
-  before_action :get_order, :only => [:show, :edit, :update, :destroy, :commit, :print]
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
+  before_action :get_order, :except => [:index, :new, :create, :cart_order, :update_cart_order, :list, :my_list, :seller_list, :same_template]
 
   skip_authorize_resource :only => [:same_template]
 

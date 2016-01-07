@@ -200,7 +200,9 @@ class MyForm
         opt << "partner='#{table_name}_#{node_options["partner"]}_#{index}'" if node_options.has_key?("partner")
       end
       opt << "disabled='disabled'" if node_options.has_key?("display") && node_options["display"].to_s == "disabled"
-      opt << "readonly='readonly'" if node_options.has_key?("display") && node_options["display"].to_s == "readonly"
+      if (node_options.has_key?("display") && node_options["display"].to_s == "readonly") || (node_options.has_key?("class") && (["tree_checkbox","tree_radio","box_checkbox","box_radio"] & node_options["class"].to_s.split).present?)
+        opt << "readonly='readonly'"
+      end
       opt << "placeholder='#{node_options["placeholder"]}'" if node_options.has_key?("placeholder")
       opt << "class='#{node_options["class"]}'" if node_options.has_key?("class")
       opt << "json_url='#{node_options["json_url"]}'" if node_options.has_key?("json_url")

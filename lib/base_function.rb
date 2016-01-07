@@ -83,7 +83,7 @@ module BaseFunction
   def show_obj_info(obj, xml, options = {})
     # td列数
     grid = options[:grid] || 2
-
+    wid = 50/grid
     html = ""
     tbody = ""
 
@@ -100,7 +100,7 @@ module BaseFunction
     tds.each_slice(grid).with_index do |node, i|
       tbody << "<tr>"
       node.each_with_index{|n, ii|
-        tbody << "<td>#{n.attributes["name"]}：</td><td>#{get_node_value(obj,n)}</td>"
+        tbody << "<td width='#{wid}%'>#{n.attributes["name"]}：</td><td width='#{wid}%'>#{get_node_value(obj,n)}</td>"
         tbody << "<td></td><td></td>" * (grid-ii-1) if (n == node.last) && (ii != grid -1)
       }
       tbody << "</tr>"

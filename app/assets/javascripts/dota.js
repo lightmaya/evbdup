@@ -68,11 +68,11 @@ $(function(){
     }
 
     var price_flag = false;
-    $(".save_price_span").each(function(){ 
+    $(".save_price_span").each(function(){
       if(!$(this).is(":hidden")){
         price_flag = true;
         return false;
-      } 
+      }
     });
 
     if(price_flag){
@@ -80,7 +80,7 @@ $(function(){
       art_alert("请先保存采购单价");
       return false;
     }
-    
+
   }).on("ajax:beforeSend", function(){
     $("#order_submit_btn").hide();
     $("#loading_btn").show();
@@ -105,8 +105,8 @@ $(function(){
 
   // 下单采购人价格keyup paste
   // $(document).on('keyup paste', '.item_real_price', function(){
-    
-  // }).css("ime-mode", "disabled"); //CSS设置输入法不可用  
+
+  // }).css("ime-mode", "disabled"); //CSS设置输入法不可用
 
 // 勾选商品
   $(".cart_checkbox").change(function(){
@@ -226,7 +226,7 @@ function checkYw_type(){
     budget_value = $("input:radio[name='order\[budget_id\]']:checked").val();
     if (isEmpty(budget_value)) {
       errorFlag = true;
-      errorMessage = "单位采购请选择预算申请单";
+      errorMessage = "单位采购请选择预算审批单，如果没有可选择的预算审批单，请<a href='/kobe/budgets/new'>[新增预算审批单]</a>";
       $("#order_yw_type_div_error").html(errorMessage);
       $("#order_yw_type_div").addClass("errorinformation");
     }else{
@@ -357,7 +357,7 @@ function save_address(){
   if (!checkAddress("order_buyer_tel_div")) {
     checkr = false;
   }
-  
+
   $("#step_address_current .newinfo").each(function(){
     if (!checkAddress($(this).attr("id"))) {
       checkr = false;
@@ -367,7 +367,7 @@ function save_address(){
   if (!checkr) {
     return;
   }
-  
+
   $("#current_address_info").text($("#order_buyer_man").val() + " " + $("#order_buyer_addr").val() + " " + $("#order_buyer_tel").val() + " " + $("#order_buyer_mobile").val() + " 要求交付日期：" + $("#order_deliver_at").val());
   $("#step_address").show();
   $("#step_address_current").hide();
@@ -404,7 +404,7 @@ function change_real_price(item_id){
 function save_real_price(item_id){
   // 检查价格
   var $t = $("#item_price_" + item_id);
-  $t.val($t.val().replace(/[^0-9.]/g,'')); 
+  $t.val($t.val().replace(/[^0-9.]/g,''));
   var max_price = $t.attr("max_price");
   if (isEmpty($t.val()) || parseInt($t.val()) < 0 || parseFloat($t.val()) > parseFloat(max_price)){
     $t.val(max_price);
@@ -419,7 +419,7 @@ function save_real_price(item_id){
   var other_fee = $("#order_other_fee").val().replace(/[^0-9.]/g,'');
   if (!isEmpty(deliver_fee)) { current_total += parseFloat(deliver_fee); }
   if (!isEmpty(other_fee)) { current_total += parseFloat(other_fee); }
-  
+
   $("#order_total").text(current_total.toFixed(2)).change();
 
   $("#item-price-show-" + item_id).text(parseFloat($t.val()).toFixed(2));
@@ -455,12 +455,12 @@ function save_fee(){
   var current_total = 0.0;
   $(".cart-item-total").each(function(){current_total += parseFloat($(this).text());})
   // 运费和其他费用
-  if (!isEmpty(deliver_fee)) { 
-    current_total += parseFloat(deliver_fee); 
+  if (!isEmpty(deliver_fee)) {
+    current_total += parseFloat(deliver_fee);
     fee_text = fee_text + "运费：¥" + parseFloat(deliver_fee) + " 元 ";
   }
-  if (!isEmpty(other_fee)) { 
-    current_total += parseFloat(other_fee); 
+  if (!isEmpty(other_fee)) {
+    current_total += parseFloat(other_fee);
     fee_text = fee_text + "其他费用：¥" + parseFloat(other_fee) + " 元，其他费用说明：" + other_fee_desc;
   }
 
