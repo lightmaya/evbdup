@@ -262,9 +262,10 @@ class Order < ActiveRecord::Base
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
+    tmp = current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id
     case act
     when "show"
-      current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id
+      tmp
     when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit"
@@ -272,9 +273,9 @@ class Order < ActiveRecord::Base
     when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
     when "invoice_number", "update_invoice_number"
-      self.class.effective_status.include?(self.status)
+      self.class.effective_status.include?(self.status) && tmp
     when "print", "print_ht", "print_ysd"
-      self.class.effective_status.include?(self.status) && (current_u.real_department.is_ancestors?(self.buyer_id)|| current_u.real_department.id == self.seller_id)
+      self.class.effective_status.include?(self.status) && tmp
     when "update_agent_confirm", "agent_confirm" # 等待卖方确认
       self.class.seller_status.include?(self.status) && self.seller_id == current_u.real_department.id
     when "update_buyer_confirm", "buyer_confirm" # 等待卖方确认

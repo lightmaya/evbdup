@@ -179,6 +179,7 @@ module AboutRuleStep
     current_index = 0
     cs = self.get_current_step
     # 先判断rule_step
+    return array.length - 1 if cs == 'done'
     if cs.is_a?(Hash)
       index = array.index(cs["name"])
       return index if index.present?

@@ -204,8 +204,8 @@ class Kobe::OrdersController < KobeController
 
   def update_invoice_number
      @order.update(invoice_number: params[:number] )
-     write_logs(@order, '填写发票')
-     redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
+     write_logs(@order, '填写发票', "发票号：#{params[:number]}")
+     redirect_back_or request.referer
   end
 
   private
@@ -224,11 +224,11 @@ class Kobe::OrdersController < KobeController
 
     # show页面的数组
     def get_show_arr
-      obj_contents = show_obj_info(@order,Order.xml,{title: "基本信息"})
+      obj_contents = show_obj_info(@order,Order.xml,{title: "基本信息", grid: 3})
       @order.items.each_with_index do |item, index|
-        obj_contents << show_obj_info(item,OrdersItem.xml,{title: "产品明细 ##{index+1}"})
+        obj_contents << show_obj_info(item,OrdersItem.xml,{title: "产品明细 ##{index+1}", grid: 4})
       end
-      obj_contents << show_obj_info(@order,Order.fee_xml,{title: "附加费用", grid: 3})
+      obj_contents << show_obj_info(@order,Order.fee_xml,{title: "附加费用", grid: 2})
       obj_contents << show_total_part(@order.total)
       @arr  = []
       @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
