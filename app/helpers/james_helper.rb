@@ -17,12 +17,12 @@ module JamesHelper
     "<li><div class='category_grey'>#{get_name_with_icon(name, icon)}</div></li>".html_safe
   end
 
-  # 带日期的li标签 主要用于首页 显示公告
+  # 带日期的li标签 主要用于首页 显示公告 length = 0 表示不用按length截取title
   def li_tag_with_date(title, link_url, date, length = 20, new_cdt=false, new_cont='new', new_color='red')
     new_tag = %Q{<span class="text-highlights text-highlights-#{new_color} rounded-2x">#{new_cont}</span>}
     %Q{
       <li>
-        <a href='#{link_url}' title='#{title}' target='_blank'>#{text_truncate(title, length)}</a>
+        <a href='#{link_url}' title='#{title}' target='_blank'>#{length == 0 ? title : text_truncate(title, length)}</a>
         #{new_tag if new_cdt}
         <span class='hex pull-right'>#{date}</span>
       </li>
@@ -34,6 +34,21 @@ module JamesHelper
     return '' if article.blank?
     new_cdt = (article.publish_time + article.new_days.days) >= Time.now
     li_tag_with_date(article.title, article_path(article), article.publish_time.to_date, length, new_cdt)
+  end
+
+  # 网上竞价需求
+  def wsjj_xq_li_tag(project, length = 20)
+    li_tag_with_date(project.name, bid_project_path(project), project.end_time.to_date, length)
+  end
+
+  # 网上竞价结果
+  def wsjj_jg_li_tag(project, length = 18)
+    li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, length, true, (project.status == 23 ? '中标' : '废标'), (project.status == 23 ? 'green' : 'blue'))
+  end
+
+  # 资产划转 包括无偿划转和协议转让
+  def transfer_li_tag(project, length = 20)
+    li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, length)
   end
 
   # 首页更多标签

@@ -14,9 +14,9 @@ class HomeController < JamesController
     jggg_articles = get_articles('招标结果公告')
     @jggg = jggg_articles.present? ? jggg_articles.order("id desc").limit(8) : []
     # 网上竞价需求公告
-    @wsjj_xq = BidProject.can_bid.order("id desc").limit(8)
+    @wsjj_xq = BidProject.can_bid.order("end_time desc").limit(8)
     # 网上竞价结果公告
-    @wsjj_jg = BidProject.where(status: [23, 33]).order("id desc").limit(8)
+    @wsjj_jg = BidProject.where(status: [23, 33]).order("updated_at desc").limit(8)
     # 畅销产品
     @products = Product.show.order("id desc").limit(8)
     # 入围供应商
@@ -26,6 +26,29 @@ class HomeController < JamesController
     @xyzr = Transfer.xyzr.order("id desc").limit(8)
     # 无偿划转公告
     @wchz = Transfer.wchz.order("id desc").limit(8)
+  end
+
+  # 更多列表
+  def more_list
+    type_ha = Dictionary.more_tag_type
+    if type_ha.has_key? params[:type]
+      @title = type_ha[params[:type]]
+      # 重要通知 招标公告 招标结果公告
+      if params[:type].include? 'article'
+        articles = get_articles(type_ha[params[:type]])
+        @rs = articles.present? ? articles.order("id desc").page(params[:page]) : []
+      end
+
+      # 网上竞价需求公告
+      @rs = BidProject.can_bid.order("end_time desc").page(params[:page]) if params[:type] == 'wsjj_xq'
+      # 网上竞价结果公告
+      @rs = BidProject.where(status: [23, 33]).order("updated_at desc").page(params[:page]) if params[:type] == 'wsjj_jg'
+
+      # 协议转让公告
+      @rs = Transfer.xyzr.order("id desc").page(params[:page]) if params[:type] == 'xyzr'
+      # 无偿划转公告
+      @rs = Transfer.wchz.order("id desc").page(params[:page]) if params[:type] == 'wchz'
+    end
   end
 
   def ajax_test

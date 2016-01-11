@@ -54,7 +54,7 @@
   </div>
   <div class="col-md-4 padding-0">
     <div class="tag-box tag-box-v3 margin-0 padding-bottom-0 padding-top-5">
-      <div class="headline headline-md"><h2> 重要通知</h2><%= more_tag %></div>
+      <div class="headline headline-md"><h2> 重要通知</h2><%= more_tag more_list_path(type: 'article_zytz') %></div>
       <ul class="list-unstyled categories">
         <% @zytz.each do |article| %>
           <%= article_li_tag(article, 13) %>
@@ -71,7 +71,7 @@
       <div class="col-md-6 padding-right-5">
         <!--Tag Box v6-->
         <div class="tag-box tag-box-v1 margin-bottom-0">
-          <h2>招标公告<%= more_tag %></h2>
+          <h2>招标公告<%= more_tag more_list_path(type: 'article_zbgg') %></h2>
           <ul class="list-unstyled categories">
             <% @zbgg.each do |article| %>
               <%= article_li_tag(article) %>
@@ -84,7 +84,7 @@
       <div class="col-md-6 padding-left-5">
         <!--Tag Box v7-->
         <div class="tag-box tag-box-v1 margin-bottom-0">
-          <h2>招标结果公告<%= more_tag %></h2>
+          <h2>招标结果公告<%= more_tag more_list_path(type: 'article_jggg') %></h2>
           <ul class="list-unstyled categories">
             <% @jggg.each do |article| %>
               <%= article_li_tag(article) %>
@@ -105,17 +105,17 @@
           <ul class="nav nav-tabs">
             <li class="active"><a aria-expanded="true" href="#tab-1" data-toggle="tab" style="font-size: 18px;">网上竞价公告</a></li>
             <li class=""><a aria-expanded="false" href="#tab-2" data-toggle="tab" style="font-size:18px;">竞价结果公告</a></li>
-          </ul>                
+          </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="tab-1">
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
                   <% @wsjj_xq.each do |project| %>
-                    <%= li_tag_with_date(project.name, bid_project_path(project), project.end_time.to_date, 20) %>
+                    <%= wsjj_xq_li_tag(project) %>
                   <% end %>
                   <%= (li_blank_tag * (8-@wsjj_xq.size)).html_safe if @wsjj_xq.size < 8 %>
                 </ul>
-                <div class="padding-bottom-10"><%= more_tag %></div>
+                <div class="padding-bottom-10"><%= more_tag more_list_path(type: 'wsjj_xq') %></div>
               </div>
 
             </div>
@@ -123,11 +123,11 @@
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
                   <% @wsjj_jg.each do |project| %>
-                     <%= li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, 18, true, (project.status == 23 ? '中标' : '废标'), (project.status == 23 ? 'green' : 'blue')) %>
+                     <%= wsjj_jg_li_tag(project) %>
                   <% end %>
                   <%= (li_blank_tag * (8-@wsjj_jg.size)).html_safe if @wsjj_jg.size < 8 %>
                 </ul>
-                <div class="padding-bottom-10"><%= more_tag %></div>
+                <div class="padding-bottom-10"><%= more_tag more_list_path(type: 'wsjj_jg') %></div>
               </div>
             </div>
           </div>
@@ -138,28 +138,28 @@
           <ul class="nav nav-tabs">
             <li class="active"><a aria-expanded="true" href="#tab-3" data-toggle="tab" style="font-size:18px;">协议转让公告</a></li>
             <li class=""><a aria-expanded="false" href="#tab-4" data-toggle="tab" style="font-size:18px;">无偿划转公告</a></li>
-          </ul>                
+          </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="tab-3">
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
                   <% @xyzr.each do |project| %>
-                    <%= li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, 20) %>
+                    <%= transfer_li_tag(project) %>
                   <% end %>
                   <%= (li_blank_tag * (8-@xyzr.size)).html_safe if @xyzr.size < 8 %>
                 </ul>
-                <div class="padding-bottom-10"><%= more_tag %></div>
+                <div class="padding-bottom-10"><%= more_tag more_list_path(type: 'xyzr') %></div>
               </div>
             </div>
             <div class="tab-pane fade" id="tab-4">
               <div class="tag-box tag-box-v6 margin-bottom-0">
                 <ul class="list-unstyled categories">
                   <% @wchz.each do |project| %>
-                    <%= li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, 20) %>
+                    <%= transfer_li_tag(project) %>
                   <% end %>
                   <%= (li_blank_tag * (8-@wchz.size)).html_safe if @wchz.size < 8 %>
                 </ul>
-                <div class="padding-bottom-10"><%= more_tag %></div>
+                <div class="padding-bottom-10"><%= more_tag more_list_path(type: 'wchz') %></div>
               </div>
             </div>
           </div>
@@ -173,7 +173,7 @@
   <div class="col-md-3">
 
     <div class="tag-box tag-box-v6 margin-bottom-10">
-      <div class="headline"><h2 class="heading-sm"><i class="fa fa-qrcode"></i> 核对电子凭证真伪</h2></div>                                                    
+      <div class="headline"><h2 class="heading-sm"><i class="fa fa-qrcode"></i> 核对电子凭证真伪</h2></div>
       <form role="form "id="form" action="<%=check_ysd_path%>" method="post" target="_blank">
         <div class="form-group">
           <label for="exampleInputEmail1">电子凭证编号</label>
@@ -261,15 +261,15 @@
 
 <!--供应商展示-->
 <div class="headline margin-bottom-35"><h2><i class="fa fa-trophy"></i>入围供应商展示</h2></div>
-   
-<% @deps.each_slice(4) do |dep| %>          
+
+<% @deps.each_slice(4) do |dep| %>
   <div class="row high-rated margin-bottom-20">
     <% dep.each do |d|%>
       <%= show_dep_div(d) %>
     <% end %>
   </div>
   <%= "<hr />".html_safe unless @deps.last == dep.last %>
-<% end %>              
+<% end %>
 
 <!--供应商展示结束-->
 
@@ -285,31 +285,31 @@
           </div>
         </a>
       </figure>
-    </li> 
+    </li>
     <li>
       <figure>
         <a href="http://www.cngrain.com" target="_blank">
-          <img src="/plugins/images/logo/zhlw.png" alt="">  
+          <img src="/plugins/images/logo/zhlw.png" alt="">
           <div class="img-hover">
-            <h4>中华粮网</h4>  
+            <h4>中华粮网</h4>
           </div>
         </a>
       </figure>
-    </li>      
+    </li>
     <li>
       <figure>
         <a href="http://www.zycg.gov.cn" target="_blank">
           <img src="/plugins/images/logo/ycg.png" alt="">
           <div class="img-hover">
-            <h4>中央政府采购网</h4>  
+            <h4>中央政府采购网</h4>
           </div>
         </a>
       </figure>
-    </li>        
+    </li>
     <li>
       <figure>
         <a href="http://www.ctba.org.cn" target="_blank">
-          <img src="/plugins/images/logo/zbtb.png" alt="">  
+          <img src="/plugins/images/logo/zbtb.png" alt="">
           <div class="img-hover">
             <h4>中国招标投标协会</h4>
           </div>
@@ -319,37 +319,37 @@
     <li>
       <figure>
         <a href="http://ecp.sgcc.com.cn" target="_blank">
-          <img src="/plugins/images/logo/gjdw.png" alt="">  
+          <img src="/plugins/images/logo/gjdw.png" alt="">
           <div class="img-hover">
             <h4>国家电网电子商务平台</h4>
           </div>
         </a>
       </figure>
-    </li> 
+    </li>
     <li>
       <figure>
         <a href="http://www.bidding.csg.cn" target="_blank">
-          <img src="/plugins/images/logo/nfdw.png" alt="">  
+          <img src="/plugins/images/logo/nfdw.png" alt="">
           <div class="img-hover">
             <h4>中国南方电网阳光电子商务</h4>
           </div>
         </a>
       </figure>
-    </li>      
+    </li>
     <li>
       <figure>
         <a href="http://eportal.energyahead.com" target="_blank">
-          <img src="/plugins/images/logo/zsy.png" alt="">  
+          <img src="/plugins/images/logo/zsy.png" alt="">
           <div class="img-hover">
             <h4>中国石油物资采购网</h4>
           </div>
         </a>
       </figure>
-    </li>  
+    </li>
     <li>
       <figure>
         <a href="http://zgsh.sinopec.com" target="_blank">
-          <img src="/plugins/images/logo/zsh.png" alt="">  
+          <img src="/plugins/images/logo/zsh.png" alt="">
           <div class="img-hover">
             <h4>中国石化物资采购电子招标平台</h4>
           </div>
@@ -359,7 +359,7 @@
     <li>
       <figure>
         <a href="http://b2b.10086.cn" target="_blank">
-          <img src="/plugins/images/logo/zgyd.png" alt="">  
+          <img src="/plugins/images/logo/zgyd.png" alt="">
           <div class="img-hover">
             <h4>中国移动采购与招标网</h4>
           </div>
@@ -369,7 +369,7 @@
     <li>
       <figure>
         <a href="http://www.chinaunicombidding.cn" target="_blank">
-          <img src="/plugins/images/logo/zglt.png" alt="">  
+          <img src="/plugins/images/logo/zglt.png" alt="">
           <div class="img-hover">
             <h4>中国联通采购与招标网</h4>
           </div>
@@ -379,17 +379,17 @@
     <li>
       <figure>
         <a href="http://www.hnmec.org" target="_blank">
-          <img src="/plugins/images/logo/zghn.png" alt="">  
+          <img src="/plugins/images/logo/zghn.png" alt="">
           <div class="img-hover">
             <h4>中国华能物资招标网</h4>
           </div>
         </a>
       </figure>
-    </li>  
+    </li>
     <li>
       <figure>
         <a href="http://www.greenfood.org.cn" target="_blank">
-          <img src="/plugins/images/logo/zgbq.png" alt="">  
+          <img src="/plugins/images/logo/zgbq.png" alt="">
           <div class="img-hover">
             <h4>兵器工业集团公司采购电子平台</h4>
           </div>
@@ -399,17 +399,17 @@
     <li>
       <figure>
         <a href="http://jc.cdtbid.cn" target="_blank">
-          <img src="/plugins/images/logo/zgdt.png" alt="">  
+          <img src="/plugins/images/logo/zgdt.png" alt="">
           <div class="img-hover">
             <h4>中国大唐集团公司集采平台</h4>
           </div>
         </a>
       </figure>
-    </li>       
+    </li>
     <li>
       <figure>
         <a href="http://www.greenfood.org.cn" target="_blank">
-          <img src="/plugins/images/logo/zgzt.png" alt="">  
+          <img src="/plugins/images/logo/zgzt.png" alt="">
           <div class="img-hover">
             <h4>中国中铁采购电子商务平台</h4>
           </div>
@@ -419,22 +419,22 @@
     <li>
       <figure>
         <a href="http://eps.baosteel.net.cn" target="_blank">
-          <img src="/plugins/images/logo/bgjt.png" alt="">  
+          <img src="/plugins/images/logo/bgjt.png" alt="">
           <div class="img-hover">
             <h4>宝钢集团采购电子商务平台</h4>
           </div>
         </a>
       </figure>
-    </li> 
+    </li>
     <li>
       <figure>
         <a href="http://www.china-tender.com.cn" target="_blank">
-          <img src="/plugins/images/logo/zgty.png" alt="">  
+          <img src="/plugins/images/logo/zgty.png" alt="">
           <div class="img-hover">
             <h4>中国通用招标网</h4>
           </div>
         </a>
       </figure>
-    </li>  
+    </li>
   </ul>
 </div>
