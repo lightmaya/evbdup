@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->  
-<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
-<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
 <head>
     <title><%= Dictionary.web_site_name %> <%= yield(:title).presence %></title>
     <!-- Meta -->
@@ -18,20 +18,20 @@
     <%= stylesheet_link_tag "kobe" %>
     <%= javascript_include_tag "application" %>
 
-</head> 
+</head>
 
 <body>
-    <!--=== Style Switcher ===-->    
+    <!--=== Style Switcher ===-->
     <!-- <i class="style-switcher-btn fa fa-question hidden-xs" data-toggle="modal" data-target="#suggestion"></i> -->
     <%#= modal_dialog('suggestion', _create_xml_form(Suggestion.xml,Suggestion.new,{"upload_files" => true,"grid"=>1,"form_id"=>"suggestion_form","action"=>kobe_suggestions_path}), raw('<i class="fa fa-question-circle"></i> 问题或意见建议')) %>
     <%#= modal_dialog('suggestion', draw_myform(@suggestion_form), raw('<i class="fa fa-question-circle"></i> 问题或意见建议')) %>
     <!--/style-switcher-->
-    <!--=== End Style Switcher ===-->    
+    <!--=== End Style Switcher ===-->
 
     <div class="wrapper">
-        <!--=== Header ===-->    
+        <!--=== Header ===-->
         <%= render :partial => '/shared/layout/kobe_header' %>
-        <!--=== End Header ===-->     
+        <!--=== End Header ===-->
 
         <!--=== Breadcrumbs ===-->
         <%= breadcrumbs_tag %>
@@ -39,15 +39,15 @@
         <!--=== End Breadcrumbs ===-->
 
         <!--=== Content Part ===-->
-        <div class="container content">
+        <div class="container content height-350">
             <div class="row">
                 <!-- Begin Content -->
                 <div class="col-md-12" style="min-height:400px;">
                     <%= yield %>
                 </div>
                 <!-- End Content -->
-            </div>          
-        </div><!--/container-->     
+            </div>
+        </div><!--/container-->
         <!--=== End Content Part ===-->
 
         <!--=== Copyright ===-->

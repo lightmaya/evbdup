@@ -51,6 +51,15 @@ class HomeController < JamesController
     end
   end
 
+  # 入围供应商名单
+  def dep_list
+    @q = Item.can_search.ransack(params[:q])
+    @rs = @q.result
+    @rs = @rs.page(params[:page]) if params[:q][:dep_names_cont].present?
+    @dep_rs = @rs.first.item_departments.page(params[:page]) if params[:q][:id_eq].present?
+  end
+
+
   def ajax_test
       render :text => "这是来自ajax的内容。"
   end

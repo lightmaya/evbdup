@@ -19,6 +19,7 @@ Evbdup::Application.routes.draw do
   get 'cart_order' => "kobe/orders#cart_order", as: :cart_order
   get "search", :to => 'home#search', :as => "search"
   get "more_list" => "home#more_list"
+  get "dep_list" => "home#dep_list"
 
   get 'show_faqs' => "faqs#show"
 

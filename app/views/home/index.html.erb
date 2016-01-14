@@ -187,7 +187,7 @@
       </form>
     </div>
 
-    <button type="button" class="btn-u btn-u-lg btn-block btn-u-sea margin-bottom-10"><i class="fa fa-search font-size-22"></i> 入围供应商名单查询</button>
+    <%= link_to_blank '<i class="fa fa-search font-size-22"></i> 入围供应商名单查询'.html_safe, dep_list_path, class: 'btn-u btn-u-lg btn-block btn-u-sea margin-bottom-10' %>
     <button class="btn-u btn-u-lg btn-block btn-u-red margin-bottom-10" type="button">
       <i class="fa fa-exclamation-triangle font-size-22"></i> 曝光违规、违约行为
     </button>
@@ -197,7 +197,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-red icon-book-open"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="<%=show_faqs_path(type:'zcfg')%>"> 政策法规</a></h3>
+            <h3><%= link_to_blank '政策法规', show_faqs_path(type:'zcfg') %></h3>
             <p>集中采购相关政策文件</p>
           </div>
         </div>
@@ -206,7 +206,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-blue icon-directions"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="<%=show_faqs_path(type:'cgzn')%>"> 业务指南</a></h3>
+            <h3><%= link_to_blank '业务指南', show_faqs_path(type:'cgzn') %></h3>
             <p>集中采购的方式及流程</p>
           </div>
         </div>
@@ -215,7 +215,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-green icon-cloud-download"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="<%=show_faqs_path(type:'xzzx')%>"> 下载中心</a></h3>
+            <h3><%= link_to_blank '下载中心', show_faqs_path(type:'xzzx') %></h3>
             <p>合同模板、系统操作手册...</p>
           </div>
         </div>
@@ -224,7 +224,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-aqua icon-earphones-alt"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="<%=show_faqs_path(type:'cjwt')%>"> 常见问题</a></h3>
+            <h3><%= link_to_blank '常见问题', show_faqs_path(type:'cjwt') %></h3>
             <p>业务咨询、网上操作帮助...</p>
           </div>
         </div>
@@ -233,7 +233,7 @@
         <div class="content-boxes-v3">
           <i class="icon-custom icon-sm rounded-x icon-bg-brown icon-bubbles"></i>
           <div class="content-boxes-in-v3">
-            <h3><a href="<%=new_kobe_faq_path(catalog: 'yjjy')%>"> 意见建议</a></h3>
+            <h3><%= link_to_blank '意见建议', show_faqs_path(type:'yjjy') %></h3>
             <p>发表您的意见及建议</p>
           </div>
         </div>

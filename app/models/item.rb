@@ -16,6 +16,7 @@ class Item < ActiveRecord::Base
   # default_scope -> {order("id desc")}
 
   scope :usable, -> { where("items.status = #{Item.effective_status.join(', ')} and now() < items.end_time") }
+  scope :can_search, -> { where(status: [65, 68, 54]) }
 
   default_value_for :status, 0
 
