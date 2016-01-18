@@ -40,6 +40,7 @@ class BidProjectBid < ActiveRecord::Base
     update(total: items.sum("total"))
   end
 
+  # 联系方式
   def lx
     [self.mobile, self.tel].select{|i| i.present?}.join(" / ")
   end

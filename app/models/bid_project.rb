@@ -95,6 +95,10 @@ class BidProject < ActiveRecord::Base
   #   # }
   # end
 
+  # 最低报价
+  def lowest_bid
+    self.bid_project_bids.order("bid_project_bids.total ASC, bid_project_bids.bid_time ASC").first
+  end
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
