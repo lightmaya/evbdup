@@ -5,10 +5,10 @@ class Kobe::FaqsController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:commit, :get_catalog]
   skip_load_and_authorize_resource :only => :get_catalog
 
-	def index
-		@q = Faq.ransack(params[:q])
+  def index
+    @q = Faq.ransack(params[:q])
     @faqs = @q.result.status_not_in(404).page params[:page]
-	end
+  end
 
 
   def new
@@ -61,9 +61,9 @@ class Kobe::FaqsController < KobeController
 
   def commit
     @faq.change_status_and_write_logs("提交",stateless_logs("提交","提交成功！", false))
-    # 插入日常费用审核的待办事项
-    tips_get("提交成功！")
-    redirect_back_or
+  # 插入日常费用审核的待办事项
+  tips_get("提交成功！")
+  redirect_back_or
   end
 
   def reply
@@ -71,20 +71,22 @@ class Kobe::FaqsController < KobeController
   end
 
   def update_reply
-     status = @faq.change_status_hash["回复"][@faq.status]
-     @faq.update(content: params[:reply], status: status )
-     write_logs(@faq, '回复')
-     redirect_to kobe_faqs_path
+    status = @faq.change_status_hash["回复"][@faq.status]
+    @faq.update(content: params[:reply], status: status )
+    write_logs(@faq, '回复')
+    redirect_to kobe_faqs_path
   end
 
   def yjjy_list
-     @q = current_user.yjjy.ransack(params[:q])
-     @faqs = @q.result.status_not_in(404).page params[:page]
+    @q = current_user.yjjy.ransack(params[:q])
+    @faqs = @q.result.status_not_in(404).page params[:page]
   end
 
-  #是否有权限操作项目
-  def get_faq
-    cannot_do_tips unless @faq.present? && @faq.cando(action_name,current_user)
-  end
+  private
+
+    #是否有权限操作项目
+    def get_faq
+      cannot_do_tips unless @faq.present? && @faq.cando(action_name,current_user)
+    end
 
 end

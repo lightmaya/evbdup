@@ -10,7 +10,7 @@ class Dictionary < Settingslogic
     self.status_hash.each do |k, v|
       status_arr << (k + v)
     end
-    return status_arr     
+    return status_arr
   end
 
   # 格式化application.yml中的status_hash 将字符串类型的状态变成数字类型

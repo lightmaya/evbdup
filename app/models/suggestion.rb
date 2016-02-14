@@ -7,7 +7,7 @@ class Suggestion < ActiveRecord::Base
  #  def self.upload_model
  #    SuggestionsUpload
  #  end
-  
+
 	# def self.xml(who='',options={})
 	#   %Q{
 	#     <?xml version='1.0' encoding='UTF-8'?>
@@ -20,7 +20,7 @@ class Suggestion < ActiveRecord::Base
 	#   }
 	# end
 
-	# # 中文意思 状态值 标签颜色 进度 
+	# # 中文意思 状态值 标签颜色 进度
 	# def self.status_array
 	# 	[
 	#     ["未读",0,"orange",10,[1,4,101],[1,0]],
@@ -39,7 +39,7 @@ class Suggestion < ActiveRecord::Base
  #  end
 
  #  def cando_list(action='')
- #    arr = [] 
+ #    arr = []
  #    # 查看详细
  #    if [0,1,2,3,4,404].include?(self.status)
  #    	arr << [self.class.icon_action("详细"), "/kobe/suggestions/#{self.id}", target: "_blank"]

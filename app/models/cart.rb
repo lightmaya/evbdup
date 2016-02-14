@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Cart
-  
+
   attr_accessor :items
 
   def initialize
@@ -27,9 +27,9 @@ class Cart
       set ? current_item.num = num : current_item.cr(num)
       destroy(cart_item_id) if current_item.num <= 0
     else
-      current_item = CartItem.new({:market_price => product.market_price, :ready => true, 
-      :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => [num, 1].max, 
-      :name => product.name, :seller_id => seller.id, id: cart_item_id, sid: sid,  
+      current_item = CartItem.new({:market_price => product.market_price, :ready => true,
+      :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => [num, 1].max,
+      :name => product.name, :seller_id => seller.id, id: cart_item_id, sid: sid,
       :seller_name => seller.name, ht: product.category.ht_template,
       :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
       self.items = [current_item] + self.items

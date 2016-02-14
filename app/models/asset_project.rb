@@ -84,15 +84,14 @@ class AssetProject < ActiveRecord::Base
     %Q{
      <?xml version='1.0' encoding='UTF-8'?>
      <root>
-     <node name='项目名称' column='name' class='required'/>
-     <node name='报销日期' column='deliver_at' class='required date_select dateISO'/>
-     <node name='单位名称' column='dep_name' class='required'/>
-     <node name='单位联系人' column='dep_man'  class='required'/>
-     <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
-     <node column='total' data_type='hidden'/>
+       <node name='项目名称' column='name' class='required'/>
+       <node name='报销日期' column='deliver_at' class='required date_select dateISO'/>
+       <node name='单位名称' column='dep_name' class='required'/>
+       <node name='单位联系人' column='dep_man'  class='required'/>
+       <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
+       <node column='total' data_type='hidden'/>
      </root>
    }
- end
-
+  end
 
 end

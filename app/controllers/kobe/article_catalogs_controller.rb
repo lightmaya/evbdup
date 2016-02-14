@@ -1,13 +1,13 @@
 # -*- encoding : utf-8 -*-
 class Kobe::ArticleCatalogsController < KobeController
-  
+
   skip_before_action :verify_authenticity_token, :only => [:move]
   # protect_from_forgery :except => :index
   before_action :get_article_catalog, :only => [:destroy, :delete]
   layout false, :only => [:edit, :new, :show, :delete]
 
   skip_authorize_resource :only => [:ztree]
-  
+
   def index
     # 至少有一个分类才能增删改查
     ArticleCatalog.find_or_create_by(name: "栏目分类", status: ArticleCatalog.effective_status) if ArticleCatalog.count == 0
@@ -65,7 +65,7 @@ class Kobe::ArticleCatalogsController < KobeController
     ztree_nodes_json(ArticleCatalog)
   end
 
-  private  
+  private
 
     def get_article_catalog
       cannot_do_tips unless @article_catalog.present? && @article_catalog.cando(action_name)

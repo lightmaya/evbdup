@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 class Kobe::PlanItemsController < KobeController
 
-	skip_before_action :verify_authenticity_token, :only => [:commit]
-	before_action :get_item, :only => [:edit, :update, :delete, :destroy, :commit]
+  skip_before_action :verify_authenticity_token, :only => [:commit]
+  before_action :get_item, :only => [:edit, :update, :delete, :destroy, :commit]
 
-	def index
-    @q = PlanItem.where(get_conditions("plan_items")).ransack(params[:q]) 
+  def index
+    @q = PlanItem.where(get_conditions("plan_items")).ransack(params[:q])
     @plan_items = @q.result.page params[:page]
   end
 
@@ -24,7 +24,7 @@ class Kobe::PlanItemsController < KobeController
   end
 
   def create
-  	create_and_write_logs(PlanItem, PlanItem.xml)
+    create_and_write_logs(PlanItem, PlanItem.xml)
     redirect_to kobe_plan_items_path
   end
 
@@ -59,7 +59,7 @@ class Kobe::PlanItemsController < KobeController
 
   private
 
-  	def get_item
+    def get_item
       cannot_do_tips unless @plan_item.present? && @plan_item.cando(action_name)
     end
 

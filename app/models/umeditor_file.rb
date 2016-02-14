@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class UmeditorFile < ActiveRecord::Base
-	mount_uploader :data, ImageUploader, :mount_on => :store_name
+  mount_uploader :data, ImageUploader, :mount_on => :store_name
 
   validates :data, :presence => true
 

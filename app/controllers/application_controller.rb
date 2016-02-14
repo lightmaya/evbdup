@@ -33,21 +33,20 @@ class ApplicationController < ActionController::Base
   # 当前用户
   def current_user
     remember_token = User.encrypt(cookies[:remember_token])
-    @current_user ||= User.find_by(remember_token:remember_token) 
+    @current_user ||= User.find_by(remember_token:remember_token)
   end
- 
+
   # 是否登录?
   def signed_in?
     !current_user.nil?
   end
-  
+
   # 后退页面
   def redirect_back_or(default=nil)
     redirect_to(default || session[:return_to] || root_path)
     session.delete(:return_to)
   end
 
-  
   def find_cart
     Cart # cache_classes
     if current_user
@@ -66,7 +65,7 @@ class ApplicationController < ActionController::Base
         end
         current_user.update(cart: user_cart.to_yaml)
       end
-      
+
       @cart = YAML.load(current_user.cart.to_s)
       cookies.delete :cart
     else
@@ -74,13 +73,13 @@ class ApplicationController < ActionController::Base
     end
 
     unless @cart.is_a?(Cart)
-      @cart = Cart.new 
+      @cart = Cart.new
       cookies.delete :cart
     end
 
     @cart.refine
   end
-  
+
   def save_cart
     if current_user
       current_user.update(cart: @cart.to_yaml)
@@ -90,8 +89,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-
-  # 查询初始化参数 
+  # 查询初始化参数
   def init_params_search
     params[:q] ||= {}
     params[:q][:s] ||= "id desc"
@@ -120,7 +118,7 @@ class ApplicationController < ActionController::Base
 
     # 生成不带搜索的ztree的json 用于维护树形结构 例如单位维护 菜单维护 角色维护等
     # 如果node为空 生成树的json 取所有状态不是已删除的节点 例如 menu、category等
-    # 如果node不为空 取node和他的子孙们 例如 department 
+    # 如果node不为空 取node和他的子孙们 例如 department
     def ztree_nodes_json(obj_class, node='')
       if node.blank?
         nodes = obj_class.attribute_method?("status") ? obj_class.where.not(status: 404) : obj_class.all
@@ -185,7 +183,6 @@ class ApplicationController < ActionController::Base
       str << "</table>"
       return str
     end
-
 
     include SaveXmlForm
 

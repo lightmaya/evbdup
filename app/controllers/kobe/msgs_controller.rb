@@ -5,7 +5,7 @@ class Kobe::MsgsController < KobeController
   # 发送的短消息
   def index
     params[:q][:user_id_eq] = current_user.id unless current_user.admin?
-    @q = Msg.where(get_conditions("msgs")).ransack(params[:q]) 
+    @q = Msg.where(get_conditions("msgs")).ransack(params[:q])
     @msgs = @q.result.includes([:author]).page params[:page]
   end
 
@@ -41,11 +41,8 @@ class Kobe::MsgsController < KobeController
   end
 
   def new
-    @msg.user_name = current_user.name 
-    @myform = SingleForm.new(Msg.xml, @msg, 
-      { form_id: "msg_form", action: kobe_msgs_path,
-        title: '<i class="fa fa-pencil-square-o"></i> 新建短消息', grid: 2  
-      })
+    @msg.user_name = current_user.name
+    @myform = SingleForm.new(Msg.xml, @msg, { form_id: "msg_form", action: kobe_msgs_path, title: '<i class="fa fa-pencil-square-o"></i> 新建短消息', grid: 2 })
   end
 
   def edit
@@ -78,7 +75,7 @@ class Kobe::MsgsController < KobeController
     redirect_to kobe_msgs_path
   end
 
-  private  
+  private
     # 检查接收人是否存在
     def check_send_tos
       succ = false
@@ -86,12 +83,12 @@ class Kobe::MsgsController < KobeController
       if params[:msgs][:send_type] == "1"
         succ = params[:msgs][:send_tos].split.all?{|login| User.find_by_login(login).present? }
       elsif params[:msgs][:send_type] == "0"
-        
         succ = params[:msgs][:send_tos].split.all?{|dep_id| Department.find_by_id(dep_id).present? }
       end
       unless succ
         flash_get("具体接受人中有不存在的单位或个人，请检查")
-        return redirect_to :back 
+        return redirect_to :back
       end
     end
+
 end

@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
 class Plan < ActiveRecord::Base
-	has_many :uploads, class_name: :PlanUpload, foreign_key: :master_id
+  has_many :uploads, class_name: :PlanUpload, foreign_key: :master_id
   has_many :products, class_name: :PlanProduct
-	# default_scope -> {order("id desc")}
-	belongs_to :category
+  # default_scope -> {order("id desc")}
+  belongs_to :category
   belongs_to :plan_item
   belongs_to :department
 
@@ -12,7 +12,7 @@ class Plan < ActiveRecord::Base
 
   scope :find_all_by_dep_code, ->(dep_real_ancestry) { where("dep_code like '#{dep_real_ancestry}/%' or dep_code = '#{dep_real_ancestry}'") }
 
-	include AboutStatus
+  include AboutStatus
 
   default_value_for :status, 0
 
@@ -21,19 +21,19 @@ class Plan < ActiveRecord::Base
     init_rule
   end
 
-  after_create do 
+  after_create do
     create_no(rule.code, "sn")
   end
 
-	# 附件的类
+  # 附件的类
   def self.upload_model
     PlanUpload
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [
-    #   ["暂存", "0", "orange", 10], ["审核通过", "9", "yellow", 70], 
+    #   ["暂存", "0", "orange", 10], ["审核通过", "9", "yellow", 70],
     #   ["等待审核", "8", "blue", 60], ["审核拒绝", "7", "red", 20],
     #   ["自动生效", "2", "yellow", 70],  ["已删除", "404", "dark", 100]
     # ]
@@ -50,7 +50,7 @@ class Plan < ActiveRecord::Base
 
   # 根据不同操作 改变状态
   # def change_status_hash
-  #   status_ha = self.find_step_by_rule.blank? ? 5 : 2 
+  #   status_ha = self.find_step_by_rule.blank? ? 5 : 2
   #   return {
   #     "提交" => { 3 => status_ha, 0 => status_ha },
   #     "通过" => { 2 => 1 },
@@ -74,15 +74,15 @@ class Plan < ActiveRecord::Base
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
-    when "show" 
+    when "show"
       current_u.department.is_ancestors?(self.department_id)
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
-    when "commit" 
+    when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "update_audit", "audit" 
+    when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false
     end

@@ -90,6 +90,7 @@ module AboutStatus
       icon = key ? Dictionary.icons[key] : Dictionary.icons["其他"]
       return left ? "<i class='fa #{icon}'></i> #{action}" : "#{action} <i class='fa #{icon}'></i>"
     end
+
   end
 
   # 状态标签

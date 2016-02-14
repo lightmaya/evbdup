@@ -2,7 +2,7 @@
 class Upload < ActiveRecord::Base
 
   has_attached_file :upload, :styles => {thumbnail: "45x45", md: "240x180", lg: "1024x768"}
-  validates_attachment_content_type :upload, :content_type => /\Aimage\/.*\Z/, :message => "只能上传图片文件" 
+  validates_attachment_content_type :upload, :content_type => /\Aimage\/.*\Z/, :message => "只能上传图片文件"
 
   validates :master_id, :presence => { message: "master_id不能为空" }
   validates :master_type, :presence => { message: "模型不能为空" }
@@ -10,7 +10,7 @@ class Upload < ActiveRecord::Base
 
   before_post_process :allow_only_images
 
-	include Rails.application.routes.url_helpers
+  include Rails.application.routes.url_helpers
   include UploadFiles
 
   # 上传附件的提示 -- 需要跟下面的JS设置匹配

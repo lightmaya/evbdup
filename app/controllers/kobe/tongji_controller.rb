@@ -14,7 +14,7 @@ class Kobe::TongjiController < KobeController
     end
   end
 
- #入围供应商销量统计
+  #入围供应商销量统计
   def item_dep_sales
     if params[:search_btn].present?
       if params[:item_id].blank? && params[:dep_s_name].blank?
@@ -28,7 +28,7 @@ class Kobe::TongjiController < KobeController
   end
 
   def get_categories
-  # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
+    # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
     # 默认没有选品目的话统计第一层 办公类 ，粮机类
     ca_select = "c.id,c.name,sum(orders_items.total)as total"
     category_sql = %Q{
@@ -57,7 +57,7 @@ class Kobe::TongjiController < KobeController
   end
 
   def get_department
-  # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
+    # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
     # 默认没有选品目的话统计第一层 中储粮总公司下的各种分公司
     # 只显示采购单位的条件
     department_sql = %Q{
@@ -89,11 +89,10 @@ class Kobe::TongjiController < KobeController
     @departments << ['其他',dep_other.to_f]  unless dep_other == 0
   end
 
-
   def  get_yw_type
     if params[:category_id].present?
-    @yw_total = Order.joins(:items).where(@cdt).sum("orders_items.total")
-    rs = Order.joins(:items).select("yw_type,sum(orders_items.total) as total").where(@cdt).group("orders.yw_type")
+      @yw_total = Order.joins(:items).where(@cdt).sum("orders_items.total")
+      rs = Order.joins(:items).select("yw_type,sum(orders_items.total) as total").where(@cdt).group("orders.yw_type")
     else
     @yw_total = Order.where(@cdt).sum("orders.total")
     rs = Order.select("yw_type,sum(orders.total) as total").where(@cdt).group("orders.yw_type")
@@ -126,51 +125,50 @@ class Kobe::TongjiController < KobeController
     end
   end
 
-
   private
 
-  def set_default_params
-  	params[:begin] ||= Time.now.beginning_of_month.strftime('%Y-%m-%d')
-    params[:end] ||=  Time.now.strftime('%Y-%m-%d')
-    params[:show_type] ||= 'shape'
-  end
-
-  def get_category_joins(sql)
-     %Q{
-      inner join orders_items on orders.id= orders_items.order_id
-      inner join (#{sql}) c on c.code = left(concat_ws('/',orders_items.category_code,orders_items.category_id,''), length(c.code))
-    }
-  end
-
-  def get_department_joins(sql)
-    %Q{
-      #{'inner join orders_items on orders.id = orders_items.order_id' if params[:category_id].present? }
-      inner join (#{sql}) c on c.code = left(concat_ws('/',orders.buyer_code,'0'), length(c.code))
-    }
-  end
-
-  def get_common_cdt
-    @select =  params[:category_id].present? ? "c.id,c.name,sum(orders_items.total)as total" : "c.id,c.name,sum(orders.total)as total"
-    @common_cdt = []
-    @common_value = []
-    @common_cdt << 'orders.status in (?)'
-    @common_value << Order.effective_status
-    @common_cdt << 'orders.created_at between ? and ?'
-    @common_value << params[:begin]
-    @common_value << params[:end]
-    if params[:category_id].present?
-      @common_cdt << "find_in_set(?,replace(concat_ws('/',orders_items.category_code,orders_items.category_id),'/',','))>0"
-      @common_value << params[:category_id]
+    def set_default_params
+    	params[:begin] ||= Time.now.beginning_of_month.strftime('%Y-%m-%d')
+      params[:end] ||=  Time.now.strftime('%Y-%m-%d')
+      params[:show_type] ||= 'shape'
     end
-    if params[:department_id].present?
-      @common_cdt << "find_in_set(?,replace(orders.buyer_code,'/',','))>0"
-      @common_value << params[:department_id]
+
+    def get_category_joins(sql)
+       %Q{
+        inner join orders_items on orders.id= orders_items.order_id
+        inner join (#{sql}) c on c.code = left(concat_ws('/',orders_items.category_code,orders_items.category_id,''), length(c.code))
+      }
     end
-    if params[:dep_s_name].present?
-      @common_cdt << " orders.seller_name like ?"
-      @common_value <<  "%#{params[:dep_s_name]}%"
+
+    def get_department_joins(sql)
+      %Q{
+        #{'inner join orders_items on orders.id = orders_items.order_id' if params[:category_id].present? }
+        inner join (#{sql}) c on c.code = left(concat_ws('/',orders.buyer_code,'0'), length(c.code))
+      }
     end
-    @cdt = [@common_cdt.join(' and ')] + @common_value
-  end
+
+    def get_common_cdt
+      @select =  params[:category_id].present? ? "c.id,c.name,sum(orders_items.total)as total" : "c.id,c.name,sum(orders.total)as total"
+      @common_cdt = []
+      @common_value = []
+      @common_cdt << 'orders.status in (?)'
+      @common_value << Order.effective_status
+      @common_cdt << 'orders.created_at between ? and ?'
+      @common_value << params[:begin]
+      @common_value << params[:end]
+      if params[:category_id].present?
+        @common_cdt << "find_in_set(?,replace(concat_ws('/',orders_items.category_code,orders_items.category_id),'/',','))>0"
+        @common_value << params[:category_id]
+      end
+      if params[:department_id].present?
+        @common_cdt << "find_in_set(?,replace(orders.buyer_code,'/',','))>0"
+        @common_value << params[:department_id]
+      end
+      if params[:dep_s_name].present?
+        @common_cdt << " orders.seller_name like ?"
+        @common_value <<  "%#{params[:dep_s_name]}%"
+      end
+      @cdt = [@common_cdt.join(' and ')] + @common_value
+    end
 
 end

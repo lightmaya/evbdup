@@ -7,7 +7,7 @@ class Kobe::ArticlesController < KobeController
   def index
     # authorize! :index, Article, :message => "您没有相关权限！"
     # params[:q][:user_id_eq] = current_user.id unless current_user.admin?
-    @q = Article.where(get_conditions("articles")).ransack(params[:q]) 
+    @q = Article.where(get_conditions("articles")).ransack(params[:q])
     @articles = @q.result.includes([:author, :catalogs]).page params[:page]
   end
 
@@ -20,7 +20,7 @@ class Kobe::ArticlesController < KobeController
 
   def update_audit
     save_audit(@article)
-    # 如果需要审核 更新发布时间 
+    # 如果需要审核 更新发布时间
     @article.publish_time!
     redirect_to list_kobe_articles_path
   end
@@ -32,16 +32,14 @@ class Kobe::ArticlesController < KobeController
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
     # arr << ["task_queues.dep_id = ?", current_user.real_department.id]
     # cdt = get_conditions("articles", arr)
-    # @q =  Article.joins(:task_queues).where(cdt).ransack(params[:q]) 
+    # @q =  Article.joins(:task_queues).where(cdt).ransack(params[:q])
     # @articles = @q.result(distinct: true).page params[:page]
   end
 
   # 注册提交
   def commit
-    @article.change_status_and_write_logs("提交",
-      stateless_logs("提交","提交成功！", false),
-      @article.commit_params, false)
-    # 如果不需要审核 更新发布时间 
+    @article.change_status_and_write_logs("提交", stateless_logs("提交","提交成功！", false), @article.commit_params, false)
+    # 如果不需要审核 更新发布时间
     @article.publish_time!
     @article.reload.create_task_queue
     tips_get("提交成功。")
@@ -49,10 +47,10 @@ class Kobe::ArticlesController < KobeController
   end
 
   def new
-    @article.username = current_user.name 
-    @myform = SingleForm.new(Article.xml, @article, 
+    @article.username = current_user.name
+    @myform = SingleForm.new(Article.xml, @article,
       { form_id: "article_form", action: kobe_articles_path,
-        title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2  
+        title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2
       })
 
     # xml默认调用obj.class.xml
@@ -91,7 +89,7 @@ class Kobe::ArticlesController < KobeController
     redirect_to kobe_articles_path
   end
 
-  private  
+  private
 
     # 获取审核的menu_ids
     def get_audit_menu_ids
@@ -106,8 +104,8 @@ class Kobe::ArticlesController < KobeController
     end
 
     # 只允许传递过来的参数
-    # def my_params  
-    #   params.require(:articles).permit(:title, :new_days, :top_type, 
-    #     :access_permission, :content)  
+    # def my_params
+    #   params.require(:articles).permit(:title, :new_days, :top_type,
+    #     :access_permission, :content)
     # end
 end

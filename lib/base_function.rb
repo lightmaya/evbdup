@@ -17,9 +17,9 @@ module BaseFunction
     	result = obj.attributes[node["column"]]
     else
     	if obj.class.attribute_method?("details") && !obj.attributes["details"].blank?
-    		doc = Nokogiri::XML(obj["details"])
-    		tmp = doc.xpath("/root/node[@name='#{node["name"]}']").first
-    		result = tmp.blank? ? "" : tmp["value"]
+        doc = Nokogiri::XML(obj["details"])
+        tmp = doc.xpath("/root/node[@name='#{node["name"]}']").first
+        result = tmp.blank? ? "" : tmp["value"]
     	end
     end
     result = "%g" % result if result.is_a?(Float)
@@ -65,17 +65,17 @@ module BaseFunction
 
   # 哈希转成syml格式的字符串，供JS调用
   def hash_to_string(ha)
-  	if ha.is_a?(Hash)
-  		arr = []
-  		ha.each do |key,value|
-  			arr << "#{key}:#{hash_to_string(value)}"
-  		end
-  		return "{#{arr.join(',')}}"
-  	elsif ha.is_a?(String)
-  		return "'#{ha}'"
-  	else
-  		return ha
-  	end
+    if ha.is_a?(Hash)
+      arr = []
+      ha.each do |key,value|
+        arr << "#{key}:#{hash_to_string(value)}"
+      end
+      return "{#{arr.join(',')}}"
+    elsif ha.is_a?(String)
+      return "'#{ha}'"
+    else
+      return ha
+    end
   end
 
 
@@ -83,7 +83,7 @@ module BaseFunction
   def show_obj_info(obj, xml, options = {})
     # td列数
     grid = options[:grid] || 2
-
+    wid = 50/grid
     html = ""
     tbody = ""
 
@@ -100,7 +100,7 @@ module BaseFunction
     tds.each_slice(grid).with_index do |node, i|
       tbody << "<tr>"
       node.each_with_index{|n, ii|
-        tbody << "<td>#{n.attributes["name"]}：</td><td>#{get_node_value(obj,n)}</td>"
+        tbody << "<td width='#{wid}%'>#{n.attributes["name"]}：</td><td width='#{wid}%'>#{get_node_value(obj,n)}</td>"
         tbody << "<td></td><td></td>" * (grid-ii-1) if (n == node.last) && (ii != grid -1)
       }
       tbody << "</tr>"
@@ -130,8 +130,6 @@ module BaseFunction
   end
 
   alias_method :info_html, :show_obj_info
-
-
 
   # 显示评价记录 -- 订单或产品
   def show_estimates(obj)
@@ -227,7 +225,7 @@ module BaseFunction
   end
 
   def something_not_found
-    "<div class='alert alert-danger fade in'><h4><i class='fa fa-frown-o font_24px'></i> 抱歉，没有找到相关信息。</h4></div>"
+    "<div class='alert alert-warning fade in'><h4><i class='fa fa-frown-o font_24px'></i> 抱歉，没有找到相关信息。</h4></div>".html_safe
   end
 
   #  截取字符串固定长度，支持中英文混合，length 为中文的长度，一个英文相当于0.5个中文长度

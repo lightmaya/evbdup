@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module JamesHelper
 
-  # 首页品目标签 品目共三级 
+  # 首页品目标签 品目共三级
   # 第一级显示在首页上 鼠标悬浮显示二三级 第二级用li_header_tag显示 第三级跳转到channel页面
   def li_header_tag(name, icon = '')
     "<li><div class='category_header'>#{get_name_with_icon(name, icon)}</div></li>".html_safe
@@ -17,13 +17,12 @@ module JamesHelper
     "<li><div class='category_grey'>#{get_name_with_icon(name, icon)}</div></li>".html_safe
   end
 
-  # 带日期的li标签 主要用于首页 显示公告
+  # 带日期的li标签 主要用于首页 显示公告 length = 0 表示不用按length截取title
   def li_tag_with_date(title, link_url, date, length = 20, new_cdt=false, new_cont='new', new_color='red')
-    
     new_tag = %Q{<span class="text-highlights text-highlights-#{new_color} rounded-2x">#{new_cont}</span>}
     %Q{
       <li>
-        <a href='#{link_url}' title='#{title}' target='_blank'>#{text_truncate(title, length)}</a> 
+        <a href='#{link_url}' title='#{title}' target='_blank'>#{length == 0 ? title : text_truncate(title, length)}</a>
         #{new_tag if new_cdt}
         <span class='hex pull-right'>#{date}</span>
       </li>
@@ -35,7 +34,22 @@ module JamesHelper
     return '' if article.blank?
     new_cdt = (article.publish_time + article.new_days.days) >= Time.now
     li_tag_with_date(article.title, article_path(article), article.publish_time.to_date, length, new_cdt)
-  end  
+  end
+
+  # 网上竞价需求
+  def wsjj_xq_li_tag(project, length = 20)
+    li_tag_with_date(project.name, bid_project_path(project), project.end_time.to_date, length)
+  end
+
+  # 网上竞价结果
+  def wsjj_jg_li_tag(project, length = 18)
+    li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, length, true, (project.status == 23 ? '中标' : '废标'), (project.status == 23 ? 'green' : 'blue'))
+  end
+
+  # 资产划转 包括无偿划转和协议转让
+  def transfer_li_tag(project, length = 20)
+    li_tag_with_date(project.name, transfer_path(project), project.submit_time.to_date, length)
+  end
 
   # 首页更多标签
   def more_tag(link_url='')
@@ -60,7 +74,7 @@ module JamesHelper
             <div class="overflow-hidden">
                 <img alt="" src="#{img}" class="img-responsive">
             </div>
-            <a href="#{link_url}" class="btn-more hover-effect" target="_blank" title="#{product.name}">详情 +</a>         
+            <a href="#{link_url}" class="btn-more hover-effect" target="_blank" title="#{product.name}">详情 +</a>
           </div>
 
           <div class="product-description">
@@ -74,7 +88,7 @@ module JamesHelper
                   <span class="line-through fl clear font-size-14">市场价：<b class="b_m hide">请登录查看</b></span>
                   <span class="fl clear color-red">入围价：<b class="b_b hide">请登录查看</b></span>
                 </div>
-              </div>    
+              </div>
             </div>
           </div>
 
@@ -97,26 +111,26 @@ module JamesHelper
             </ol>
             <div class="carousel-inner">
               <div class="item active">
-                <div class="easy-block-v1-badge rgba-default">办公楼外景</div> 
+                <div class="easy-block-v1-badge rgba-default">办公楼外景</div>
                 <img alt="" src="/plugins/images/ad/agents/thumb/#{dep.old_id}_1.jpg">
               </div>
               <div class="item">
-                <div class="easy-block-v1-badge rgba-default">车间外景</div> 
+                <div class="easy-block-v1-badge rgba-default">车间外景</div>
                 <img alt="" src="/plugins/images/ad/agents/thumb/#{dep.old_id}_2.jpg">
               </div>
               <div class="item">
-                <div class="easy-block-v1-badge rgba-default">车间内景</div> 
+                <div class="easy-block-v1-badge rgba-default">车间内景</div>
                 <img alt="" src="/plugins/images/ad/agents/thumb/#{dep.old_id}_3.jpg">
               </div>
             </div>
           </div>
-          <div class="margin-top-10 font-size-16">#{text_truncate(dep.name, 15)}</div>     
+          <div class="margin-top-10 font-size-16">#{text_truncate(dep.name, 15)}</div>
           <ul class="list-unstyled">
             <li><span class="color-green">信用分：</span> #{dep.comment_total}</li>
             <li class="h40"><span class="color-green">入围产品：</span> #{text_truncate(cat, 32)}</li>
-          </ul>    
+          </ul>
           <a class="btn-u btn-u-sm" href="#">详情 + </a>
-        </div>  
+        </div>
       </div>
     }.html_safe
   end

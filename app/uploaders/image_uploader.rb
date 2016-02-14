@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-
 class ImageUploader < BaseUploader
 
   include CarrierWave::MiniMagick
@@ -51,6 +50,5 @@ class ImageUploader < BaseUploader
   def blank?
     url == blank_url
   end
-
 
 end

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class BidProject < ActiveRecord::Base
   # has_many :uploads, as: :master
-  
+
   has_many :uploads, class_name: :BidProjectUpload, foreign_key: :master_id
 
   has_many :items, class_name: "BidItem"
@@ -14,7 +14,7 @@ class BidProject < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :item
-  belongs_to :department  
+  belongs_to :department
 
   belongs_to :budget
 
@@ -24,7 +24,7 @@ class BidProject < ActiveRecord::Base
 
   # 模型名称
   Mname = "网上竞价项目"
-  
+
   # 附件的类
   def self.upload_model
     BidProjectUpload
@@ -36,24 +36,24 @@ class BidProject < ActiveRecord::Base
     self.rule_step = 'start'
   end
 
-  after_create do 
+  after_create do
     create_no
 
   end
 
-  after_save do 
+  after_save do
     budget.try(:used!)
   end
-  
+
   include AboutStatus
-  
+
   # 可投标 可选择中标人的状态
   def self.bid_and_choose_status
     16
   end
 
-  # 中文意思 状态值 标签颜色 进度 
-	def self.status_array
+  # 中文意思 状态值 标签颜色 进度
+  def self.status_array
     # [
     #   ["暂存", "0", "orange", 10],
     #   ["需求等待审核", "15", "blue", 30],
@@ -95,19 +95,23 @@ class BidProject < ActiveRecord::Base
   #   # }
   # end
 
+  # 最低报价
+  def lowest_bid
+    self.bid_project_bids.order("bid_project_bids.total ASC, bid_project_bids.bid_time ASC").first
+  end
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
     case act
     when "show"
       true
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
-    when "commit" 
+    when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "update_audit", "audit" 
+    when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "choose", "update_choose"
       self.can_choose? && current_u.try(:id) == self.user_id
@@ -123,7 +127,7 @@ class BidProject < ActiveRecord::Base
   def is_end?
     Time.now - self.end_time > 0
   end
-    
+
   def can_bid?
     self.status == BidProject.bid_and_choose_status && !is_end?
   end
@@ -186,7 +190,7 @@ class BidProject < ActiveRecord::Base
     order.name = self.name
     order.sn = self.code
     order.contract_sn = self.code.gsub(self.rule.try(:code), 'ZCL')
-    order.buyer_name = self.buyer_dep_name 
+    order.buyer_name = self.buyer_dep_name
     order.payer = self.invoice_title
 
     order.buyer_id = self.department_id
@@ -197,7 +201,7 @@ class BidProject < ActiveRecord::Base
     order.buyer_mobile = self.buyer_mobile
     order.buyer_addr = self.buyer_add
 
-    bid = self.bid_project_bid 
+    bid = self.bid_project_bid
     order.seller_name = bid.com_name
     order.seller_id = bid.department_id
     order.seller_code = bid.department.real_ancestry
@@ -225,9 +229,9 @@ class BidProject < ActiveRecord::Base
 
     bid.items.each do |item|
       xq_item = item.bid_item
-      order.items.build(  
+      order.items.build(
         quantity: xq_item.num, price: item.price,
-        category_id: xq_item.category_id, category_code: xq_item.category.ancestry, 
+        category_id: xq_item.category_id, category_code: xq_item.category.ancestry,
         category_name: xq_item.category.name, brand: item.brand_name,
         version: item.xh, unit: xq_item.unit,  total: item.total, summary: item.req
         )

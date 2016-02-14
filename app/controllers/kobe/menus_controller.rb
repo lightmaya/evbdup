@@ -1,16 +1,14 @@
 # -*- encoding : utf-8 -*-
 class Kobe::MenusController < KobeController
-  
+
   skip_before_action :verify_authenticity_token, :only => [:move]
-  # protect_from_forgery :except => :index
   before_action :get_menu, :only => [:destroy, :delete]
   layout false, :only => [:edit, :new, :show, :delete]
-
   skip_authorize_resource :only => [:ztree]
-  
-	def index
+
+  def index
     @menu = Menu.find_by(id: params[:id]) if params[:id].present?
-	end
+  end
 
   def new
     @menu.parent_id = params[:pid] unless params[:pid].blank?
@@ -73,7 +71,7 @@ class Kobe::MenusController < KobeController
     ztree_nodes_json(Menu)
   end
 
-  private  
+  private
 
     def get_menu
       cannot_do_tips unless @menu.present? && @menu.cando(action_name)

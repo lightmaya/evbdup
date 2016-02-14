@@ -4,9 +4,9 @@ class BidProjectBid < ActiveRecord::Base
   has_many :items, class_name: "BidItemBid"
   # has_many :uploads, as: :master
   has_many :uploads, class_name: :BidProjectBidUpload, foreign_key: :master_id
-  
+
   belongs_to :user
-  belongs_to :department  
+  belongs_to :department
 
   default_value_for :is_bid, 0
 
@@ -15,7 +15,7 @@ class BidProjectBid < ActiveRecord::Base
   def self.upload_model
     BidProjectBidUpload
   end
-  
+
   def self.xml(who = '',options = {})
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
@@ -40,6 +40,7 @@ class BidProjectBid < ActiveRecord::Base
     update(total: items.sum("total"))
   end
 
+  # 联系方式
   def lx
     [self.mobile, self.tel].select{|i| i.present?}.join(" / ")
   end

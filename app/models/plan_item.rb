@@ -6,7 +6,7 @@ class PlanItem < ActiveRecord::Base
 
   # default_scope -> {order("id desc")}
 
-  before_save do 
+  before_save do
     self.category_ids = self.categoryids.split(",")
   end
 
@@ -14,12 +14,12 @@ class PlanItem < ActiveRecord::Base
 
   default_value_for :status, 0
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [
-    #   ["暂存", "0", "orange", 10], 
-    #   ["正常", "65", "yellow", 100], 
-    #   ["已过期", "54", "dark", 100], 
+    #   ["暂存", "0", "orange", 10],
+    #   ["正常", "65", "yellow", 100],
+    #   ["已过期", "54", "dark", 100],
     #   ["已删除", "404", "dark", 100]
     # ]
     self.get_status_array(["暂存", "正常", "已过期", "已删除"])
@@ -49,13 +49,13 @@ class PlanItem < ActiveRecord::Base
 
   def cando(act='',current_u=nil)
     case act
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status)
-    when "commit" 
+    when "commit"
       self.can_opt?("提交")
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除")
-    when "add_plan" 
+    when "add_plan"
       self.class.effective_status.include?(self.status) && self.end_time > Time.now
     else false
     end

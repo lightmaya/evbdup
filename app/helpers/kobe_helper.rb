@@ -92,7 +92,8 @@ module KobeHelper
           #{ link_to obj.to_do_list.name, obj.to_do_list.list_url }
           <span class="label rounded-2x label-red">#{obj.num}</span>
         |
-        desc = "暂时忽略 <i class='fa fa-minus-circle'></i>"
+        # desc = "暂时忽略 <i class='fa fa-minus-circle'></i>"
+        desc = ""
         str << show_to_do_div(title,desc,index)
         num = index + 1
       end
@@ -199,6 +200,7 @@ module KobeHelper
     return result
   end
 
+  # 面包屑
   def breadcrumbs_tag
     cdt = "(find_in_set(#{current_user.user_type}, user_type) > 0 or find_in_set(#{Dictionary.audit_user_type}, user_type) > 0)"
     menu = Menu.find_by("route_path = ? and #{cdt}", request.fullpath.gsub('.html',''))

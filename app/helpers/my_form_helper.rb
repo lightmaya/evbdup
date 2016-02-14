@@ -35,7 +35,6 @@ module MyFormHelper
       # 自定义标题
       myform.html_code << "<div class='headline'><h2><strong>#{myform.options[:title]}</strong></h2></div>"
     end
-
   end
 
   def set_input_part(myform)
@@ -72,7 +71,7 @@ module MyFormHelper
   def set_total_part(myform)
     # 附加费用
     if myform.obj.class.respond_to?(:fee_xml)
-      str = myform.get_input_str(myform.obj.class.fee_xml, myform.obj, myform.table_name, 3)
+      str = myform.get_input_str(myform.obj.class.fee_xml, myform.obj, myform.table_name, 2)
       myform.html_code << content_tag(:div, raw(str.html_safe).html_safe, :class=>'tag-box tag-box-v1')
       tmp = %Q{
         $("input#" + master_table_names + "_deliver_fee").live('change blur',function(){sum_calc_total(master_table_names,slave_table_names);});

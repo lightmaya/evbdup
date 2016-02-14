@@ -14,9 +14,9 @@ class HomeController < JamesController
     jggg_articles = get_articles('招标结果公告')
     @jggg = jggg_articles.present? ? jggg_articles.order("id desc").limit(8) : []
     # 网上竞价需求公告
-    @wsjj_xq = BidProject.can_bid.order("id desc").limit(8)
+    @wsjj_xq = BidProject.can_bid.order("end_time desc").limit(8)
     # 网上竞价结果公告
-    @wsjj_jg = BidProject.where(status: [23, 33]).order("id desc").limit(8)
+    @wsjj_jg = BidProject.where(status: [23, 33]).order("updated_at desc").limit(8)
     # 畅销产品
     @products = Product.show.order("id desc").limit(8)
     # 入围供应商
@@ -27,7 +27,39 @@ class HomeController < JamesController
     # 无偿划转公告
     @wchz = Transfer.wchz.order("id desc").limit(8)
   end
-  
+
+  # 更多列表
+  def more_list
+    type_ha = Dictionary.more_tag_type
+    if type_ha.has_key? params[:type]
+      @title = type_ha[params[:type]]
+      # 重要通知 招标公告 招标结果公告
+      if params[:type].include? 'article'
+        articles = get_articles(type_ha[params[:type]])
+        @rs = articles.present? ? articles.order("id desc").page(params[:page]) : []
+      end
+
+      # 网上竞价需求公告
+      @rs = BidProject.can_bid.order("end_time desc").page(params[:page]) if params[:type] == 'wsjj_xq'
+      # 网上竞价结果公告
+      @rs = BidProject.where(status: [23, 33]).order("updated_at desc").page(params[:page]) if params[:type] == 'wsjj_jg'
+
+      # 协议转让公告
+      @rs = Transfer.xyzr.order("id desc").page(params[:page]) if params[:type] == 'xyzr'
+      # 无偿划转公告
+      @rs = Transfer.wchz.order("id desc").page(params[:page]) if params[:type] == 'wchz'
+    end
+  end
+
+  # 入围供应商名单
+  def dep_list
+    @q = Item.can_search.ransack(params[:q])
+    @rs = @q.result
+    @rs = @rs.page(params[:page]) if params[:q][:dep_names_cont].present?
+    @dep_rs = @rs.first.item_departments.page(params[:page]) if params[:q][:id_eq].present?
+  end
+
+
   def ajax_test
       render :text => "这是来自ajax的内容。"
   end
@@ -37,7 +69,7 @@ class HomeController < JamesController
   end
 
   def order_success
-    
+
   end
 
   def form_test
@@ -48,10 +80,10 @@ class HomeController < JamesController
     if current_user
       login = true
       # 如果有product_id, 返回价格
-      if params[:pids].present? 
+      if params[:pids].present?
         if current_user.cgr?
           @products = Product.where("id in (?)", params[:pids].split(","))
-          @products.each do |pr| 
+          @products.each do |pr|
             @rs << {"id" => pr.id, "bid_price" => ApplicationController.helpers.money(pr.bid_price), "market_price" => ApplicationController.helpers.money(pr.market_price)}
           end
         else
@@ -105,7 +137,7 @@ class HomeController < JamesController
         str << "，合计金额：#{@order.total}元，验证网址：http://fwgs.sinograin.com.cn/c/#{sn}?m=#{@order.total}"
         @qr = qrcode(str)
         render partial: @order.ht , layout: 'print'
-      end  
+      end
     end
   end
 
@@ -134,16 +166,16 @@ class HomeController < JamesController
         next if @combos[index].to_i == 0
         if q == "sort"
           if @combos[index].to_i == 1
-            params[:q][:s] = "id asc"  
+            params[:q][:s] = "id asc"
             @id_hash = {title: "上架时间 ▲", id: 2, q: "sort"}
           elsif @combos[index].to_i == 2
-            params[:q][:s] = "id desc"  
+            params[:q][:s] = "id desc"
             @id_hash = {title: "上架时间 ▼", id: 1, q: "sort"}
           elsif @combos[index].to_i == 3
-            params[:q][:s] = "market_price asc"  
+            params[:q][:s] = "market_price asc"
             @price_hash = {title: "市场价 ▲", id: 4, q: "sort"}
           elsif @combos[index].to_i == 4
-            params[:q][:s] = "market_price desc"  
+            params[:q][:s] = "market_price desc"
             @price_hash = {title: "市场价 ▼", id: 3, q: "sort"}
           end
         elsif q == "page"
@@ -159,7 +191,7 @@ class HomeController < JamesController
     def ult(source)
       combo_to_conditions(source)
       clazz = source.products.show
-      
+
       # 已选条件
       @qs = []
       # 关键参数
@@ -202,8 +234,8 @@ class HomeController < JamesController
             data_ary << {title: d, id: index + 1, q: h["name"]} if key_index != index + 1
           end
           h["data"] = data_ary
-          
-          @key_params << h 
+
+          @key_params << h
         end
       end
 

@@ -1,0 +1,77 @@
+<div class="headline"><h2><i class="fa fa-search font-size-22"></i> 入围供应商名单查询</h2></div>
+<div class="row tag-box tag-box-v5">
+  <%= search_form_for @q, url: dep_list_path, html: { method: :get, class: 'sky-form no-border' } do |f| %>
+    <div class="row">
+      <div class="col col-5">
+        <label class="label col col-4">供应商单位：</label>
+        <div class="col col-8">
+          <label class="input">
+            <i class="icon-append fa fa-user"></i>
+            <%= f.search_field :dep_names_cont, class: "form-control input-sm", placeholder: "请输入供应商名称..." %>
+          </label>
+        </div>
+      </div>
+
+      <div class="col col-5">
+        <label class="label col col-4">入围项目：</label>
+        <div class="col col-8">
+          <label class="select">
+            <select name="q[id_eq]" id="q_id_eq">
+              <option value="">请选择入围项目...</option>
+              <% Item.can_search.order('id desc').each do |i|%>
+                <option value="<%= i.id %>" <%= "selected=''" if params[:q][:id_eq].to_i == i.id %>><%= "#{i.name} [#{i.status_badge}]".html_safe %></option>
+              <% end %>
+            </select>
+            <i></i>
+          </label>
+        </div>
+      </div>
+
+      <div class="col col-2">
+        <button class="btn btn-success btn-sm" type="submit">查询</button>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @rs.blank? %>
+  <%= something_not_found %>
+<% elsif params[:q][:dep_names_cont].present? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>项目名称</th>
+        <th>项目状态</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @rs.each_with_index do |r, i|%>
+        <tr>
+          <td align="center"><%= i+1 %></td>
+          <td><%= link_to r.name, dep_list_path("q[id_eq]" => r.id) %></td>
+          <td align="center"><%= r.status_badge %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @rs %>
+<% elsif params[:q][:id_eq].present? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>单位名称</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @dep_rs.each_with_index do |d, i|%>
+        <tr>
+          <td align="center"><%= i+1 %></td>
+          <td><%= d.name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @dep_rs %>
+<% end %>

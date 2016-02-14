@@ -15,7 +15,6 @@ module ApplicationHelper
     javascript_include_tag(*args)
   end
 
-  
   # 必须项，红星
   def require_span
     "<span class='red'>* </span>".html_safe
@@ -42,12 +41,12 @@ module ApplicationHelper
     unless arr.is_a?(Array)
       return arr
     else
-      if arr.length < 3 
+      if arr.length < 3
         opts = btn ? {class: "btn btn-sm btn-default"} : {}
       else
         opts = arr[2]
         if btn
-          cls_name = "btn btn-sm btn-default" 
+          cls_name = "btn btn-sm btn-default"
           if opts.has_key?(:class) || opts.has_key?("class")
             cls_name << " #{opts[:class] || opts["class"]}"
           end
@@ -63,7 +62,7 @@ module ApplicationHelper
     return "" if arr.blank?
     unless dropdown || arr.length > 10
       return raw arr.map{|a|arr_to_link(a)}.join(" ").html_safe
-    else 
+    else
       first = arr_to_link(arr.shift)
       if first.index("<a").nil?
         top = "<button data-toggle='dropdown' class='btn btn-sm btn-default dropdown-toggle' type='button'>#{first} <i class='fa fa-sort-desc'></i></button>"
@@ -109,7 +108,7 @@ module ApplicationHelper
     contents = []
     arr.each_with_index do |a,i|
       icon = a.has_key?(:icon) ? "<i class='fa #{a[:icon]}'></i>" : ""
-      if i == 0 
+      if i == 0
         titles << "<li class='active'><a href='##{tag}-#{i}' data-toggle='tab'><h4>#{icon} #{a[:title]}</h4></a></li>"
         contents << "<div class='tab-pane fade in active' id='#{tag}-#{i}'>#{a[:content]}</div>"
       else
@@ -121,14 +120,14 @@ module ApplicationHelper
     <div class="tab-v2">
       <ul class="nav nav-tabs">
         #{titles.join}
-      </ul>                
+      </ul>
       <div class="tab-content">
         #{contents.join}
       </div>
     </div>|.html_safe
   end
 
-  # 页面提示信息(不是弹框) 
+  # 页面提示信息(不是弹框)
   def show_tips(type,title='',msg='')
     return raw %Q|
       <div class="alert #{get_alert_style(type)} fade in">
@@ -138,7 +137,7 @@ module ApplicationHelper
       </div>|.html_safe
   end
 
-  # 给提示信息加<p>标签 
+  # 给提示信息加<p>标签
   def get_tips_msg(msg)
     unless msg.blank?
       if msg.is_a?(Array)
@@ -158,7 +157,7 @@ module ApplicationHelper
     end
   end
 
-  # modal弹框 
+  # modal弹框
   # 按钮要有href="#div_id" data-toggle="modal"
   # 例如<a class="btn btn-sm btn-default" href="#div_id" data-toggle="modal">
   def modal_dialog(div_id='modal_dialog',content='',title='提示')
@@ -189,25 +188,25 @@ module ApplicationHelper
   #   <div class="step">
   #     <ul class="nav nav-justified">
   #       #{arr.join}
-  #     </ul>     
+  #     </ul>
   #   </div>|
   #   return raw str.html_safe
   # end
 
-  # 网页title
-  def title(page_title)
-    content_for :title, page_title.to_s
-  end
+  # # 网页title
+  # def title(page_title)
+  #   content_for :title, page_title.to_s
+  # end
 
-  # 加载css: <%= stylesheets 'my1','my2' %>
-  def stylesheets(*args)
-    stylesheet_link_tag(*args)
-  end
+  # # 加载css: <%= stylesheets 'my1','my2' %>
+  # def stylesheets(*args)
+  #   stylesheet_link_tag(*args)
+  # end
 
-  # 加载js: <%= javascripts 'my1','my2' %>
-  def javascripts(*args)
-    javascript_include_tag(*args)
-  end
+  # # 加载js: <%= javascripts 'my1','my2' %>
+  # def javascripts(*args)
+  #   javascript_include_tag(*args)
+  # end
 
   def link_to_blank(*args, &block)
     if block_given?
@@ -228,17 +227,17 @@ module ApplicationHelper
 
   # 加载富文本框插件UMeditor
   def include_umeditor
-    javascripts("/plugins/umeditor1_2_2/umeditor.config.js", 
-      "/plugins/umeditor1_2_2/umeditor.min.js", 
+    javascripts("/plugins/umeditor1_2_2/umeditor.config.js",
+      "/plugins/umeditor1_2_2/umeditor.min.js",
       "/plugins/umeditor1_2_2/lang/zh-cn/zh-cn.js"
-      ) + 
+      ) +
     stylesheets("/plugins/umeditor1_2_2/themes/default/css/umeditor.css")
   end
 
   # 加载富文本框插件Ueditor
   def include_ueditor
-    javascripts("/plugins/ueditor1_4_3/ueditor.config.js", 
-      "/plugins/ueditor1_4_3/ueditor.all.js", 
+    javascripts("/plugins/ueditor1_4_3/ueditor.config.js",
+      "/plugins/ueditor1_4_3/ueditor.all.js",
       "/plugins/ueditor1_4_3/lang/zh-cn/zh-cn.js",
       "/plugins/ueditor1_4_3/ueditor.parse.js"
       )
@@ -265,7 +264,7 @@ module ApplicationHelper
     return 0 if number.to_f == 0
     return pre << number_to_currency(number, {:unit => "¥", :delimiter => ",", :precision => precision, format: "%u%n"})
   end
- 
+
   #大写
   def total_money_cn(n)
     cNum = ["零","壹","贰","叁","肆","伍","陆","柒","捌","玖","-","-","万","仟","佰","拾","亿","仟","佰","拾","万","仟","佰","拾","元","角","分"]

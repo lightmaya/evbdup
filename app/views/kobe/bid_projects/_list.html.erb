@@ -31,7 +31,7 @@
             <th class="hidden-sm date">截止时间</th>
             <th class="hidden-sm">预算金额</th>
             <th class="hidden-sm">报价人数</th>
-            <th class="status_badge"><%= status_filter(BidProject) %></th>
+            <th class="status_badge"><%= action_name == 'list' ? '状态' : status_filter(BidProject) %></th>
             <th class="cando">操作</th>
           </tr>
         </thead>
@@ -51,7 +51,7 @@
         <% end %>
         </tbody>
       </table>
-      <%= paginate @bid_projects %> 
-    </div>                     
+      <%= paginate @bid_projects %>
+    </div>
 </div>
 

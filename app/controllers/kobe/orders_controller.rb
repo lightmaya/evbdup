@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 class Kobe::OrdersController < KobeController
 
-  before_action :get_order, :only => [:show, :edit, :update, :destroy, :commit, :print]
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
+  before_action :get_order, :except => [:index, :new, :create, :cart_order, :update_cart_order, :list, :my_list, :seller_list, :same_template]
 
   skip_authorize_resource :only => [:same_template]
 
@@ -18,12 +18,12 @@ class Kobe::OrdersController < KobeController
 
   def new
     @order = Order.init_order(current_user, 'ddcg')
-   #  @order.yw_type = 'ddcg'
-  	# @order.buyer_name = @order.payer = current_user.real_department.name
-   #  @order.buyer_man = current_user.name
-   #  @order.buyer_tel = current_user.tel
-   #  @order.buyer_mobile = current_user.mobile
-   #  @order.buyer_addr = current_user.department.address
+    #  @order.yw_type = 'ddcg'
+    # @order.buyer_name = @order.payer = current_user.real_department.name
+    #  @order.buyer_man = current_user.name
+    #  @order.buyer_tel = current_user.tel
+    #  @order.buyer_mobile = current_user.mobile
+    #  @order.buyer_addr = current_user.department.address
     slave_objs = [OrdersItem.new(order_id: @order.id)]
     @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
@@ -204,8 +204,8 @@ class Kobe::OrdersController < KobeController
 
   def update_invoice_number
      @order.update(invoice_number: params[:number] )
-     write_logs(@order, '填写发票')
-     redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
+     write_logs(@order, '填写发票', "发票号：#{params[:number]}")
+     redirect_back_or request.referer
   end
 
   private
@@ -224,11 +224,11 @@ class Kobe::OrdersController < KobeController
 
     # show页面的数组
     def get_show_arr
-      obj_contents = show_obj_info(@order,Order.xml,{title: "基本信息"})
+      obj_contents = show_obj_info(@order,Order.xml,{title: "基本信息", grid: 3})
       @order.items.each_with_index do |item, index|
-        obj_contents << show_obj_info(item,OrdersItem.xml,{title: "产品明细 ##{index+1}"})
+        obj_contents << show_obj_info(item,OrdersItem.xml,{title: "产品明细 ##{index+1}", grid: 4})
       end
-      obj_contents << show_obj_info(@order,Order.fee_xml,{title: "附加费用", grid: 3})
+      obj_contents << show_obj_info(@order,Order.fee_xml,{title: "附加费用", grid: 2})
       obj_contents << show_total_part(@order.total)
       @arr  = []
       @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
@@ -276,7 +276,7 @@ class Kobe::OrdersController < KobeController
       end
     end
 
-    # 更新主从表并写日志
+    # 确认订单并写日志
     def update_confirm_and_write_logs(master_xml, slave_xml)
       cs = @order.get_current_step
       act = cs.is_a?(Hash) ? cs["name"] : "确认订单"

@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-
 class CartController < JamesController
   # before_filter :find_product_and_seller, :only => [:change]
   skip_filter :find_cart, :only => [:destroy]
@@ -20,7 +19,7 @@ class CartController < JamesController
   end
 
   def show
-  
+
   end
 
   # 改变购买状态
@@ -59,5 +58,5 @@ class CartController < JamesController
 
   #   return render_404 if @seller.blank?
   # end
- 
+
 end

@@ -9,12 +9,12 @@ class Agent < ActiveRecord::Base
   include AboutStatus
 
   default_value_for :status, 65
-  
-  before_save do 
+
+  before_save do
     self.agent_id = Department.find_by(name: self.name).try(:id)
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["正常", "65", "yellow", 100], ["已删除", "404", "dark", 100]]
     self.get_status_array(["正常", "已删除"])
@@ -54,9 +54,9 @@ class Agent < ActiveRecord::Base
     when "show"
       # 上级单位或者总公司人
       current_u.department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false
     end

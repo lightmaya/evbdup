@@ -1,11 +1,10 @@
 # -*- encoding : utf-8 -*-
-
 class FileUploader < BaseUploader
-  
+
   def store_dir
     dyniamc_dir
   end
-  
+
   def url
     '/' + dyniamc_dir + "/#{file.try(:filename)}"
   end

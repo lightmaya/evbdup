@@ -4,74 +4,75 @@
   <div class="headline-center">
     <h2><%= "#{@bid_project.name}#{'中标' if @bid_project.status == 23}#{'废标' if @bid_project.status == 33}公告" %>
       <div class="service-block-v5">
-				<p> 时间：<%= @bid_project.created_at %></p>
-		  </div>
+        <p> 时间：<%= @bid_project.created_at %></p>
+      </div>
     </h2>
   </div>
 </div>
 <div class="container">
-	<%= @obj_contents %>
-	<%= uploads_html(@bid_project, {title: true}).html_safe %>
-	<% if @bid_project.status == BidProject.bid_and_choose_status %>
-		<% if @before_end > 0 %>
-			<div class='bid_project_time tc'>
-		    <span class='seconds hide'><%= @before_end %></span>
-		    <h4>据截止：</h4>
-		    <div class='time_str'></div>
-		    <hr>
-		    <%= link_to "我要报价", bid_kobe_bid_project_bids_path(bid_project_id: @bid_project), class: "btn-u btn-u-lg btn-u-purple" if current_user && @bid_project.check_user_can_bid?(current_user) %>
-		  </div>
-		<% else %>
-	  	<div class="alert alert-danger fade in tc center">
-			  <strong>抱歉!</strong>投标已截止!
-			</div>
-	  <% end %>
-	<% elsif @bid_project.status == 23 %>
-		<h5><i class="fa fa-chevron-circle-down"></i> 中标单位报价信息</h5>
-		<div>
-			<table class="table table-bordered table-hover">
-		    <tr>
-		    	<th>单位名称</th>
-		    	<th>报价总金额</th>
-		    </tr>
-		    <tr>
-		    	<td><%= @bid_project.bid_project_bid.com_name %></td>
-		    	<td><%= money @bid_project.bid_project_bid.total %></td>
-		    </tr>
-		  </table>
-		  <ul>
-		  	<li>采购人意见: <%= @bid_project.reason %></li>
-		  </ul> 
-		</div>
+  <%= @obj_contents %>
+  <%= uploads_html(@bid_project, {title: true}).html_safe %>
+  <% if @bid_project.status == BidProject.bid_and_choose_status %>
+    <% if @before_end > 0 %>
+      <div class='bid_project_time tc'>
+        <span class='seconds hide'><%= @before_end %></span>
+        <h4>据截止：</h4>
+        <div class='time_str'></div>
+        <%= (@bid_project.lowest_bid.present? ? "<h4>当前最低报价：#{money @bid_project.lowest_bid.total.to_f} 元</h4>".html_safe : "<h4>暂无报价</h4>".html_safe) if @bid_project.lod == 1 %>
+        <hr>
+        <%= link_to "我要报价", bid_kobe_bid_project_bids_path(bid_project_id: @bid_project), class: "btn-u btn-u-lg btn-u-purple" if current_user && @bid_project.check_user_can_bid?(current_user) %>
+      </div>
+    <% else %>
+      <div class="alert alert-danger fade in tc center">
+        <strong>抱歉!</strong>投标已截止!
+      </div>
+    <% end %>
+  <% elsif @bid_project.status == 23 %>
+    <h5><i class="fa fa-chevron-circle-down"></i> 中标单位报价信息</h5>
+    <div>
+      <table class="table table-bordered table-hover">
+        <tr>
+          <th>单位名称</th>
+          <th>报价总金额</th>
+        </tr>
+        <tr>
+          <td><%= @bid_project.bid_project_bid.com_name %></td>
+          <td><%= money @bid_project.bid_project_bid.total %></td>
+        </tr>
+      </table>
+      <ul>
+        <li>采购人意见: <%= @bid_project.reason %></li>
+      </ul>
+    </div>
 
-		<h5><i class="fa fa-chevron-circle-down"></i> 提示</h5>
-		<div>
-			<ol>
-				<li>未成交单位名称和报价等信息不再显示；</li>
-		  	<li>请交易双方在规定的期限内签订书面采购合同，时间最晚不得超过成交公告发布之日起30日；</li>
-		  	<li>感谢各方的积极参与。如有问题请联系服务热线 <%= "#{Dictionary.service_bg_tel} / #{Dictionary.service_lj_tel}" %>。</li>
-				<li>报价截止时间之后，平台将自动按以下原则确定中标（成交）供应商候选人排序：符合采购需求，质量和服务相等，报价最低的排序在先；当出现相同报价时，信用等级高的排序在先；如信用等级也相同，先报价的排序在先。</li>
-				<li>采购人选择中标（成交）供应商时因遵循以下原则：采购人应按中标（成交）供应商候选人排序确认排名第一的中标（成交）供应商为中标（成交）供应商。</li>
-				<li>但出现以下情形时，采购人可按照中标（成交）供应商候选人排序选择排名在次的候选人为中标（成交）供应商，依此类推：1、排名在先的中标（成交）供应商候选人放弃中标的；2、排名在先的中标（成交）供应商候选人未实质性响应采购人的竞价要求的，采购人可拒绝该中标候选人的报价，但应对拒绝原因予以详细说明。3、排名在先的中标（成交）供应商候选人曾存在不良信用纪录的。</li>	
-		  	<li>中标资格被拒绝的供应商可在中标（成交）公告发布之日起七个工作日内按照平台中公告的联系方式向采购人的纪检监察或其集中采购管理部门反映。</li>
-	  	</ol>
-		</div>
+    <h5><i class="fa fa-chevron-circle-down"></i> 提示</h5>
+    <div>
+      <ol>
+        <li>未成交单位名称和报价等信息不再显示；</li>
+        <li>请交易双方在规定的期限内签订书面采购合同，时间最晚不得超过成交公告发布之日起30日；</li>
+        <li>感谢各方的积极参与。如有问题请联系服务热线 <%= "#{Dictionary.service_bg_tel} / #{Dictionary.service_lj_tel}" %>。</li>
+        <li>报价截止时间之后，平台将自动按以下原则确定中标（成交）供应商候选人排序：符合采购需求，质量和服务相等，报价最低的排序在先；当出现相同报价时，信用等级高的排序在先；如信用等级也相同，先报价的排序在先。</li>
+        <li>采购人选择中标（成交）供应商时因遵循以下原则：采购人应按中标（成交）供应商候选人排序确认排名第一的中标（成交）供应商为中标（成交）供应商。</li>
+        <li>但出现以下情形时，采购人可按照中标（成交）供应商候选人排序选择排名在次的候选人为中标（成交）供应商，依此类推：1、排名在先的中标（成交）供应商候选人放弃中标的；2、排名在先的中标（成交）供应商候选人未实质性响应采购人的竞价要求的，采购人可拒绝该中标候选人的报价，但应对拒绝原因予以详细说明。3、排名在先的中标（成交）供应商候选人曾存在不良信用纪录的。</li>
+        <li>中标资格被拒绝的供应商可在中标（成交）公告发布之日起七个工作日内按照平台中公告的联系方式向采购人的纪检监察或其集中采购管理部门反映。</li>
+      </ol>
+    </div>
 
-	<% elsif @bid_project.status == 33 %>
-		<h5><i class="fa fa-chevron-circle-down"></i> 废标理由</h5>
-		<div>
-		  <ul>
-		  	<li><%= @bid_project.reason %></li>
-		  </ul> 
-		</div>
+  <% elsif @bid_project.status == 33 %>
+    <h5><i class="fa fa-chevron-circle-down"></i> 废标理由</h5>
+    <div>
+      <ul>
+        <li><%= @bid_project.reason %></li>
+      </ul>
+    </div>
 
-	<% end -%>
+  <% end -%>
 </div>
 
 <script type="text/javascript">
-	$(function(){
-		$('.bid_project_time').each(function(index, item){
-	    item_count_down($(item), parseInt($(item).children('.seconds').text()));
-	  });
-	})
+  $(function(){
+    $('.bid_project_time').each(function(index, item){
+      item_count_down($(item), parseInt($(item).children('.seconds').text()));
+    });
+  })
 </script>

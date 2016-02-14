@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class Msg < ActiveRecord::Base
-	has_many :users, class_name: "MsgUser" 
+  has_many :users, class_name: "MsgUser"
   belongs_to :author, class_name: "User", foreign_key: "user_id"
 
   include AboutStatus
@@ -13,7 +13,7 @@ class Msg < ActiveRecord::Base
       Rufus::Scheduler.new.in "1s" do
         link_users
         ActiveRecord::Base.clear_active_connections!
-      end 
+      end
     end
   end
 
@@ -44,7 +44,7 @@ class Msg < ActiveRecord::Base
     end
   end
 
-  # 中文意思 状态值 标签颜色 进度 
+  # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [["暂存", "0", "orange", 10], ["已发布", "16", "yellow", 40], ["已删除", "404", "dark", 100]]
     self.get_status_array(["暂存", "已发布", "已删除"])
@@ -66,13 +66,13 @@ class Msg < ActiveRecord::Base
   def cando(act='', user)
     return false if user.try(:id) != self.user_id
     case act
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status)
-    when "commit" 
+    when "commit"
       self.can_opt?("提交")
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除")
-    else 
+    else
       false
     end
   end
@@ -97,15 +97,15 @@ class Msg < ActiveRecord::Base
         <node name='作者' column='user_name' class='required'/>
         <node name='状态' column='status' class='required' data_type='radio'  data='[[0, "暂存"],[2, "直接发送"]]' />
         <node name='接收人类型'  data_type='radio'  data='#{Dictionary.send_types}' column='send_type' class='required'/>
-        <node name='具体接收人' column='send_tos' class='required' data_type='textarea' hint="接收人类型为单位请填写单位ID，个人请填写登录名。多接收人用空格隔开。" />	
+        <node name='具体接收人' column='send_tos' class='required' data_type='textarea' hint="接收人类型为单位请填写单位ID，个人请填写登录名。多接收人用空格隔开。" />
         <node name='内容' column='content' class='required' data_type='richtext' style='width:100%;height:300px;' />
       </root>
     }
   end
 
   def content_html
-    "<h3 class=\"f10\">作者：#{self.user_name} 时间：#{self.created_at}</h3>" + 
-    "<hr/>" + 
+    "<h3 class=\"f10\">作者：#{self.user_name} 时间：#{self.created_at}</h3>" +
+    "<hr/>" +
     "#{self.content}".html_safe
   end
 
@@ -114,7 +114,7 @@ class Msg < ActiveRecord::Base
       Rufus::Scheduler.new.in "1s" do
         msg.link_users
         ActiveRecord::Base.clear_active_connections!
-      end 
+      end
     end
   end
 

@@ -11,11 +11,7 @@ module AboutRuleStep
   # 返回 change_status_and_write_logs(opt,stateless_logs,update_params=[]) 的update_params 数组
   def commit_params
     arr = []
-    if self.find_step_by_rule.blank?
-      arr << "rule_step = 'done'"
-    else
-      arr << "rule_step = 'start'"
-    end
+    arr << (self.find_step_by_rule.blank? ? "rule_step = 'done'" : "rule_step = 'start'")
     return arr
   end
 
@@ -172,10 +168,10 @@ module AboutRuleStep
     return arr
   end
 
-    # 该实例rule的步骤名称
-    def get_obj_step_names
-      self.get_obj_steps.map{ |e| e["name"] }
-    end
+  # 该实例rule的步骤名称
+  def get_obj_step_names
+    self.get_obj_steps.map{ |e| e["name"] }
+  end
 
   # 判断当前步骤在数组中的位置 返回整数
   def get_current_step_in_array(array=[])
@@ -183,6 +179,7 @@ module AboutRuleStep
     current_index = 0
     cs = self.get_current_step
     # 先判断rule_step
+    return array.length - 1 if cs == 'done'
     if cs.is_a?(Hash)
       index = array.index(cs["name"])
       return index if index.present?

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->  
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->  
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->  
+<head>
+  <title><%= yield(:title).presence || Dictionary.web_site_name %></title>
+
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="中储粮服务网 中储粮 集中采购 电子采购 网上商城 粮油机械">
+  <meta name="description" content="中储粮总公司唯一指定的物资集中采购平台。">
+  <meta name="author" content="zcl">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="shortcut icon" href="/favicon.ico">
+  <%= stylesheet_link_tag "errors" %>
+  <%= javascript_include_tag "errors" %>
+</head> 
+
+<body>
+  
+<div class="container">
+    <!--Error Block-->
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="error-v2">
+                <%= yield %>
+            </div>
+        </div>
+    </div>
+    <!--End Error Block-->
+</div>
+
+<script type="text/javascript">
+    $.backstretch([
+      "/plugins/images/bg_img/474918.jpg",
+      "/plugins/images/bg_img/447665.jpg"
+      ], {
+        fade: 1000,
+        duration: 7000
+    });
+</script>
+</body>
+</html> 

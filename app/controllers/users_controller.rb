@@ -81,21 +81,21 @@ class UsersController < JamesController
     end
   end
 
-  private  
+  private
 
-  def current_user=(user)
-    @current_user = user
-  end
-
-  def sign_in_user(user,remember_me = false)
-    remember_token = User.new_remember_token
-    if remember_me
-      cookies.permanent[:remember_token] = remember_token # 20年有效期
-    else
-      cookies[:remember_token] = remember_token # 30min 或关闭浏览器消失
+    def current_user=(user)
+      @current_user = user
     end
-    user.update_attribute(:remember_token, User.encrypt(remember_token))
-    self.current_user= user
-  end
+
+    def sign_in_user(user,remember_me = false)
+      remember_token = User.new_remember_token
+      if remember_me
+        cookies.permanent[:remember_token] = remember_token # 20年有效期
+      else
+        cookies[:remember_token] = remember_token # 30min 或关闭浏览器消失
+      end
+      user.update_attribute(:remember_token, User.encrypt(remember_token))
+      self.current_user= user
+    end
 
 end

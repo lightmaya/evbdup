@@ -30,5 +30,5 @@ class Area < ActiveRecord::Base
       name
     end
   end
-  
+
 end

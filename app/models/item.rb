@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 class Item < ActiveRecord::Base
-	has_many :item_categories, dependent: :destroy
+  has_many :item_categories, dependent: :destroy
   has_many :categories, through: :item_categories
-	has_many :item_departments, dependent: :destroy
+  has_many :item_departments, dependent: :destroy
   has_many :departments, through: :item_departments
   has_many :coordinators
   has_many :agents
@@ -11,27 +11,28 @@ class Item < ActiveRecord::Base
   # 已注册的入围供应商
   has_many :registered_departments, -> { where.not(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
   # 项目订单
-  has_many :orders_items 
+  has_many :orders_items
   has_many :orders, -> { distinct }, through: :orders_items
-	# default_scope -> {order("id desc")}
-  
+  # default_scope -> {order("id desc")}
+
   scope :usable, -> { where("items.status = #{Item.effective_status.join(', ')} and now() < items.end_time") }
+  scope :can_search, -> { where(status: [65, 68, 54]) }
 
-  default_value_for :status, 0 
+  default_value_for :status, 0
 
-	before_save do 
-		self.category_ids = self.categoryids.split(",") - ["734"]
-	end
+  before_save do
+    self.category_ids = self.categoryids.split(",") - ["734"]
+  end
 
-	after_save do 
+  after_save do
     if self.dep_names.present?
-  		self.dep_names.split("\r\n").each do |name|
-  			dep = Department.find_by(name: name)
-  			tmp = (dep.present? ? { name: name, department_id: dep.id } : { name: name })
+      self.dep_names.split("\r\n").each do |name|
+        dep = Department.find_by(name: name)
+        tmp = (dep.present? ? { name: name, department_id: dep.id } : { name: name })
         self.item_departments.find_or_create_by(tmp)
-  		end
+      end
     end
-	end
+  end
 
   def self.fix_dep_names
     Item.all.each do |item|
@@ -40,20 +41,20 @@ class Item < ActiveRecord::Base
     end
   end
 
-	include AboutStatus
+  include AboutStatus
 
   # 是否过了有效期
   def is_end?
     Time.now > self.end_time
   end
 
-	# 中文意思 状态值 标签颜色 进度 
-	def self.status_array
+  # 中文意思 状态值 标签颜色 进度
+  def self.status_array
     # [
-    #   ["暂存", "0", "orange", 10], 
-    #   ["正常", "65", "yellow", 100], 
-    #   ["停止申请", "68", "dark", 100], 
-    #   ["已过期", "54", "dark", 100], 
+    #   ["暂存", "0", "orange", 10],
+    #   ["正常", "65", "yellow", 100],
+    #   ["停止申请", "68", "dark", 100],
+    #   ["已过期", "54", "dark", 100],
     #   ["已删除", "404", "dark", 100]
     # ]
     self.get_status_array(["暂存", "正常", "停止申请", "已过期", "已删除"])
@@ -85,22 +86,22 @@ class Item < ActiveRecord::Base
 
   def cando(act='',current_u=nil)
     case act
-    when "update", "edit" 
+    when "update", "edit"
       self.class.edit_status.include?(self.status)
-    when "commit" 
+    when "commit"
       self.can_opt?("提交")
-    when "delete", "destroy" 
+    when "delete", "destroy"
       self.can_opt?("删除")
-    when "recover", "update_recover" 
+    when "recover", "update_recover"
       self.can_opt?("恢复")
-    when "pause", "update_pause" 
+    when "pause", "update_pause"
       self.can_opt?("停止")
-    when "add_product" 
+    when "add_product"
       self.finalist?(current_u.department.id) && self.class.effective_status.include?(self.status)
-    when "add_agent" 
+    when "add_agent"
       self.finalist?(current_u.department.id) && self.class.effective_status.include?(self.status) && self.item_type
-    when "add_coordinator" 
-      self.finalist?(current_u.department.id) && self.class.effective_status.include?(self.status) && self.item_type      
+    when "add_coordinator"
+      self.finalist?(current_u.department.id) && self.class.effective_status.include?(self.status) && self.item_type
     else false
     end
   end
@@ -113,13 +114,13 @@ class Item < ActiveRecord::Base
 
   # 保存后提示哪些供应商已经注册 哪些没有注册
   def tips
-		unregistered_names = self.unregistered_departments.map(&:name).join("<br/> ")
-		registered_names = self.registered_departments.map(&:name).join("<br/> ")
-		tips = []
-		tips << "<span class='red'>以下单位还未注册，请联系供应商注册：</span><br/> #{unregistered_names}" if unregistered_names.present?
-		tips << "<span class='red'>以下单位已注册，提交项目后给这些供应商发送站内消息：</span><br/> #{registered_names}" if registered_names.present?
-		return tips
-	end
+    unregistered_names = self.unregistered_departments.map(&:name).join("<br/> ")
+    registered_names = self.registered_departments.map(&:name).join("<br/> ")
+    tips = []
+    tips << "<span class='red'>以下单位还未注册，请联系供应商注册：</span><br/> #{unregistered_names}" if unregistered_names.present?
+    tips << "<span class='red'>以下单位已注册，提交项目后给这些供应商发送站内消息：</span><br/> #{registered_names}" if registered_names.present?
+    return tips
+  end
 
   def self.xml(who='',options={})
     %Q{

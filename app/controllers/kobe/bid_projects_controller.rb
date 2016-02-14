@@ -7,7 +7,7 @@ class Kobe::BidProjectsController < KobeController
 
   def index
     params[:q][:user_id_eq] = current_user.id unless current_user.department.is_zgs?
-    @q = BidProject.where(get_conditions("bid_projects")).ransack(params[:q]) 
+    @q = BidProject.where(get_conditions("bid_projects")).ransack(params[:q])
     @bid_projects = @q.result.includes([:bid_project_bids]).page params[:page]
   end
 
@@ -50,7 +50,7 @@ class Kobe::BidProjectsController < KobeController
     # 确定中标人
     if @bid_project.status == 23
       # Rufus::Scheduler.new.in "1s" do
-        @bid_project.send_to_order
+      @bid_project.send_to_order
       #   ActiveRecord::Base.clear_active_connections!
       # end
     end
@@ -82,8 +82,8 @@ class Kobe::BidProjectsController < KobeController
 
     slave_objs = [@bid_project.items.build]
     @ms_form = MasterSlaveForm.new(BidProject.xml(true), BidItem.xml, @bid_project, slave_objs,
-      { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true, 
-        # upload_files_name: "bid_project", 
+      { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true,
+        # upload_files_name: "bid_project",
         title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 3},
         {title: '产品明细', grid: 3}
       )
@@ -121,7 +121,7 @@ class Kobe::BidProjectsController < KobeController
     redirect_to kobe_bid_projects_path
   end
 
-  private  
+  private
 
     # 获取审核的menu_ids
     def get_audit_menu_ids
@@ -130,7 +130,7 @@ class Kobe::BidProjectsController < KobeController
 
     def get_show_arr
       @arr  = []
-      obj_contents = show_obj_info(@bid_project, BidProject.xml(current_user.real_department.is_ancestors?(@bid_project.department_id)), {title: "基本信息", grid: 3}) 
+      obj_contents = show_obj_info(@bid_project, BidProject.xml(current_user.real_department.is_ancestors?(@bid_project.department_id)), {title: "基本信息", grid: 3})
       @bid_project.items.each_with_index do |item, index|
         obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 3})
       end
@@ -145,12 +145,12 @@ class Kobe::BidProjectsController < KobeController
       end
       @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
       @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
-      
+
     end
     # 只允许传递过来的参数
-    # def my_params  
-    #   params.require(:bid_projects).permit(:title, :new_days, :top_type, 
-    #     :access_permission, :content)  
+    # def my_params
+    #   params.require(:bid_projects).permit(:title, :new_days, :top_type,
+    #     :access_permission, :content)
     # end
 
     def get_project_name
@@ -165,4 +165,5 @@ class Kobe::BidProjectsController < KobeController
       cannot_do_tips unless @bid_project.present? && @bid_project.cando(action_name,current_user)
       audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@bid_project,@menu_ids)
     end
+
 end

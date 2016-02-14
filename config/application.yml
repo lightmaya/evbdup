@@ -4,7 +4,7 @@ defaults: &defaults
   encodes: ["UTF-8", "GBK"]
   web_site_name: "中储粮服务网"
   web_site_domain: "http://fwgs.sinograin.com.cn"
-  web_site_founded_year: 2011 
+  web_site_founded_year: 2011
   web_site_key_words: "中储粮 服务网 集中采购 电子化平台 中国储备粮管理总公司 粮机"
   company_name: "中国储备粮管理总公司"
   company_short_name: "中储粮总公司"
@@ -17,13 +17,13 @@ defaults: &defaults
   # 地址
   company_addr: "北京市海淀区西四环中路16号院8号楼"
   # 技术支持
-  technical_support: "(010)68776617、68776623" 
+  technical_support: "(010)68776617、68776623"
   # 传真
   fax: "(010)68776924"
   # 网站邮箱
   web_email: "cgzx@sinograin.com.cn"
   # 快速通道
-  friendly_link: 
+  friendly_link:
     "中储粮网上商城": "http://mall.sinograin.com.cn/"
     "中储粮服务网": "http://fwgs.sinograin.com.cn"
   # 首页品目分类 没有产品的提示
@@ -41,7 +41,7 @@ defaults: &defaults
   # 状态约定，对6求模，0待定(等待审核)，1有效(纳入统计)，2无效（已作废、已撤销）,3重要（审核不通过），4警告提醒（未提交、 未完成、等待评论、等待发货、等待确认），5其他
   # '已删除'统一定为98，除了管理员外一般情况列表不显示
   # 状态为数组形式，分别代表 中文含义 状态值 颜色 进度条
-  # status: 
+  # status:
   #   users: [["资料未填写",0,"light",10], ["正常",1,"u",100], ["冻结",2,"yellow",100], ["未审核",3,"orange",20],["已删除",98,"red",100]]
   #   articles: [["暂存",0,"light",10], ["已发布",1,"u",100], ["审核不通过",2,"purple",100], ["已删除",98,"light",100]]
   #   suggestions: [
@@ -97,20 +97,17 @@ defaults: &defaults
   # 项目类型
   item_type: [[0,"厂家直销"],[1,"代理商供货"]]
   asset_status: [[1,"在用"],[2,"闲置"],[3,"转移"],[4,"报废"]]
-  yw_type:  { xygh: "协议供货", ddcg: "定点采购", wsjj: "网上竞价", dscg: "电商采购", grcg: "个人采购" }
+  yw_type: { xygh: "协议供货", ddcg: "定点采购", wsjj: "网上竞价", dscg: "电商采购", grcg: "个人采购" }
   faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
   manage_user_type: 1
   dep_purchaser_id: 2
   dep_supplier_id: 3
   audit_user_type: 7
   ht_template: [ ["bg", "办公物资"], ["lj", "粮机物资"], ["qc", "汽车采购"], ["bzw", "包装物采购"], ["gc", "建筑工程"], ["gz", "职工工装"], ["ds", "电商采购"]]
+  # 首页更多标签
+  more_tag_type: { article_zytz: '重要通知', article_zbgg: '招标公告', article_jggg: '招标结果公告', wsjj_xq: '网上竞价公告', wsjj_jg: '竞价结果公告', xyzr: '协议转让公告', wchz: '无偿划转公告' }
 
-  # 状态数组 
-  # 无效状态：除7取余数为5 例如 已删除404 404%7=5
-  # 纳入统计范围内的状态：除7取余数为0 
-  # 等待审核的状态：除7取余数为1
-  # =========================================
-  # new 
+  # 状态数组
   # key: [状态中文, 状态数字]
   # value: [状态标签颜色, 百分比数字]
   # 可以修改、删除、提交、发布的状态：除7余数是0
@@ -119,7 +116,7 @@ defaults: &defaults
   # 卖方处理状态：除7余数是3
   # 买方处理状态：除7余数是4
   # 完结的无效状态：除7余数是5
-  all_status: 
+  all_status:
     # 可以修改、删除、提交、发布的状态：除7余数是0
     # 标签颜色 暂存["orange", "橙色"] 拒绝["purple", "紫色"]["red", "红色"]
     ["暂存", "0"]: ["orange", 10]
@@ -130,7 +127,7 @@ defaults: &defaults
     ["已撤回", "35"]: ["orange", 20]
     ["卖方退回", "42"]: ["orange", 20]
 
-    # 等待审核的状态：除7余数是1 
+    # 等待审核的状态：除7余数是1
     # 标签颜色 ["blue", "浅蓝"],["sea", "蓝绿色"]["aqua", "浅蓝色"]["dark-blue", "深蓝色"]
     ["等待审核", "8"]: ["blue", 60]
     ["需求等待审核", "15"]: ["blue", 30]
@@ -139,7 +136,7 @@ defaults: &defaults
     ["撤回等待审核", "36"]: ["aqua", 30]
     ["作废等待审核", "43"]: ["aqua", 30]
 
-    # 有效状态：除7余数是2 
+    # 有效状态：除7余数是2
     # 标签颜色 已完成是["u", "草绿"], 其他有效状态是["yellow", "黄色"]
     ["已完成", "100"]: ["u", 100]
     ["自动生效", "2"]: ["yellow", 70]

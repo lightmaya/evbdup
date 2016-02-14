@@ -8,9 +8,9 @@ class Kobe::CategoriesController < KobeController
 
   skip_authorize_resource :only => [:ztree, :valid_name]
 
-	def index
+  def index
     @category = Category.find(params[:id]) if params[:id].present?
-	end
+  end
 
   def show
     @arr  = []
@@ -19,9 +19,8 @@ class Kobe::CategoriesController < KobeController
       create_objs_from_xml_model(@category.params_xml, CategoryParam).each_with_index do |param,index|
         obj_contents << show_obj_info(param,CategoryParam.xml,{title: "参数明细 ##{index+1}"})
       end
-      
     end
-    @arr << {title: "详细信息", icon: "fa-info", content: obj_contents} 
+    @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
     @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@category)}
   end
 
@@ -42,7 +41,7 @@ class Kobe::CategoriesController < KobeController
     if category
       redirect_to kobe_categories_path(id: category)
     else
-      redirect_back_or      
+      redirect_back_or
     end
   end
 
@@ -53,9 +52,9 @@ class Kobe::CategoriesController < KobeController
 
   # 删除
   def delete
-    render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_category_form', action: kobe_category_path(@category), method: 'delete' } 
+    render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_category_form', action: kobe_category_path(@category), method: 'delete' }
   end
-  
+
   def destroy
     @category.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     @category.clean_cache_ids

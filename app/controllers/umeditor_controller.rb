@@ -30,18 +30,18 @@ class UmeditorController < ApplicationController
             size: asset.data.size,
             originalName: asset.store_name,
             state: "SUCCESS"}
-      
+
       result = %Q|{"name": "#{asset.store_name}", "originalName": "#{asset.original_name}",
         "size": "#{asset.data.size.to_s}", "state": "SUCCESS", "type": "#{asset.data.file.extension}",
         "url": "#{asset.data.url}"}|
         # result = "{\"name\":\""+ asset.store_name +"\", \"originalName\": \""+ asset.store_name +
         # "\", \"size\": " + asset.data.size.to_s +", \"state\": \""+ "SUCCESS" +
-        # "\", \"type\": \"" + asset.data.file.extension.downcase + "\", \"url\": \"" + 
+        # "\", \"type\": \"" + asset.data.file.extension.downcase + "\", \"url\": \"" +
         # asset.data.url + "\"}"
 
       if callback.blank?
         render text: result
-      else  
+      else
         render text: "<script>"+ callback +"(" + result + ")</script>"
       end
     else
@@ -49,6 +49,5 @@ class UmeditorController < ApplicationController
     end
 
   end
-
 
 end

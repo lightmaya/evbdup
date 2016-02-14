@@ -7,7 +7,7 @@ class Kobe::DailyCostsController < KobeController
 
   # 辖区内采购计划
   def index
-    @q = DailyCost.where(get_conditions("daily_costs")).ransack(params[:q]) 
+    @q = DailyCost.where(get_conditions("daily_costs")).ransack(params[:q])
     @daily_costs = @q.result.page params[:page]
   end
 
@@ -26,7 +26,7 @@ class Kobe::DailyCostsController < KobeController
 
   def update
     update_msform_and_write_logs(@daily_cost, DailyCost.xml, DailyCostItem, DailyCostItem.xml, {:action => "修改费用信息", :slave_title => "费用信息"}, {name: create_name})
-    redirect_to kobe_daily_costs_path 
+    redirect_to kobe_daily_costs_path
   end
 
   def edit
@@ -76,19 +76,18 @@ class Kobe::DailyCostsController < KobeController
     redirect_to list_kobe_daily_costs_path
   end
 
-
   private
 
     def get_audit_menu_ids
       @menu_ids = Menu.get_menu_ids("DailyCost|list")
     end
 
-   #是否有权限操作项目
+    #是否有权限操作项目
     def get_daily_cost
       cannot_do_tips unless @daily_cost.present? && @daily_cost.cando(action_name,current_user)
       audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@daily_cost,@menu_ids)
     end
-   
+
     def get_show_arr
       obj_contents = show_obj_info(@daily_cost,DailyCost.xml,{grid: 3})
       @daily_cost.items.each_with_index do |p, index|
