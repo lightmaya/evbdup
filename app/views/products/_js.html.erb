@@ -35,6 +35,11 @@
   });
 
   function add_to_cart(seller_id){
+    // 根据项目和入围供应商的级别判断是否可以加入购物车
+    if(!$.parseJSON($("#can_cart").val())){
+      flash_dialog("该产品的供应商不是A类供应商，不能加入购物车，请选择其他产品！");
+      return false;
+    }
     var num = parseInt($("#qty").val());
     if ($.isBlank(num) || num < 1){
       num = 1

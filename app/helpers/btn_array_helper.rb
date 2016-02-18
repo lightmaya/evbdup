@@ -136,7 +136,7 @@ module BtnArrayHelper
     # 维护总协调人
     arr << [obj.class.icon_action("维护总协调人"), list_kobe_coordinators_path(item_id: obj.id)] if can?(:list, Coordinator) && obj.cando("add_coordinator", current_user)
     # 供应商分级
-    arr << [obj.class.icon_action("供应商分级"), classify_kobe_items_path(item_id: obj.id)] if can?(:classify, obj) && obj.cando("classify", current_user)
+    arr << [obj.class.icon_action("供应商分级"), classify_kobe_items_path(item_id: obj.id), target: "_blank"] if can?(:classify, obj) && obj.cando("classify", current_user)
     return arr
   end
 

@@ -164,4 +164,14 @@ class Product < ActiveRecord::Base
     end
   end
 
+  # 是否可以加入购物车  可以加入购物车的条件：1.产品的项目不分级 2. 项目分级+产品的供应商是A级供应商
+  def add_to_cart?
+    if self.item.is_classify
+      dep = ItemDepartment.find_by(item_id: self.item_id, department_id: self.department_id)
+      dep.present? && dep.classify == 1
+    else
+      true
+    end
+  end
+
 end

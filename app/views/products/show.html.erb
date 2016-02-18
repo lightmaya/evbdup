@@ -1,8 +1,9 @@
 <%= title @product.name %>
 <%= render "js" %>
 <%= hidden_field_tag "product_id", @product.id %>
+<%= hidden_field_tag "can_cart", @product.add_to_cart? %>
 <div class="wrapper">
-  <!--=== Header v5 ===-->   
+  <!--=== Header v5 ===-->
   <!--=== Shop Product ===-->
   <div class="shop-product">
     <!-- Breadcrumbs v5 -->
@@ -11,7 +12,7 @@
             <li><a href="index.html"><i class="fa fa-home"></i></a></li>
             <li><%= link_to_blank @product.category.name, channel_path(@product.category_id) %></li>
             <li class="active"><%= @product.name %></li>
-        </ul> 
+        </ul>
     </div>
     <!-- End Breadcrumbs v5 -->
     <div class="container">
@@ -71,11 +72,11 @@
               <% else %>
                 <button id="xzgys" type="button" class="btn-u btn-u-sea-shop btn-u-lg">选择供应商</button>
               <% end -%>
-          </div><!--/end product quantity-->    
+          </div><!--/end product quantity-->
           <p class="wishlist-category"><strong>销售范围：</strong> <a href="#">全国(厂商协议供货)</a></p>
         </div>
       </div><!--/end row-->
-    </div>    
+    </div>
   </div>
   <!--=== End Shop Product ===-->
 
@@ -116,9 +117,9 @@
       </div>
       <!-- End Description -->
       <div class="tab-pane fade" id="gysxx">
-        
+
         <%= get_seller_info(@product) %>
-        
+
         <% unless @product.cjzx? %>
           <h5><i class="fa fa-chevron-circle-down"></i> 代理商列表：</h5>
           <div class="row p0_25">
@@ -147,7 +148,7 @@
 
       </div>
 
-      <!-- Reviews -->                
+      <!-- Reviews -->
       <div class="tab-pane fade" id="yhpl">
         <div class="product-comment margin-bottom-40">
           <div class="product-comment-in">
@@ -163,18 +164,18 @@
                     <li><i class="rating fa fa-star"></i></li>
                     <li><i class="rating fa fa-star"></i></li>
                   </ul>
-                </li>    
+                </li>
               </ul>
               <p><%= Time.now %></p>
             </div>
-          </div>    
+          </div>
         </div>
       </div>
-      <!-- End Reviews --> 
+      <!-- End Reviews -->
 
       <div class="tab-pane fade" id="jgjb">
         <form action="http://htmlstream.com/preview/unify-v1.7/Shop-UI/assets/php/demo-contacts-process.php" method="post" id="sky-form3" class="sky-form sky-changes-4">
-          <fieldset>                  
+          <fieldset>
             <div class="row">
               <section class="col col-6">
                 <label class="label"><%= require_span %>您的价格：</label>
@@ -207,7 +208,7 @@
                 </label>
               </section>
             </div>
-                        
+
             <section>
               <label class="label">备注：</label>
               <label class="textarea">
@@ -215,24 +216,24 @@
                   <textarea rows="4" name="message" id="message"></textarea>
               </label>
             </section>
-          </fieldset>    
+          </fieldset>
           <footer>
             <button type="submit" class="button">提交</button>
           </footer>
         </form>
-      </div>               
+      </div>
      </div>
     </div>
-  </div><!--/end container-->    
+  </div><!--/end container-->
 </div><!--/wrapper-->
 
 <!-- JS Global Compulsory -->
 <script>
     jQuery(document).ready(function() {
         App.init();
-        App.initScrollBar();        
+        App.initScrollBar();
         OwlCarousel.initOwlCarousel();
-        StyleSwitcher.initStyleSwitcher();      
+        StyleSwitcher.initStyleSwitcher();
         MasterSliderShowcase2.initMasterSliderShowcase2();
     });
-</script>           
+</script>
