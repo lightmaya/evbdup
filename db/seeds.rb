@@ -100,7 +100,8 @@ if Menu.first.blank?
     ["提交项目", "Item|commit"],
     ["停止项目", "Item|pause"],
     ["恢复项目", "Item|recover"],
-    ["删除项目", "Item|update_destroy"]
+    ["删除项目", "Item|update_destroy"],
+    ["供应商分级", "Item|classify"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: manage_user_type)
     tmp.parent = item

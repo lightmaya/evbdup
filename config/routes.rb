@@ -163,7 +163,8 @@ namespace :kobe do
   end
   resources :items do
     collection do
-      get :list
+      get :list, :classify
+      post :update_classify
     end
     member do
       get :delete, :pause, :recover

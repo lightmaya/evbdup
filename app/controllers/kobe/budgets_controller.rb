@@ -8,7 +8,7 @@ class Kobe::BudgetsController < KobeController
 
   # 我的预算审批单
   def index
-    @q = Budget.find_all_by_dep_code(current_user.real_dep_code).where(get_conditions("budgets")).ransack(params[:q]) 
+    @q = Budget.find_all_by_dep_code(current_user.real_dep_code).where(get_conditions("budgets")).ransack(params[:q])
     @budgets = @q.result.page params[:page]
   end
 

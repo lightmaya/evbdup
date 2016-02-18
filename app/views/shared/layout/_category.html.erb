@@ -25,7 +25,7 @@
         <ul class="dropdown-menu">
           <li><%= link_to_blank "网上商城", Dictionary.mall_web_site %></li>
           <li class="dropdown-submenu">
-            <%= link_to_void "协议供货" %>
+            <%= link_to_void "办公设备" %>
             <ul class="dropdown-menu">
               <%= li_link_to_tag("台式机", 221) %>
               <%= li_link_to_tag("笔记本", 230) %>
@@ -33,7 +33,15 @@
               <%= li_link_to_tag("打印机", 29) %>
               <%= li_link_to_tag("复印机", 30) %>
               <%= li_link_to_tag("服务器", 19) %>
-            </ul>                                
+            </ul>
+          </li>
+          <li class="dropdown-submenu">
+            <%= link_to_void "职工工装" %>
+            <ul class="dropdown-menu">
+              <%= li_link_to_tag("春秋装", 255) %>
+              <%= li_link_to_tag("夏装", 256) %>
+              <%= li_link_to_tag("冬装", 257) %>
+            </ul>
           </li>
         </ul>
       </li>
@@ -61,6 +69,9 @@
                       <%= li_link_to_tag("装仓机", 647) %>
                       <%= li_link_to_tag("补仓机", 723) %>
                       <%= li_link_to_tag("卸粮机", 648) %>
+                      <li>&nbsp;</li>
+                      <%= li_header_tag("计量设备") %>
+                      <%= li_link_to_tag("地上、轨道衡", 871) %>
                     </ul>
                   </div>
                   <div class="col-md-3 equal-height-in">
@@ -81,9 +92,6 @@
                   </div>
                   <div class="col-md-3 equal-height-in">
                     <ul class="list-unstyled equal-height-list">
-                      <%= li_header_tag("计量设备") %>
-                      <%= li_link_to_tag("地上、轨道衡", 871) %>
-                      <li>&nbsp;</li>
                       <%= li_header_tag("升降设备") %>
                       <%= li_link_to_tag("高空作业车", 136) %>
                       <%= li_link_to_tag("剪叉式高空作业平台", 874) %>
@@ -93,6 +101,10 @@
                       <%= li_link_to_tag("分体壁挂机", 649) %>
                       <%= li_link_to_tag("分体柜机", 650) %>
                       <%= li_link_to_tag("风管机", 651) %>
+                      <li>&nbsp;</li>
+                      <%= li_header_tag("包装物") %>
+                      <%= li_link_to_tag("贸易性粮食编织袋", 123) %>
+                      <%= li_link_to_tag("油脂公司专用编织袋", 718) %>
                     </ul>
                   </div>
                   <div class="col-md-3 equal-height-in">
@@ -117,7 +129,7 @@
                 </div>
               </div>
               <div class="color-u padding-10" >注意：带*的品目暂时没有入围供应商，请通过网上竞价或定点采购方式采购。</div>
-            </div>    
+            </div>
           </li>
         </ul>
       </li>
@@ -149,7 +161,7 @@
                       <%= li_no_link_tag("酶标仪 *") %>
                       <%= li_no_link_tag("电感耦合等离子体质谱仪 *") %>
                       <%= li_no_link_tag("微波介质消解仪 *") %>
-                    </ul>                          
+                    </ul>
                   </div>
                   <div class="col-md-3 equal-height-in">
                     <ul class="list-unstyled equal-height-list">
@@ -172,34 +184,12 @@
                 </div>
               </div>
               <div class="color-u padding-10" >注意：带*的品目暂时没有入围供应商，请通过网上竞价或定点采购方式采购。</div>
-            </div>    
+            </div>
           </li>
         </ul>
       </li>
       <!-- End 粮食检化验设备 -->
 
-      <!-- Search Block -->
-      <li class="dropdown">
-        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">包装物 & 职工工装</a>
-        <ul class="dropdown-menu">
-          <li class="dropdown-submenu">
-            <%= link_to_void "包装物" %>
-            <ul class="dropdown-menu">
-              <%= li_link_to_tag("贸易性粮食编织袋", 123) %>
-              <%= li_link_to_tag("油脂公司专用编织袋", 718) %>
-            </ul>                                
-          </li>
-          <li class="dropdown-submenu">
-            <%= link_to_void "职工工装" %>
-            <ul class="dropdown-menu">
-              <%= li_link_to_tag("春秋装", 255) %>
-              <%= li_link_to_tag("夏装", 256) %>
-              <%= li_link_to_tag("冬装", 257) %>
-            </ul>                                
-          </li>
-        </ul>
-      </li>
-      <!-- End Search Block -->
       <li class="dropdown">
         <a aria-expanded="false" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">化学药品药剂</a>
         <ul class="dropdown-menu">
@@ -214,10 +204,10 @@
           <%= li_link_to_tag("施工及APP防水卷材", 743) %>
           <%= li_link_to_tag("施工及建筑外墙涂料", 740) %>
           <%= li_link_to_tag("施工及建筑反射隔热涂料", 741) %>
-          <%= li_link_to_tag("施工及油罐外壁防腐涂料", 57) %>          
+          <%= li_link_to_tag("施工及油罐外壁防腐涂料", 57) %>
         </ul>
       </li>
-      
+
     </ul>
   </div><!--/end container-->
 </div>

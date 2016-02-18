@@ -22,7 +22,7 @@ class Kobe::BidProjectsController < KobeController
 
   def choose
     # 默认第一中标人
-    @bid_project.bid_project_bid_id = @bpbs.first.id
+    @bid_project.bid_project_bid_id = @bpbs.first.try(:id)
   end
 
   def update_choose

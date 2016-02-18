@@ -95,8 +95,10 @@ defaults: &defaults
     audit_default_cannot: "抱歉，您没有审核权限或者本项目已被其他用户审核过了！"
 
   # 项目类型
-  item_type: [[0,"厂家直销"],[1,"代理商供货"]]
-  asset_status: [[1,"在用"],[2,"闲置"],[3,"转移"],[4,"报废"]]
+  item_type: [[0,"厂家直销"], [1,"代理商供货"]]
+  # 供应商分级
+  dep_classify: [[1, "A级", "blue"], [2, "B级", "purple"], [3, "C级", "orange"], [0, "待定", "brown"]]
+  asset_status: [[1,"在用"], [2,"闲置"], [3,"转移"], [4,"报废"]]
   yw_type: { xygh: "协议供货", ddcg: "定点采购", wsjj: "网上竞价", dscg: "电商采购", grcg: "个人采购" }
   faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
   manage_user_type: 1

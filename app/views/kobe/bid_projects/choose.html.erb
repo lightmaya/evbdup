@@ -10,10 +10,11 @@
     	<th>操作理由</th>
     	<td><%= f.text_area :reason, class: "form-control" %></td>
     </tr>
-  </table> 
+  </table>
 <% end -%>
 
 <%= link_to_void "选择中标人", onclick: "choose_who(1);", class: "btn-u btn-u-large" if @bpbs.size >= 3 && @bpbs.first.total <= @bid_project.budget_money %>
+
 <%= link_to_void "选择废标", onclick: "choose_who(2);", class: "btn-u btn-u-large btn-u-red" %>
 
 <script type="text/javascript">
@@ -22,7 +23,7 @@
     if(<%= @bpbs.size < 3 %>){
       msg += "投标单位不足三家。";
     }
-    if(<%= @bpbs.first.total > @bid_project.budget_money %>){
+    if(<%= @bpbs.size >= 3 && @bpbs.first.total > @bid_project.budget_money %>){
       msg += "最低报价超出预算。";
     }
     if(!isEmpty(msg)){
@@ -32,7 +33,7 @@
       $("#bid_project_reason").text(msg);
     }
   });
-  
+
   function choose_who(i){
     if(i==1){
       var bid_id = $("input:radio[name='bid_project_bid_radios']:checked").val();
@@ -40,15 +41,15 @@
       if (isEmpty(bid_id)){
         art_alert("请选择中标人！");
         return false;
-      } 
-      if (bid_id != '<%= @bpbs.first.id %>'){
+      }
+      if (bid_id != '<%= @bpbs.first.try(:id) %>'){
         if(isEmpty($("#bid_project_reason").val())){
           art_alert("请填写操作理由！");
           $("#bid_project_reason").focus();
           return false;
         }
-      } 
-      $("#choose_who").val("选择中标人"); 
+      }
+      $("#choose_who").val("选择中标人");
     }else{
       $("#bid_project_bid_project_bid_id").val("");
       if(isEmpty($("#bid_project_reason").val())){
@@ -56,9 +57,9 @@
         $("#bid_project_reason").focus();
         return false;
       }
-      $("#choose_who").val("选择废标"); 
+      $("#choose_who").val("选择废标");
     }
     // alert("submit");
     $("#choose_form").submit();
   }
-</script>                    
+</script>

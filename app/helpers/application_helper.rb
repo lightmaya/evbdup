@@ -247,11 +247,12 @@ module ApplicationHelper
     link_to(*args.insert((block_given? ? 0 : 1), "javascript:void(0)"), &block)
   end
 
-  def dict_value(str, key)
+  def dict_value(str, key, index = 1)
     values = Dictionary.send(key)
     return "" if values.blank?
     if values.is_a?(Array)
-      values.find{|ary| ary.first == str}.try(:last)
+      tmp = values.find{|ary| ary.first == str}
+      tmp.is_a?(Array) ? tmp[index] : ""
     elsif values.is_a?(Hash)
       values[str]
     else

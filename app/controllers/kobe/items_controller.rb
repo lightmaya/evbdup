@@ -84,6 +84,19 @@ class Kobe::ItemsController < KobeController
     @items = @q.result(distinct: true).includes(:item_departments).page params[:page]
   end
 
+  # 供应商分级
+  def classify
+    item = Item.find_by(id: params[:item_id])
+    cannot_do_tips unless item.present? && item.cando(action_name)
+    @q = ItemDepartment.where(item_id: item.id).ransack(params[:q])
+    @deps = @q.result.page params[:page]
+  end
+
+  def update_classify
+    dep = ItemDepartment.where(id: params[:deps].split(",")).update_all(classify: params[:classify].to_i)
+    render :text => dep ? "标记成功！" : "标记失败！"
+  end
+
   private
 
     def get_item

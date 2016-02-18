@@ -86,7 +86,7 @@ class Item < ActiveRecord::Base
 
   def cando(act='',current_u=nil)
     case act
-    when "update", "edit"
+    when "update", "edit", "classify", "update_classify" # 供应商分级
       self.class.edit_status.include?(self.status)
     when "commit"
       self.can_opt?("提交")
@@ -127,11 +127,12 @@ class Item < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='项目名称' column='name' class='required'/>
-        <node name='项目类型' column='item_type' data_type='radio' data='#{Dictionary.item_type}'/>
+        <node name='项目类型' column='item_type' data_type='radio' data='#{Dictionary.item_type}' class='required'/>
         <node name='品目分配' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden'/>
         <node name='有效期开始时间' column='begin_time' class='required datetime_select datetime'/>
         <node name='有效期截止时间' column='end_time' class='required datetime_select datetime'/>
+        <node name='入围供应商是否分级' column='is_classify' data_type='radio' data='#{Dictionary.yes_or_no}' class='required'/>
         <node name='入围供应商' column='dep_names' data_type='textarea' class='required' hint='请用回车作为分隔符'/>
       </root>
     }

@@ -1,0 +1,81 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> 供应商分级</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6 pull-left padding-top-5">
+                <% Dictionary.dep_classify.each do |arr| %>
+                    <%= "<button class='btn-u btn-u-sm btn-u-#{arr[2]} set_classify' type='button' classify='#{arr[0]}'>标记为#{arr[1]}</button>".html_safe %>
+                <% end %>
+            </div>
+            <div class="col-md-6 pull-right">
+            <%= search_form_for @q, url: classify_kobe_items_path(item_id: params[:item_id]), html: { method: :get, class: 'sky-form no-border' } do |f| %>
+                <div class="margin-bottom-10">
+                    <div class="col-md-4">
+                        <label class="select">
+                            <select name="q[classify_eq]" id="q_classify_eq">
+                              <option value="">请选择级别...</option>
+                              <% Dictionary.dep_classify.each do |arr|%>
+                                <%= "<option value='#{arr[0]}' #{"selected=''" if params[:q][:classify_eq] == arr[0].to_s}>#{arr[1]}</option>".html_safe %>
+                              <% end %>
+                          </select>
+                          <i></i>
+                      </label>
+                    </div>
+                    <div class="input-group col-md-8">
+                        <input type="hidden" name="item_id" value="<%= params[:item_id] %>">
+                        <%= f.search_field :name_cont, class: "form-control input-sm", placeholder: "请输入供应商单位名称..." %>
+                        <span class="input-group-btn">
+                          <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                        </span>
+                    </div>
+                </div>
+            <% end %>
+            </div>
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" name="dep_ids" id="all_check_box"><i></i></th>
+                    <th class="index">序号</th>
+                    <th>供应商单位名称</th>
+                    <th>级别</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @deps.each_with_index do |obj,index| %>
+                <tr>
+                    <td class="tc">
+                        <input type="checkbox" name="dep_ids" value="<%= obj.id %>" class="check_box_item"><i></i>
+                    </td>
+                    <td><%= show_index(index) %></td>
+                    <td><%= obj.name %></td>
+                    <td><%= label_tag(dict_value(obj.classify, "dep_classify"), dict_value(obj.classify, "dep_classify", 2)) %></td>
+                </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <%= paginate @deps %>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(".set_classify").on('click', function() {
+        var checked_dep = $(".check_box_item:checkbox:checked");
+        if(checked_dep.length == 0){
+            flash_dialog("请选择要标记的供应商！");
+            return false;
+        } else {
+            var cont = "您确定要将选中的 " + checked_dep.length + " 家供应商" + $(this).text() + "?";
+            var classify = $(this).attr("classify");
+            var deps = checked_dep.map(function(){ return $(this).val(); }).get().join(", ") ;
+            confirm_dialog(cont, function () {
+                $.post("/kobe/items/update_classify", { deps: deps, classify: classify }, function( data ) {
+                    window.location.reload();
+                    tips_dialog(data);
+                });
+            });
+        }
+    });
+</script>

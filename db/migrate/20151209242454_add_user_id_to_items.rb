@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 class AddUserIdToItems < ActiveRecord::Migration
   def change
-    # add_column :items, :user_id, :integer
-
+    add_column :items, :user_id, :integer
 
     add_index :agents, [:department_id, :item_id]
     add_index :agents, :item_id
