@@ -1,15 +1,50 @@
-<h3><%= @dep.name %></h3>
-<table class="table table-bordered table-hover">
-  <tr>
-    <th>所在地区</th>
-    <td><%= @dep.area.pcc_name %></td>
-    <th>联系方式</th>
-    <td><%= @dep.tel  %></td>
-  </tr>
-  <tr>
-    <th>公司地址</th>
-    <td><%= current_user.present? ? @dep.address : "请登录后查看" %></td>
-    <th>公司网址</th>
-    <td><%= @dep.website %></td>
-  </tr>
-</table>
+<h4 class='margin-top-20 margin-bottom-20'><%= @dep.name %></h4>
+<div class="tab-v1">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#info" data-toggle="tab">基本信息</a></li>
+    <li><a href="#item" data-toggle="tab">入围项目</a></li>
+    <li><a href="#dep_pic" data-toggle="tab">企业形象</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane fade in active" id="info">
+      <%= show_obj_info(@dep, Department.supplier_xml) %>
+    </div>
+    <div class="tab-pane fade in" id="item">
+      <table class="table">
+        <thead>
+          <tr>
+            <td>序号</td>
+            <td>项目名称</td>
+            <td>供应商级别</td>
+          </tr>
+        </thead>
+        <tbody>
+          <%
+            i = 0
+            @dep.item_departments.order('id desc').each do |d|
+              next unless Item.effective_status.include? d.item.status
+          %>
+            <tr>
+              <td><%= i += 1 %></td>
+              <td><%= d.item.name %></td>
+              <td><%= dep_classify_tag(d.classify) unless d.classify == 0 %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade in" id="dep_pic">
+    <%
+      if Dictionary.dep_pic_old_id.include? @dep.old_id
+        ["办公楼外景", "车间外景", "车间内景"].each_with_index do |name, index|
+    %>
+        <div class="col-md-4">
+          <%= show_picture("/plugins/images/ad/agents/thumb/#{@dep.old_id}_#{index + 1}.jpg", "/plugins/images/ad/agents/big/#{@dep.old_id}_#{index + 1}.jpg", name, 'departments') %>
+        </div>
+      <% end %>
+    <% else %>
+      <%= something_not_found %>
+    <% end %>
+    </div>
+  </div>
+</div>

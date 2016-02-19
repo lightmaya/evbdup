@@ -164,6 +164,24 @@ module BaseFunction
     return "<ul class='timeline-v2'>#{str.reverse.join}</ul>"
   end
 
+  # 显示图片 用于上传产品图片、注册单位上传证件 点小图弹出大图
+  def show_picture(small_pic_url, large_pic_url, title = "", rel = 'pics')
+    %Q{
+      <div class="thumbnails thumbnail-style thumbnail-kenburn">
+        <div class="thumbnail-img">
+          <div class="overflow-hidden">
+            <a href="#{large_pic_url}" title="#{title}" rel="#{rel}" class="fancybox">
+              <span><img alt="" src="#{small_pic_url}" class="img-responsive"></span>
+            </a>
+          </div>
+        </div>
+        <div class="caption">
+          <p class="word_break">#{title}</p>
+        </div>
+      </div>
+      }.html_safe
+  end
+
   # 显示附件
   def show_uploads(obj, options = {})
     options[:is_picture] ||= false
@@ -176,24 +194,13 @@ module BaseFunction
       end
       result << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
     end
-    return result + something_not_found if obj.uploads.blank?
+    return result + something_not_found(options[:icon_not_found]) if obj.uploads.blank?
     # 图片类型
     if options[:is_picture]
       tmp = obj.uploads.map do |file|
         %Q|<div class="col-md-#{12/options[:grid]}">
-            <div class="thumbnails thumbnail-style thumbnail-kenburn">
-              <div class="thumbnail-img">
-                <div class="overflow-hidden">
-                  <a href="#{file.upload.url(:lg)}" title="#{file.upload_file_name}" rel="#{obj.class.to_s.tableize}" class="fancybox">
-                    <span><img alt="" src="#{file.upload.url(:md)}" class="img-responsive"></span>
-                  </a>
-                </div>
-              </div>
-              <div class="caption">
-                <p class="word_break">#{file.upload_file_name}<br>[#{number_to_human_size(file.upload_file_size)}]</p>
-              </div>
-            </div>
-          </div>|.html_safe
+          #{show_picture(file.upload.url(:md), file.upload.url(:lg), file.upload_file_name, obj.class.to_s.tableize)}
+        </div>|.html_safe
       end
     # 非图片类型
     else
@@ -224,8 +231,17 @@ module BaseFunction
     return tmp
   end
 
-  def something_not_found
-    "<div class='alert alert-warning fade in'><h4><i class='fa fa-frown-o font_24px'></i> 抱歉，没有找到相关信息。</h4></div>".html_safe
+  def something_not_found(icon=false)
+    return "<div class='padding-left-20'>抱歉，没有找到相关信息。</div>" if icon
+    %Q|
+      <div class="content-boxes-v2 space-lg-hor content-sm">
+        <h2 class="heading-sm">
+          <i class="icon-custom icon-sm icon-bg-red fa fa-lightbulb-o"></i>
+          <span>抱歉，没有找到相关信息。</span>
+        </h2>
+      </div>
+    |.html_safe
+    # "<div class='alert alert-warning fade in'><h4><i class='fa fa-frown-o font_24px'></i> 抱歉，没有找到相关信息。</h4></div>".html_safe
   end
 
   #  截取字符串固定长度，支持中英文混合，length 为中文的长度，一个英文相当于0.5个中文长度

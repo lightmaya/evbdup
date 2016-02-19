@@ -51,7 +51,7 @@
                     </td>
                     <td><%= show_index(index) %></td>
                     <td><%= obj.name %></td>
-                    <td><%= label_tag(dict_value(obj.classify, "dep_classify"), dict_value(obj.classify, "dep_classify", 2)) %></td>
+                    <td><%= dep_classify_tag(obj.classify) %></td>
                 </tr>
                 <% end %>
             </tbody>

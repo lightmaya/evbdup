@@ -338,4 +338,9 @@ module ApplicationHelper
     }.html_safe
   end
 
+  # 供应商分级标签 classify指数据库中存的数值 对应Dictionary.dep_classify数组第一位
+  def dep_classify_tag(classify)
+    label_tag(dict_value(classify, "dep_classify"), dict_value(classify, "dep_classify", 2))
+  end
+
 end

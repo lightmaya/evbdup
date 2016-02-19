@@ -129,7 +129,7 @@ module JamesHelper
             <li><span class="color-green">信用分：</span> #{dep.comment_total}</li>
             <li class="h40"><span class="color-green">入围产品：</span> #{text_truncate(cat, 32)}</li>
           </ul>
-          <a class="btn-u btn-u-sm" href="#">详情 + </a>
+          <a class="btn-u btn-u-sm" href="#{department_path(dep)}" target="_blank">详情 + </a>
         </div>
       </div>
     }.html_safe

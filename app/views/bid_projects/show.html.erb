@@ -11,7 +11,7 @@
 </div>
 <div class="container">
   <%= @obj_contents %>
-  <%= uploads_html(@bid_project, {title: true}).html_safe %>
+  <%= uploads_html(@bid_project, { title: true, icon_not_found: true}).html_safe %>
   <% if @bid_project.status == BidProject.bid_and_choose_status %>
     <% if @before_end > 0 %>
       <div class='bid_project_time tc'>

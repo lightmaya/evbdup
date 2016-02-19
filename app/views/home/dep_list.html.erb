@@ -40,17 +40,17 @@
   <table class="table">
     <thead>
       <tr>
-        <th>序号</th>
-        <th>项目名称</th>
-        <th>项目状态</th>
+        <td>序号</td>
+        <td>项目名称</td>
+        <td>项目状态</td>
       </tr>
     </thead>
     <tbody>
       <% @rs.each_with_index do |r, i|%>
         <tr>
-          <td align="center"><%= i+1 %></td>
+          <td><%= i+1 %></td>
           <td><%= link_to r.name, dep_list_path("q[id_eq]" => r.id) %></td>
-          <td align="center"><%= r.status_badge %></td>
+          <td><%= r.status_badge %></td>
         </tr>
       <% end %>
     </tbody>
@@ -60,15 +60,17 @@
   <table class="table">
     <thead>
       <tr>
-        <th>序号</th>
-        <th>单位名称</th>
+        <td>序号</td>
+        <td>单位名称</td>
+        <td>供应商级别</td>
       </tr>
     </thead>
     <tbody>
       <% @dep_rs.each_with_index do |d, i|%>
         <tr>
-          <td align="center"><%= i+1 %></td>
-          <td><%= d.name %></td>
+          <td><%= i+1 %></td>
+          <td><%= link_to_blank d.name, department_path(d.department.try(:id)) %></td>
+          <td><%= dep_classify_tag(d.classify) unless d.classify == 0 %></td>
         </tr>
       <% end %>
     </tbody>
