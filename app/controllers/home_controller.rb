@@ -148,6 +148,8 @@ class HomeController < JamesController
       # 随机排序
       params[:q][:s] = "id asc"
       @combos = params[:combo].split("_")
+      @id_hash = {title: "上架时间", id: 2, q: "sort"}
+      @price_hash = {title: "入围价格", id: 3, q: "sort"}
       # 关键参数
       @all_qs = if source.is_a?(Category)
           rs = Product::QS
@@ -172,11 +174,11 @@ class HomeController < JamesController
             params[:q][:s] = "id desc"
             @id_hash = {title: "上架时间 ▼", id: 1, q: "sort"}
           elsif @combos[index].to_i == 3
-            params[:q][:s] = "market_price asc"
-            @price_hash = {title: "市场价 ▲", id: 4, q: "sort"}
+            params[:q][:s] = "bid_price asc"
+            @price_hash = {title: "入围价格 ▲", id: 4, q: "sort"}
           elsif @combos[index].to_i == 4
-            params[:q][:s] = "market_price desc"
-            @price_hash = {title: "市场价 ▼", id: 3, q: "sort"}
+            params[:q][:s] = "bid_price desc"
+            @price_hash = {title: "入围价格 ▼", id: 3, q: "sort"}
           end
         elsif q == "page"
           params[:page] = @combos[index].to_i
@@ -202,13 +204,13 @@ class HomeController < JamesController
       @all_brands = clazz.group("brand").map(&:brand)
       q_brand_index = @combos[Product::QS.index("brand_eq")].to_i
       if q_brand_index > 0
-        q_brand = @all_brands[@combos[q_brand_index].to_i - 1 ]
+        q_brand = @all_brands[q_brand_index - 1 ]
         params[:q][:brand_eq] = q_brand
         @qs << {title: "品牌：<span>#{q_brand}</span>", id: 0, q: "brand_eq"}
       end
       @brands = []
       @all_brands.each_with_index do |brand, i|
-        @brands << {title: brand, id: i+1, q: "brand_eq"} if q_brand_index == 0 || brand != @all_brands[q_brand_index- 1]
+        @brands << {title: text_truncate(brand, 8), id: i+1, q: "brand_eq"} if q_brand_index == 0 || brand != @all_brands[q_brand_index- 1]
       end
 
       # 关键参数

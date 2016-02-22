@@ -83,7 +83,7 @@ module JamesHelper
                 <h4 class="title-price height-50">
                   #{link_to_blank truncate(product.name, length: 28), link_url, title: product.name}
                 </h4>
-                <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
+                <span class="gender text-uppercase">#{product.item_dep.try(:classify) == 0 ? "&nbsp;" : "供应商级别：#{dict_value(product.item_dep.classify, 'dep_classify')}" }</span>
                 <div class="price_div title-price" id="price_div_#{product.id}">
                   <span class="line-through fl clear font-size-14">市场价：<b class="b_m hide">请登录查看</b></span>
                   <span class="fl clear color-red">入围价：<b class="b_b hide">请登录查看</b></span>

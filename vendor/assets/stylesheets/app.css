@@ -3301,7 +3301,7 @@ img.image-md {
 .no-margin {
   margin: 0;
 }
-
+.margin-auto { margin: auto; }
 .no-top-space {
   margin-top: 0 !important;
   padding-top: 0 !important;

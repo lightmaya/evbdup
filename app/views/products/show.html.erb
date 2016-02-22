@@ -25,13 +25,13 @@
               <% if @product.uploads.present? %>
                 <% @product.uploads.each do |up| %>
                   <div class="ms-slide">
-                    <%= image_tag up.upload.url(:lg), "data-src" => up.upload.url(:lg), alt: "lorem ipsum dolor sit" %>
-                    <%= image_tag up.upload.url(:md), class: "ms-thumb" %>
+                    <%= image_tag up.upload.url(:md), "data-src" => up.upload.url(:md), class: 'margin-auto' %>
+                    <%= image_tag up.upload.url(:thumbnail), class: "ms-thumb" %>
                   </div>
                 <% end -%>
               <% else %>
                 <div class="ms-slide">
-                  <%= image_tag "/assets/404.gif", "data-src" => "/assets/404.gif", alt: "lorem ipsum dolor sit" %>
+                  <%= image_tag "/assets/404.gif", "data-src" => "/assets/404.gif" %>
                   <%= image_tag "/assets/404.gif", class: "ms-thumb" %>
                 </div>
               <% end -%>
@@ -73,7 +73,7 @@
                 <button id="xzgys" type="button" class="btn-u btn-u-sea-shop btn-u-lg">选择供应商</button>
               <% end -%>
           </div><!--/end product quantity-->
-          <p class="wishlist-category"><strong>销售范围：</strong> <a href="#">全国(厂商协议供货)</a></p>
+          <p class="wishlist-category"><strong>供应商级别：</strong> <%= dep_classify_tag @product.item_dep.classify %></p>
         </div>
       </div><!--/end row-->
     </div>

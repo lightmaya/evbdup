@@ -17,12 +17,12 @@
           <a href="#">
             <em class="overflow-hidden">
               <img class="img-responsive" src="http://fwgs.sinograin.com.cn/uploads/zcl_product_photos/000/001/298/small_C30.JPG" alt="">
-            </em>    
+            </em>
             <span>
               <strong>H<%#= i + 1 %></strong>
               <i>Anim pariatur cliche reprehenderit</i>
             </span>
-          </a>    
+          </a>
         </div>
       </div>
     <%# end -%>
@@ -41,14 +41,14 @@
         </div>
         <div class="col-sm-8">
           <ul class="list-inline clear-both">
-            <li class="grid-list-icons">
+            <!-- <li class="grid-list-icons">
               <a href="shop-ui-filter-list.html"><i class="fa fa-th-list"></i></a>
               <a href="shop-ui-filter-grid.html"><i class="fa fa-th"></i></a>
-            </li>
+            </li> -->
             <li class="sort-list-btn">
-              <h3><%= link_to label_tag("默认排序") %></h3>
-              <h3><%= link_to label_tag("价格") %></h3>
-              <h3><%= link_to label_tag("销量") %></h3>
+              <h3 class='btn-u btn-brd rounded btn-u-xs btn-u-default'><%= link_to_channel @id_hash %></h3>
+              <h3 class='btn-u btn-brd rounded btn-u-xs btn-u-default'><%= link_to_channel @price_hash %></h3>
+              <h3><%#= link_to label_tag("销量") %></h3>
             </li>
           </ul>
         </div>
@@ -68,7 +68,7 @@
                 <div class="product-img product-img-brd">
                   <%#= link_to_blank image_tag(product.cover_url, class: "full-width img-responsive lazy", onerror: "$(this).attr('src', '/assets/no_pic_small.gif')"), product %>
                   <div class="shop-rgba-dark-green rgba-banner">新产品</div>
-                </div> 
+                </div>
                 <div class="product-description product-description-brd margin-bottom-30">
                   <div class="overflow-h margin-bottom-5">
                     <div class="pull-left">
@@ -80,7 +80,7 @@
                         <span class="line-through fl clear font-size-14">市场价：<b class="b_m hide">请登录查看</b></span>
                         <span class="fl clear color-red">入围价：<b class="b_b hide">请登录查看</b></span>
                       </div>
-                    </div>    
+                    </div>
                   </div>     -->
                   <!--<ul class="list-inline product-ratings">
                       <li><i class="rating-selected fa fa-star"></i></li>
@@ -100,7 +100,7 @@
       <!-- 产品列表END -->
     </div>
   </div><!--/end row-->
-<!-- </div> --><!--/end container-->    
+<!-- </div> --><!--/end container-->
 
 
 <script type="text/javascript">
