@@ -15,23 +15,24 @@
 
 $(function(){
   // 检查是否同登陆以显示价格
-  var ids = $(".price_div").map(function(){ return $(this).attr("id").split("_")[2]}).get().join(",");
+  var product_ids = $(".product_price_div").map(function(){ return $(this).attr("id").split("_")[3]}).get().join(",");
   $.ajax({
     type: "get",
     dataType: "json",
     url: "/check_login",
-    data: "pids=" + ids,
+    data: "pids=" + product_ids,
     success: function(data) {
       if(data.success){
-        // 列表商品价格
         $.each(data.rs, function(i, d){
-          $("#price_div_" + d.id + " b.b_m").html(d.market_price).show();
-          $("#price_div_" + d.id + " b.b_b").html(d.bid_price).show();
-        })
+          $("#bid_price_" + d.id).html("入围价格： <span class='color-red font-bold font-size-16'>" + d.bid_price + "</span>" + ($(".product_price_div").length > 1 ? "" : " [ 可向下议价 ]")).show();
+          $("#market_price_" + d.id).html("市场价格： <span class='line-through'>" + d.market_price + "</span>").show();
+        });
       }else{
-        $(".b_m").show();
-        $(".b_b").show();
+        $.each(product_ids.split(","), function(i, d) {
+          $("#login_tip_" + d).show();
+        });
       }
     }
   });
+
 })

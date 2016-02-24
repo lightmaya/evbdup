@@ -15,29 +15,12 @@
       setTimeout('$("html,body").animate({scrollTop:$("#gysxx").offset().top},1000);', 300)
     });
 
-    $.ajax({
-      type: "get",
-      dataType: "json",
-      url: "/check_login",
-      data: "pids=" + $("#product_id").val(),
-      success: function(data) {
-        if(data.success){
-          $.each(data.rs, function(i, d){
-            $("#bid_price_li").html(d.bid_price).show();
-            $("#market_price_li").html(d.market_price).show();
-          });
-        }else{
-          $("#login_tip").show();
-        }
-      }
-    })
-
   });
 
   function add_to_cart(seller_id){
     // 根据项目和入围供应商的级别判断是否可以加入购物车
     if(!$.parseJSON($("#can_cart").val())){
-      flash_dialog("该产品的供应商不是A类供应商，不能加入购物车，请选择其他产品！");
+      flash_dialog("该产品的供应商不是A级供应商，请从A级供应商处采购或者通过协议议价的方式进行采购！");
       return false;
     }
     var num = parseInt($("#qty").val());

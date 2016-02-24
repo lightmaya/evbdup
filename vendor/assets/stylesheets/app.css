@@ -3646,6 +3646,9 @@ img.img-center,
 
 /* margin setting*/
 
+.margin-left-minus-4 {margin-left: -4px;}
+.margin-right-minus-4 { margin-right: -4px; }
+
 .margin-left-0 {margin-left:0px;}
 .margin-left-15 {margin-left:15px;}
 .margin-left-20 {margin-left:20px;}
@@ -3686,6 +3689,8 @@ img.img-center,
 .font-size-22 {font-size:22px;}
 .font-size-24 {font-size:24px;}
 
-
+.border-1 {border: 1px solid rgba(0, 0, 0, 0.1)}
 .border-top-1 {border-top: 1px solid rgba(0, 0, 0, 0.1)}
 .bordre-bottom-1 {border-bottom: 1px solid rgba(0, 0, 0, 0.1);}
+
+.line-through {text-decoration: line-through;}

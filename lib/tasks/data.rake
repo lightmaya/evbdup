@@ -20,6 +20,7 @@ namespace :data do
       pr.unit = zcl_product.unit
       pr.market_price = zcl_product.market_price
       pr.bid_price = zcl_product.bid_price
+      pr.summary = get_value_in_xml(zcl_product.detail, "基本描述")
       pr.user_id = zcl_product.user_id
       new_dep = Department.find_by(old_id: zcl_product.user_dep, old_table: "dep_supplier")
       pr.department_id = new_dep.id if new_dep.present?
@@ -512,6 +513,8 @@ namespace :data do
         n_node["column"] = "model" if n_node["column"] == "name"
         n_node["column"] = "version" if n_node["column"] == "xinghao"
 
+        n_node["column"] = "summary" if n_node["name"] == "基本描述"
+
         class_arr = []
         class_arr << "required" if old_node.has_attribute?("input") && old_node["input"] == "true"
 
@@ -537,7 +540,7 @@ namespace :data do
         n_node["class"] = class_arr.join(" ") if class_arr.present?
       end
 
-      n.params_xml = new_doc.to_s
+      n.params_xml = new_doc.to_s.gsub("市场价（元）", "市场价格（元）").gsub("本站报价（元）", "入围价格（元）")
 
       # ["正常",0,"u",100],
       # ["冻结",1,"yellow",0],

@@ -65,16 +65,17 @@ module JamesHelper
 
   # 首页 畅销产品展示
   def show_product_div(product)
-    img = "/plugins/images/zclfww/product.jpg"
+    img = product.uploads.present? ? product.uploads.first.upload.url(:md) : "/assets/404.gif"
     link_url = product_path(product)
     %Q{
       <div class="col-md-3 col-sm-6">
         <div class="thumbnails thumbnail-style thumbnail-kenburn">
           <div class="thumbnail-img">
-            <div class="overflow-hidden">
-                <img alt="" src="#{img}" class="img-responsive">
-            </div>
-            <a href="#{link_url}" class="btn-more hover-effect" target="_blank" title="#{product.name}">详情 +</a>
+            <a href="#{link_url}" class="hover-effect" target="_blank" title="#{product.name}">
+              <div class="overflow-hidden">
+                  <img alt="" src="#{img}" class="img-responsive border-1">
+              </div>
+            </a>
           </div>
 
           <div class="product-description">
@@ -84,10 +85,7 @@ module JamesHelper
                   #{link_to_blank truncate(product.name, length: 28), link_url, title: product.name}
                 </h4>
                 <span class="gender text-uppercase">#{product.item_dep.try(:classify) == 0 ? "&nbsp;" : "供应商级别：#{dict_value(product.item_dep.classify, 'dep_classify')}" }</span>
-                <div class="price_div title-price" id="price_div_#{product.id}">
-                  <span class="line-through fl clear font-size-14">市场价：<b class="b_m hide">请登录查看</b></span>
-                  <span class="fl clear color-red">入围价：<b class="b_b hide">请登录查看</b></span>
-                </div>
+                #{check_login_and_show_price(product.id)}
               </div>
             </div>
           </div>
@@ -159,6 +157,17 @@ module JamesHelper
     }
     str << "</div>"
     return str.html_safe
+  end
+
+  # 根据是否登录显示价格
+  def check_login_and_show_price(product_id)
+    %Q{
+      <div class="product_price_div" id="product_price_div_#{product_id}">
+        <p class="color-red hide" id="login_tip_#{product_id}">请登录后查看价格</p>
+        <p id="market_price_#{product_id}"  class="hide"></p>
+        <p id="bid_price_#{product_id}" class="hide"></p>
+      </div>
+    }.html_safe
   end
 
 end

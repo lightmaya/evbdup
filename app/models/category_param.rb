@@ -26,8 +26,8 @@ class CategoryParam < XmlColumn
         <node name="型号" column='model' class="required" is_key="否"/>
         <node name="版本号" column='version' is_key="否"/>
         <node name="计量单位" column='unit' class="required" is_key="否"/>
-        <node name="市场价格" column='market_price' class="required number" is_key="否"/>
-        <node name="中标价格" column='bid_price' class="required number" is_key="否"/>
+        <node name="市场价格（元）" column='market_price' class="required number" is_key="否"/>
+        <node name="入围价格（元）" column='bid_price' class="required number" is_key="否"/>
         <node name="基本描述" column='summary' class="required"  data_type='textarea' is_key="否"/>
       </root>
     }

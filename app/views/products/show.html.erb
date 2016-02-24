@@ -2,230 +2,199 @@
 <%= render "js" %>
 <%= hidden_field_tag "product_id", @product.id %>
 <%= hidden_field_tag "can_cart", @product.add_to_cart? %>
-<div class="wrapper">
-  <!--=== Header v5 ===-->
-  <!--=== Shop Product ===-->
-  <div class="shop-product">
-    <!-- Breadcrumbs v5 -->
-    <div class="container">
-        <ul class="breadcrumb-v5">
-            <li><a href="index.html"><i class="fa fa-home"></i></a></li>
-            <li><%= link_to_blank @product.category.name, channel_path(@product.category_id) %></li>
-            <li class="active"><%= @product.name %></li>
-        </ul>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="ms-showcase2-template">
+        <!-- Master Slider -->
+        <div class="master-slider ms-skin-default" id="masterslider">
+          <!-- 产品滚动图 -->
+          <% if @product.uploads.present? %>
+          <% @product.uploads.each do |up| %>
+          <div class="ms-slide">
+            <%= image_tag up.upload.url(:md), "data-src" => up.upload.url(:md), class: "product_pic" %>
+            <a href="<%= up.upload.url(:lg) %>" rel="products" class="fancybox"></a>
+            <%= image_tag up.upload.url(:thumbnail), class: "ms-thumb" %>
+          </div>
+          <% end -%>
+          <% else %>
+          <div class="ms-slide">
+            <%= image_tag "/assets/404.gif", "data-src" => "/assets/404.gif" %>
+            <%= image_tag "/assets/404.gif", class: "ms-thumb" %>
+          </div>
+          <% end -%>
+        </div>
+        <!-- 产品滚动图END -->
+      </div>
     </div>
-    <!-- End Breadcrumbs v5 -->
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 md-margin-bottom-50">
-          <div class="ms-showcase2-template">
-            <!-- Master Slider -->
-            <div class="master-slider ms-skin-default" id="masterslider">
-              <!-- 产品滚动图 -->
-              <% if @product.uploads.present? %>
-                <% @product.uploads.each do |up| %>
-                  <div class="ms-slide">
-                    <%= image_tag up.upload.url(:md), "data-src" => up.upload.url(:md), class: 'margin-auto' %>
-                    <%= image_tag up.upload.url(:thumbnail), class: "ms-thumb" %>
-                  </div>
-                <% end -%>
-              <% else %>
-                <div class="ms-slide">
-                  <%= image_tag "/assets/404.gif", "data-src" => "/assets/404.gif" %>
-                  <%= image_tag "/assets/404.gif", class: "ms-thumb" %>
-                </div>
-              <% end -%>
-            </div>
-            <!-- 产品滚动图END -->
-          </div>
-        </div>
 
-        <div class="col-md-6">
-          <div class="shop-product-heading">
-            <h2><%= @product.name %></h2>
-          </div>
+    <div class="col-md-6">
+      <h3><%= @product.name %></h3>
 
-          <ul class="list-inline product-ratings margin-bottom-30">
-              <li><i class="rating-selected fa fa-star"></i></li>
-              <li><i class="rating-selected fa fa-star"></i></li>
-              <li><i class="rating-selected fa fa-star"></i></li>
-              <li><i class="rating fa fa-star"></i></li>
-              <li><i class="rating fa fa-star"></i></li>
-              <li class="product-review-list">
-                  <span>(1) <a href="#">用户评价</a> | <a href="#"> 价格举报</a></span>
-              </li>
-          </ul>
+      <p>
+        入围企业：
+        <%= @product.item_dep.classify == 0 ?  @product.item_dep.name : "#{@product.item_dep.name} ( #{dict_value(@product.item_dep.classify, 'dep_classify')} )" %>
+      </p>
 
-          <ul class="list-inline shop-product-prices margin-bottom-30">
-            <li class="shop-red" id="login_tip" style="display:none;">请登录后查看价格</li>
-            <li class="shop-red hide" id="bid_price_li" title="协议价"></li>
-            <li class="line-through hide" id="market_price_li" title="市场价"></li>
-          </ul>
+      <%= check_login_and_show_price(@product.id) %>
 
-          <h3 class="shop-product-title">购买数量</h3>
-          <div class="margin-bottom-40">
-              <button type='button' class="quantity-button" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
-              <input type='text' class="quantity-field" name='qty' value="1" id='qty'/>
-              <button type='button' class="quantity-button" name='add' onclick='javascript: document.getElementById("qty").value++;' value='+'>+</button>
-              <% if @product.cjzx? %>
-                <%= link_to_void "加入购物车", onclick: "add_to_cart('#{@product.department_id}')", class:"btn-u btn-u-sea-shop btn-u-lg"  %>
-              <% else %>
-                <button id="xzgys" type="button" class="btn-u btn-u-sea-shop btn-u-lg">选择供应商</button>
-              <% end -%>
-          </div><!--/end product quantity-->
-          <p class="wishlist-category"><strong>供应商级别：</strong> <%= dep_classify_tag @product.item_dep.classify %></p>
-        </div>
-      </div><!--/end row-->
+      <p>产品描述： <%= @product.summary %></p>
+
+      <div class="content-xs">
+          <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
+          <input type='text' class="h50 w60 border-1 tc font-size-20 padding-5 margin-left-minus-4 margin-right-minus-4" name='qty' value="1" id='qty'/>
+          <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='add' onclick='javascript: document.getElementById("qty").value++;' value='+'>+</button>
+        <% if @product.cjzx? %>
+          <%= link_to_void "加入购物车", onclick: "add_to_cart('#{@product.department_id}')", class:"btn-u btn-u-lg"  %>
+        <% else %>
+          <button id="xzgys" type="button" class="btn-u btn-u-lg">选择供应商</button>
+        <% end -%>
+      </div>
     </div>
   </div>
-  <!--=== End Shop Product ===-->
 
-    <!--=== Content Medium ===-->
-  <div class="content-md container">
-    <div class="tab-v5">
-      <ul class="nav nav-tabs" role="tablist">
-        <li class="active">
-          <a href="#csgg" role="tab" data-toggle="tab">参数规格</a>
-        </li>
-        <li>
-          <a href="#gysxx" role="tab" data-toggle="tab">供应商信息</a>
-        </li>
-        <li>
-          <a href="#shfw" role="tab" data-toggle="tab">售后服务</a>
-        </li>
-        <li>
-          <a href="#yhpl" role="tab" data-toggle="tab">用户评论</a>
-        </li>
-        <li>
-          <a href="#jgjb" role="tab" data-toggle="tab">价格举报</a>
-        </li>
-    </ul>
 
-    <div class="tab-content">
-      <!-- Description -->
-      <div class="tab-pane fade in active" id="csgg">
-        <div class="row">
-          <table class="table table-bordered table-striped">
-            <% log_rs(@product.details).each do |l| %>
-              <tr>
-                <th class="tc"><%= l.attr("name") %></th>
-                <td class="tc"><%= l.attr("value") %></td>
-              </tr>
-            <% end -%>
-          </table>
-        </div>
+<!--=== Content Medium ===-->
+<div class="tab-v5 margin-top-25">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="active">
+      <a href="#csgg" role="tab" data-toggle="tab">参数规格</a>
+    </li>
+    <li>
+      <a href="#gysxx" role="tab" data-toggle="tab">供应商信息</a>
+    </li>
+    <li>
+      <a href="#shfw" role="tab" data-toggle="tab">售后服务</a>
+    </li>
+    <li>
+      <a href="#yhpl" role="tab" data-toggle="tab">用户评论</a>
+    </li>
+    <li>
+      <a href="#jgjb" role="tab" data-toggle="tab">价格举报</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- Description -->
+    <div class="tab-pane fade in active" id="csgg">
+        <table class="table table-bordered table-striped">
+          <% log_rs(@product.details).each do |l| %>
+          <tr>
+            <th class="w160"><%= l.attr("name") %></th>
+            <td class="tc"><%= l.attr("value") %></td>
+          </tr>
+          <% end -%>
+        </table>
+    </div>
+    <!-- End Description -->
+    <div class="tab-pane fade" id="gysxx">
+
+      <%= get_seller_info(@product) %>
+
+      <% unless @product.cjzx? %>
+      <h5><i class="fa fa-chevron-circle-down"></i> 代理商列表：</h5>
+      <div class="row p0_25">
+        <table id="gyslb" class="table table-bordered table-striped">
+          <tr>
+            <th>代理商单位</th>
+            <th>联系人</th>
+            <th>联系方式</th>
+            <th>操作</th>
+          </tr>
+          <% @product.agents.each do |dep| %>
+          <tr>
+            <td><%= dep.real_dep.name %></td>
+            <td><%= dep.users.first.try(:name) %></td>
+            <td><%= dep.users.first.try(:tel_and_mobile) %></td>
+            <td class="tc"><%= link_to_void "购买", onclick: "add_to_cart('#{dep.id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
+            </td>
+          </tr>
+          <% end -%>
+        </table>
       </div>
-      <!-- End Description -->
-      <div class="tab-pane fade" id="gysxx">
+      <% end %>
+    </div>
 
-        <%= get_seller_info(@product) %>
+    <div class="tab-pane fade" id="shfw">
 
-        <% unless @product.cjzx? %>
-          <h5><i class="fa fa-chevron-circle-down"></i> 代理商列表：</h5>
-          <div class="row p0_25">
-            <table id="gyslb" class="table table-bordered table-striped">
-              <tr>
-                <th>代理商单位</th>
-                <th>联系人</th>
-                <th>联系方式</th>
-                <th>操作</th>
-              </tr>
-              <% @product.agents.each do |dep| %>
-                <tr>
-                  <td><%= dep.real_dep.name %></td>
-                  <td><%= dep.users.first.try(:name) %></td>
-                  <td><%= dep.users.first.try(:tel_and_mobile) %></td>
-                  <td class="tc"><%= link_to_void "购买", onclick: "add_to_cart('#{dep.id}');", class: "btn-u btn-u-small add_to_cart_btn" %>
-                  </td>
-                </tr>
-              <% end -%>
-            </table>
-          </div>
-        <% end %>
-      </div>
+    </div>
 
-      <div class="tab-pane fade" id="shfw">
-
-      </div>
-
-      <!-- Reviews -->
-      <div class="tab-pane fade" id="yhpl">
-        <div class="product-comment margin-bottom-40">
-          <div class="product-comment-in">
-            <div class="product-comment-dtl">
-              <h4>中央储备粮安康直属库 <small>[购买颜色：黑色] [购买日期：2015-02-03]</small></h4>
-              <p>该用户没有发表评论</p>
-              <ul class="list-inline product-ratings">
-                <li class="pull-right">
-                  <ul class="list-inline">
-                    <li><i class="rating-selected fa fa-star"></i></li>
-                    <li><i class="rating-selected fa fa-star"></i></li>
-                    <li><i class="rating-selected fa fa-star"></i></li>
-                    <li><i class="rating fa fa-star"></i></li>
-                    <li><i class="rating fa fa-star"></i></li>
-                  </ul>
-                </li>
-              </ul>
-              <p><%= Time.now %></p>
-            </div>
+    <!-- Reviews -->
+    <div class="tab-pane fade" id="yhpl">
+      <div class="product-comment margin-bottom-40">
+        <div class="product-comment-in">
+          <div class="product-comment-dtl">
+            <h4>中央储备粮安康直属库 <small>[购买颜色：黑色] [购买日期：2015-02-03]</small></h4>
+            <p>该用户没有发表评论</p>
+            <ul class="list-inline product-ratings">
+              <li class="pull-right">
+                <ul class="list-inline">
+                  <li><i class="rating-selected fa fa-star"></i></li>
+                  <li><i class="rating-selected fa fa-star"></i></li>
+                  <li><i class="rating-selected fa fa-star"></i></li>
+                  <li><i class="rating fa fa-star"></i></li>
+                  <li><i class="rating fa fa-star"></i></li>
+                </ul>
+              </li>
+            </ul>
+            <p><%= Time.now %></p>
           </div>
         </div>
       </div>
-      <!-- End Reviews -->
+    </div>
+    <!-- End Reviews -->
 
-      <div class="tab-pane fade" id="jgjb">
-        <form action="http://htmlstream.com/preview/unify-v1.7/Shop-UI/assets/php/demo-contacts-process.php" method="post" id="sky-form3" class="sky-form sky-changes-4">
-          <fieldset>
-            <div class="row">
-              <section class="col col-6">
-                <label class="label"><%= require_span %>您的价格：</label>
-                <label class="input">
-                    <i class="icon-append fa fa-user"></i>
-                    <input type="text" name="name" id="name">
-                </label>
-              </section>
-              <section class="col col-6">
-                <label class="label"><%= require_span %>询价地址或网址：</label>
-                <label class="input">
-                    <i class="icon-append fa fa-envelope-o"></i>
-                    <input type="email" name="email2" id="email2">
-                </label>
-              </section>
-            </div>
-            <div class="row">
-              <section class="col col-6">
-                <label class="label"><%= require_span %>询价时间：</label>
-                <label class="input">
-                    <i class="icon-append fa fa-user"></i>
-                    <input type="text" name="name" id="name">
-                </label>
-              </section>
-              <section class="col col-6">
-                <label class="label"><%= require_span %>是否同等配置和服务：</label>
-                <label class="input">
-                    <i class="icon-append fa fa-envelope-o"></i>
-                    <input type="email" name="email2" id="email2">
-                </label>
-              </section>
-            </div>
-
-            <section>
-              <label class="label">备注：</label>
-              <label class="textarea">
-                  <i class="icon-append fa fa-comment"></i>
-                  <textarea rows="4" name="message" id="message"></textarea>
+    <div class="tab-pane fade" id="jgjb">
+      <form action="http://htmlstream.com/preview/unify-v1.7/Shop-UI/assets/php/demo-contacts-process.php" method="post" id="sky-form3" class="sky-form sky-changes-4">
+        <fieldset>
+          <div class="row">
+            <section class="col col-6">
+              <label class="label"><%= require_span %>您的价格：</label>
+              <label class="input">
+                <i class="icon-append fa fa-user"></i>
+                <input type="text" name="name" id="name">
               </label>
             </section>
-          </fieldset>
-          <footer>
-            <button type="submit" class="button">提交</button>
-          </footer>
-        </form>
-      </div>
-     </div>
+            <section class="col col-6">
+              <label class="label"><%= require_span %>询价地址或网址：</label>
+              <label class="input">
+                <i class="icon-append fa fa-envelope-o"></i>
+                <input type="email" name="email2" id="email2">
+              </label>
+            </section>
+          </div>
+          <div class="row">
+            <section class="col col-6">
+              <label class="label"><%= require_span %>询价时间：</label>
+              <label class="input">
+                <i class="icon-append fa fa-user"></i>
+                <input type="text" name="name" id="name">
+              </label>
+            </section>
+            <section class="col col-6">
+              <label class="label"><%= require_span %>是否同等配置和服务：</label>
+              <label class="input">
+                <i class="icon-append fa fa-envelope-o"></i>
+                <input type="email" name="email2" id="email2">
+              </label>
+            </section>
+          </div>
+
+          <section>
+            <label class="label">备注：</label>
+            <label class="textarea">
+              <i class="icon-append fa fa-comment"></i>
+              <textarea rows="4" name="message" id="message"></textarea>
+            </label>
+          </section>
+        </fieldset>
+        <footer>
+          <button type="submit" class="button">提交</button>
+        </footer>
+      </form>
     </div>
-  </div><!--/end container-->
-</div><!--/wrapper-->
+  </div>
+</div>
 
 <!-- JS Global Compulsory -->
 <script>

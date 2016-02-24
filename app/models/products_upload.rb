@@ -2,7 +2,7 @@
 class ProductsUpload < ActiveRecord::Base
   belongs_to :master, class_name: "Product", foreign_key: "master_id"
 
-  has_attached_file :upload, :styles => {thumbnail: "100x75", md: "400x300#", lg: "1024x768#"}
+  has_attached_file :upload, :styles => {thumbnail: "100x75", md: "550x412#", lg: "1024x768#"}
   validates_attachment_content_type :upload, :content_type => /\Aimage\/.*\Z/, :message => "只能上传图片文件"
   before_post_process :allow_only_images
 
