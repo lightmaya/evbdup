@@ -42,10 +42,10 @@
 
     <div class="content-xs">
       <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
-      <input type='text' class="h50 w60 border-1 tc font-size-20 padding-5 margin-left-minus-4 margin-right-minus-4" name='qty' value="1" id='qty'/>
+      <input type='text' class="h50 w100 border-1 tc font-size-20 padding-5 margin-left-minus-4 margin-right-minus-4" name='qty' value="1" id='qty'/>
       <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='add' onclick='javascript: document.getElementById("qty").value++;' value='+'>+</button>
       <% if @product.cjzx? %>
-        <%= link_to_void "加入购物车", onclick: "add_to_cart('#{@product.department_id}')", class:"btn-u btn-u-lg"  %>
+        <%= link_to_void "加入购物车", onclick: "add_to_cart('#{@product.department_id}')", class: (@product.add_to_cart? ? 'btn-u btn-u-lg' : 'btn-u btn-u-lg btn-u-light-grey') %>
       <% else %>
         <button id="xzgys" type="button" class="btn-u btn-u-lg">选择供应商</button>
       <% end -%>

@@ -980,6 +980,7 @@ h3.heading-xs {
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
 }
+a.btn-u:active, a.btn-u:focus {color: #fff;}
 
 .btn-u.btn-block {
   text-align: center;
