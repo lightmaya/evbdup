@@ -3,55 +3,55 @@
 <%= hidden_field_tag "product_id", @product.id %>
 <%= hidden_field_tag "can_cart", @product.add_to_cart? %>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="ms-showcase2-template">
-        <!-- Master Slider -->
-        <div class="master-slider ms-skin-default" id="masterslider">
-          <!-- 产品滚动图 -->
-          <% if @product.uploads.present? %>
+<div class="row">
+  <div class="col-md-6">
+    <div class="ms-showcase2-template">
+      <!-- Master Slider -->
+      <div class="master-slider ms-skin-default" id="masterslider">
+        <!-- 产品滚动图 -->
+        <% if @product.uploads.present? %>
           <% @product.uploads.each do |up| %>
-          <div class="ms-slide">
-            <%= image_tag up.upload.url(:md), "data-src" => up.upload.url(:md), class: "product_pic" %>
-            <a href="<%= up.upload.url(:lg) %>" rel="products" class="fancybox"></a>
-            <%= image_tag up.upload.url(:thumbnail), class: "ms-thumb" %>
-          </div>
+            <div class="ms-slide">
+              <%= image_tag up.upload.url(:md), "data-src" => up.upload.url(:md) %>
+              <a href="<%= up.upload.url(:lg) %>" rel="products" class="fancybox"></a>
+              <%= image_tag up.upload.url(:thumbnail), class: "ms-thumb" %>
+            </div>
           <% end -%>
-          <% else %>
+        <% else %>
           <div class="ms-slide">
             <%= image_tag "/assets/404.gif", "data-src" => "/assets/404.gif" %>
             <%= image_tag "/assets/404.gif", class: "ms-thumb" %>
           </div>
-          <% end -%>
-        </div>
-        <!-- 产品滚动图END -->
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <h3><%= @product.name %></h3>
-
-      <p>
-        入围企业：
-        <%= @product.item_dep.classify == 0 ?  @product.item_dep.name : "#{@product.item_dep.name} ( #{dict_value(@product.item_dep.classify, 'dep_classify')} )" %>
-      </p>
-
-      <%= check_login_and_show_price(@product.id) %>
-
-      <p>产品描述： <%= @product.summary %></p>
-
-      <div class="content-xs">
-          <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
-          <input type='text' class="h50 w60 border-1 tc font-size-20 padding-5 margin-left-minus-4 margin-right-minus-4" name='qty' value="1" id='qty'/>
-          <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='add' onclick='javascript: document.getElementById("qty").value++;' value='+'>+</button>
-        <% if @product.cjzx? %>
-          <%= link_to_void "加入购物车", onclick: "add_to_cart('#{@product.department_id}')", class:"btn-u btn-u-lg"  %>
-        <% else %>
-          <button id="xzgys" type="button" class="btn-u btn-u-lg">选择供应商</button>
         <% end -%>
       </div>
+      <!-- 产品滚动图END -->
     </div>
   </div>
+
+  <div class="col-md-6">
+    <h3><%= @product.name %></h3>
+
+    <p>
+      入围企业：
+      <%= @product.item_dep.classify == 0 ?  @product.item_dep.name : "#{@product.item_dep.name} ( #{dep_classify_span(@product.item_dep.classify)} )".html_safe %>
+    </p>
+
+    <%= check_login_and_show_price(@product.id) %>
+
+    <p>产品描述： <%= @product.summary %></p>
+
+    <div class="content-xs">
+      <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
+      <input type='text' class="h50 w60 border-1 tc font-size-20 padding-5 margin-left-minus-4 margin-right-minus-4" name='qty' value="1" id='qty'/>
+      <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='add' onclick='javascript: document.getElementById("qty").value++;' value='+'>+</button>
+      <% if @product.cjzx? %>
+        <%= link_to_void "加入购物车", onclick: "add_to_cart('#{@product.department_id}')", class:"btn-u btn-u-lg"  %>
+      <% else %>
+        <button id="xzgys" type="button" class="btn-u btn-u-lg">选择供应商</button>
+      <% end -%>
+    </div>
+  </div>
+</div>
 
 
 <!--=== Content Medium ===-->
@@ -63,7 +63,7 @@
     <li>
       <a href="#gysxx" role="tab" data-toggle="tab">供应商信息</a>
     </li>
-    <li>
+    <!-- <li>
       <a href="#shfw" role="tab" data-toggle="tab">售后服务</a>
     </li>
     <li>
@@ -71,7 +71,7 @@
     </li>
     <li>
       <a href="#jgjb" role="tab" data-toggle="tab">价格举报</a>
-    </li>
+    </li> -->
   </ul>
 
   <div class="tab-content">
@@ -115,12 +115,12 @@
       <% end %>
     </div>
 
-    <div class="tab-pane fade" id="shfw">
+<!--     <div class="tab-pane fade" id="shfw">
 
-    </div>
+    </div> -->
 
     <!-- Reviews -->
-    <div class="tab-pane fade" id="yhpl">
+    <!-- <div class="tab-pane fade" id="yhpl">
       <div class="product-comment margin-bottom-40">
         <div class="product-comment-in">
           <div class="product-comment-dtl">
@@ -137,13 +137,13 @@
                 </ul>
               </li>
             </ul>
-            <p><%= Time.now %></p>
+            <p><%#= Time.now %></p>
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- End Reviews -->
-
+<!--
     <div class="tab-pane fade" id="jgjb">
       <form action="http://htmlstream.com/preview/unify-v1.7/Shop-UI/assets/php/demo-contacts-process.php" method="post" id="sky-form3" class="sky-form sky-changes-4">
         <fieldset>
@@ -192,7 +192,7 @@
           <button type="submit" class="button">提交</button>
         </footer>
       </form>
-    </div>
+    </div> -->
   </div>
 </div>
 

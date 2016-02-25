@@ -19,7 +19,7 @@ class Cart
 
   # 购物车中保存product(商品)的id
   def change(product, seller, num, set = false)
-    num = num.to_i
+    num = num.to_f
     cart_item_id = "#{product.id}-#{seller.class}-#{seller.id}"
     # 同一供应商id
     sid = "#{seller.class}-#{seller.id}"
@@ -28,7 +28,7 @@ class Cart
       destroy(cart_item_id) if current_item.num <= 0
     else
       current_item = CartItem.new({:market_price => product.market_price, :ready => true,
-      :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => [num, 1].max,
+      :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => num, # [num, 1].max,
       :name => product.name, :seller_id => seller.id, id: cart_item_id, sid: sid,
       :seller_name => seller.name, ht: product.category.ht_template,
       :big_category_name => product.category.try(:parent).try(:parent).try(:name)})
@@ -86,8 +86,8 @@ class CartItem
 
   def initialize(attributes = {})
     self.product_id = attributes[:product_id]
-    attributes[:num] = [attributes[:num].to_i, 1].max
-    self.num = attributes[:num].to_i
+    # attributes[:num] = [attributes[:num].to_i, 1].max
+    self.num = attributes[:num].to_f
     self.id = attributes[:id]
     self.sid = attributes[:sid]
     self.ht = attributes[:ht]

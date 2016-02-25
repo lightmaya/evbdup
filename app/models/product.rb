@@ -179,4 +179,9 @@ class Product < ActiveRecord::Base
     end
   end
 
+  # 产品的第一张图片 size = 'thumbnail|md|lg'
+  def first_img(size='md')
+    self.uploads.present? ? self.uploads.first.upload.url(size.to_sym) : "/assets/404.gif"
+  end
+
 end

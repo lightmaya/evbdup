@@ -65,7 +65,7 @@ module JamesHelper
 
   # 首页 畅销产品展示
   def show_product_div(product)
-    img = product.uploads.present? ? product.uploads.first.upload.url(:md) : "/assets/404.gif"
+    img = product.first_img
     link_url = product_path(product)
     %Q{
       <div class="col-md-3 col-sm-6">
@@ -84,7 +84,7 @@ module JamesHelper
                 <h4 class="title-price height-50">
                   #{link_to_blank truncate(product.name, length: 28), link_url, title: product.name}
                 </h4>
-                <span class="gender text-uppercase">#{product.item_dep.try(:classify) == 0 ? "&nbsp;" : "供应商级别：#{dict_value(product.item_dep.classify, 'dep_classify')}" }</span>
+                <span class="gender text-uppercase">#{product.item_dep.try(:classify) == 0 ? "&nbsp;" : "供应商级别：#{dep_classify_span(product.item_dep.classify)}" }</span>
                 #{check_login_and_show_price(product.id)}
               </div>
             </div>

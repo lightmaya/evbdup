@@ -23,8 +23,8 @@
       flash_dialog("该产品的供应商不是A级供应商，请从A级供应商处采购或者通过协议议价的方式进行采购！");
       return false;
     }
-    var num = parseInt($("#qty").val());
-    if ($.isBlank(num) || num < 1){
+    var num = parseFloat($("#qty").val());
+    if ($.isBlank(num)){
       num = 1
     }
     if ((num + 1) > 9999){

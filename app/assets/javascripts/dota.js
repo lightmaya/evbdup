@@ -3,11 +3,11 @@ $(function(){
   // 购物车页面商品增减
   $(document).on('click', '.decrease_num', function(event) {
     $num = $('#item-num-' + $(this).parent().attr('cart_item_id'));
-    if ($.isBlank(parseInt($num.val()))){
+    if ($.isBlank(parseFloat($num.val()))){
       $num.val(1);
     }
-    if (parseInt($num.val()) > 1){
-      $num.val(parseInt($num.val()) - 1);
+    if (parseFloat($num.val()) > 1){
+      $num.val((parseFloat($num.val()) - 1).toFixed(3));
       // 计算单个商品总价
       calc_item($(this).parent().attr('cart_item_id'), $num.val());
       // 计算购物车总价
@@ -19,13 +19,13 @@ $(function(){
   $(document).on('click', '.increase_num', function(event) {
     $num = $('#item-num-' + $(this).parent().attr('cart_item_id'));
     num = $num.val();
-    if ($.isBlank(parseInt(num))){
+    if ($.isBlank(parseFloat(num))){
       $num.val(1);
     }
-    if ((parseInt(num) + 1) > 9999){
+    if ((parseFloat(num) + 1) > 9999){
       $num.val(9999);
     }else{
-      $num.val(parseInt(num) + 1);
+      $num.val((parseFloat(num) + 1).toFixed(3));
     }
     // 计算单个商品总价
     calc_item($(this).parent().attr('cart_item_id'), $num.val());
@@ -159,13 +159,13 @@ $(function(){
 
   // 购物车数量
   $(document).on('blur', '.cart-num-field', function(){
-    var num = parseInt($(this).val());
+    var num = parseFloat($(this).val()).toFixed(3);
     if (isEmpty(num)){
       num = 1;
     }else{
-      if (num <= 1){
-        num = 1;
-      }
+      // if (num <= 1){
+      //   num = 1;
+      // }
       if (num >= 9999){
         num = 9999;
       }
@@ -391,7 +391,7 @@ function calc_total(){
 function calc_item(item_id, num){
   price_input = $('#item-price-' + item_id);
   total = $('#item-total-' + item_id);
-  total.text((parseInt(num)*parseFloat(price_input.text())).toFixed(2));
+  total.text((parseFloat(num)*parseFloat(price_input.text())).toFixed(2));
 }
 
 // 修改报价
@@ -406,12 +406,12 @@ function save_real_price(item_id){
   var $t = $("#item_price_" + item_id);
   $t.val($t.val().replace(/[^0-9.]/g,''));
   var max_price = $t.attr("max_price");
-  if (isEmpty($t.val()) || parseInt($t.val()) < 0 || parseFloat($t.val()) > parseFloat(max_price)){
+  if (isEmpty($t.val()) || parseFloat($t.val()) < 0 || parseFloat($t.val()) > parseFloat(max_price)){
     $t.val(max_price);
   }
   // 计算总价
   var num = $t.attr('num');
-  $("#cart-item-total-" + item_id).text((parseInt(num) * parseFloat($t.val())).toFixed(2));
+  $("#cart-item-total-" + item_id).text((parseFloat(num) * parseFloat($t.val())).toFixed(2));
   var current_total = 0.0;
   $(".cart-item-total").each(function(){current_total += parseFloat($(this).text());})
   // 运费和其他费用

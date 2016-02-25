@@ -343,4 +343,9 @@ module ApplicationHelper
     label_tag(dict_value(classify, "dep_classify"), dict_value(classify, "dep_classify", 2))
   end
 
+  # 供应商分级 只有字体颜色 没有标签背景色
+  def dep_classify_span(classify)
+    "<span class='color-#{dict_value(classify, "dep_classify", 2)}'>#{dict_value(classify, "dep_classify")}</span>".html_safe
+  end
+
 end

@@ -15,7 +15,7 @@
                     <th></th>
                     <th>产品</th>
                     <th width="190px">最高限价</th>
-                    <th width="180px">数量</th>
+                    <th width="200px">数量</th>
                     <th width="190px">小计</th>
                     <th></th>
                   </tr>
@@ -35,17 +35,17 @@
                           <%= check_box_tag "p-#{sid}", "", item.ready.present?, class: "cart_checkbox", cart_item_id: item.id %>
                         </td>
                         <td class="product-in-table">
-                          <img class="img-responsive" src="/assets/404.gif" alt="">
+                          <%= image_tag item.product.first_img('thumbnail'), class: "img-responsive" %>
                           <div class="product-it-in">
                             <h3><%= link_to_blank item.name, item.product %></h3>
-                            <span><%= item.big_category_name %></span>
-                          </div>    
+                            <span><%= item.product.category.try(:name) %></span>
+                          </div>
                         </td>
                         <td class="tc">¥<span class="cart-item-price" id="item-price-<%= item.id %>"><%= number_with_precision(item.price, :precision => 2) %></span>
                         </td>
                         <td class="state-success tc" cart_item_id="<%= item.id %>">
                           <button type="button" class="quantity-button decrease_num">-</button>
-                          <%= text_field_tag "item-num-#{item.id}", item.num, class: "quantity-field cart-num-field", maxlength: "4", maxsize: "4" %>
+                          <%= text_field_tag "item-num-#{item.id}", item.num, class: "quantity-field cart-num-field", maxlength: "8", maxsize: "8" %>
                           <button type="button" class="quantity-button increase_num">+</button>
                         </td>
                         <td class="shop-red tc">¥<span class="cart-item-total" id="item-total-<%= item.id %>"><%= number_with_precision(item.total, :precision => 2) %></span>
@@ -62,7 +62,7 @@
               </table>
             </div>
           </section>
-                    
+
           <div class="coupon-code">
               <div class="row">
                   <div class="col-sm-4 sm-margin-bottom-30">
@@ -78,7 +78,7 @@
                       </ul>
                   </div>
               </div>
-          </div>    
+          </div>
         </div>
         <div class="actions clearfix">
           <ul role="menu" aria-label="Pagination">
@@ -102,7 +102,7 @@
 
 <script type="text/javascript">
   $(function(){
-    // 超过限额  
+    // 超过限额
     check_quote();
 
     $("#item-buy-sum_total").change(function(){
@@ -118,6 +118,6 @@
       $("#new_order_link").text("购买所选产品").attr("href", "<%= cart_order_path %>").css("background-color", "#18ba9b");
     }
   })
-</script> 
+</script>
 
-  
+
