@@ -353,7 +353,7 @@ class Department < ActiveRecord::Base
 
     str << show_category_total("办公物资", category_ha['bg'])
 
-    str << show_category_total("电商采购", category_ha['ds'])
+    str << show_category_total("网上商城", category_ha['ds'])
 
     str << show_category_total("职工工装", category_ha['gz'])
 

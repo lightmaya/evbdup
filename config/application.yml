@@ -101,13 +101,13 @@ defaults: &defaults
   # 首页供应商风采 有企业形象图片的单位的old_id
   dep_pic_old_id: [90853, 91337, 91178, 91125, 76588, 90829, 87920, 90849]
   asset_status: [[1,"在用"], [2,"闲置"], [3,"转移"], [4,"报废"]]
-  yw_type: { xygh: "协议供货", ddcg: "定点采购", wsjj: "网上竞价", dscg: "电商采购", grcg: "个人采购" }
+  yw_type: { xygh: "协议供货", ddcg: "定点采购", wsjj: "网上竞价", dscg: "网上商城", grcg: "个人采购" }
   faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
   manage_user_type: 1
   dep_purchaser_id: 2
   dep_supplier_id: 3
   audit_user_type: 7
-  ht_template: [ ["bg", "办公物资"], ["lj", "粮机物资"], ["qc", "汽车采购"], ["bzw", "包装物采购"], ["gc", "建筑工程"], ["gz", "职工工装"], ["ds", "电商采购"]]
+  ht_template: [ ["bg", "办公物资"], ["lj", "粮机物资"], ["qc", "汽车采购"], ["bzw", "包装物采购"], ["gc", "建筑工程"], ["gz", "职工工装"], ["ds", "网上商城"]]
   # 首页更多标签
   more_tag_type: { article_zytz: '重要通知', article_zbgg: '招标公告', article_jggg: '招标结果公告', wsjj_xq: '网上竞价公告', wsjj_jg: '竞价结果公告', xyzr: '协议转让公告', wchz: '无偿划转公告' }
 
