@@ -5,7 +5,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-8 pull-left padding-top-5">
-                <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_budget_path) if action_name == 'index'  %>
+                <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_budget_path) if params[:t] == 'my'  %>
             </div>
             <div class="col-md-4 pull-right">
                 <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
@@ -47,6 +47,6 @@
                 <% end %>
             </tbody>
         </table>
-        <%= paginate @budgets %> 
-    </div>                     
+        <%= paginate @budgets %>
+    </div>
 </div>

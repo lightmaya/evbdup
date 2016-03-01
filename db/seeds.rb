@@ -89,7 +89,7 @@ if Menu.first.blank?
     tmp.save
   end
 
-# ----入围项目管理-------------------------------------------------------------------------------------
+# ----入围项目管理-----------------------------------------------------------------------------------
   item = Menu.find_or_initialize_by(name: "入围项目管理", route_path: "/kobe/items", can_opt_action: "Item|read", is_show: true, user_type: manage_user_type)
   item.parent = yw
   item.save
@@ -108,7 +108,7 @@ if Menu.first.blank?
     tmp.save
   end
 
-# ----入围产品管理-------------------------------------------------------------------------------------
+# ----入围产品管理-----------------------------------------------------------------------------------
   item_manage = Menu.find_or_initialize_by(name: "入围产品管理", is_show: true, user_type: ms_ut)
   item_manage.parent = yw
   item_manage.save
@@ -271,9 +271,9 @@ if Menu.first.blank?
   budget.parent = yw
   budget.save
 
-  budget_list = Menu.find_or_initialize_by(name: "辖区内预算审批单", route_path: "/kobe/budgets", can_opt_action: "Budget|read", is_show: true, user_type: mp_ut)
-  budget_list.parent = budget
-  budget_list.save
+  my_budget_list = Menu.find_or_initialize_by(name: "我的预算审批单", route_path: "/kobe/budgets?t=my", can_opt_action: "Budget|read", is_show: true, user_type: mp_ut)
+  my_budget_list.parent = budget
+  my_budget_list.save
 
   [ ["查看预算审批单", "Budget|show", "/kobe/budgets/show"],
     ["新增预算审批单", "Budget|create", "/kobe/budgets/new"],
@@ -282,9 +282,13 @@ if Menu.first.blank?
     ["删除预算审批单", "Budget|update_destroy"]
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
-    tmp.parent = budget_list
+    tmp.parent = my_budget_list
     tmp.save
   end
+
+  budget_list = Menu.find_or_initialize_by(name: "辖区内预算审批单", route_path: "/kobe/budgets", can_opt_action: "Budget|read", is_show: true, user_type: mp_ut)
+  budget_list.parent = budget
+  budget_list.save
 
   audit_budget = Menu.find_or_initialize_by(name: "审核预算审批单列表", route_path: "/kobe/budgets/list", can_opt_action: "Budget|list", is_show: true, user_type: audit_user_type)
   audit_budget.parent = budget

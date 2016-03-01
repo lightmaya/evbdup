@@ -1,1 +1,1 @@
-<%= render :partial => 'list',:locals => { :title => "辖区内预算审批单", :search_url => kobe_budgets_path } %>
+<%= render :partial => 'list',:locals => { :title => "#{params[:t] == 'my' ? '我的' : '辖区内'}预算审批单", :search_url => kobe_budgets_path } %>

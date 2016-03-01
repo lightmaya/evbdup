@@ -8,6 +8,7 @@ class Kobe::BudgetsController < KobeController
 
   # 我的预算审批单
   def index
+    params[:q][:user_id_eq] = current_user.id if params[:t] == "my"
     @q = Budget.find_all_by_dep_code(current_user.real_dep_code).where(get_conditions("budgets")).ransack(params[:q])
     @budgets = @q.result.page params[:page]
   end
@@ -18,12 +19,12 @@ class Kobe::BudgetsController < KobeController
 
   def create
     create_and_write_logs(Budget, Budget.xml, {}, { department_id: current_user.department.id, dep_code: current_user.real_dep_code })
-    redirect_to kobe_budgets_path
+    redirect_to kobe_budgets_path(t: "my")
   end
 
   def update
     update_and_write_logs(@budget, Budget.xml)
-    redirect_to kobe_budgets_path
+    redirect_to kobe_budgets_path(t: "my")
   end
 
   def edit
