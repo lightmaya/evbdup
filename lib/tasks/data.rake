@@ -192,7 +192,7 @@ namespace :data do
       d.created_at = old.created_at
       d.updated_at = old.updated_at
 
-      d.comment_total = old.comment_total
+      # d.comment_total = old.comment_total
       d.capital = old.registered_funds
       d.license = old.license_code
       d.tax = old.national_tax_num
@@ -725,8 +725,8 @@ namespace :data do
       n.deliver_fee = get_value_in_xml(old.detail, "运费（元）")
       n.other_fee = get_value_in_xml(old.detail, "其他费用（元）")
       n.other_fee_desc = get_value_in_xml(old.detail, "其他费用说明")
-      n.comment_total = old.comment_total
-      n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
+      # n.comment_total = old.comment_total
+      # n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
       n.audit_user_id = get_user_id_in_audit_log(old)
       n.mall_id = old.mall_id
 
@@ -809,7 +809,7 @@ namespace :data do
       n.details = old.detail.to_s.gsub("param", "node")
       n.created_at = old.created_at
       n.updated_at = old.updated_at
-      n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
+      # n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
 
       if n.save
         succ += 1
@@ -847,7 +847,7 @@ namespace :data do
       n.details = old.detail.to_s.gsub("param", "node")
       n.created_at = old.created_at
       n.updated_at = old.updated_at
-      n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
+      # n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
 
       if n.save
         succ += 1

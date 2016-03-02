@@ -432,6 +432,44 @@ if Menu.first.blank?
     a.save
   end
 
+# ----协议议价-------------------------------------------------------------------------------------
+  bargain = Menu.find_or_initialize_by(name: "协议议价", is_show: true, user_type: mp_ut)
+  bargain.parent = yw
+  bargain.save
+
+  my_bargain_list = Menu.find_or_initialize_by(name: "我的协议议价", route_path: "/kobe/bargains?t=my", can_opt_action: "Bargain|read", is_show: true, user_type: mp_ut)
+  my_bargain_list.parent = bargain
+  my_bargain_list.save
+
+  [ ["查看协议议价", "Bargain|show", "/kobe/bargains/show"],
+    ["新增协议议价", "Bargain|create", "/kobe/bargains/new"],
+    ["修改协议议价", "Bargain|update", "/kobe/bargains/edit"],
+    ["提交协议议价", "Bargain|commit"],
+    ["删除协议议价", "Bargain|update_destroy"]
+  ].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
+    tmp.parent = my_bargain_list
+    tmp.save
+  end
+
+  bargain_list = Menu.find_or_initialize_by(name: "辖区内协议议价", route_path: "/kobe/bargains", can_opt_action: "Bargain|read", is_show: true, user_type: mp_ut)
+  bargain_list.parent = bargain
+  bargain_list.save
+
+  audit_bargain = Menu.find_or_initialize_by(name: "审核协议议价列表", route_path: "/kobe/bargains/list", can_opt_action: "Bargain|list", is_show: true, user_type: audit_user_type)
+  audit_bargain.parent = bargain
+  audit_bargain.save
+
+  audit_bargain_obj = Menu.find_or_initialize_by(name: "协议议价审核", route_path: "/kobe/bargains/audit", user_type: audit_user_type)
+  audit_bargain_obj.parent = audit_bargain
+  audit_bargain_obj.save
+
+  [["协议议价初审", "Bargain|first_audit"], ["协议议价终审", "Bargain|last_audit"]].each do |m|
+    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
+    tmp.parent = audit_bargain_obj
+    tmp.save
+  end
+
 # ----个人采购-----------------------------------------------------------------------------------------
   grcg = Menu.find_or_initialize_by(name: "个人采购", is_show: true, user_type: mp_ut)
   grcg.parent = yw
@@ -589,6 +627,7 @@ if Menu.first.blank?
     tmp.parent = audit_dep_obj
     tmp.save
   end
+
 # ----后台管理-----------------------------------------------------------------------------------------
   main = Menu.find_or_create_by(name: "后台管理", route_path: "/main", user_type: all_ut)
 
@@ -686,7 +725,6 @@ if Menu.first.blank?
   item_dep_tj = Menu.find_or_initialize_by(name: "入围供应商销量统计", route_path: "/kobe/tongji/item_dep_sales", can_opt_action: "Order|item_dep_sales", is_show: true, user_type: manage_user_type)
   item_dep_tj.parent = tongji
   item_dep_tj.save
-
 
 # ----系统设置-----------------------------------------------------------------------------------------
   setting = Menu.find_or_create_by(name: "系统设置", icon: "fa-cogs", is_show: true, user_type: manage_user_type)
@@ -787,7 +825,8 @@ if ToDoList.first.blank?
     ["买方确认", "/kobe/orders/my_list?r=3", "/kobe/orders/$$obj_id$$/buyer_confirm"],
     ["审核个人采购订单", "/kobe/orders/list?r=9", "/kobe/orders/$$obj_id$$/audit"],
     ["审核日常费用报销", "/kobe/daily_costs/list", "/kobe/daily_costs/$$obj_id$$/audit"],
-    ["审核车辆费用报销", "/kobe/asset_projects/list", "/kobe/asset_projects/$$obj_id$$/audit"]
+    ["审核车辆费用报销", "/kobe/asset_projects/list", "/kobe/asset_projects/$$obj_id$$/audit"],
+    ["审核协议议价", "/kobe/bargains/list", "/kobe/bargains/$$obj_id$$/audit"]
   ].each do |m|
     ToDoList.find_or_create_by(name: m[0], list_url: m[1], audit_url: m[2])
   end

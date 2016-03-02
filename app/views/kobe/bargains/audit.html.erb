@@ -1,0 +1,2 @@
+<%= show_tabs_with_name(@bargain.name, @arr, 'bargain_tab') %>
+<%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_bargain_path(@bargain), obj: @bargain, title: "审核协议议价" } %>

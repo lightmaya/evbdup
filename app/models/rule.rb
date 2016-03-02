@@ -120,6 +120,44 @@ class Rule < ActiveRecord::Base
       end
     end
     str.each{ |e| p e }
+    p str.size-1
+  end
+
+  # 更新流程对应的错误菜单
+  def self.update_menus
+    str = ['update: ']
+    self.all.each do |r|
+      p "...#{r.name}.........................."
+      doc = Nokogiri::XML(r.rule_xml)
+      doc.css("step").each_with_index do |step, i|
+        name = step["name"].to_str
+        first_audit = step.at_css('first_audit').to_str
+        last_audit = step.at_css('last_audit').to_str
+        old_junior = step.at_css('junior').to_str.to_i
+        old_senior = step.at_css('senior').to_str.to_i
+        junior = Menu.find_by(name: first_audit).try(:id)
+        senior = Menu.find_by(name: last_audit).try(:id)
+        to_do_id = ToDoList.find_by(id: step.at_css('to_do_id').to_str).try(:name)
+
+        p "#{i+1}. #{name}   to_do_id: #{to_do_id}"
+        p "#{old_junior == junior}  #{first_audit}:  junior: #{junior} | old_junior: #{old_junior}"
+        p "#{old_senior == senior}  #{last_audit}:  senior: #{senior} | old_senior: #{old_senior}"
+        p "=============================================================================="
+
+        unless old_junior == junior
+          step.at_css('junior').content = junior
+          str << "...#{r.name}....#{first_audit}:  junior: #{junior} | old_junior: #{old_junior}"
+        end
+
+        unless old_senior == senior
+          step.at_css('senior').content = senior
+          str << "...#{r.name}....#{last_audit}:  senior: #{senior} | old_senior: #{old_senior}"
+        end
+      end
+      r.update(rule_xml: doc.to_s)
+    end
+    str.each{ |e| p e }
+    p str.size-1
   end
 
 end

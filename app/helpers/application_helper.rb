@@ -106,7 +106,7 @@ module ApplicationHelper
   def show_tabs(arr=[],tag="mytab")
     titles = []
     contents = []
-    arr.each_with_index do |a,i|
+    arr.compact.each_with_index do |a,i|
       icon = a.has_key?(:icon) ? "<i class='fa #{a[:icon]}'></i>" : ""
       if i == 0
         titles << "<li class='active'><a href='##{tag}-#{i}' data-toggle='tab'><h4>#{icon} #{a[:title]}</h4></a></li>"

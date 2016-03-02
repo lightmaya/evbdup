@@ -278,4 +278,13 @@ module BaseFunction
     return result
   end
 
+  # show页面显示预算审批单 需要的hash
+  def get_budget_hash(budget, dep_id)
+    if budget.present? && current_user.real_department.is_ancestors?(dep_id)
+      budget_contents = show_obj_info(budget, Budget.xml)
+      budget_contents << show_uploads(budget)
+      { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
+    end
+  end
+
 end

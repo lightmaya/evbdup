@@ -137,12 +137,13 @@ class Kobe::BidProjectsController < KobeController
       @bpbs = @bid_project.bid_project_bids.order("bid_project_bids.total ASC, bid_project_bids.bid_time ASC")
       @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
 
-      budget = @bid_project.budget
-      if budget.present? && current_user.real_department.is_ancestors?(@bid_project.department_id)
-        budget_contents = show_obj_info(budget, Budget.xml)
-        budget_contents << show_uploads(budget, { is_picture: true })
-        @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
-      end
+      @arr << get_budget_hash(@bid_project.budget, @bid_project.department_id)
+      # budget = @bid_project.budget
+      # if budget.present? && current_user.real_department.is_ancestors?(@bid_project.department_id)
+      #   budget_contents = show_obj_info(budget, Budget.xml)
+      #   budget_contents << show_uploads(budget)
+      #   @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
+      # end
       @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
       @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
 

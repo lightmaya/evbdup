@@ -89,6 +89,16 @@ namespace :kobe do
     end
   end
 
+  resources :bargains do
+    collection do
+      get :list, :show_optional_category
+    end
+    member do
+      get :delete, :audit
+      post :commit, :update_audit
+    end
+  end
+
   resources :bid_projects do
     collection do
       get :list

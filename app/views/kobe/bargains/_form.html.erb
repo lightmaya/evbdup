@@ -1,0 +1,17 @@
+<%= draw_myform(@myform) %>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    // 选择预算审批单 给budget_id和budget_money赋值
+    $("body").on("click", ".dialog_box input[name='bargains_total'][type='radio']", function(){
+      var budget_money = $(this).nextAll('.red').text();
+      $("#new_bargain #bargains_total").val(budget_money);
+    });
+
+    $('#new_bargain').on('submit',function(){
+      $("#new_bargain_submit").text("保存中...");
+      $("#new_bargain_submit").addClass("btn-u-default");
+   });
+});
+</script>
