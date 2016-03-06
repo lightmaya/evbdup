@@ -1,13 +1,19 @@
 <div class="headline"><h2><%= @title.presence || '更多' %></h2></div>
 <% if @rs.present? %>
-    <ol>
+    <table class="table table-hover">
+        <tbody>
+        <tr>
+            <td style="width:80%:"><strong>标题</strong></td>
+            <td><strong>日期</strong></td>
+        </tr>
         <% @rs.each do |r| %>
         <%= article_li_tag(r, 0) if params[:type].include? 'article' %>
         <%= wsjj_xq_li_tag(r, 0) if params[:type] == 'wsjj_xq' %>
         <%= wsjj_jg_li_tag(r, 0) if params[:type] == 'wsjj_jg' %>
         <%= transfer_li_tag(r, 0) if ['xyzr', 'wchz'].include? params[:type] %>
         <% end %>
-    </ol>
+        </tbody>
+    </table>
     <%= paginate @rs %>
 <% else %>
     <%= something_not_found %>

@@ -20,13 +20,24 @@ module JamesHelper
   # 带日期的li标签 主要用于首页 显示公告 length = 0 表示不用按length截取title
   def li_tag_with_date(title, link_url, date, length = 20, new_cdt=false, new_cont='new', new_color='red')
     new_tag = %Q{<span class="text-highlights text-highlights-#{new_color} rounded-2x">#{new_cont}</span>}
-    %Q{
-      <li>
-        <a href='#{link_url}' title='#{title}' target='_blank'>#{length == 0 ? title : text_truncate(title, length)}</a>
-        #{new_tag if new_cdt}
-        <span class='hex pull-right'>#{date}</span>
-      </li>
-    }.html_safe
+    # “更多..”页面用表格显示
+    if length == 0 
+      return %Q{
+        <tr>
+          <td><a href='#{link_url}' target='_blank'>#{title}</a>
+        #{new_tag if new_cdt}</td>
+          <td>#{date}</td>                          
+        </tr>
+      }.html_safe
+    else
+      return %Q{
+        <li>
+          <a href='#{link_url}' title='#{title}' target='_blank'>#{text_truncate(title, length)}</a>
+          #{new_tag if new_cdt}
+          <span class='hex pull-right'>#{date}</span>
+        </li>
+      }.html_safe
+    end
   end
 
   # 首页公告li标签
@@ -43,7 +54,11 @@ module JamesHelper
 
   # 网上竞价结果
   def wsjj_jg_li_tag(project, length = 18)
-    li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, length, true, (project.status == 23 ? '中标' : '废标'), (project.status == 23 ? 'green' : 'blue'))
+    unless project.status == 33
+      return li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, length)
+    else
+      return li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, length, true, '废标')
+    end
   end
 
   # 资产划转 包括无偿划转和协议转让
@@ -122,12 +137,11 @@ module JamesHelper
               </div>
             </div>
           </div>
-          <div class="margin-top-10 font-size-16">#{text_truncate(dep.name, 15)}</div>
+          <div class="margin-top-10 font-size-16">#{link_to_blank(text_truncate(dep.name, 15),department_path(dep))}</div>
           <ul class="list-unstyled">
             <li><span class="color-green">信用分：</span> #{dep.comment_total}</li>
             <li class="h40"><span class="color-green">入围产品：</span> #{text_truncate(cat, 32)}</li>
           </ul>
-          <a class="btn-u btn-u-sm" href="#{department_path(dep)}" target="_blank">详情 + </a>
         </div>
       </div>
     }.html_safe
