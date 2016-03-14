@@ -17,15 +17,15 @@ class Menu < ActiveRecord::Base
 
   default_value_for :status, 65
 
-  # after_save do
-  #   Setting.where("var like 'user_options_%' or var like 'menus_%'").delete_all if changes["id"].blank? && changes["can_opt_action"].present?
-  #   if changes[:route_path].present?
-  #     users.map{|user| user.cache_menus(true)}
-  #   end
-  #   if changes[:can_opt_action].present?
-  #     users.map{|user| user.cache_option_hash(true)}
-  #   end
-  # end
+  after_save do
+    Setting.where("var like 'user_options_%' or var like 'menus_%'").delete_all if changes["id"].blank? && changes["can_opt_action"].present?
+    if changes[:route_path].present?
+      users.map{|user| user.cache_menus(true)}
+    end
+    if changes[:can_opt_action].present?
+      users.map{|user| user.cache_option_hash(true)}
+    end
+  end
 
   # 中文意思 状态值 标签颜色 进度
   def self.status_array

@@ -15,9 +15,9 @@ class Category < ActiveRecord::Base
   include AboutAncestry
 
   after_save do
-    # if changes["id"].present? || changes["ancestry"].present?
-    #   clean_cache_ids
-    # end
+    if changes["id"].present? || changes["ancestry"].present?
+      clean_cache_ids
+    end
   end
 
   # 中文意思 状态值 标签颜色 进度
