@@ -162,30 +162,21 @@ module KobeHelper
       current_index = obj_or_arr.get_current_step_in_array(arr)
     end
     str = %Q{
-      <div class="wizard margin-bottom-20">
-        <div class="steps clearfix">
-          <ul role="tablist">
+      <div class="alert alert-info font-size-22">
     }
     arr.each_with_index do |step, index|
-      li_cls = index == current_index ? 'current' : (index < current_index ? 'done' : '')
-      i_cls = index == current_index ? 'fa-info' : (index < current_index ? 'fa-check' : 'fa-history')
-      if current_index == arr.size-1
-        li_cls = 'done'
-        i_cls = 'fa-check'
-      end
+      span_cls = (current_index == arr.size-1 || index < current_index) ? "color-green" :  "color-grey"
+      i_cls = (index == arr.size - 1) ? "fa-circle-o" : (index < current_index ? "fa-check-circle-o" : "fa-clock-o")
       str << %Q{
-        <li role="tab" style="width: #{89/arr.size}%" class="#{li_cls}" aria-disabled="false" aria-selected="true">
-        <a id="steps-uid-0-t-0" href="#steps-uid-0-h-0" aria-controls="steps-uid-0-p-0">
-          <span class="number">#{index + 1}.</span>
-          <div class="overflow-h">
-              <h2 class='col-sm-10'>#{step}</h2>
-              <i class="rounded-x fa #{i_cls}"></i>
-           </div>
-        </a>
-        </li>
+        <span class="#{span_cls}"><i class="fa #{i_cls}"></i> #{step}</span>
       }
+      unless index == arr.size - 1
+        str << %Q{
+          <span class="font-size-18 #{span_cls} margin-left-10 margin-right-10"><i class="fa fa-arrow-right"></i></span>
+        }
+      end
     end
-    str << %Q{</ul></div></div>}
+    str << "</div>"
     return str.html_safe
   end
 

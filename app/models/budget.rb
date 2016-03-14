@@ -60,11 +60,11 @@ class Budget < ActiveRecord::Base
   def cando(act='',current_u=nil)
     case act
     when "show"
-      current_u.department.is_ancestors?(self.department_id)
+      current_u.real_department.is_ancestors?(self.department_id)
     when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit"
-      self.can_opt?("提交") && current_u.try(:id) == self.user_id
+      self.can_opt?("提交") && current_u.try(:id) == self.user_id && self.total != 0
     when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
     when "delete", "destroy"

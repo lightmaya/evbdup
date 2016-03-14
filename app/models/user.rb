@@ -96,7 +96,7 @@ class User < ActiveRecord::Base
     if current_u.is_admin
       if current_u.user_type == Dictionary.manage_user_type
         tmp << %Q{
-        <node name='是否单位管理员' column='is_admin' data_type='radio' data='[[0,"否"],[1,"是"]]'/>
+        <node name='是否单位管理员' column='is_admin' data_type='radio' data='#{Dictionary.yes_or_no}'/>
         }
       end
       tmp << %Q{

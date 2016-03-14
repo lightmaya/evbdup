@@ -15,9 +15,9 @@ class Category < ActiveRecord::Base
   include AboutAncestry
 
   after_save do
-    if changes["id"].present? || changes["ancestry"].present?
-      clean_cache_ids
-    end
+    # if changes["id"].present? || changes["ancestry"].present?
+    #   clean_cache_ids
+    # end
   end
 
   # 中文意思 状态值 标签颜色 进度
@@ -68,8 +68,8 @@ class Category < ActiveRecord::Base
         <node name='parent_id' data_type='hidden'/>
         <node name='品目名称' column='name' class='required' rules='{ remote: { url:"/kobe/categories/valid_name", type:"post" }}'/>
         <node name='合同模板' column='ht_template' class='required' data_type='select' data='#{Dictionary.ht_template}'/>
-        <node name='是否显示在首页' column='show_mall' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
-        <node name='是否采购计划显示' column='show_plan' class='required' data_type='radio' data='[[1,"是"],[0,"否"]]'/>
+        <node name='是否显示在首页' column='show_mall' class='required' data_type='radio' data='#{Dictionary.yes_or_no}'/>
+        <node name='业务类型' column='yw_type' class='required' data_type='select' data='#{Dictionary.category_yw_type.values}'/>
         <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
         <node name='审核部门' column='audit_type' class='digits' hint='-1：分公司审核，0：分公司和总公司都审核，1：总公司审核'/>
       </root>

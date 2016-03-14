@@ -1,0 +1,10 @@
+<div class="panel panel-grey margin-bottom-40">
+  <div class="panel-heading">
+  <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= "#{@dep.name} 可报价的产品" %></h3>
+  </div>
+  <div class="panel-body">
+
+    <%= render partial: 'bid_product', locals: { act: 'show' } %>
+
+  </div>
+</div>

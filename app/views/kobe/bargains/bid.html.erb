@@ -1,0 +1,164 @@
+<div class="panel panel-grey margin-bottom-40">
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= "#{@bargain.name} -- 报价" %></h3>
+  </div>
+  <div class="panel-body">
+
+  <%= form_tag(update_bid_kobe_bargain_path(@bargain), method: "post", class: 'sky-form no-border', id: "bid_form") do %>
+
+    <%= render partial: 'bid_product', locals: { act: 'bid' } %>
+
+    <h5><i class="fa fa-chevron-circle-down"></i> 附加费用</h5>
+    <div class="show_obj">
+      <table class="table table-striped table-bordered">
+        <tbody>
+          <tr>
+            <td width="16%">运费（元）：</td>
+            <td width="16%">
+              <label class="input">
+                <input type="text" class="number" id="bargain_bids_deliver_fee" name="bargain_bids[deliver_fee]" value="<%= @bid.deliver_fee %>">
+              </label>
+            </td>
+            <td width="16%">其他费用（元）：</td>
+            <td width="16%">
+              <label class="input">
+                <input type="text" class="number" id="bargain_bids_other_fee" name="bargain_bids[other_fee]" value="<%= @bid.other_fee %>">
+              </label>
+            </td>
+            <td width="16%">其他费用说明：</td>
+            <td width="16%">
+              <label class="input">
+                <input type="text" id="bargain_bids_other_fee_desc" name="bargain_bids[other_fee_desc]" value="<%= @bid.other_fee_desc %>">
+              </label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h5><i class="fa fa-chevron-circle-down"></i> 报价单位信息</h5>
+    <div class="show_obj">
+      <table class="table table-striped table-bordered">
+        <tbody>
+          <tr>
+            <td width="16%">报价单位：</td>
+            <td width="16%"><%= @bid.name %><input type="hidden" name="department_id" value="<%= current_user.real_department.id %>"></td>
+            <td width="16%"><span class="color-red">* </span>联系人：</td>
+            <td width="16%">
+              <label class="input">
+                <input type="text" class="required" id="bargain_bids_dep_man" name="bargain_bids[dep_man]" value="<%= @bid.dep_man.present? ? @bid.dep_man : current_user.name %>">
+              </label>
+            </td>
+            <td width="16%"><span class="color-red">* </span>联系人座机：</td>
+            <td width="16%">
+              <label class="input">
+                <input type="text" class="required" id="bargain_bids_dep_tel" name="bargain_bids[dep_tel]" value="<%= @bid.dep_tel.present? ? @bid.dep_tel : current_user.tel %>">
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td width="16%"><span class="color-red">* </span>联系人手机：</td>
+            <td width="16%">
+              <label class="input">
+                <input type="text" class="required" id="bargain_bids_dep_mobile" name="bargain_bids[dep_mobile]" value="<%= @bid.dep_mobile.present? ? @bid.dep_mobile : current_user.mobile %>">
+              </label>
+            </td>
+            <td width="16%"><span class="color-red">* </span>联系人地址：</td>
+            <td colspan="3">
+              <label class="input">
+                <input type="text" class="required" id="bargain_bids_dep_addr" name="bargain_bids[dep_addr]" value="<%= @bid.dep_addr.present? ? @bid.dep_addr : current_user.department.address %>">
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td>备注：</td>
+            <td colspan="5">
+              <label class="textarea textarea-resizable">
+                <textarea id="bargain_bids_备注" name="bargain_bids[备注]" rows="2"><%= get_details_node_value(@bid, "备注") %></textarea>
+              </label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="show_total">
+      <h2 class="text-red">
+        <strong>总计：￥<span id="bid_sum_total">0</span></strong>
+        <input type="hidden" id="bargain_bids_total" name="bargain_bids[total]" value="">
+      </h2>
+    </div>
+
+    <div><button class="btn-u" id="new_bid_submit" type="submit"><i class="fa fa-floppy-o"></i> 保 存 </button> </div>
+  <% end %>
+
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function(){
+    $("#bid_form").validate();
+
+    $('#bid_form').on('submit',function(){
+
+      var msg = []
+      // 填写其他费用 没有填写其他费用说明
+      var other_fee = $("input#bargain_bids_other_fee").val();
+      var bargain_bids_other_fee_desc = $("#bid_form #bargain_bids_other_fee_desc").val();
+      if(!isEmpty(other_fee) && isEmpty(bargain_bids_other_fee_desc)){
+        msg.push("其他费用说明不能为空！");
+      }
+
+      if (msg.length != 0) {
+       flash_dialog(msg.join("<br/>"));
+       return false;
+     };
+
+     $("#bargain_bids_total").val($("#bid_sum_total").text());
+    });
+    // 计算合计
+    set_all_check_total();
+    $('body').on("click", "input:radio", set_all_check_total);
+    $('body').on("focus blur", "#bargain_bids_deliver_fee", set_all_check_total);
+    $('body').on("focus blur", "#bargain_bids_other_fee", set_all_check_total);
+    // 本次报价 计算小计和合计
+    $('body').on("focus blur", ".price", function(){
+      var p_id = $(this).attr("id").split("price_")[1];
+      var num = parseFloat($(this).attr("num"));
+      var price = parseFloat($(this).val());
+      var bid_price = parseFloat($(this).attr("bp"));
+      if(isNaN(price) || price > bid_price){
+        $(this).parent("label").addClass("state-error");
+        $(this).after('<div class="color-red">本次报价不能大于产品的入围价格！</div>');
+        return false;
+      }else {
+        $(this).parent("label").removeClass('state-error');
+        $(this).nextAll("div.color-red").remove()
+        set_bid_total(p_id, num, price);
+        set_all_check_total();
+      }
+    });
+  });
+
+  // 计算每个产品的小计
+  function set_bid_total(p_id, num, price) {
+    var total = parseFloat(num) * parseFloat(price);
+    $("#total_" + p_id).text(total.toFixed(2));
+  };
+
+  // 计算所勾选的报价产品合计
+  function set_all_check_total() {
+    var sum_total = 0;
+    if (!isEmpty($("#bargain_bids_deliver_fee").val())) {
+      sum_total += parseFloat($("#bargain_bids_deliver_fee").val());
+    }
+    if (!isEmpty($("#bargain_bids_other_fee").val())) {
+      sum_total += parseFloat($("#bargain_bids_other_fee").val());
+    }
+    $("input:radio:checked").each(function() {
+      var p_id = $(this).attr("id").split("pid_")[1];
+      sum_total += parseFloat($("#total_" + p_id).text());
+    });
+    $("#bid_sum_total").text(sum_total.toFixed(2));
+  };
+</script>

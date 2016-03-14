@@ -67,7 +67,7 @@ class AssetProject < ActiveRecord::Base
   def cando(act='',current_u=nil)
     case act
     when "show"
-      current_u.department.is_ancestors?(self.department_id)
+      current_u.real_department.is_ancestors?(self.department_id)
     when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit"

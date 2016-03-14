@@ -122,15 +122,10 @@ module AboutRuleStep
       dep = eval(rs["dep"])
       if user_id.blank?
         rs["junior"].each do |m|
-          # 没有指定user_id时，判断当前审核用户有没有关联品目（判断有没有audit_user_ids和current_step_users交集）
-          current_step_users = dep.real_users.map(&:id)
-          if self.class.attribute_method?("audit_user_ids") && (current_step_users & self.audit_user_ids).present?
-            (current_step_users & self.audit_user_ids).each do |u_id|
-              tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m, user_id: u_id, to_do_list_id: to_do_id, dep_id: dep.id)
-            end
+          if dep.is_a?(Array)
+            dep.each{ |d| tqs << create_tq_without_user_id(d, m, to_do_id) }
           else
-            # 没有audit_user_ids，只有初审的人插入待办事项
-            tqs << TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: m, to_do_list_id: to_do_id, dep_id: dep.id)
+            tqs << create_tq_without_user_id(dep, m, to_do_id)
           end
         end
       else
@@ -146,6 +141,20 @@ module AboutRuleStep
       if rs == 'done' # 流程结束 删除所有待办事项
         self.delete_task_queue
       end
+    end
+  end
+
+  # 插入待办事项 没有指定user_id
+  def create_tq_without_user_id(dep, menu_id, to_do_list_id)
+    # 没有指定user_id时，判断当前审核用户有没有关联品目（判断有没有audit_user_ids和current_step_users交集）
+    current_step_users = dep.real_users.map(&:id)
+    if self.class.attribute_method?("audit_user_ids") && (current_step_users & self.audit_user_ids).present?
+      (current_step_users & self.audit_user_ids).each do |u_id|
+        return TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: menu_id, user_id: u_id, to_do_list_id: to_do_list_id, dep_id: dep.id)
+      end
+    else
+      # 没有audit_user_ids，只有初审的人插入待办事项
+      return TaskQueue.create(class_name: self.class, obj_id: self.id, menu_id: menu_id, to_do_list_id: to_do_list_id, dep_id: dep.id)
     end
   end
 

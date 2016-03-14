@@ -7,7 +7,7 @@ $(function() {
   $.isBlank = function(obj) {
     return(!obj || $.trim(obj) === "");
   };
-  
+
   // 提示
   $('.itips').on('click', function(){
     var d = dialog({
@@ -40,14 +40,14 @@ $(function() {
       quickClose: true,
       content: $(this).next().clone()
     }).show(this).title("提示");
-  }); 
+  });
 
-  // checkbox全选
+  // checkbox全选 不包括 disabled
   $("#all_check_box").on("click", function() {
     if ($(this).prop("checked") == false){
-      $(".check_box_item").prop("checked", false);
+      $(".check_box_item:enabled").prop("checked", false);
     }else{
-      $(".check_box_item").prop("checked", true);
+      $(".check_box_item:enabled").prop("checked", true);
     }
   });
 
@@ -316,26 +316,26 @@ function cutstr(str, len) {
   }
 }
 
-// 全选、取消全选的事件  
-function selectAll(){  
-    if ($("#check_all").attr("checked")) {  
-        $(":checkbox").attr("checked", true);  
-    } else {  
-        $(":checkbox").attr("checked", false);  
-    }  
+// 全选、取消全选的事件
+function selectAll(){
+    if ($("#check_all").attr("checked")) {
+        $(":checkbox").attr("checked", true);
+    } else {
+        $(":checkbox").attr("checked", false);
+    }
 };
-// 子复选框的事件  
-function setSelectAll(){  
-    //当没有选中某个子复选框时，SelectAll取消选中  
-    if (!$(this).checked) {  
-        $("#check_all").attr("checked", false);  
-    }  
-    var chsub = $(".list_table tbody input[type='checkbox']").length; //获取checkbox的个数  
-    var checkedsub = $(".list_table tbody input[type='checkbox']:checked").length; //获取选中的checkbox的个数  
-    if (checkedsub == chsub) {  
-        $("#check_all").attr("checked", true);  
+// 子复选框的事件
+function setSelectAll(){
+    //当没有选中某个子复选框时，SelectAll取消选中
+    if (!$(this).checked) {
+        $("#check_all").attr("checked", false);
+    }
+    var chsub = $(".list_table tbody input[type='checkbox']").length; //获取checkbox的个数
+    var checkedsub = $(".list_table tbody input[type='checkbox']:checked").length; //获取选中的checkbox的个数
+    if (checkedsub == chsub) {
+        $("#check_all").attr("checked", true);
     }else {
-        $("#check_all").attr("checked", false); 
+        $("#check_all").attr("checked", false);
     }
 };
 function art_alert(msg){

@@ -1,0 +1,46 @@
+<div class="panel panel-grey margin-bottom-40">
+  <div class="panel-heading">
+  <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= "#{@dep.name} -- 报价" %></h3>
+  </div>
+  <div class="panel-body">
+
+    <%= show_obj_info(@bargain, Bargain.xml("show"), { title: "采购单位信息" }) %>
+
+    <%= show_obj_info(@bid, BargainBid.xml("info"), { title: "报价单位信息" }) %>
+
+    <% @bargain.products.each_with_index do |p, index| %>
+      <%= show_obj_info(p,BargainProduct.xml(@bargain.category),{title: "产品明细 ##{index+1}", grid: 3}) %>
+
+      <table class="table table-bordered table-hover margin-top-10 text-border-green">
+        <thead>
+          <tr>
+            <th>报价产品名称</th>
+            <th>入围价格（元）</th>
+            <th>本次报价（元）</th>
+            <th>数量</th>
+            <th>小计（元）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% obj = p.bids.find_by(bargain_bid_id: @bid.id) %>
+          <tr>
+            <td class="tc"><%= link_to_blank obj.product.name, product_path(obj.product) %></td>
+            <td class="tc"><%= money obj.product.bid_price %></td>
+            <td class="tc"><%= money obj.price %></td>
+            <td class="tc"><%= p.quantity %></td>
+            <td class="tc"><%= money obj.total %></td>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
+
+    <%= show_obj_info(@bid, BargainBid.xml("fee"), { title: "附加费用", grid: 3 }) %>
+
+    <div class="margin-top-20">
+      <h2 class="text-red">
+        <strong>总计：<%= money @bid.total %></strong>
+      </h2>
+    </div>
+
+  </div>
+</div>

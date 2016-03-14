@@ -1,1 +1,1 @@
-<%= show_tabs_with_name(@bargain.name, @arr, 'bargain_tab') %>
+<%= render partial: 'show', locals: { act: "show", objs: @bargain.bids.order("id asc") } %>

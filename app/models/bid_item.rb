@@ -12,7 +12,7 @@ class BidItem < ActiveRecord::Base
       <root>
         <node column='id' data_type='hidden'/>
         <node column='category_id' data_type='hidden'/>
-        <node name='品目' column='category_name' class='tree_radio required' json_url='/kobe/shared/category_ztree_json' partner='category_id'/>
+        <node name='品目' column='category_name' class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:wsjj].first}"}' partner='category_id'/>
         <node name='参考品牌' column='brand_name' class='required'/>
         <node name='参考型号' column='xh' class='required'/>
         <node name='采购数量' column='num' class='required number'/>

@@ -490,6 +490,7 @@ namespace :data do
     Dragon.find_each do |old|
       n = Category.find_or_initialize_by(id: old.id)
       n.name = old.name
+      n.yw_type = 6
       n.audit_type = case old.audit_type
       when "1"
         1

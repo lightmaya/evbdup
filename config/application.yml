@@ -111,6 +111,9 @@ defaults: &defaults
   # 首页更多标签
   more_tag_type: { article_zytz: '重要通知', article_zbgg: '招标公告', article_jggg: '招标结果公告', wsjj_xq: '网上竞价公告', wsjj_jg: '竞价结果公告', xyzr: '协议转让公告', wchz: '无偿划转公告' }
 
+  # 某品目可以选择业务类别 例如：定点采购的订单只能选择可以被2整除的品目
+  category_yw_type: { ddcg: [2, "定点采购"], wsjj: [3, "网上竞价"], all: [6, "既可以定点采购又可以网上竞价"], none: [1, "都不能"] }
+
   # 状态数组
   # key: [状态中文, 状态数字]
   # value: [状态标签颜色, 百分比数字]
@@ -172,11 +175,13 @@ defaults: &defaults
     # 标签颜色 ["brown", "棕色"]
     ["等待卖方确认", "3"]: ["brown", 30]
     ["买方退回", "10"]: ["brown", 30]
+    ["等待报价", "17"]: ["brown", 30]
 
     # 买方处理状态：除7余数是4
     # 标签颜色 ["light-green", "浅绿"]
     ["等待买方确认", "4"]: ["light-green", 40]
     ["等待收货", "11"]: ["light-green", 50]
+    ["等待确认报价结果", "18"]: ["light-green", 50]
 
 development:
   <<: *defaults

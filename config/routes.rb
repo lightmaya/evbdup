@@ -91,11 +91,12 @@ namespace :kobe do
 
   resources :bargains do
     collection do
-      get :list, :show_optional_category
+      get :list, :show_optional_category, :show_optional_products, :bid_list, :show_bid_details
+      post :check_choose_dep
     end
     member do
-      get :delete, :audit
-      post :commit, :update_audit
+      get :delete, :audit, :choose, :bid, :confirm
+      post :commit, :update_audit, :update_choose, :update_bid, :update_confirm
     end
   end
 

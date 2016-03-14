@@ -433,7 +433,7 @@ if Menu.first.blank?
   end
 
 # ----协议议价-------------------------------------------------------------------------------------
-  bargain = Menu.find_or_initialize_by(name: "协议议价", is_show: true, user_type: mp_ut)
+  bargain = Menu.find_or_initialize_by(name: "协议议价", is_show: true, user_type: all_ut)
   bargain.parent = yw
   bargain.save
 
@@ -444,13 +444,21 @@ if Menu.first.blank?
   [ ["查看协议议价", "Bargain|show", "/kobe/bargains/show"],
     ["新增协议议价", "Bargain|create", "/kobe/bargains/new"],
     ["修改协议议价", "Bargain|update", "/kobe/bargains/edit"],
+    ["选择报价供应商", "Bargain|choose", "/kobe/bargains/choose"],
+    ["查看可选产品", "Bargain|show_optional_products", "/kobe/bargains/show_optional_products"],
+    ["查看报价产品", "Bargain|show_bid_details", "/kobe/bargains/show_bid_details"],
     ["提交协议议价", "Bargain|commit"],
-    ["删除协议议价", "Bargain|update_destroy"]
+    ["删除协议议价", "Bargain|update_destroy"],
+    ["确认报价结果", "Bargain|confirm", "/kobe/bargains/confirm"],
   ].each do |m|
     tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
     tmp.parent = my_bargain_list
     tmp.save
   end
+
+  confirm_bargain_list = Menu.find_or_initialize_by(name: "等待确认报价结果的协议议价项目", route_path: "/kobe/bargains?t=confirm", can_opt_action: "Bargain|read", is_show: true, user_type: mp_ut)
+  confirm_bargain_list.parent = bargain
+  confirm_bargain_list.save
 
   bargain_list = Menu.find_or_initialize_by(name: "辖区内协议议价", route_path: "/kobe/bargains", can_opt_action: "Bargain|read", is_show: true, user_type: mp_ut)
   bargain_list.parent = bargain
@@ -469,6 +477,30 @@ if Menu.first.blank?
     tmp.parent = audit_bargain_obj
     tmp.save
   end
+
+  bargain_done_list = Menu.find_or_initialize_by(name: "我的协议议价成交订单", route_path: "/kobe/orders/my_list?r=16", can_opt_action: "Order|my_list", is_show: true, user_type: mp_ut)
+  bargain_done_list.parent = bargain
+  bargain_done_list.save
+
+  bargain_bid_list = Menu.find_or_initialize_by(name: "可报价的协议议价项目", route_path: "/kobe/bargains/bid_list?flag=1", can_opt_action: "Bargain|bid_list", is_show: true, user_type: supplier_user_type)
+  bargain_bid_list.parent = bargain
+  bargain_bid_list.save
+
+  bargain_bid = Menu.find_or_initialize_by(name: "报价", can_opt_action: "Bargain|bid", route_path: "/kobe/bargains/bid", user_type: supplier_user_type)
+  bargain_bid.parent = bargain_bid_list
+  bargain_bid.save
+
+  bargain_bidden_list = Menu.find_or_initialize_by(name: "已报价的协议议价项目", route_path: "/kobe/bargains/bid_list?flag=2", can_opt_action: "Bargain|bid_list", is_show: true, user_type: supplier_user_type)
+  bargain_bidden_list.parent = bargain
+  bargain_bidden_list.save
+
+  bargain_is_bid_list = Menu.find_or_initialize_by(name: "已中标的协议议价项目", route_path: "/kobe/bargains/bid_list?flag=3", can_opt_action: "Bargain|bid_list", is_show: true, user_type: supplier_user_type)
+  bargain_is_bid_list.parent = bargain
+  bargain_is_bid_list.save
+
+  bargain_seller_list = Menu.find_or_initialize_by(name: "已成交的协议议价项目", route_path: "/kobe/orders/seller_list?r=16", can_opt_action: "Order|seller_list", is_show: true, user_type: supplier_user_type)
+  bargain_seller_list.parent = bargain
+  bargain_seller_list.save
 
 # ----个人采购-----------------------------------------------------------------------------------------
   grcg = Menu.find_or_initialize_by(name: "个人采购", is_show: true, user_type: mp_ut)
@@ -826,7 +858,9 @@ if ToDoList.first.blank?
     ["审核个人采购订单", "/kobe/orders/list?r=9", "/kobe/orders/$$obj_id$$/audit"],
     ["审核日常费用报销", "/kobe/daily_costs/list", "/kobe/daily_costs/$$obj_id$$/audit"],
     ["审核车辆费用报销", "/kobe/asset_projects/list", "/kobe/asset_projects/$$obj_id$$/audit"],
-    ["审核协议议价", "/kobe/bargains/list", "/kobe/bargains/$$obj_id$$/audit"]
+    ["审核协议议价", "/kobe/bargains/list", "/kobe/bargains/$$obj_id$$/audit"],
+    ["协议议价等待报价", "/kobe/bargains/bid_list", "/kobe/bargains/$$obj_id$$/bid"],
+    ["协议议价确认报价结果", "/kobe/bargains?t=confirm", "/kobe/bargains/$$obj_id$$/confirm"]
   ].each do |m|
     ToDoList.find_or_create_by(name: m[0], list_url: m[1], audit_url: m[2])
   end

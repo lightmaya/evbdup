@@ -26,7 +26,12 @@ class Item < ActiveRecord::Base
 
   after_save do
     if self.dep_names.present?
-      self.dep_names.split("\r\n").each do |name|
+      names = self.dep_names.split("\r\n")
+      # 删除不是本次填写的供应商名称
+      all_names = self.item_departments.map(&:name)
+      ItemDepartment.destroy_all(item_id: self.id, name: (all_names - names))
+
+      names.each do |name|
         dep = Department.find_by(name: name)
         tmp = (dep.present? ? { name: name, department_id: dep.id } : { name: name })
         self.item_departments.find_or_create_by(tmp)

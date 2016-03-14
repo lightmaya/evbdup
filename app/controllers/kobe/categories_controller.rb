@@ -31,7 +31,7 @@ class Kobe::CategoriesController < KobeController
   end
 
   def edit
-    sobj = @category.params_xml.present? ? @category.params_xml : CategoryParam.default_xml
+    sobj = Nokogiri::XML(@category.params_xml).xpath("/root/node").present? ? @category.params_xml : CategoryParam.default_xml
     slave_objs = create_objs_from_xml_model(sobj, CategoryParam)
     @ms_form = MasterSlaveForm.new(Category.xml, CategoryParam.xml, @category, slave_objs, { action: kobe_category_path(@category), method: "patch", grid: 2 }, { title: '参数明细', grid: 4 })
   end

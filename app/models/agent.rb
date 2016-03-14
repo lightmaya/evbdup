@@ -53,7 +53,7 @@ class Agent < ActiveRecord::Base
     case act
     when "show"
       # 上级单位或者总公司人
-      current_u.department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
+      current_u.real_department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
     when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "delete", "destroy"

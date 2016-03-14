@@ -131,7 +131,6 @@ module ApplicationHelper
   def show_tips(type,title='',msg='')
     return raw %Q|
       <div class="alert #{get_alert_style(type)} fade in">
-        <button class="close" aria-hidden="true" data-dismiss="alert" type="button">×</button>
         <h4>#{title}</h4>
         #{get_tips_msg(msg)}
       </div>|.html_safe
@@ -340,7 +339,7 @@ module ApplicationHelper
 
   # 供应商分级标签 classify指数据库中存的数值 对应Dictionary.dep_classify数组第一位
   def dep_classify_tag(classify)
-    label_tag(dict_value(classify, "dep_classify"), dict_value(classify, "dep_classify", 2))
+    "<span title='#{dict_value(classify, "dep_classify")}' class='btn-u btn-u-sm btn-u-#{dict_value(classify, "dep_classify", 2)}'>#{dict_value(classify, "dep_classify")}</span>".html_safe
   end
 
   # 供应商分级 只有字体颜色 没有标签背景色

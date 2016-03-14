@@ -1,0 +1,35 @@
+<%= show_obj_info(@bargain,Bargain.xml(act), { title: "采购单位信息" }) %>
+
+<% @bargain.products.each_with_index do |p, index| %>
+  <%= show_obj_info(p,BargainProduct.xml(@bargain.category),{title: "产品明细 ##{index+1}", grid: 3}) %>
+
+  <table class="table table-bordered table-hover margin-top-10 text-border-green">
+    <thead>
+      <tr>
+        <%= "<th>选择</th>".html_safe if act == "bid" %>
+        <th class="index">序号</th>
+        <th>可选产品名称</th>
+        <th>入围价格（元）</th>
+        <% if act == "bid" %>
+          <th class="w200">本次报价（元）</th>
+          <th>小计（元）</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @products[index].each_with_index do |obj, i| %>
+      <tr>
+        <% bproduct = @bid.present? ? @bid.products.find_by(bargain_product_id: p.id, product_id: obj.id) : nil %>
+        <%= content_tag(:td, radio_button_tag("pid_#{p.id}", obj.id, (bproduct.present? ? true : i == 0)), class: 'tc').html_safe if act == "bid" %>
+        <td class="tc"><%= show_index(i) %></td>
+        <td class="tc"><%= link_to_blank obj.name, product_path(obj) %></td>
+        <td class="tc"><%=money obj.bid_price %></td>
+        <% if act == "bid" %>
+          <td class="tc"><%= content_tag(:label, text_field_tag("price_#{p.id}_#{obj.id}", (bproduct.present? ? bproduct.price : obj.bid_price), num: p.quantity, bp: obj.bid_price, class: "number price"), class: 'input') %></td>
+          <td class="tc bid_total" id='<%= "total_#{p.id}_#{obj.id}" %>'><%= (bproduct.present? ? bproduct.price : obj.bid_price) * p.quantity %></td>
+        <% end %>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

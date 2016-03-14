@@ -1,0 +1,58 @@
+<div class="panel panel-grey margin-bottom-40">
+  <div class="panel-heading">
+      <h3 class="panel-title"><i class="fa fa-tasks"></i> <%= @panel_title %></h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="pt10">
+          <%= link_to label_tag("正在进行", "#{'warning' if params[:flag] == '1'}"), bid_list_kobe_bargains_path(flag: 1) %>
+          <%= link_to label_tag("已报价", "#{'warning' if params[:flag] == '2'}"), bid_list_kobe_bargains_path(flag: 2) %>
+          <%= link_to label_tag("已中标", "#{'warning' if params[:flag] == '3'}"), bid_list_kobe_bargains_path(flag: 3) %>
+        </div>
+      </div>
+      <div class="col-md-4 pull-right">
+
+        <%= search_form_for @q, url: bid_list_kobe_bargains_path, html: { method: :get } do |f| %>
+          <div class="margin-bottom-10">
+            <div class="input-group">
+              <%= hidden_field_tag "flag", params[:flag] %>
+              <%= f.search_field :name_or_sn_cont, class: "form-control input-sm", placeholder: "请输入项目编号或项目名称..." %>
+              <span class="input-group-btn ml8">
+                <button class="btn btn-success btn-sm mr8" type="submit">搜索</button>
+                <%= link_to "全部", bid_list_kobe_bargains_path(flag: params[:flag]), class: "btn btn-success btn-sm" %>
+              </span>
+            </div>
+          </div>
+          <% end %>
+        </div>
+      </div>
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th class="index">序号</th>
+            <th>项目编号</th>
+            <th>项目名称</th>
+            <th>采购单位</th>
+            <th>项目状态</th>
+            <th>投标状态</th>
+            <th class="cando">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @bargains.each_with_index do |bargain, index| %>
+          <tr>
+            <td><%= show_index(index) %></td>
+            <td><%= bargain.sn %></td>
+            <td><%= bargain.name %></td>
+            <td class="tc"><%= bargain.dep_name %></td>
+            <td class="tc"><%= bargain.status_badge %></td>
+            <td class="tc"><%= bargain.bids.find_by(department_id: current_user.department.id).has_bid?  ? label_tag("已报价") : label_tag("未报价", "warning") %></td>
+            <td class="tc"><%= btn_group(bargains_btn(bargain)) %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @bargains %>
+    </div>
+</div>

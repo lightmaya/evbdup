@@ -54,12 +54,14 @@ class Kobe::SharedController < KobeController
 
   # 状态是正常的品目
   def category_ztree_json
+    yw_cdt = params[:yw_type].present? ? "yw_type % #{params[:yw_type].to_i} = 0" : ""
     name = params[:ajax_key]
     status = Category.effective_status
     if name.blank?
-      nodes = Category.where(status: status)
+      nodes = yw_cdt.present? ? Category.where(status: status).where(yw_cdt) : Category.where(status: status)
     else
-      cdt = "and a.status in (#{status.join(', ')}) and b.status in (#{status.join(', ')})"
+      cdt = "and a.status in (#{status.join(', ')}) and b.status in (#{status.join(', ')}) "
+      cdt << " and a.#{yw_cdt} and b.#{yw_cdt}" if yw_cdt.present?
       sql = ztree_box_sql(Category, cdt)
       # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
       nodes = Category.find_by_sql([sql,"%#{name}%"])

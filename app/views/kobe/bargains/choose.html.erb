@@ -1,0 +1,48 @@
+<div class="panel panel-grey margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-tasks"></i> 选择可报价的供应商</h3>
+    </div>
+    <div class="panel-body">
+        <%= show_tips('warning', @bargain.name, Bargain.tips) %>
+
+        <%= render partial: 'bid_table', locals: { act: 'choose', objs: @deps } %>
+
+        <div class="margin-top-20">
+            <!-- 供应商不足三家 不显示选择供应商按钮 -->
+            <%= link_to_void '<i class="fa fa-check-square-o"></i> 选择供应商'.html_safe, onclick: "choose_dep(#{@bargain.id});", class: "btn-u btn-u-lg" if @deps.length >= 3 %>
+            <%= link_to '<i class="fa fa-reply"></i> 修改产品参数'.html_safe, edit_kobe_bargain_path(@bargain), class: "btn-u btn-u-lg btn-u-blue" %>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function choose_dep (bargain_id) {
+        var checked_dep = $(".check_box_item:checkbox:checked");
+        if(checked_dep.length < 3){
+            flash_dialog("请选择至少三家供应商报价！");
+            return false;
+        } else {
+            var dep_names = checked_dep.map(function(){ return $(this).parent('td').nextAll('.dep_name').text(); }).get().join("<br>") ;
+            var deps = checked_dep.map(function(){ return $(this).val(); }).get().join(", ") ;
+            $.post("/kobe/bargains/check_choose_dep", { b: bargain_id, d: deps }, function (data) {
+                if($.parseJSON(data)){
+                    var cont = "您确定选择以下 " + checked_dep.length + " 家供应商报价?" + "<br><br>"  + dep_names;
+                    confirm_dialog(cont, function () {
+                        $.post("/kobe/bargains/" + bargain_id + "/update_choose", { b: bargain_id, d: deps }, function (data) {
+                            if($.parseJSON(data["rs"])){
+                                window.location.href = "/kobe/bargains?t=my"
+                                flash_dialog("选择报价供应商成功！");
+                            }else {
+                                flash_dialog(data["msg"]);
+                                return false;
+                            }
+                        });
+                    });
+                }else {
+                   flash_dialog('<%= Bargain.a_dep_tips %>');
+                   return false;
+                }
+            });
+        }
+    };
+</script>
