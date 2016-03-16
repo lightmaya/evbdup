@@ -294,7 +294,8 @@ private
     spoor = ""
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
-      next if ["textarea","richtext"].include?(node.attributes["data_type"].to_s)
+      # 公告不保存textarea类型的日志
+      next if ["textarea","richtext"].include?(node.attributes["data_type"].to_s) && obj.class == "Article"
       attr_name = node.attributes.has_key?("name") ? node.attributes["name"] : node.attributes["column"]
       if node.attributes.has_key?("column")
         new_value = all_params[node.attributes["column"].to_str]

@@ -2,17 +2,14 @@
 	<div class="row">
         <div class="col-md-3 md-margin-bottom-40">
 
-            <%= current_user.department.cache_dep_main.html_safe if current_user.department.root_id == Dictionary.dep_purchaser_id %>
-            <hr>
-
             <%= render partial: "notification" %>
 
-            <div class="margin-bottom-50"></div>
+            <%= current_user.department.cache_dep_main.html_safe %>
 
             <!--Datepicker-->
             <form action="#" id="sky-form2" class="sky-form">
                 <div id="inline-start"></div>
-            </form> 
+            </form>
             <!--End Datepicker-->
         </div>
 
@@ -22,7 +19,7 @@
                 <%= render partial: "to_do" %>
 
                 <hr>
-                
+
                 <%= render partial: "order_list" %>
 
             </div>

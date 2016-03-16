@@ -305,13 +305,14 @@ class Department < ActiveRecord::Base
     }
   end
 
-  # 进入后台的统计数据
+  # 采购单位进入后台的统计数据
   def get_dep_main
 
     # 本辖区本年度 采购方式占比
     type_arr = []
-    cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"
+    cdt = "year(created_at) = '#{Time.now.last_year.year}' and status in (#{Order.ysd_status.join(', ')})"
     total = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).sum(:total)
+    order_count = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).count
     if total.present?
       type = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
       type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/total).to_f] }
@@ -322,50 +323,81 @@ class Department < ActiveRecord::Base
     category_ha = {}
     category.map{ |e| category_ha[e.ht_template] = e.total.to_f }
 
-    str = show_header("本年度辖区内采购方式占比", 'fa-bar-chart-o')
+    str = show_header("本年度采购情况", 'fa-line-chart ')
+    str << show_category_total("订单数量", "#{order_count} 个")
+    str << show_category_total("采购金额", format_total(total))
+    str << "<hr>"
+    str << show_header("本年度辖区内采购方式占比", 'fa-bar-chart-o')
 
     Dictionary.yw_type.each_with_index do |a, i|
       next if a[0] == 'grcg'
       yw_type = type_arr.find{|e| e[0] == a[0]}
-      str << progress_bar("#{a[1]}#{"( #{format_total(yw_type[1])} )" if yw_type.present?}", (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
+      str << progress_bar(a[1], (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
     end
 
     str << "<hr>"
     str << show_header("粮机物资采购情况", 'fa-vine')
 
-    str << show_category_total("粮机设备", category_ha['lj'])
+    str << show_category_total("粮机设备", format_total(category_ha['lj']))
 
-    str << show_category_total("建筑工程", category_ha['gc'])
+    str << show_category_total("建筑工程", format_total(category_ha['gc']))
 
-    str << show_category_total("包装物采购", category_ha['bzw'])
+    str << show_category_total("包装物采购", format_total(category_ha['bzw']))
 
     lj_per = total == 0 ? 0 : ([category_ha['lj'], category_ha['gc'], category_ha['bzw']].compact.sum * 100)/total
     str << progress_bar("粮机物资采购占比", lj_per, 'purple')
 
     str << show_header("汽车采购情况", 'fa-car')
 
-    str << show_category_total("汽车采购", category_ha['qc'])
+    str << show_category_total("汽车采购", format_total(category_ha['qc']))
 
     qc_per = total == 0 ? 0 : ([category_ha['qc']].compact.sum * 100)/total
     str << progress_bar("汽车采购占比", qc_per, 'brown')
 
     str << show_header("办公物资采购情况", 'fa-desktop')
 
-    str << show_category_total("办公物资", category_ha['bg'])
+    str << show_category_total("办公物资", format_total(category_ha['bg']))
 
-    str << show_category_total("网上商城", category_ha['ds'])
+    str << show_category_total("网上商城", format_total(category_ha['ds']))
 
-    str << show_category_total("职工工装", category_ha['gz'])
+    str << show_category_total("职工工装", format_total(category_ha['gz']))
 
     bg_per = total == 0 ? 0 : ([category_ha['bg'], category_ha['ds'], category_ha['gz']].compact.sum * 100)/total
     str << progress_bar("办公物资采购占比", bg_per, 'sea')
   end
 
+  # 供应商销量统计
+  def get_seller_main
+    # 本年度 销售占比
+    type_arr = []
+    cdt = "year(created_at) = '#{Time.now.last_year.year}' and status in (#{Order.ysd_status.join(', ')})"
+    total = Order.find_all_by_seller(self.real_dep.id, self.real_dep.name).where(cdt).sum(:total)
+    order_count = Order.find_all_by_seller(self.real_dep.id, self.real_dep.name).where(cdt).count
+    if total.present?
+      type = Order.find_all_by_seller(self.real_dep.id, self.real_dep.name).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
+      type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/total).to_f] }
+    end
+
+    str = show_header("本年度销售情况", 'fa-line-chart ')
+    str << show_category_total("订单数量", "#{order_count} 个")
+    str << show_category_total("销售金额", format_total(total))
+    str << "<hr>"
+    str << show_header("本年度销售方式占比", 'fa-bar-chart-o')
+    Dictionary.yw_type.each_with_index do |a, i|
+      next if a[0] == 'grcg'
+      yw_type = type_arr.find{|e| e[0] == a[0]}
+      str << progress_bar(a[1], (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
+    end
+    str
+  end
+
+  # 生产单位采购或销量统计的缓存
   def cache_dep_main(force = false)
+    d_cache = self.root_id == Dictionary.dep_purchaser_id ? get_dep_main : get_seller_main
     if force
-      Setting.send("dep_main_#{self.id}=", get_dep_main)
+      Setting.send("dep_main_#{self.id}=", d_cache)
     else
-      Setting.send("dep_main_#{self.id}=", get_dep_main) if Setting.send("dep_main_#{self.id}").blank?
+      Setting.send("dep_main_#{self.id}=", d_cache) if Setting.send("dep_main_#{self.id}").blank?
     end
     Setting.send("dep_main_#{self.id}")
   end
@@ -396,15 +428,16 @@ class Department < ActiveRecord::Base
     sum = total.present? ? total : 0
     %Q{
       <div class="row margin-bottom-20">
-        <div class="col-xs-6 service-in"><small>#{name}</small></div>
-        <div class="col-xs-6 text-right service-in"><small>#{format_total(sum)}</small></div>
+        <div class="col-xs-6 service-in">#{name}</div>
+        <div class="col-xs-6 text-right service-in">#{sum}</div>
       </div>
     }
   end
 
   # 格式化显示金额 万元
   def format_total(total)
-    "¥#{format("%0.2f", total/10000)} 万元"
+    sum = total.present? ? total : 0
+    "¥#{format("%0.2f", sum/10000)} 万元"
   end
 
 end
