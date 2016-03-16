@@ -79,7 +79,7 @@ class Kobe::BargainsController < KobeController
   def update_audit
     save_audit(@bargain)
     # 插入order表
-
+    @bargain.send_to_order if Bargain.effective_status.include?(@bargain.status)
     redirect_to list_kobe_bargains_path
   end
 

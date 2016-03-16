@@ -154,4 +154,68 @@ class Bargain < ActiveRecord::Base
     self.done_bids.first.total > self.budget.total
   end
 
+  # 插入order表
+  def send_to_order
+    order = Order.new
+    order.name = self.name
+    order.sn = self.sn
+    order.contract_sn = self.sn.gsub(self.rule.try(:code), 'ZCL')
+    order.buyer_name = self.dep_name
+    order.payer = self.invoice_title
+
+    order.buyer_id = self.department_id
+    order.buyer_code = self.dep_code
+
+    order.buyer_man = self.dep_man
+    order.buyer_tel = self.dep_tel
+    order.buyer_mobile = self.dep_mobile
+    order.buyer_addr = self.dep_addr
+
+    bid = self.bid_success
+    order.seller_name = bid.name
+    order.seller_id = bid.department_id
+    order.seller_code = bid.department.real_ancestry
+
+    order.seller_man = bid.dep_man
+    order.seller_tel = bid.dep_tel
+    order.seller_mobile = bid.dep_mobile
+    order.seller_addr = bid.dep_addr
+
+    order.budget_id = self.budget_id
+    order.budget_money = self.total
+    order.total = bid.total
+
+    order.deliver_at = self.updated_at
+
+    order.summary = self.summary
+    order.user_id = self.user_id
+    order.status = self.status
+
+    order.details = self.details
+    order.logs = self.logs.to_s
+    order.created_at = self.created_at
+    order.updated_at = self.updated_at
+    order.yw_type = 'xyyj'
+
+    order.deliver_fee = bid.deliver_fee
+    order.other_fee = bid.other_fee
+    order.other_fee_desc = bid.other_fee_desc
+
+    bid.products.each do |item|
+      xq_item = item.bargain_product
+      product = item.product
+      order.items.build(
+        category_id: self.category_id, category_code: self.category_code,
+        category_name: self.category.name, product_id: item.product_id,
+        brand: product.brand, model: product.model, version: product.version,
+        unit: xq_item.unit, market_price: product.market_price, bid_price: product.bid_price,
+        summary: product.summary, quantity: xq_item.quantity, price: item.price, total: item.total,
+        details: xq_item.details, item_id: self.item_id
+        )
+    end
+
+    order.ht_template = self.category.ht_template
+    order.save
+  end
+
 end

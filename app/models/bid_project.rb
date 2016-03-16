@@ -185,6 +185,7 @@ class BidProject < ActiveRecord::Base
     }
   end
 
+  # 插入order表
   def send_to_order
     order = Order.new
     order.name = self.name
