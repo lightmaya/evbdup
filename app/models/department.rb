@@ -250,7 +250,7 @@ class Department < ActiveRecord::Base
         <node name='单位名称' column='name' hint='必须与营业执照中的单位名称保持一致' rules='{required:true, maxlength:30, minlength:3, remote: { url:"/kobe/departments/valid_dep_name", type:"post" }}'/>
         <node name='单位简称' column='short_name'/>
         <node name='曾用名' column='old_name' display='disabled'/>
-        <node name='单位类型' column='dep_type' data_type='radio' data='[[0,"独立核算单位"],[1,"部门"]]' hint='独立核算单位是****************'/>
+        <node name='单位类型' column='dep_type' data_type='radio' data='[[0,"独立核算单位"],[1,"部门"]]' hint='“独立核算单位”是指财务独立，需要单独开具发票的单位。'/>
         <node name='邮政编码' column='post_code' rules='{required:true, number:true}'/>
         <node name='所在地区' class='tree_radio required' json_url='/kobe/shared/ztree_json' json_params='{"json_class":"Area"}' partner='area_id'/>
         <node column='area_id' data_type='hidden'/>
