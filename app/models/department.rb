@@ -312,6 +312,7 @@ class Department < ActiveRecord::Base
     type_arr = []
     cdt = "year(created_at) = '#{Time.now.last_year.year}' and status in (#{Order.ysd_status.join(', ')})"
     total = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).sum(:total)
+    order_count = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).count
     if total.present?
       type = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
       type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/total).to_f] }
@@ -322,7 +323,11 @@ class Department < ActiveRecord::Base
     category_ha = {}
     category.map{ |e| category_ha[e.ht_template] = e.total.to_f }
 
-    str = show_header("本年度辖区内采购方式占比", 'fa-bar-chart-o')
+    str = show_header("本年度采购情况", 'fa-line-chart ')
+    str << show_category_total("订单数量", "#{order_count} 个")
+    str << show_category_total("采购金额", format_total(total))
+    str << "<hr>"
+    str << show_header("本年度辖区内采购方式占比", 'fa-bar-chart-o')
 
     Dictionary.yw_type.each_with_index do |a, i|
       next if a[0] == 'grcg'
@@ -374,7 +379,7 @@ class Department < ActiveRecord::Base
     end
 
     str = show_header("本年度销售情况", 'fa-line-chart ')
-    str << show_category_total("订单数量", order_count)
+    str << show_category_total("订单数量", "#{order_count} 个")
     str << show_category_total("销售金额", format_total(total))
     str << "<hr>"
     str << show_header("本年度销售方式占比", 'fa-bar-chart-o')
