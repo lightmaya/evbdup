@@ -1,9 +1,9 @@
 <div class="wizard">
   <%#= render "shared/steps", i: 2 %>
-  <%= show_step(["我的购物车", "下单", "供应商确认", "打印合同<br/>及凭证", "商品及<br/>服务评价"], 1) %>
+  <%= show_step(["我的购物车", "下单", "供应商确认", "打印合同及凭证", "用户评价"], 1) %>
 </div>
 
-<div class="container content"> 
+<div class="container content">
 <%= simple_form_for @order, remote: true, url: update_cart_order_kobe_orders_path, html: {id: "order_create_form"} do |f| %>
   <!-- 收货地址 -->
   <%= render 'address', f: f %>
@@ -29,6 +29,6 @@
   <button type="button" id="loading_btn" class="fr btn btn-lg rounded" disabled="disabled" style="display:none;">订单提交中...</button>
 
   <div class="ordernumber">应付金额：<span>￥</span><span id="order_total"><%= "%.2f" % @order.total.to_f %></span></div>
-  
+
 <% end -%>
-</div> 
+</div>

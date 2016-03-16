@@ -145,7 +145,7 @@ class Kobe::BidProjectsController < KobeController
       #   @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
       # end
       @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
-      @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.show_logs) }
+      @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.can_bid?) }
 
     end
     # 只允许传递过来的参数

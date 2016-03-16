@@ -381,7 +381,7 @@ module BtnArrayHelper
     # 修改
     arr << [obj.class.icon_action("修改"), edit_kobe_bargain_path(obj)] if can?(:update, obj) && obj.cando("edit", current_user)
     # 选择供应商
-    arr << [obj.class.icon_action("选择供应商"), choose_kobe_bargain_path(obj)] if can?(:choose, obj) && obj.cando("choose", current_user)
+    arr << [obj.class.icon_action("指定供应商"), choose_kobe_bargain_path(obj)] if can?(:choose, obj) && obj.cando("choose", current_user)
     # 提交
     arr << [obj.class.icon_action("提交"), commit_kobe_bargain_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit", current_user)
     # 删除
@@ -389,7 +389,7 @@ module BtnArrayHelper
     # 报价
     arr << [obj.class.icon_action("报价"), bid_kobe_bargain_path(obj)] if can?(:bid, obj) && obj.cando("bid", current_user)
     # 确认报价结果
-    arr << [obj.class.icon_action("确认报价结果"), confirm_kobe_bargain_path(obj)] if can?(:confirm, obj) && obj.cando("confirm", current_user)
+    arr << [obj.class.icon_action("选择成交人"), confirm_kobe_bargain_path(obj)] if can?(:confirm, obj) && obj.cando("confirm", current_user)
 
     # 审核
     audit_opt = [obj.class.icon_action("审核"), audit_kobe_bargain_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)

@@ -67,7 +67,7 @@ class BidProject < ActiveRecord::Base
     #   ["已废标", "33", "dark", 100],
     #   ["已删除", "404", "dark", 100]
     # ]
-    self.get_status_array(["暂存", "需求等待审核", "需求审核拒绝", "已发布", "结果等待审核", "结果审核拒绝", "确定中标人", "废标等待审核", "废标审核拒绝", "已废标", "已删除"])
+    self.get_status_array(["暂存", "需求等待审核", "需求审核拒绝", "已发布", "结果等待审核", "结果审核拒绝", "已成交", "废标等待审核", "废标审核拒绝", "已废标", "已删除"])
 		# [
 	 #    ["暂存", 0, "orange", 20],
   #     ["需求等待审核", 1, "blue", 40],
@@ -121,7 +121,7 @@ class BidProject < ActiveRecord::Base
 
   # 可以选择中标人
   def can_choose?
-    self.status == BidProject.bid_and_choose_status && self.is_end?
+    self.status == BidProject.bid_and_choose_status && self.is_end? || BidProject.buyer_edit_status.include?(self.status)
   end
 
   def is_end?
@@ -137,17 +137,17 @@ class BidProject < ActiveRecord::Base
     (item.present? && item.departments.include?(user.department)) || item.blank?
   end
 
-  def show_logs
-    if can_bid?
-      doc = Nokogiri::XML(self.logs)
-      # note = doc.search("/root/node[(@操作内容='报价')]") # find all tags with the node_name "note"
-      note = doc.search("/root/node[(@操作内容='报价')] | /root/node[(@操作内容='修改报价')]")
-      note.remove
-      doc
-    else
-      Nokogiri::XML(self.logs)
-    end
-  end
+  # def show_logs
+  #   if can_bid?
+  #     doc = Nokogiri::XML(self.logs)
+  #     # note = doc.search("/root/node[(@操作内容='报价')]") # find all tags with the node_name "note"
+  #     note = doc.search("/root/node[(@操作内容='报价')] | /root/node[(@操作内容='修改报价')]")
+  #     note.remove
+  #     doc
+  #   else
+  #     Nokogiri::XML(self.logs)
+  #   end
+  # end
 
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids

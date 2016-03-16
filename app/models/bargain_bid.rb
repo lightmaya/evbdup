@@ -17,6 +17,8 @@ class BargainBid < ActiveRecord::Base
         rule_step = ns.is_a?(Hash) ? ns["name"] : ns
         st = obj.get_change_status("通过")
         obj.update(status: st, rule_step: rule_step)
+        # 插入待办事项
+        obj.reload.create_task_queue
       end
     end
   end
@@ -28,7 +30,13 @@ class BargainBid < ActiveRecord::Base
 
   # 是否已经报价
   def has_bid?
-    self.total !=0 && self.products.present?
+    self.total > 0 && self.products.present?
+  end
+
+  # 更新中标情况
+  def update_bid_success
+    self.bargain.bids.update_all(is_bid: false)
+    self.update(is_bid: true)
   end
 
 

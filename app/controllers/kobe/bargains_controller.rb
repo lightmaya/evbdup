@@ -174,7 +174,7 @@ class Kobe::BargainsController < KobeController
     write_logs(@bargain, info, "[#{bid.name}]#{info}成功！")
     # 删除待办事项
     TaskQueue.where(class_name: 'Bargain', obj_id: @bargain.id, dep_id: bid.department_id).destroy_all if info == "报价"
-
+    tips_get("#{info}成功。")
     redirect_to bid_list_kobe_bargains_path(flag: 2)
   end
 
@@ -213,20 +213,36 @@ class Kobe::BargainsController < KobeController
 
   # 确认结果
   def confirm
-    @myform = SingleForm.new(Bargain.confirm_xml, @bargain, { form_id: "confirm_form", upload_files: true, action: update_confirm_kobe_bargain_path(@bargain), title: '选择中标人' })
+    @myform = SingleForm.new(Bargain.confirm_xml, @bargain, { form_id: "confirm_form", upload_files: true, action: update_confirm_kobe_bargain_path(@bargain), title: '选择成交人' })
   end
 
   def update_confirm
-    cs = @bargain.get_current_step
+    if @bargain.rule_step.blank?
+      log_name = @bargain.get_last_node_by_logs["操作内容"]
+      all_steps = @bargain.get_obj_steps
+      i = @bargain.get_step_index(log_name)
+      cs = i > 0 ? all_steps[i-1] : "start"
+      st = cs.is_a?(Hash) ? cs["start_status"].to_i : Bargain.confirm_status
+      rs = cs.is_a?(Hash) ? cs["name"] : cs
+      @bargain.update(status: st,rule_step: rs)
+    end
+    bid = @bargain.bids.find_by(id: params[:bargains][:bid_id])
+    if bid.present?
+      bid.update_bid_success
+    else
+      @bargain.bids.update_all(is_bid: false)
+    end
+    info = bid.present? ? "选择成交人 [#{bid.name}] " : '选择作废'
+    cs = @bargain.reload.get_current_step
     if cs.is_a?(Hash)
       ns = @bargain.get_next_step
       rule_step = ns.is_a?(Hash) ? ns["name"] : ns
       st = @bargain.get_change_status("通过")
-      update_and_write_logs(@bargain, Bargain.confirm_xml, { action: '选择中标人' }, { status: st, rule_step: rule_step })
-      bid = @bargain.bids.find_by(id: params[:bargains][:bid_id])
-      bid.update(is_bid: true) if bid.present?
+      update_and_write_logs(@bargain, Bargain.confirm_xml, { action: info }, { status: st, rule_step: rule_step })
+
       # 插入协议议价审核的待办事项
       @bargain.reload.create_task_queue
+      tips_get("#{info}成功！")
     end
     redirect_to kobe_bargains_path(t: "my")
   end
@@ -256,8 +272,12 @@ class Kobe::BargainsController < KobeController
 
     # 根据选择的产品参数组成sql条件 返回数组
     def get_cdts_by_product_params(product)
-      Nokogiri::XML(product.details).css("node").map{ |n|
-        %Q|extractvalue(details, '//node[@name=\"#{n["name"]}\"]/@value') = '#{n["value"]}'| }
+      arr = []
+      Nokogiri::XML(product.details).css("node").each do |n|
+        next if n["value"].blank?
+        arr << %Q|extractvalue(details, '//node[@name=\"#{n["name"]}\"]/@value') = '#{n["value"]}'|
+      end
+      return arr
     end
 
     def get_audit_menu_ids
@@ -281,6 +301,7 @@ class Kobe::BargainsController < KobeController
     end
 
     def get_show_arr
+      @bids = @bargain.show_bids? ?  @bargain.done_bids : @bargain.bids
       obj_contents = show_obj_info(@bargain,Bargain.xml)
       @bargain.products.each_with_index do |p, index|
         obj_contents << show_obj_info(p,BargainProduct.xml(@bargain.category),{title: "产品明细 ##{index+1}", grid: 3})
@@ -291,7 +312,7 @@ class Kobe::BargainsController < KobeController
      @arr << get_budget_hash(@bargain.budget, @bargain.department_id)
 
       @arr << {title: "附件", icon: "fa-paperclip", content: show_uploads(@bargain)}
-      @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@bargain, @bargain.show_logs)}
+      @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@bargain, @bargain.can_bid?)}
     end
 
 end

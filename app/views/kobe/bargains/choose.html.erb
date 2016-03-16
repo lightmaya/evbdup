@@ -9,7 +9,7 @@
 
         <div class="margin-top-20">
             <!-- 供应商不足三家 不显示选择供应商按钮 -->
-            <%= link_to_void '<i class="fa fa-check-square-o"></i> 选择供应商'.html_safe, onclick: "choose_dep(#{@bargain.id});", class: "btn-u btn-u-lg" if @deps.length >= 3 %>
+            <%= link_to_void '<i class="fa fa-check-square-o"></i> 指定供应商'.html_safe, onclick: "choose_dep(#{@bargain.id});", class: "btn-u btn-u-lg" if @deps.length >= 3 %>
             <%= link_to '<i class="fa fa-reply"></i> 修改产品参数'.html_safe, edit_kobe_bargain_path(@bargain), class: "btn-u btn-u-lg btn-u-blue" %>
         </div>
     </div>

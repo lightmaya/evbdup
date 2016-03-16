@@ -5,7 +5,8 @@
     <h3 class="panel-title"><i class="fa fa-tasks"></i> 已报价的供应商</h3>
   </div>
   <div class="panel-body">
-      <%= render partial: 'bid_table', locals: { act: "confirm", objs: @bargain.bids.order("bargain_bids.total asc") } %>
+
+      <%= render partial: 'bid_table', locals: { act: "confirm", objs: @bids } %>
 
       <div class="margin-top-20">
         <%= draw_myform(@myform) %>

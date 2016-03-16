@@ -167,12 +167,17 @@ module KobeHelper
     arr.each_with_index do |step, index|
       span_cls = (current_index == arr.size-1 || index < current_index) ? "color-green" :  "color-grey"
       i_cls = (index == arr.size - 1) ? "fa-circle-o" : (index < current_index ? "fa-check-circle-o" : "fa-clock-o")
+      right_cls = span_cls
+      if current_index == index
+        span_cls = "color-brown"
+        i_cls = "fa-pencil-square-o"
+      end
       str << %Q{
         <span class="#{span_cls}"><i class="fa #{i_cls}"></i> #{step}</span>
       }
       unless index == arr.size - 1
         str << %Q{
-          <span class="font-size-18 #{span_cls} margin-left-10 margin-right-10"><i class="fa fa-arrow-right"></i></span>
+          <span class="font-size-18 #{right_cls} margin-left-10 margin-right-10"><i class="fa fa-arrow-right"></i></span>
         }
       end
     end

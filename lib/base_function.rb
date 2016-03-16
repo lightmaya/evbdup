@@ -137,10 +137,17 @@ module BaseFunction
   end
 
   # 显示记录的操作日志
-  def show_logs(obj, doc = nil)
+  def show_logs(obj, can_bid = false, doc = nil)
     return "暂无记录" if obj.logs.blank?
     str = []
     doc ||= Nokogiri::XML(obj.logs)
+    # 如果是网上竞价或协议议价的 在报价时不显示报价日志
+    if can_bid
+      doc = Nokogiri::XML(obj.logs)
+      # note = doc.search("/root/node[(@操作内容='报价')]") # find all tags with the node_name "note"
+      note = doc.search("/root/node[(@操作内容='报价')] | /root/node[(@操作内容='修改报价')]")
+      note.remove
+    end
     doc.xpath("/root/node").each do |n|
       opt_time = n.attributes["操作时间"].to_s.split(" ")
       # act = n.attributes["操作内容"].to_s[0,2]

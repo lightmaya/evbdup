@@ -1,11 +1,11 @@
-<% 
+<%
   i ||= 1
   steps = [
       ["我的购物车", ""],
       ["下单", ""],
       ["供应商确认", ""],
       ["打印合同及凭证", ""],
-      ["商品及服务评价"]
+      ["用户评价"]
     ]
 %>
 
@@ -14,12 +14,12 @@
     <% steps.each_with_index do |step, index| %>
       <li role="tab" style="width: <%= 89.0/steps.size %>%" class="first <%= 'current' if index == i - 1 %>" aria-disabled="false" aria-selected="true">
         <a id="steps-uid-0-t-0" href="#steps-uid-0-h-0" aria-controls="steps-uid-0-p-0">
-          <span class="number"><%= index + 1 %>.</span>             
+          <span class="number"><%= index + 1 %>.</span>
           <div class="overflow-h">
               <h2><%= step[0] %>&nbsp;</h2>
               <p><%= step[1] %></p>
               <i class="rounded-x fa fa-check"></i>
-           </div>    
+           </div>
         </a>
       </li>
     <% end -%>

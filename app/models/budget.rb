@@ -19,6 +19,19 @@ class Budget < ActiveRecord::Base
     init_rule
   end
 
+  after_save do
+    # 如果是已经使用的预算审批单 需要修改预算 保存之后更新对应的网上竞价或协议议价
+    if self.status == 19
+      obj = BidProject.find_by(budget_id: self.id)
+      if obj.present?
+        obj.update budget_money: self.total
+      else
+        obj = Bargain.find_by(budget_id: self.id)
+        obj.update(total: self.total) if obj.present?
+      end
+    end
+  end
+
   # 附件的类
   def self.upload_model
     BudgetUpload
@@ -62,7 +75,7 @@ class Budget < ActiveRecord::Base
     when "show"
       current_u.real_department.is_ancestors?(self.department_id)
     when "update", "edit"
-      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+      (self.class.edit_status.include?(self.status) || self.order.blank?) && current_u.try(:id) == self.user_id
     when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id && self.total != 0
     when "update_audit", "audit"
@@ -73,8 +86,13 @@ class Budget < ActiveRecord::Base
     end
   end
 
+  # 对应的订单
+  def order
+    Order.find_by(budget_id: self.id)
+  end
+
   def used!
-    update(status: 19)
+    update(status: 19) unless self.status == 19
   end
 
   def self.xml(who='',options={})

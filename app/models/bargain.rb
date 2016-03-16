@@ -40,16 +40,21 @@ class Bargain < ActiveRecord::Base
   # 中文意思 状态值 标签颜色 进度
   def self.status_array
     # [
-    #  ["暂存", 0, "orange", 10], ["结果审核拒绝", 21, "purple", 50],
-    #  ["结果等待审核", 22, "sea", 60], ["确定中标人", 23, "u", 100],
-    #  ["已删除", 404, "dark", 100], ["已作废", 47, "dark", 100],
-    #  ["等待报价", 17, "brown", 30], ["等待确认报价结果", 18, "light-green", 50]
+    # ["暂存", 0, "orange", 10], ["结果审核拒绝", 21, "purple", 50], ["废标审核拒绝", 28, "purple", 50],
+    # ["结果等待审核", 22, "sea", 60], ["废标等待审核", 29, "sea", 60], ["已成交", 23, "u", 100], ["已删除", 404, "dark", 100],
+    # ["已作废", 47, "dark", 100], ["等待报价", 17, "brown", 30], ["等待选择成交人", 18, "light-green", 50]
     # ]
-    self.get_status_array(["暂存", "等待报价", "确定中标人", "等待确认报价结果", "已作废", "结果等待审核", "结果审核拒绝", "已删除"])
+    self.get_status_array(["暂存", "等待报价", "已成交", "等待选择成交人", "已作废", "结果等待审核", "结果审核拒绝", "已删除", "废标等待审核", "废标审核拒绝"])
   end
 
+  # 等待选择成交人的状态
   def self.confirm_status
     18
+  end
+
+  # 可以显示报价信息
+  def show_bids?
+    status >= Bargain.confirm_status
   end
 
   # 根据品目判断审核人 插入待办事项用
@@ -73,7 +78,7 @@ class Bargain < ActiveRecord::Base
     when "bid", "update_bid"
       self.can_bid? && self.bids.find_by(department_id: current_u.department.id).present?
     when "confirm", "update_confirm"
-      self.status == 18 && current_u.try(:id) == self.user_id
+      Bargain.buyer_edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     else false
     end
   end
@@ -129,22 +134,24 @@ class Bargain < ActiveRecord::Base
     "你选择的供应商中不包括全部的A级供应商，请重新选择报价供应商！"
   end
 
-  # 报价时不显示报价日志
-  def show_logs
-    if self.can_bid?
-      doc = Nokogiri::XML(self.logs)
-      # note = doc.search("/root/node[(@操作内容='报价')]") # find all tags with the node_name "note"
-      note = doc.search("/root/node[(@操作内容='报价')] | /root/node[(@操作内容='修改报价')]")
-      note.remove
-      doc
-    else
-      Nokogiri::XML(self.logs)
-    end
-  end
-
   # 中标报价
   def bid_success
     self.bids.find_by(is_bid: true)
+  end
+
+  # 基准价
+  def avg_total
+    (self.bids.average(:total) * 0.95).to_f
+  end
+
+  # 按基准价排序的报价
+  def done_bids
+    self.bids.order("abs(total-#{avg_total}), total, bid_time")
+  end
+
+  # 超预算
+  def over_budget?
+    self.done_bids.first.total > self.budget.total
   end
 
 end

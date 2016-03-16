@@ -3,9 +3,11 @@
 
 <div class="panel panel-grey margin-top-20">
   <div class="panel-heading">
-    <h3 class="panel-title"><i class="fa fa-tasks"></i> 已选报价的供应商</h3>
+    <h3 class="panel-title"><i class="fa fa-tasks"></i> 已选的报价供应商</h3>
   </div>
   <div class="panel-body">
-    <%= render partial: 'bid_table', locals: { act: act, objs: objs } %>
+    <%= render partial: 'bid_table', locals: { act: "show", objs: (@bids)  } %>
+
+    <%= show_obj_info(@bargain,Bargain.confirm_xml, { title: "选择成交人" }) if @bargain.show_bids? %>
   </div>
 </div>

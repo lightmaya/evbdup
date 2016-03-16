@@ -1,1 +1,1 @@
-<%= render :partial => 'list',:locals => { :title => "#{params[:t] == 'my' ? '我的' : (params[:t] == "confirm" ? '等待确认的' : '辖区内')}协议议价", :search_url => kobe_bargains_path } %>
+<%= render :partial => 'list',:locals => { :title => "#{params[:t] == 'my' ? '我的' : (params[:t] == "confirm" ? '等待选择成交人的' : '辖区内的')}项目", :search_url => kobe_bargains_path } %>

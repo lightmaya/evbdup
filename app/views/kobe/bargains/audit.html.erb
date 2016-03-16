@@ -1,4 +1,3 @@
-<%= render partial: 'show', locals: { act: "show", objs: @bargain.bids.order("id asc") } %>
-
+<%= render partial: 'show' %>
 
 <%= render partial: '/kobe/shared/audit', locals: { action: update_audit_kobe_bargain_path(@bargain), obj: @bargain, title: "审核协议议价" } %>

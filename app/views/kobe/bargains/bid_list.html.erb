@@ -33,7 +33,7 @@
             <th class="index">序号</th>
             <th>项目编号</th>
             <th>项目名称</th>
-            <th>采购单位</th>
+            <th>报价金额</th>
             <th>项目状态</th>
             <th>投标状态</th>
             <th class="cando">操作</th>
@@ -42,12 +42,13 @@
         <tbody>
         <% @bargains.each_with_index do |bargain, index| %>
           <tr>
+          <% bid = bargain.bids.find_by(department_id: current_user.department.id) %>
             <td><%= show_index(index) %></td>
             <td><%= bargain.sn %></td>
             <td><%= bargain.name %></td>
-            <td class="tc"><%= bargain.dep_name %></td>
+            <td class="money"><%= money bid.try(:total) %></td>
             <td class="tc"><%= bargain.status_badge %></td>
-            <td class="tc"><%= bargain.bids.find_by(department_id: current_user.department.id).has_bid?  ? label_tag("已报价") : label_tag("未报价", "warning") %></td>
+            <td class="tc"><%= (bid.present? && bid.has_bid?) ? label_tag("已报价") : label_tag("未报价", "warning") %></td>
             <td class="tc"><%= btn_group(bargains_btn(bargain)) %></td>
           </tr>
         <% end %>

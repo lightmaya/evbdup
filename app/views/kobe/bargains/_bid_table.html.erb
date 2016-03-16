@@ -1,13 +1,15 @@
+<%= "<div class='font-size-16 margin-bottom-10'>本项目基准价（平均价×0.95）为 #{money @bargain.avg_total}，根据接近基准价的顺序推荐成交人如下：</div>".html_safe if @bargain.show_bids? %>
+
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
             <%= '<th><input type="checkbox" name="dep_ids" id="all_check_box"><i></i></th>'.html_safe if act == "choose" %>
-            <%= "<th>选择中标人</th>".html_safe if act == "confirm" %>
+            <%= "<th>选择成交人</th>".html_safe if act == "confirm" %>
             <th class="index">序号</th>
             <th>供应商单位名称</th>
             <th>级别</th>
-            <%= "<th>总报价</th>".html_safe if (act == "confirm" || @bargain.status > Bargain.confirm_status)  %>
-            <%= "<th>报价时间</th>".html_safe if (act == "confirm" || @bargain.status > Bargain.confirm_status)  %>
+            <%= "<th>总报价</th>".html_safe if @bargain.show_bids?  %>
+            <%= "<th>报价时间</th>".html_safe if @bargain.show_bids?  %>
             <th class="w140">产品</th>
         </tr>
     </thead>
@@ -15,14 +17,17 @@
         <% objs.each_with_index do |obj,index| %>
         <tr <%= "class='bg-color-grey'".html_safe if obj.id == @bargain.bid_success.try(:id) %>>
             <%= content_tag(:td, check_box_tag("dep_ids", obj.department_id, (obj.classify == 1 || @bargain.bids.map(&:department_id).include?(obj.department_id)), class: "check_box_item", disabled: obj.classify == 1), class: 'tc').html_safe if act == "choose" %>
-            <%= content_tag(:td, radio_button_tag("bid_id", obj.id, index == 0), class: 'tc').html_safe if act == "confirm" %>
+            <%= content_tag(:td, radio_button_tag("bid_id", obj.id, index == 0, disabled: (obj.total > @bargain.total)), class: 'tc').html_safe if act == "confirm" %>
             <td><%= show_index(index) %></td>
             <td class="dep_name"><%= obj.name %></td>
             <td><%= dep_classify_tag(obj.classify) %></td>
-            <%= "<td>#{money obj.total}</td>".html_safe if (act == "confirm" || @bargain.status > Bargain.confirm_status)  %>
-            <%= "<td>#{obj.bid_time}</td>".html_safe if (act == "confirm" || @bargain.status > Bargain.confirm_status)  %>
-            <td><%= (act == "confirm" || @bargain.status > Bargain.confirm_status) ? link_to_blank('查看报价产品', show_bid_details_kobe_bargains_path(d: obj.department_id, b: @bargain.id)) : link_to_blank('查看可报价产品', show_optional_products_kobe_bargains_path(d: obj.department_id, b: @bargain.id)) %></td>
+            <%= "<td>#{money obj.total}</td>".html_safe if @bargain.show_bids?  %>
+            <%= "<td>#{obj.bid_time}</td>".html_safe if @bargain.show_bids?  %>
+            <td><%= @bargain.show_bids? ? link_to_blank('查看报价产品', show_bid_details_kobe_bargains_path(d: obj.department_id, b: @bargain.id)) : link_to_blank('查看可报价产品', show_optional_products_kobe_bargains_path(d: obj.department_id, b: @bargain.id)) %></td>
         </tr>
+        <% end %>
+        <% if act == "confirm" && @bargain.over_budget? %>
+            <tr><td class="tc"><%= radio_button_tag("bid_id", 0, true) %></td><td colspan="6" class="red">超预算，作废 <a href="<%= edit_kobe_budget_path(@bargain.budget) %>" title="修改预算审批单">【点此修改预算审批单】</a></td></tr>
         <% end %>
     </tbody>
 </table>

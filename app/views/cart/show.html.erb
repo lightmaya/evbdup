@@ -1,12 +1,14 @@
-<div class="content-md margin-bottom-30">
+<div class="margin-bottom-30">
   <div class="container shopping-cart">
     <% if @cart.items.present? %>
       <%= hidden_field_tag "buy_type", 0 %>
       <div role="application" class="wizard clearfix">
         <%#= render "shared/steps" %>
-        <%= show_step(["我的购物车", "下单", "供应商确认", "打印合同<br/>及凭证", "商品及<br/>服务评价"])%>
+        <%#= show_step(["我的购物车", "下单", "供应商确认", "打印合同及凭证", "用户评价"])%>
 
-        <div class="content clearfix">
+        <div class="headline margin-bottom-10"><h2><i class="fa fa-shopping-cart"></i> 我的购物车</h2></div>
+
+        <div class="clearfix">
           <section>
             <div class="table-responsive">
               <table class="table table-striped list_table">

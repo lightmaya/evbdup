@@ -122,8 +122,8 @@ class Item < ActiveRecord::Base
     unregistered_names = self.unregistered_departments.map(&:name).join("<br/> ")
     registered_names = self.registered_departments.map(&:name).join("<br/> ")
     tips = []
-    tips << "<span class='red'>以下单位还未注册，请联系供应商注册：</span><br/> #{unregistered_names}" if unregistered_names.present?
-    tips << "<span class='red'>以下单位已注册，提交项目后给这些供应商发送站内消息：</span><br/> #{registered_names}" if registered_names.present?
+    tips << %Q{<span class="red">以下单位还未注册，请联系供应商注册：</span><br/> #{unregistered_names}} if unregistered_names.present?
+    tips << %Q{<span class="red">以下单位已注册，提交项目后给这些供应商发送站内消息：</span><br/> #{registered_names}} if registered_names.present?
     return tips
   end
 

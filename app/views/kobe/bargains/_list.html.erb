@@ -25,12 +25,10 @@
             <thead>
                 <tr>
                     <th class="index">序号</th>
-                    <% unless params[:t] == "my" %>
-                    <th>单位名称</th>
-                    <% end %>
-                    <th>计划编号</th>
-                    <th>计划名称</th>
+                    <th>项目编号</th>
+                    <th>项目名称</th>
                     <th>预算总金额</th>
+                    <th>成交金额</th>
                     <th class="status_badge"><%= status_filter(Bargain) %></th>
                     <th class="date"><%= date_filter %></th>
                     <th class="cando">操作</th>
@@ -40,12 +38,10 @@
                 <% @bargains.each_with_index do |bargain,index| %>
                 <tr>
                     <td><%= show_index(index) %></td>
-                    <% unless params[:t] == "my" %>
-                    <td><%= bargain.department.present? ? bargain.department.real_dep.name : "" %></td>
-                    <% end %>
                     <td><%= bargain.sn %></td>
                     <td><%= bargain.name %></td>
                     <td class="money"><%= money bargain.total %></td>
+                    <td class="money"><%= bargain.bid_success.present? ? money(bargain.bid_success.total) : "" %></td>
                     <td><%= bargain.status_badge %></td>
                     <td><%= show_date(bargain.created_at) %></td>
                     <td><%= btn_group(bargains_btn(bargain,action_name == "list")) %></td>

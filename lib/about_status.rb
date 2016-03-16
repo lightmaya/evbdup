@@ -47,6 +47,11 @@ module AboutStatus
       (Dictionary.all_status_array.select{ |e| [51, 65].include? e[1] } & self.status_array).map{ |e| e[1] }
     end
 
+    # 等待买方操作的状态 可以修改预算
+    def buyer_edit_status
+      (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 4) } & self.status_array).map{ |e| e[1] }
+    end
+
     # 列表中的状态筛选, 默认404不显示
     def status_filter(arr = [])
       # 列表中不允许出现的
