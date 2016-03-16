@@ -205,7 +205,7 @@ if Menu.first.blank?
   coordinator_manage.save
 
 # ----采购计划项目管理---------------------------------------------------------------------------------
-  plan_item = Menu.find_or_initialize_by(name: "采购计划管理", route_path: "/kobe/plan_items", can_opt_action: "PlanItem|read", is_show: true, user_type: manage_user_type)
+  plan_item = Menu.find_or_initialize_by(name: "制定采购计划", route_path: "/kobe/plan_items", can_opt_action: "PlanItem|read", is_show: true, user_type: manage_user_type)
   plan_item.parent = yw
   plan_item.save
 
@@ -622,7 +622,7 @@ if Menu.first.blank?
 # ----单位及用户管理-----------------------------------------------------------------------------------
   dep = Menu.find_or_create_by(name: "单位及用户管理", icon: "fa-users", is_auto: true, is_show: true, user_type: all_ut)
 
-  dep_p = Menu.find_or_initialize_by(name: "单位管理", route_path: "/kobe/departments", can_opt_action: "Department|read", is_show: true, is_auto: true, user_type: all_ut)
+  dep_p = Menu.find_or_initialize_by(name: "组织机构管理", route_path: "/kobe/departments", can_opt_action: "Department|read", is_show: true, is_auto: true, user_type: all_ut)
   dep_p.parent = dep
   dep_p.save
 
