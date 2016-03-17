@@ -398,7 +398,7 @@ class Order < ActiveRecord::Base
       <root>
         <node name='运费（元）' column='deliver_fee' class='number'/>
         <node name='其他费用（元）' column='other_fee' class='number' hint='如填写其他费用，请填写其他费用说明'/>
-        <node name='其他费用说明' column='other_fee_desc' data_type='textarea' placeholder='不超过800字'/>
+        <node name='其他费用说明' column='other_fee_desc' placeholder='不超过800字'/>
       </root>
     }
   end

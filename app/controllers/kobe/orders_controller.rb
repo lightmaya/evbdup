@@ -235,7 +235,7 @@ class Kobe::OrdersController < KobeController
       @order.items.each_with_index do |item, index|
         obj_contents << show_obj_info(item,OrdersItem.xml,{title: "产品明细 ##{index+1}", grid: 4})
       end
-      obj_contents << show_obj_info(@order,Order.fee_xml,{title: "附加费用", grid: 2})
+      obj_contents << show_obj_info(@order,Order.fee_xml,{title: "附加费用", grid: 3})
       obj_contents << show_total_part(@order.total)
       @arr  = []
       @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
