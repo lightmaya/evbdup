@@ -310,7 +310,7 @@ class Department < ActiveRecord::Base
 
     # 本辖区本年度 采购方式占比
     type_arr = []
-    cdt = "year(created_at) = '#{Time.now.last_year.year}' and status in (#{Order.ysd_status.join(', ')})"
+    cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"
     total = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).sum(:total)
     order_count = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).count
     if total.present?
@@ -370,7 +370,7 @@ class Department < ActiveRecord::Base
   def get_seller_main
     # 本年度 销售占比
     type_arr = []
-    cdt = "year(created_at) = '#{Time.now.last_year.year}' and status in (#{Order.ysd_status.join(', ')})"
+    cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"
     total = Order.find_all_by_seller(self.real_dep.id, self.real_dep.name).where(cdt).sum(:total)
     order_count = Order.find_all_by_seller(self.real_dep.id, self.real_dep.name).where(cdt).count
     if total.present?
