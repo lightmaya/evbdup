@@ -1,0 +1,17 @@
+<div class="headline"><h2><%= Dictionary.faq_catalog[params[:catalog]] %></h2></div>
+<% if @faqs.present? %>
+    <table class="table table-hover">
+        <tbody>
+        <tr>
+            <td style="width:80%:"><strong>标题</strong></td>
+            <td><strong>日期</strong></td>
+        </tr>
+        <% @faqs.each do |r| %>
+            <%= li_tag_with_date(r.title, '', r.created_at, 0) %>
+        <% end %>
+        </tbody>
+    </table>
+    <%= paginate @faqs %>
+<% else %>
+    <%= something_not_found %>
+<% end %>

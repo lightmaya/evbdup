@@ -63,21 +63,21 @@ class Faq < ActiveRecord::Base
 
   # 从表的XML加ID是为了修改的时候能找到记录
   def self.xml(catalog='')
-    bool = catalog=='yjjy'
-    title = bool ?  '建议' : '标题'
-    content = bool ? '回复' : '内容'
-    if  bool
-    str= %Q{
-    	 	  <node name="发布人" column="ask_user_name" display="readonly" />
-          <node name="所在单位" column="ask_dep_name" display="readonly" />
-         }
+    title = catalog == 'yjjy' ?  '建议' : '标题'
+    content = catalog == 'yjjy' ? '回复' : '内容'
+    if  catalog == 'yjjy'
+      str = %Q{
+        <node name="发布人" column="ask_user_name" display="readonly" />
+        <node name="所在单位" column="ask_dep_name" display="readonly" />
+      }
     end
+    str = "<node name='问题类别' class='required' data_type='select' data='#{Dictionary.questions_type}' />" if catalog == "cjwt"
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         #{str}
-      	<node name='#{title}' column='title' data_type='textarea' class='required maxlength_800' />
-      	#{"<node name='#{content}' column='content' data_type='textarea' class='required maxlength_800'/>" if catalog!='yjjy'}
+      	<node name='#{title}' column='title' #{"data_type='textarea'" if catalog == 'yjjy'} class='required maxlength_800' />
+      	#{"<node name='#{content}' column='content' data_type='textarea' class='required maxlength_800'/>" unless catalog == 'yjjy'}
       </root>
     }
   end

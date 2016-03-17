@@ -1,1 +1,1 @@
-<%=render  partial:'form' , locals: { faqs: @faqs , type: Dictionary.faq_catalog[@type]}%>
+<%=render  partial: (params[:type] == "cjwt" ? "cjwt" : "list") %>

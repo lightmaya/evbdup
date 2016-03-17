@@ -17,7 +17,7 @@ class Kobe::FaqsController < KobeController
       @faq.ask_dep_name = current_user.real_department.name
     end
     type = Dictionary.faq_catalog[params[:catalog]]
-    @myform = SingleForm.new(Faq.xml(params[:catalog]), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faqs_path(catalog: params[:catalog]), grid: 3 })
+    @myform = SingleForm.new(Faq.xml(params[:catalog]), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faqs_path(catalog: params[:catalog]), grid: 2 })
   end
 
 
@@ -28,7 +28,7 @@ class Kobe::FaqsController < KobeController
 
   def edit
     type = Dictionary.faq_catalog[@faq.catalog]
-    @myform = SingleForm.new(Faq.xml(@faq.catalog), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faq_path(@faq), method: "patch", grid: 3 })
+    @myform = SingleForm.new(Faq.xml(@faq.catalog), @faq, { form_id: "faq_form", upload_files: true , title: "<i class='fa fa-pencil-square-o'></i> #{type}", action: kobe_faq_path(@faq), method: "patch", grid: 2 })
   end
 
   def update
@@ -38,7 +38,7 @@ class Kobe::FaqsController < KobeController
 
   def show
     @arr  = []
-    obj_contents = show_obj_info(@faq,Faq.xml(@faq.catalog),{title: "基本信息" , grid: 3})
+    obj_contents = show_obj_info(@faq,Faq.xml(@faq.catalog),{title: "基本信息" , grid: 2})
     @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
     @arr << {title: "附件", icon: "fa-paperclip", content: show_uploads(@faq)}
     @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@faq)}

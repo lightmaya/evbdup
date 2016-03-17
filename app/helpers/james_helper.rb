@@ -21,12 +21,11 @@ module JamesHelper
   def li_tag_with_date(title, link_url, date, length = 20, new_cdt=false, new_cont='new', new_color='red')
     new_tag = %Q{<span class="text-highlights text-highlights-#{new_color} rounded-2x">#{new_cont}</span>}
     # “更多..”页面用表格显示
-    if length == 0 
+    if length == 0
       return %Q{
         <tr>
-          <td><a href='#{link_url}' target='_blank'>#{title}</a>
-        #{new_tag if new_cdt}</td>
-          <td>#{date}</td>                          
+          <td><a href='#{link_url}' target='_blank'>#{title}</a>#{new_tag if new_cdt}</td>
+          <td>#{date}</td>
         </tr>
       }.html_safe
     else
