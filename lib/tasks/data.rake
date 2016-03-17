@@ -1418,7 +1418,8 @@ namespace :data do
   task :create_cache_dep_main => :environment do
     p "#{begin_time = Time.now} in create_cache_dep_main....."
 
-    deps = Department.purchaser.descendants
+    deps = Department.where(status: Department.effective_status)
+    # deps = Department.purchaser.descendants
     succ = 0
     deps.each do |d|
       if d.cache_dep_main true

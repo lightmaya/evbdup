@@ -323,7 +323,7 @@ class Department < ActiveRecord::Base
     category_ha = {}
     category.map{ |e| category_ha[e.ht_template] = e.total.to_f }
 
-    str = show_header("本年度采购情况", 'fa-line-chart ')
+    str = show_header("本年度辖区内采购情况", 'fa-line-chart ')
     str << show_category_total("订单数量", "#{order_count} 个")
     str << show_category_total("采购金额", format_total(total))
     str << "<hr>"
@@ -393,11 +393,10 @@ class Department < ActiveRecord::Base
 
   # 生产单位采购或销量统计的缓存
   def cache_dep_main(force = false)
-    d_cache = self.root_id == Dictionary.dep_purchaser_id ? get_dep_main : get_seller_main
     if force
-      Setting.send("dep_main_#{self.id}=", d_cache)
+      Setting.send("dep_main_#{self.id}=", (self.root_id == Dictionary.dep_purchaser_id ? get_dep_main : get_seller_main))
     else
-      Setting.send("dep_main_#{self.id}=", d_cache) if Setting.send("dep_main_#{self.id}").blank?
+      Setting.send("dep_main_#{self.id}=", (self.root_id == Dictionary.dep_purchaser_id ? get_dep_main : get_seller_main)) if Setting.send("dep_main_#{self.id}").blank?
     end
     Setting.send("dep_main_#{self.id}")
   end

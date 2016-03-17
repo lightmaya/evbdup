@@ -14,13 +14,12 @@
             <div class="ms-slide">
               <%= image_tag up.upload.url(:md), "data-src" => up.upload.url(:md) %>
               <a href="<%= up.upload.url(:lg) %>" rel="products" class="fancybox"></a>
-              <%= image_tag up.upload.url(:thumbnail), class: "ms-thumb" %>
+              <%= image_tag up.upload.url(:thumbnail), class: "ms-thumb" if @product.uploads.size > 1 %>
             </div>
           <% end -%>
         <% else %>
           <div class="ms-slide">
             <%= image_tag Dictionary.no_pic_url, "data-src" => Dictionary.no_pic_url %>
-            <%= image_tag Dictionary.no_pic_url, class: "ms-thumb" %>
           </div>
         <% end -%>
       </div>

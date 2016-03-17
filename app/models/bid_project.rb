@@ -22,6 +22,8 @@ class BidProject < ActiveRecord::Base
 
   scope :can_bid, -> { where("bid_projects.status = #{BidProject.bid_and_choose_status} and now() < bid_projects.end_time") }
 
+  scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("bid_projects.department_code like '#{dep_real_ancestry}/%' or bid_projects.department_code = '#{dep_real_ancestry}'") }
+
   # 模型名称
   Mname = "网上竞价项目"
 

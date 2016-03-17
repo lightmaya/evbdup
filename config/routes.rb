@@ -120,7 +120,7 @@ namespace :kobe do
 
   resources :orders do
     collection do
-      get  :my_list, :seller_list, :list
+      get  :my_list, :seller_list, :list, :grcg_list
       post :same_template, :update_cart_order
     end
     member do

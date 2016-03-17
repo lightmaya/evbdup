@@ -5,7 +5,7 @@ class Kobe::OrdersController < KobeController
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_action :get_order, :except => [:index, :new, :create, :cart_order, :update_cart_order, :list, :my_list, :seller_list, :same_template]
+  before_action :get_order, :except => [:index, :new, :create, :cart_order, :update_cart_order, :list, :my_list, :grcg_list, :seller_list, :same_template]
 
   skip_authorize_resource :only => [:same_template]
 
@@ -154,6 +154,13 @@ class Kobe::OrdersController < KobeController
     @rule = Rule.find_by(id: params[:r])
     params[:q][:user_id_eq] = current_user.id
     params[:q][:yw_type_eq] = @rule.try(:yw_type)
+    @q = Order.where(get_conditions("orders")).ransack(params[:q])
+    @orders = @q.result.page params[:page]
+  end
+
+  # 全部个人采购订单
+  def grcg_list
+    params[:q][:yw_type_eq] = 'grcg'
     @q = Order.where(get_conditions("orders")).ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
