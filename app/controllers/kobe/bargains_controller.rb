@@ -184,7 +184,8 @@ class Kobe::BargainsController < KobeController
     case params[:flag]
     when "1" # 可报价
       @panel_title = "可报价的协议议价项目"
-      params[:q][:bids_total_eq] = 0
+      params[:q][:status_in] = Bargain.seller_edit_status
+      # params[:q][:bids_total_eq] = 0
     when "2" # 已投标
       @panel_title = "已报价的协议议价项目"
       params[:q][:bids_total_not_eq] = 0

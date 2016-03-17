@@ -22,7 +22,7 @@
         <% bproduct = @bid.present? ? @bid.products.find_by(bargain_product_id: p.id, product_id: obj.id) : nil %>
         <%= content_tag(:td, radio_button_tag("pid_#{p.id}", obj.id, (bproduct.present? ? true : i == 0)), class: 'tc').html_safe if act == "bid" %>
         <td class="tc"><%= show_index(i) %></td>
-        <td class="tc"><%= link_to_blank obj.name, product_path(obj) %></td>
+        <td class="tc product_name"><%= link_to_blank obj.name, product_path(obj) %></td>
         <td class="tc"><%=money obj.bid_price %></td>
         <% if act == "bid" %>
           <td class="tc"><%= content_tag(:label, text_field_tag("price_#{p.id}_#{obj.id}", (bproduct.present? ? bproduct.price : obj.bid_price), num: p.quantity, bp: obj.bid_price, class: "number price"), class: 'input') %></td>

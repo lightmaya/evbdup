@@ -52,6 +52,11 @@ module AboutStatus
       (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 4) } & self.status_array).map{ |e| e[1] }
     end
 
+    # 卖方操作的状态
+    def seller_edit_status
+      (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 3) } & self.status_array).map{ |e| e[1] }
+    end
+
     # 列表中的状态筛选, 默认404不显示
     def status_filter(arr = [])
       # 列表中不允许出现的

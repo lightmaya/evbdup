@@ -27,7 +27,7 @@
         </tr>
         <% end %>
         <% if act == "confirm" && @bargain.over_budget? %>
-            <tr><td class="tc"><%= radio_button_tag("bid_id", 0, true) %></td><td colspan="6" class="red">超预算，作废 <a href="<%= edit_kobe_budget_path(@bargain.budget) %>" title="修改预算审批单">【点此修改预算审批单】</a></td></tr>
+            <tr><td class="tc"><%= radio_button_tag("bid_id", 0, true) %></td><td colspan="6" class="red">超预算，项目作废 <a href="<%= edit_kobe_budget_path(@bargain.budget) %>" title="修改预算审批单">【点此修改预算审批单】</a></td></tr>
         <% end %>
     </tbody>
 </table>

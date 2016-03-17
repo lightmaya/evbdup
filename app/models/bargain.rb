@@ -85,7 +85,8 @@ class Bargain < ActiveRecord::Base
 
   # 可以报价
   def can_bid?
-    self.status == 17
+    Bargain.seller_edit_status.include? self.status
+    # self.status == 17
   end
 
   # 流程图的开始数组
