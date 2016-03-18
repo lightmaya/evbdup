@@ -37,7 +37,7 @@
 
     <%= check_login_and_show_price(@product.id) %>
 
-    <p>产品描述： <%= @product.summary %></p>
+    <p>产品描述： <%= text_truncate(@product.summary, 300) %></p>
 
     <div class="content-xs">
       <button type='button' class="h50 w50 no-border font-size-20 tc padding-5" name='subtract' onclick='javascript: subtractQty();' value='-'>-</button>
@@ -54,7 +54,7 @@
 
 
 <!--=== Content Medium ===-->
-<div class="tab-v5 margin-top-25">
+<div class="tab-v1 margin-top-25">
   <ul class="nav nav-tabs" role="tablist">
     <li class="active">
       <a href="#csgg" role="tab" data-toggle="tab">参数规格</a>

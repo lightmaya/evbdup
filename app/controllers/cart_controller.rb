@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 class CartController < JamesController
   # before_filter :find_product_and_seller, :only => [:change]
+  before_action :request_purchaser!
   skip_filter :find_cart, :only => [:destroy]
 
   # 加入购物车
@@ -43,7 +44,18 @@ class CartController < JamesController
   end
 
   private
-
+    # 需要采购人登录
+    def request_purchaser!
+      unless signed_in?
+        flash_get '请先登录!'
+        redirect_to sign_in_users_path
+      else
+        if current_user.department.root_id == Dictionary.dep_supplier_id
+          flash_get '供应商不能下单!'
+          redirect_to root_path
+        end
+      end
+    end
   # def find_product_and_seller
   #   product_id = params[:id].to_s.split("-")[0]
   #   seller_id = params[:id].to_s.split("-")[2]

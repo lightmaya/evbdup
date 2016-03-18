@@ -15,8 +15,8 @@ class UsersController < JamesController
   def sign_out
     self.current_user = nil
     cookies.delete(:remember_token)
-    tips_get '退出成功！'
-    redirect_to root_path
+    # tips_get '退出成功！'
+    redirect_to sign_in_users_path
   end
 
   def login
@@ -25,7 +25,7 @@ class UsersController < JamesController
     if user && user.authenticate(user_params[:password])
       sign_in_user(user, user_params[:remember_me] == '1')
       if user.department.get_tips.blank?
-        tips_get '登录成功！'
+        # tips_get '登录成功！'
         redirect_to root_path
       else
         flash_get user.department.get_tips

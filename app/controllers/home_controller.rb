@@ -210,7 +210,7 @@ class HomeController < JamesController
       end
       @brands = []
       @all_brands.each_with_index do |brand, i|
-        @brands << {title: text_truncate(brand, 8), id: i+1, q: "brand_eq"} if q_brand_index == 0 || brand != @all_brands[q_brand_index- 1]
+        @brands << {title: text_truncate(brand, 7), id: i+1, q: "brand_eq"} if q_brand_index == 0 || brand != @all_brands[q_brand_index- 1]
       end
 
       # 关键参数

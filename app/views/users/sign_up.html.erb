@@ -1,7 +1,7 @@
-<div class="container content">
+<!-- <div class="container content"> -->
   <div class="row">
     <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 shadow-wrapper">
-      <div class="box-shadow shadow-effect-2">
+      <div class="box-shadow shadow-effect-2 opacity-80 ">
       <%= form_for(User.new, url: create_user_dep_users_path, method: :post, html: { class: "sky-form reg-page", id: "sign_up_form" }) do |u| %>
       <div class="reg-header">
         <h2>新用户注册</h2>
@@ -34,7 +34,7 @@
           <b class="tooltip tooltip-bottom-right">请填写真实有效的电子邮箱，用于找回密码。</b>
         </label>
       </section>
-      
+
       <div class="row">
         <section class="col col-6">
           <label class="label">密码 <span class="color-red">*</span></label>
@@ -60,17 +60,17 @@
           <label class="checkbox">
             <input type="checkbox" id="user_agree" name="user[agree]"><i></i>
             我已阅读并同意 <a data-toggle="modal" data-target="#user_agreements" class="under_line">网站服务条款</a>
-          </label>                        
+          </label>
         </div>
         <div class="col-lg-4 text-right">
-          <button class="btn-u" type="submit"> 注 册 </button>                        
+          <button class="btn-u" type="submit"> 注 册 </button>
         </div>
       </div>
       <% end %>
       </div>
     </div>
   </div>
-</div> 
+<!-- </div>  -->
 
 <div class="modal fade" id="user_agreements" tabindex="-1" role="dialog" aria-labelledby="user_agreements_label" aria-hidden="true">
   <div class='modal-dialog'>
@@ -110,6 +110,6 @@ $(document).ready(function() {
   $("#user_agreements #disagree_btn").on("click", function(){
     $("#user_agree").attr("checked",false);
   });
-  
+
 });
 </script>

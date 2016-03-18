@@ -3644,6 +3644,7 @@ img.img-center,
 .padding-30 {padding:30px;}
 .padding-35 {padding:35px;}
 .padding-40 {padding:40px;}
+.padding-lr-80 {padding-left: 80px; padding-right: 80px;}
 
 /* margin setting*/
 
@@ -3695,3 +3696,10 @@ img.img-center,
 .bordre-bottom-1 {border-bottom: 1px solid rgba(0, 0, 0, 0.1);}
 
 .line-through {text-decoration: line-through;}
+
+.opacity-80 {
+  filter:alpha(opacity=80);
+  -moz-opacity:0.8;
+  -khtml-opacity: 0.8;
+  opacity: 0.8;
+}

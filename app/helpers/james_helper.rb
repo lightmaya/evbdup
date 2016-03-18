@@ -176,7 +176,7 @@ module JamesHelper
   def check_login_and_show_price(product_id)
     %Q{
       <div class="product_price_div" id="product_price_div_#{product_id}">
-        <p class="color-red hide" id="login_tip_#{product_id}">请登录后查看价格</p>
+        <p class="color-red hide" id="login_tip_#{product_id}">登录查看价格</p>
         <p id="market_price_#{product_id}"  class="hide"></p>
         <p id="bid_price_#{product_id}" class="hide"></p>
       </div>

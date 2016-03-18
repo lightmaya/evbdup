@@ -8,4 +8,4 @@ Rails.application.config.assets.version = '1.0'
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 # Rails.application.config.assets.precompile += %w( search.js )
 # *.png *.jpg *.jpeg *.gif
-Rails.application.config.assets.precompile += %w(style-switcher.css common.css *.png *.jpg *.jpeg *.gif ie_9.js form.js kobe.js kobe.css james.js james.css)
+Rails.application.config.assets.precompile += %w(style-switcher.css common.css *.png *.jpg *.jpeg *.gif ie_9.js form.js kobe.js kobe.css james.js james.css plugins/jquery.backstretch.min.js)

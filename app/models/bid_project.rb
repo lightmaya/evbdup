@@ -110,7 +110,7 @@ class BidProject < ActiveRecord::Base
     when "update", "edit"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit"
-      self.can_opt?("提交") && current_u.try(:id) == self.user_id
+      self.can_opt?("提交") && current_u.try(:id) == self.user_id  && self.budget_money != 0
     when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
     when "delete", "destroy"

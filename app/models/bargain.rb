@@ -70,7 +70,7 @@ class Bargain < ActiveRecord::Base
     when "update", "edit", "choose", "update_choose"
       self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     when "commit"
-      self.can_opt?("提交") && current_u.try(:id) == self.user_id && self.bids.present?
+      self.can_opt?("提交") && current_u.try(:id) == self.user_id && self.bids.present?  && self.total != 0
     when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
     when "delete", "destroy"

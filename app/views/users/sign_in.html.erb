@@ -1,12 +1,12 @@
-<div class="container content">   
+<!-- <div class="container content">    -->
   <div class="row">
-    <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 shadow-wrapper">
-      <div class="box-shadow shadow-effect-2">
+    <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 shadow-wrapper">
+      <div class="box-shadow shadow-effect-2 mt80 opacity-80 ">
 
-        <%= form_for(User.new, url: login_users_path, method: :post, html: { class: "sky-form", id: "sign_in_form" }) do |u| %>
+        <%= form_for(User.new, url: login_users_path, method: :post, html: { class: "sky-form reg-page", id: "sign_in_form" }) do |u| %>
           <header class='margin-top-10'><span class="icon-user" aria-hidden="true"></span> 用户登录</header>
-          
-          <fieldset>                  
+
+          <fieldset>
             <section>
               <div class="row">
                 <label class="label col col-3">用户名</label>
@@ -18,7 +18,7 @@
                 </div>
               </div>
             </section>
-            
+
             <section>
               <div class="row">
                 <label class="label col col-3">密 码</label>
@@ -44,9 +44,9 @@
                   </div>
                 </div>
               </section>
-            </div> 
+            </div>
            -->
-            
+
             <section>
               <div class="row">
                 <div class="col col-4"></div>
@@ -59,16 +59,16 @@
             </section>
           </fieldset>
 
-          <div class="space-lg-hor content-xs border-top-1">
-            <button type="submit" class="btn-u pull-right" id="sign_in_form_submit">登 录</button>
+          <div class="content-xs border-top-1 textc">
             <%= link_to "注 册", sign_up_users_path, class: "btn-u btn-u-default" %>
+            <button type="submit" class="btn-u margin-left-20" id="sign_in_form_submit">登 录</button>
           </div>
 
         <% end %>
-      </div>    
+      </div>
     </div>
   </div>
-</div>
+<!-- </div> -->
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -98,7 +98,7 @@
   // 验证码看不清 点击刷新
   $("img[alt='captcha']").each(function(index, item){
     item.title = '看不清？点击刷新';
-    $(this).css("cursor", "pointer"); 
+    $(this).css("cursor", "pointer");
   });
   $("img[alt='captcha']").on("click", function(){
     // captcha_refresh();

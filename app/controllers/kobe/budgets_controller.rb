@@ -87,7 +87,7 @@ class Kobe::BudgetsController < KobeController
     def get_show_arr
       @arr  = []
       @arr << { title: "详细信息", icon: "fa-info", content: show_obj_info(@budget,Budget.xml) }
-      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@budget, { is_picture: true }) }
+      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@budget) }
       @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@budget) }
     end
 

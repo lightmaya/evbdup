@@ -328,14 +328,14 @@ class Department < ActiveRecord::Base
     str << show_category_total("采购金额", format_total(total))
     str << "<hr>"
     str << show_header("本年度辖区内采购方式占比", 'fa-pie-chart')
-    str << "<div class=\"margin-left-30\"">
+    str << "<div class='margin-left-30'>"
     Dictionary.yw_type.each_with_index do |a, i|
       next if a[0] == 'grcg'
       yw_type = type_arr.find{|e| e[0] == a[0]}
       str << progress_bar(a[1], (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
     end
-    str << "</div>">
-    
+    str << "</div>"
+
     str << show_header("粮机物资采购情况", 'fa-magnet')
 
     str << show_category_total("粮机设备", format_total(category_ha['lj']))
