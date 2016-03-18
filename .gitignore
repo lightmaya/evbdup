@@ -49,6 +49,7 @@ db/schema.rb
 Gemfile.lock
 solr/data/
 solr/pids/
+solr
 .sass-cache/
 .idea/*
 .idea/

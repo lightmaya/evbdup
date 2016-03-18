@@ -323,47 +323,36 @@ class Department < ActiveRecord::Base
     category_ha = {}
     category.map{ |e| category_ha[e.ht_template] = e.total.to_f }
 
-    str = show_header("本年度辖区内采购情况", 'fa-line-chart')
+    str = "<div class='tag-box tag-box-v3 margin-bottom-10'>"
+    str << show_header("本年度辖区内采购情况", 'fa-line-chart')
     str << show_category_total("订单数量", "#{order_count} 个")
     str << show_category_total("采购金额", format_total(total))
-    str << "<hr>"
+    str << "</div>"
+
+    str << "<div class='tag-box tag-box-v3 margin-bottom-10'>"
+    str << show_header("粮机物资采购情况", 'fa-magnet')
+    str << show_category_total("粮机设备", format_total(category_ha['lj']))
+    str << show_category_total("建筑工程", format_total(category_ha['gc']))
+    str << show_category_total("包装物采购", format_total(category_ha['bzw']))
+
+    str << show_header("汽车采购情况", 'fa-car')
+    str << show_category_total("汽车采购", format_total(category_ha['qc']))
+
+    str << show_header("办公物资采购情况", 'fa-desktop')
+    str << show_category_total("办公物资", format_total(category_ha['bg']))
+    str << show_category_total("网上商城", format_total(category_ha['ds']))
+    str << show_category_total("职工工装", format_total(category_ha['gz']))
+    str << "</div>"
+
+    str << "<div class='tag-box tag-box-v3 margin-bottom-10'>"
     str << show_header("本年度辖区内采购方式占比", 'fa-pie-chart')
-    str << "<div class='margin-left-30'>"
+    str << "<div class='margin-left-20'>"
     Dictionary.yw_type.each_with_index do |a, i|
       next if a[0] == 'grcg'
       yw_type = type_arr.find{|e| e[0] == a[0]}
       str << progress_bar(a[1], (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
     end
-    str << "</div>"
-
-    str << show_header("粮机物资采购情况", 'fa-magnet')
-
-    str << show_category_total("粮机设备", format_total(category_ha['lj']))
-
-    str << show_category_total("建筑工程", format_total(category_ha['gc']))
-
-    str << show_category_total("包装物采购", format_total(category_ha['bzw']))
-
-    lj_per = total == 0 ? 0 : ([category_ha['lj'], category_ha['gc'], category_ha['bzw']].compact.sum * 100)/total
-    str << progress_bar("粮机物资采购占比", lj_per, 'purple')
-
-    str << show_header("汽车采购情况", 'fa-car')
-
-    str << show_category_total("汽车采购", format_total(category_ha['qc']))
-
-    qc_per = total == 0 ? 0 : ([category_ha['qc']].compact.sum * 100)/total
-    str << progress_bar("汽车采购占比", qc_per, 'brown')
-
-    str << show_header("办公物资采购情况", 'fa-desktop')
-
-    str << show_category_total("办公物资", format_total(category_ha['bg']))
-
-    str << show_category_total("网上商城", format_total(category_ha['ds']))
-
-    str << show_category_total("职工工装", format_total(category_ha['gz']))
-
-    bg_per = total == 0 ? 0 : ([category_ha['bg'], category_ha['ds'], category_ha['gz']].compact.sum * 100)/total
-    str << progress_bar("办公物资采购占比", bg_per, 'sea')
+    str << "</div></div>"
   end
 
   # 供应商销量统计
@@ -378,17 +367,21 @@ class Department < ActiveRecord::Base
       type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/total).to_f] }
     end
 
-    str = show_header("本年度销售情况", 'fa-line-chart ')
+    str = "<div class='tag-box tag-box-v3 margin-bottom-10'>"
+    str << show_header("本年度销售情况", 'fa-line-chart ')
     str << show_category_total("订单数量", "#{order_count} 个")
     str << show_category_total("销售金额", format_total(total))
-    str << "<hr>"
-    str << show_header("本年度销售方式占比", 'fa-bar-chart-o')
+    str << "</div>"
+
+    str << "<div class='tag-box tag-box-v3 margin-bottom-10'>"
+    str << show_header("本年度销售方式占比", 'fa-pie-chart')
+    str << "<div class='margin-left-20'>"
     Dictionary.yw_type.each_with_index do |a, i|
       next if a[0] == 'grcg'
       yw_type = type_arr.find{|e| e[0] == a[0]}
       str << progress_bar(a[1], (yw_type.present? ? yw_type[2] : 0), Dictionary.colors.map(&:first)[i])
     end
-    str
+    str << "</div></div>"
   end
 
   # 生产单位采购或销量统计的缓存
@@ -405,7 +398,7 @@ class Department < ActiveRecord::Base
   def show_header(title, icon='fa-bar-chart-o')
     %Q{
       <div class="panel-heading-v2 overflow-h">
-        <h2 class="heading-xs pull-left"><i class="fa #{icon}"></i> #{title}</h2>
+        <h3 class="heading-xs pull-left"><i class="fa #{icon}"></i> #{title}</h3>
       </div>
       <hr/>
     }
@@ -427,7 +420,7 @@ class Department < ActiveRecord::Base
   def show_category_total(name, total)
     sum = total.present? ? total : 0
     %Q{
-      <div class="row margin-bottom-10 margin-left-30">
+      <div class="row margin-bottom-10 margin-left-5">
         <div class="col-xs-6 service-in">#{name}</div>
         <div class="col-xs-6 text-right service-in">#{sum}</div>
       </div>
