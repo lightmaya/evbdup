@@ -323,11 +323,11 @@ class Department < ActiveRecord::Base
     category_ha = {}
     category.map{ |e| category_ha[e.ht_template] = e.total.to_f }
 
-    str = show_header("本年度辖区内采购情况", 'fa-line-chart ')
+    str = show_header("本年度辖区内采购情况", 'fa-line-chart')
     str << show_category_total("订单数量", "#{order_count} 个")
     str << show_category_total("采购金额", format_total(total))
     str << "<hr>"
-    str << show_header("本年度辖区内采购方式占比", 'fa-bar-chart-o')
+    str << show_header("本年度辖区内采购方式占比", 'fa-pie-chart')
 
     Dictionary.yw_type.each_with_index do |a, i|
       next if a[0] == 'grcg'
@@ -336,7 +336,7 @@ class Department < ActiveRecord::Base
     end
 
     str << "<hr>"
-    str << show_header("粮机物资采购情况", 'fa-vine')
+    str << show_header("粮机物资采购情况", 'fa-magnet')
 
     str << show_category_total("粮机设备", format_total(category_ha['lj']))
 
@@ -426,7 +426,7 @@ class Department < ActiveRecord::Base
   def show_category_total(name, total)
     sum = total.present? ? total : 0
     %Q{
-      <div class="row margin-bottom-20">
+      <div class="row margin-bottom-10 margin-left-30">
         <div class="col-xs-6 service-in">#{name}</div>
         <div class="col-xs-6 text-right service-in">#{sum}</div>
       </div>
