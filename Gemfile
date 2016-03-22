@@ -5,7 +5,7 @@ source 'http://rubygems.org'
 gem 'rails', '4.1.7'
 
 # Use sqlite3 as the database for Active Record
-gem 'mysql2' #, '~> 0.3.20'
+gem 'mysql2' , '~> 0.3.20'
 gem 'rake', "10.4.2"
 gem 'devise', '3.4.1'
 # 默认值

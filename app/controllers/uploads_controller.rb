@@ -9,9 +9,14 @@ class UploadsController < ApplicationController
     else
       @uploads = []
     end
+    files_json = @uploads.map{|upload|upload.to_jq_upload}.to_json
     respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @uploads.map{|upload| upload.to_jq_upload } }
+      format.html {
+        render :json => files_json,
+        :content_type => 'text/html',
+        :layout => false
+      }
+      format.json { render json: files_json }
     end
   end
 
