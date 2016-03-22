@@ -170,42 +170,42 @@ if Menu.first.blank?
   coordinator_manage.save
 
 # ----预算管理-------------------------------------------------------------------------------------
-  budget = Menu.find_or_initialize_by(name: "预算审批单", is_show: true, user_type: mp_ut)
-  budget.parent = yw
-  budget.save
+  # budget = Menu.find_or_initialize_by(name: "预算审批单", is_show: true, user_type: mp_ut)
+  # budget.parent = yw
+  # budget.save
 
-  my_budget_list = Menu.find_or_initialize_by(name: "我的预算审批单", route_path: "/kobe/budgets?t=my", can_opt_action: "Budget|read", is_show: true, user_type: mp_ut)
-  my_budget_list.parent = budget
-  my_budget_list.save
+  # my_budget_list = Menu.find_or_initialize_by(name: "我的预算审批单", route_path: "/kobe/budgets?t=my", can_opt_action: "Budget|read", is_show: true, user_type: mp_ut)
+  # my_budget_list.parent = budget
+  # my_budget_list.save
 
-  [ ["查看预算审批单", "Budget|show", "/kobe/budgets/show"],
-    ["新增预算审批单", "Budget|create", "/kobe/budgets/new"],
-    ["修改预算审批单", "Budget|update", "/kobe/budgets/edit"],
-    ["提交预算审批单", "Budget|commit"],
-    ["删除预算审批单", "Budget|update_destroy"]
-  ].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
-    tmp.parent = my_budget_list
-    tmp.save
-  end
+  # [ ["查看预算审批单", "Budget|show", "/kobe/budgets/show"],
+  #   ["新增预算审批单", "Budget|create", "/kobe/budgets/new"],
+  #   ["修改预算审批单", "Budget|update", "/kobe/budgets/edit"],
+  #   ["提交预算审批单", "Budget|commit"],
+  #   ["删除预算审批单", "Budget|update_destroy"]
+  # ].each do |m|
+  #   tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], route_path: m[2], user_type: mp_ut)
+  #   tmp.parent = my_budget_list
+  #   tmp.save
+  # end
 
-  budget_list = Menu.find_or_initialize_by(name: "辖区内预算审批单", route_path: "/kobe/budgets", can_opt_action: "Budget|read", is_show: true, user_type: mp_ut)
-  budget_list.parent = budget
-  budget_list.save
+  # budget_list = Menu.find_or_initialize_by(name: "辖区内预算审批单", route_path: "/kobe/budgets", can_opt_action: "Budget|read", is_show: true, user_type: mp_ut)
+  # budget_list.parent = budget
+  # budget_list.save
 
-  audit_budget = Menu.find_or_initialize_by(name: "等待审核的预算审批单", route_path: "/kobe/budgets/list", can_opt_action: "Budget|list", is_show: true, user_type: audit_user_type)
-  audit_budget.parent = budget
-  audit_budget.save
+  # audit_budget = Menu.find_or_initialize_by(name: "等待审核的预算审批单", route_path: "/kobe/budgets/list", can_opt_action: "Budget|list", is_show: true, user_type: audit_user_type)
+  # audit_budget.parent = budget
+  # audit_budget.save
 
-  audit_budget_obj = Menu.find_or_initialize_by(name: "预算审批单审核", route_path: "/kobe/budgets/audit", user_type: audit_user_type)
-  audit_budget_obj.parent = audit_budget
-  audit_budget_obj.save
+  # audit_budget_obj = Menu.find_or_initialize_by(name: "预算审批单审核", route_path: "/kobe/budgets/audit", user_type: audit_user_type)
+  # audit_budget_obj.parent = audit_budget
+  # audit_budget_obj.save
 
-  [["预算审批单初审", "Budget|first_audit"], ["预算审批单终审", "Budget|last_audit"]].each do |m|
-    tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
-    tmp.parent = audit_budget_obj
-    tmp.save
-  end
+  # [["预算审批单初审", "Budget|first_audit"], ["预算审批单终审", "Budget|last_audit"]].each do |m|
+  #   tmp = Menu.find_or_initialize_by(name: m[0], can_opt_action: m[1], user_type: audit_user_type)
+  #   tmp.parent = audit_budget_obj
+  #   tmp.save
+  # end
 
 # ----协议采购-----------------------------------------------------------------------------------------
   xygh = Menu.find_or_initialize_by(name: "协议采购", is_show: true, user_type: all_ut)

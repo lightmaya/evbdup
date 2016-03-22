@@ -74,8 +74,8 @@ Evbdup::Application.routes.draw do
 namespace :kobe do
   resources :shared, :only => :index do
     collection do
-      post :item_ztree_json, :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json, :department_ztree_json, :get_budgets_json, :user_ztree_json
-      get :get_item_category
+      post :item_ztree_json, :get_ztree_title, :ztree_json, :audit_next_user, :ajax_submit, :ajax_remove, :category_ztree_json, :province_area_ztree_json, :department_ztree_json, :get_budgets_json, :user_ztree_json, :save_budget
+      get :get_item_category, :get_budget_form
     end
   end
 
@@ -202,13 +202,13 @@ namespace :kobe do
   end
 
   resources :budgets do
-    collection do
-      get :list
-    end
-    member do
-      get :delete, :audit
-      post :commit, :update_audit
-    end
+    # collection do
+    #   get :list
+    # end
+    # member do
+    #   get :delete, :audit
+    #   post :commit, :update_audit
+    # end
   end
 
   resources :daily_costs do

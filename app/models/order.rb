@@ -14,12 +14,13 @@ class Order < ActiveRecord::Base
   scope :by_seller_id, ->(seller_id) { where("orders.seller_id = #{seller_id}")}
 
   validates_with MyValidator
-  validate :check_budget
-  def check_budget
-    errors.add(:base, "订单金额#{self.total.to_f}应小于预算金额#{self.budget_money}") if self.budget_money.to_f > 0 && self.total > self.budget_money
-  end
+  # validate :check_budget
+  # def check_budget
+  #   errors.add(:base, "订单金额#{self.total.to_f}应小于预算金额#{self.budget_money}") if self.budget_money.to_f > 0 && self.total > self.budget_money
+  # end
 
   default_value_for :status, 0
+  default_value_for :budget_money, 0
 
   include AboutStatus
 
@@ -36,9 +37,9 @@ class Order < ActiveRecord::Base
     end
   end
 
-  after_save do
-    budget.try(:used!)
-  end
+  # after_save do
+  #   budget.try(:used!)
+  # end
 
   before_save do
     self.seller_id = Department.find_by(name: self.seller_name).try(:id) if self.seller_id.blank?
@@ -307,8 +308,10 @@ class Order < ActiveRecord::Base
         <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
         <node name='供应商单位地址' column='seller_addr' class='required'/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-        <node name='预算金额（元）' column='budget_money' class='number required box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
+
+        <node name='预算金额（元）' column='budget_money' class='number required' display='readonly'/>
         <node column='budget_id' data_type='hidden'/>
+
         <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>

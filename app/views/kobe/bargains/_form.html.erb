@@ -1,5 +1,7 @@
 <%= draw_myform(@myform) %>
 
+<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @bargain.try(:budget_id), input_id: "bargains_total", budget_id: "bargains_budget_id" } %>
+
 <script type="text/javascript">
   $(document).ready(function(){
 

@@ -1,0 +1,27 @@
+<div class="sky-form tag-box tag-box-v6 margin-bottom-10" id="budget_div">
+  <div class="row">
+    <section class="col-md-12">
+      <label class="label">总预算金额（元）<span class="text-red">*</span>
+      </label>
+      <label class="input">
+        <i class="icon-append fa fa-info"></i>
+        <input type="text" class="required number" id="budgets_total" name="budgets[total]" value="<%= @budget.total.to_f %>">
+      </label>
+    </section>
+  </div>
+  <div class="row">
+    <section class="col-md-12">
+      <label class="label">备注</label>
+      <label class="textarea textarea-resizable">
+        <textarea placeholder="不超过800字" id="budgets_summary" name="budgets[summary]" rows="2"><%= @budget.summary %></textarea>
+      </label>
+    </section>
+  </div>
+</div>
+
+<%= draw_myform(@myform) %>
+
+<div id="budget_btn_div">
+  <button class="btn btn-u" id="budget_form_submit">保 存</button>
+  <button class="btn btn-u btn-u-light-grey" aria-hidden="true" data-dismiss="modal" type="button">取 消</button>
+</div>

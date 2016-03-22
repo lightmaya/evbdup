@@ -2,14 +2,10 @@
   <%= draw_myform(myform) %>
 </div>
 
+<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @order.try(:budget_id), input_id: "orders_budget_money", budget_id: "orders_budget_id" } %>
+
 <script type="text/javascript">
   $(document).ready(function(){
-
-    // 选择预算审批单 给budget_id和budget_money赋值
-    $("body").on("click", ".dialog_box input[name='orders_budget_money'][type='radio']", function(){
-      var budget_money = $(this).nextAll('.red').text();
-      $("#new_order #orders_budget_money").val(budget_money);
-    });
 
     $('#new_order').on('submit',function(){
       $("#new_order_submit").text("保存中...");
@@ -43,6 +39,7 @@
 		msg.push("订单总金额不能超过预算！");
 		// return false;
 	};
+      if (total <= 0) { msg.push("订单总金额必须大于0！"); }
 
       // 办公用品类定点采购限额（Setting配置额度）
 

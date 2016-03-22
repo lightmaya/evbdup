@@ -48,7 +48,7 @@ function ajax_get_show(url,data,div,success_function) {
     });
 }
 
-// 弹框modal_dialog ajax加载显示 
+// 弹框modal_dialog ajax加载显示
 // 设置modal-header的title并Ajax加载modal-body
 function modal_dialog_show(title,ajax_url,modal_dialog_div,upload_form_id) {
     $(modal_dialog_div + " .modal-header .modal-title").html(title);
@@ -58,7 +58,7 @@ function modal_dialog_show(title,ajax_url,modal_dialog_div,upload_form_id) {
 // 更多操作,用于list列表页面,主要用于批量操作
 $(".more_actions").on('click',function(){
     //获取选中的checkbox的个数
-    var checked = $(".list_table tbody input[type='checkbox']:checked"); 
+    var checked = $(".list_table tbody input[type='checkbox']:checked");
     if (checked.length == 0) {
         flash_dialog("请选择至少一项再进行操作！");
         return false;
@@ -80,6 +80,38 @@ function ajax_submit_or_remove_xml_column (url,data,submit_div) {
         $(submit_div).before(data);
         if (data!="") {$(submit_div + " input").removeClass("required").val("");};
     });
-    
 };
 
+// 下订单前填写预算 上传附件
+function show_budget_form(budget_id){
+    var url = "/kobe/shared/get_budget_form"
+    if (isEmpty(budget_id)){
+        var title = "新增预算"
+    } else {
+        var title = "修改预算"
+        url += ("?id=" + budget_id)
+    }
+    modal_dialog_show(title, url, "#budget_dialog")
+};
+
+// 保存填写的预算并将预算金额、budget_id 的值放在对应的input上
+function get_budget(obj_id, input_id, budget_id){
+    var upload_ids = $('form#budget_form_fileupload tr.template-download .preview[file_id]').map(function() {
+        return $(this).attr('file_id');
+    }).get().join(',');
+
+    var total = $("#budget_dialog #budgets_total").val();
+    var summary = $("#budget_dialog #budgets_summary").val();
+
+    $.ajax({
+        type: "post",
+        url: "/kobe/shared/save_budget",
+        data: { id: obj_id, uids: upload_ids, total: total, summary: summary },
+        success: function(data){
+            $("#" + input_id).val(data["total"]);
+            $("#" + budget_id).val(data["id"]);
+            $("#budget_dialog").modal('hide');
+            return false;
+        }
+    });
+};

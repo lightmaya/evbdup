@@ -106,8 +106,10 @@ class Bargain < ActiveRecord::Base
         <node name='联系人座机' column='dep_tel' class='required'/>
         <node name='联系人手机' column='dep_mobile' class='required'/>
         <node name='联系人地址' column='dep_addr' class='required' />
-        #{"<node name='预算金额（元）' column='total' class='number required box_radio' json_url='/kobe/shared/get_budgets_json' partner='budget_id' hint='如果没有可选项，请先填写预算审批单'/>
-          <node column='budget_id' data_type='hidden'/>" unless act == "bid"}
+
+        <node name='预算金额（元）' column='total'  class='number required' display='readonly'/>
+        <node column='budget_id' data_type='hidden'/>
+
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
       </root>
     }
@@ -126,8 +128,9 @@ class Bargain < ActiveRecord::Base
   # 选择供应商的提示信息
   def self.tips
     msg = []
-    msg << "A级供应商默认全部选中"
-    msg << "不足三家供应商，请选择其他的产品参数或其他的采购方式"
+    msg << "供应商选择规则： "
+    msg << "符合条件的A级供应商必须全部选择，B类供应商可以自行选择；"
+    msg << "如果符合条件（可选择）的供应商不足三家，请修改产品参数以便缩小供应商筛选范围。"
   end
 
   # 没有选择A级供应商的提示

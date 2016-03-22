@@ -80,7 +80,7 @@ class Kobe::BidProjectsController < KobeController
     @bid_project.buyer_add = current_user.department.address
 
     slave_objs = [@bid_project.items.build]
-    @ms_form = MasterSlaveForm.new(BidProject.xml(true), BidItem.xml, @bid_project, slave_objs,
+    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project, slave_objs,
       { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true,
         # upload_files_name: "bid_project",
         title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 3},
@@ -90,17 +90,17 @@ class Kobe::BidProjectsController < KobeController
 
   def edit
     slave_objs = @bid_project.items.blank? ? [@bid_project.items.build] : @bid_project.items
-    @ms_form = MasterSlaveForm.new(BidProject.xml(true), BidItem.xml, @bid_project,slave_objs,{upload_files: true, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@bid_project), method: "patch", grid: 3},{title: '产品明细', grid: 3})
+    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project,slave_objs,{upload_files: true, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@bid_project), method: "patch", grid: 3},{title: '产品明细', grid: 3})
   end
 
   def create
     other_attrs = {department_id: current_user.department.id, department_code: current_user.real_dep_code, name: get_project_name }
-    obj = create_msform_and_write_logs(BidProject, BidProject.xml(true), BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
+    obj = create_msform_and_write_logs(BidProject, BidProject.xml, BidItem, BidItem.xml, { :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
     redirect_to kobe_bid_projects_path
   end
 
   def update
-    update_msform_and_write_logs(@bid_project, BidProject.xml(true), BidItem, BidItem.xml, {:action => "修改竞价", :slave_title => "产品明细"})
+    update_msform_and_write_logs(@bid_project, BidProject.xml, BidItem, BidItem.xml, {:action => "修改竞价", :slave_title => "产品明细"})
     redirect_to kobe_bid_projects_path
   end
 
@@ -129,7 +129,7 @@ class Kobe::BidProjectsController < KobeController
 
     def get_show_arr
       @arr  = []
-      obj_contents = show_obj_info(@bid_project, BidProject.xml(current_user.real_department.is_ancestors?(@bid_project.department_id)), {title: "基本信息", grid: 3})
+      obj_contents = show_obj_info(@bid_project, BidProject.xml, {title: "基本信息", grid: 3})
       @bid_project.items.each_with_index do |item, index|
         obj_contents << show_obj_info(item, BidItem.xml, {title: "产品明细 ##{index+1}", grid: 3})
       end

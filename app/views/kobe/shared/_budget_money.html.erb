@@ -1,0 +1,21 @@
+<%= modal_dialog("budget_dialog") %>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+  // 填写预算 给budget_id和budget_money赋值
+  // input_id 指订单中需要填写预算金额的input对应当id
+  // budget_id 指订单中隐藏的budget_id的input对应的id
+    $("#<%= input_id %>").attr('data-toggle', 'modal').attr('href', '#budget_dialog');
+
+    $("body").on("click", "#<%= input_id %>", function(){
+      if(isEmpty($("#budget_dialog .modal-body").html())){
+        show_budget_form('<%= obj_id %>');
+      }
+    });
+
+    $("body").on("click", "#budget_dialog #budget_form_submit", function(){
+
+      get_budget('<%= obj_id %>', '<%= input_id %>', '<%= budget_id %>');
+    });
+});
+</script>
