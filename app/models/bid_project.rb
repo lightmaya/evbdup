@@ -180,7 +180,7 @@ class BidProject < ActiveRecord::Base
         <node name='投标截止时间' column='end_time' class='required datetime_select datetime' />
         <node name='资质要求' column='req' data_type='textarea' class='required' />
         <node column='item_id' data_type='hidden'/>
-        <node name='指定入围供应商' hint='粮机设备必须从入围项目中选择' class='box_radio' json_url='/kobe/shared/item_ztree_json' partner='item_id'/>
+        <node name='指定入围供应商' hint='粮机设备必须从入围项目中选择' class='box_radio' json_url='/kobe/shared/item_ztree_json' json_params='{"otherchoose":"允许非入围供应商报价"}' partner='item_id'/>
         #{bm}
         <node name='备注信息' column='remark' data_type='textarea' />
       </root>

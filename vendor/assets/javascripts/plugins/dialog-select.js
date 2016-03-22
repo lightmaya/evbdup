@@ -42,22 +42,31 @@
 		dialog_type = dialog_type || "tree";
 		chkStyle = chkStyle || "checkbox";
 		var d = dialog.get(id);
-  	if (!d){
+        var btns = [
+		        {
+		        	value: '确定',
+		            autofocus: true
+		        },
+		        {
+		        	value: '取消'
+		        }
+	        ];
+	    if(!isEmpty(params) && !isEmpty(params["otherchoose"])){
+	    	btns.push({
+	    		value: params["otherchoose"],
+	    		callback: function(){
+	                alert('dddd');
+	            }
+	    	});
+	    };
+
+  		if (!d){
 			d = dialog({
 				id: id,
 				title: '加载中...',
 				follow: dom,
 				quickClose: true,
-		    okValue: '确定',
-		    ok: function () {
-		        this.close();
-		        return false;
-		    },
-		    cancelValue: '取消',
-		    cancel: function () {
-		    	this.close();
-		    	return false;
-		    }
+		    	button: btns.reverse()
 			});
 			d.show();
 			$("#" + containerId).append('<div id="'+ id +'" class="dialog"></div>');
@@ -104,7 +113,7 @@
 			diaogFilter(this);
 		});
 
-	  // 弹框单选框选中后触发事件
+	    // 弹框单选框选中后触发事件
 		$('body').on('click','.dialog_box input[type="radio"]',function(){
 			var input_id = $(this).attr("name");
 			var partner_id = getPartnerId(input_id);
