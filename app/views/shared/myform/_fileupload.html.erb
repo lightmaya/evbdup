@@ -61,8 +61,11 @@ jquery_setting = myform.options[:upload_files_name].present? ? upload_model.send
         }
         return false;
       }else{
-        $("#<%= form_id %>_uploaded_file_ids").val(ids);
-        $('#<%= form_id %>').submit();
+        // 填写预算时不提交表单使用ajax提交
+        if ("<%= form_id %>" != "budget_form") {
+          $("#<%= form_id %>_uploaded_file_ids").val(ids);
+          $('#<%= form_id %>').submit();
+        }
       }
     });
     $('#<%= form_id %>_reset').on("click",function(){$('#<%= form_id %>')[0].reset();});

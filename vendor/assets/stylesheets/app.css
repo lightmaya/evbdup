@@ -765,7 +765,7 @@ h3.heading-xs {
   display: block;
   font-size: 14px;
   padding: 5px 15px;
-  background: #fefefe;
+  /*background: #fefefe;*/
 }
 
 .acc-icon a.accordion-toggle i {

@@ -1,5 +1,7 @@
 <%= draw_myform(@ms_form) %>
 
+<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @bid_project.try(:budget_id), input_id: "bid_projects_budget_money", budget_id: "bid_projects_budget_id" } %>
+
 <script type="text/javascript">
   $(document).ready(function(){
 
@@ -12,8 +14,8 @@
   	$('#bid_project_form').on('submit',function(){
   		var msg = []
   		// 判断品目模板是否相同
-  		var ca_ids = $("input[name^='bid_items[category_id]']").map(function(){ 
-  			if ($(this).val() != "") { return $(this).val(); };  			
+  		var ca_ids = $("input[name^='bid_items[category_id]']").map(function(){
+  			if ($(this).val() != "") { return $(this).val(); };
   		}).get().join(",");
   		$.ajax({
         type: "post",

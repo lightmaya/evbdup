@@ -154,4 +154,24 @@ class Kobe::SharedController < KobeController
     render :json => json.blank? ? '' : "[#{json.join(", ")}]"
   end
 
+  # 订单填写预算的表单
+  def get_budget_form
+    title = params[:id].present? ? "<i class='fa fa-pencil-square-o'></i> 修改预算" : "<i class='fa fa-pencil-square-o'></i> 新增预算"
+    @budget = params[:id].present? ? Budget.find_by(id: params[:id]) : Budget.new
+    @myform = SingleForm.new(nil, @budget, { form_id: "budget_form", button: false, upload_files: true, min_number_of_files: 1, title: false })
+  end
+
+  # 在budgets表保存预算 返回 id 和 total
+  def save_budget
+    if params[:id].present?
+      budget = Budget.find_by id: params[:id]
+      budget.update(total: params[:total], summary: params[:summary])
+    else
+      budget = Budget.create(total: params[:total], summary: params[:summary], name: "#{current_user.real_department.name} #{Time.now.to_date} 预算", department_id: current_user.department.id, dep_code: current_user.real_dep_code)
+    end
+    upload_ids = params[:uids].split(",")
+    BudgetUpload.where(id: upload_ids).update_all(master_id: budget.try(:id))
+    render json: { id: budget.id, total: budget.total.to_f }
+  end
+
 end

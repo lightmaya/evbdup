@@ -117,7 +117,9 @@ class Kobe::OrdersController < KobeController
 
   #  下单页面
   def cart_order
-    @budgets = current_user.valid_budgets
+    # @budgets = current_user.valid_budgets
+    @order.save
+    redirect_to edit_kobe_order_path(@order)
   end
 
   def update
@@ -127,7 +129,7 @@ class Kobe::OrdersController < KobeController
 
   def edit
     slave_objs = @order.items.blank? ? [OrdersItem.new(order_id: @order.id)] : @order.items
-    @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-wrench"></i> 修改订单',action: kobe_order_path(@order), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    @ms_form = MasterSlaveForm.new(Order.xml, OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-wrench"></i> 修改订单',action: kobe_order_path(@order), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
   end
 
   # 提交
