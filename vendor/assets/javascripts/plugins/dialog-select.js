@@ -83,9 +83,9 @@ function showDialog(dom,id,url,dialog_type,chkStyle,params){
 	}
 	];
     // 其他选项
-    if(!isEmpty(params) && !isEmpty(params["otherchoose"])){
+    if(!isEmpty(params) && !isEmpty(params["vv_otherchoose"])){
     	btns.push({
-    		value: params["otherchoose"],
+    		value: params["vv_otherchoose"],
     		callback: function(){
     			clearCheckedNodes(id,dialog_type,input_id,partner_id);
     			$("#" + input_id).removeAttr("readonly");
