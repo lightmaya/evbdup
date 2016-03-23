@@ -32,6 +32,24 @@ function overflow_y_auto(id) {
 		initZtree(d,treeId,url,chkStyle,params,false);
 	}
 
+	// 对话框清空事件
+	function clearCheckedNodes(id,dialog_type,input_id,partner_id){
+	    if(dialog_type == 'tree'){
+			var treeObj = $.fn.zTree.getZTreeObj("zTree_" + id);
+			var nodes = treeObj.getCheckedNodes(true);
+	    	for (var i=0, l = nodes.length; i < l; i++) {
+				treeObj.checkNode(nodes[i], false, true);
+			}
+		}
+		else{  
+    		$('#' + id + ' input:checked').each(function(){
+				$(this).attr("checked", false);
+			}); 
+		}
+		$("#" + input_id).val('');
+	    $("#" + partner_id).val(0);
+	}
+
 	// 显示选择对话框
 	function showDialog(dom,id,url,dialog_type,chkStyle,params){
 		var containerId = "dialog_select";
@@ -40,7 +58,7 @@ function overflow_y_auto(id) {
 		}
 		id += "_Dialog";
 		var input_id = $(dom).attr("id");
-	    	var partner_id = getPartnerId(input_id);
+	    var partner_id = getPartnerId(input_id);
 		dialog_type = dialog_type || "tree";
 		chkStyle = chkStyle || "checkbox";
 		var d = dialog.get(id);
@@ -55,11 +73,10 @@ function overflow_y_auto(id) {
 			}
 		},
 		{
-			value: '取消',
+			value: '清空',
 			callback: function(){
 				$("#" + input_id).attr('readonly','readonly');
-				$("#" + input_id).val('');
-	    			$("#" + partner_id).val(0);
+				clearCheckedNodes(id,dialog_type,input_id,partner_id);
 				this.close();
 				return false;
 			}
@@ -70,10 +87,9 @@ function overflow_y_auto(id) {
 	    	btns.push({
 	    		value: params["otherchoose"],
 	    		callback: function(){
-	    			$("#" + input_id).val('');
+	    			clearCheckedNodes(id,dialog_type,input_id,partner_id);
 	    			$("#" + input_id).removeAttr("readonly");
 	    			$("#" + input_id).removeAttr("disabled");
-	    			$("#" + partner_id).val(0);
 	    			this.close();
 	    			return false;
 	    		}
@@ -88,16 +104,21 @@ function overflow_y_auto(id) {
 	    		quickClose: false,
 	    		button: btns.reverse()
 	    	});
-	    	d.show();
+	    }
+    	d.show();
+    	if($("#" + id).length == 0){
 	    	$("#" + containerId).append('<div id="'+ id +'" class="dialog"></div>');
+	    	// 只传送页面需要的参数，剔除辅助参数
+			// for(var s in params){
+			// 	if(s.indexOf("vv_") == 0)
+			// 	delete params.s
+			// }
+			// alert(params);
 	    	if (dialog_type == "tree"){
 	    		zTreeSelect(d,id,url,chkStyle,params);
 	    	}else{
 	    		BoxSelect(d,id,url,chkStyle,params);
 	    	}
-	    }
-	    else{
-	    	d.show();
 	    }
 	  }
 

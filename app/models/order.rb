@@ -303,7 +303,7 @@ class Order < ActiveRecord::Base
         <node name='采购单位联系人手机' column='buyer_mobile' class='required'/>
         <node name='采购单位地址' column='buyer_addr' hint='一般是使用单位。' class='required'/>
         <node column='seller_id' data_type='hidden'/>
-        <node name='供应商名称' column='seller_name' hint='粮机设备必须从入围项目中选择' class='tree_radio required' json_url='/kobe/shared/item_ztree_json' json_params='{"otherchoose":"从非入围供应商采购"}' partner='seller_id'/>
+        <node name='供应商名称' column='seller_name' hint='粮机设备必须从入围项目中选择' class='tree_radio required' json_url='/kobe/shared/item_ztree_json' json_params='{"vv_otherchoose":"从非入围供应商采购"}' partner='seller_id'/>
         <node name='供应商单位联系人' column='seller_man' class='required'/>
         <node name='供应商单位联系人座机' column='seller_tel' class='required'/>
         <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
