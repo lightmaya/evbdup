@@ -23,44 +23,33 @@ class OrdersItem < ActiveRecord::Base
   end
 
   # 从表的XML加ID是为了修改的时候能找到记录
-  def self.xml(who='',options={})
+  def self.xml(order=nil, current_u='', options={})
+    if order.try(:yw_type) == 'xygh'
+      category_tmp = can_edit = " display='readonly'"
+      num_edit = order.try(:seller_id) == current_u.real_department.id ? " display='readonly'" : ''
+    else
+      category_tmp = %Q{ class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}"}' partner='category_id' }
+      can_edit = num_edit = ''
+    end
+
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node column='id' data_type='hidden'/>
         <node column='category_id' data_type='hidden'/>
-        <node name='品目' column='category_name' class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}"}' partner='category_id'/>
-        <node name='品牌' column='brand' class='required'/>
-        <node name='型号' column='model' class='required'/>
-        <node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。'/>
-        <node name='市场单价（元）' column='market_price' class='required number'/>
-        <node name='入围单价（元）' column='bid_price' class='number'/>
+        <node name='品目' column='category_name' #{category_tmp}/>
+        <node name='品牌' column='brand' class='required' #{can_edit}/>
+        <node name='型号' column='model' class='required' #{can_edit}/>
+        <node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。' #{can_edit}/>
+        <node name='市场单价（元）' column='market_price' class='required number' #{can_edit}/>
+        <node name='入围单价（元）' column='bid_price' class='number' #{can_edit}/>
         <node name='成交单价（元）' column='price' class='required number'/>
-        <node name='数量' column='quantity' class='required number'/>
-        <node name='单位' class='zip' column='unit' class='required'/>
+        <node name='数量' column='quantity' class='required number' #{num_edit}/>
+        <node name='单位' class='zip' column='unit' class='required' #{can_edit}/>
         <node name='小计（元）' column='total' class='required number' display='readonly'/>
         <node name='备注' column='summary' data_type='textarea' class='maxlength_800' placeholder='不超过800字'/>
       </root>
     }
   end
 
-  def self.confirm_xml(who='',options={})
-    %Q{
-      <?xml version='1.0' encoding='UTF-8'?>
-      <root>
-        <node column='id' data_type='hidden'/>
-        <node name='品目' column='category_name' display='readonly'/>
-        <node name='品牌' column='brand' class='required' display='readonly'/>
-        <node name='型号' column='model' class='required' display='readonly'/>
-        <node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。' display='readonly'/>
-        <node name='市场单价（元）' column='market_price' class='required number' display='readonly'/>
-        <node name='入围单价（元）' column='bid_price' class='number' display='readonly'/>
-        <node name='成交单价（元）' column='price' class='required number'/>
-        <node name='数量' column='quantity' class='required number' display='readonly'/>
-        <node name='单位' class='zip' column='unit' class='required' display='readonly'/>
-        <node name='小计（元）' column='total' class='required number' display='readonly'/>
-        <node name='备注' column='summary' data_type='textarea' class='maxlength_800' placeholder='不超过800字'/>
-      </root>
-    }
-  end
 end

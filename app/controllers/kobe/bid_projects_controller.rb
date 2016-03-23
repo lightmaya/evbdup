@@ -78,13 +78,14 @@ class Kobe::BidProjectsController < KobeController
     @bid_project.buyer_mobile = current_user.mobile
     # @bid_project.buyer_email = current_user.email
     @bid_project.buyer_add = current_user.department.address
+    @bid_project.department_id = current_user.department.id
 
     slave_objs = [@bid_project.items.build]
     @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project, slave_objs,
       { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true,
         # upload_files_name: "bid_project",
-        title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 3},
-        {title: '产品明细', grid: 3}
+        title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 3 },
+        { title: '产品明细', grid: 3 }
       )
   end
 

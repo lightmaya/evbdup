@@ -292,79 +292,33 @@ class Order < ActiveRecord::Base
     return arr
   end
 
-  def self.xml(who='',options={})
+  def self.xml(order=nil, current_u='', options={})
+    buyer_edit = seller_edit = ''
+    if order.try(:yw_type) == 'xygh'
+      buyer_edit = " display='readonly'" if order.try(:seller_id) == current_u.real_department.id
+      seller_edit = " display='readonly'" if order.try(:buyer_id) == current_u.real_department.id
+    end
+
+    dep_s_tmp = order.try(:yw_type) == 'ddcg' ? %Q{ hint='粮机设备必须从入围供应商处采购' class='tree_radio required' json_url='/kobe/shared/item_ztree_json' json_params='{"vv_otherchoose":"从非入围供应商采购"}' partner='seller_id' } : " display='readonly'"
+
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='采购单位' column='buyer_name' class='required' display='readonly'/>
-        <node name='发票抬头' column='payer' hint='付款单位，默认与采购单位相同。' class='required'/>
-        <node name='采购单位联系人' column='buyer_man' class='required'/>
-        <node name='采购单位联系人座机' column='buyer_tel' class='required'/>
-        <node name='采购单位联系人手机' column='buyer_mobile' class='required'/>
-        <node name='采购单位地址' column='buyer_addr' hint='一般是使用单位。' class='required'/>
+        <node name='发票抬头' column='payer' hint='付款单位，默认与采购单位相同。' class='required' #{buyer_edit}/>
+        <node name='采购单位联系人' column='buyer_man' class='required' #{buyer_edit}/>
+        <node name='采购单位联系人座机' column='buyer_tel' class='required' #{buyer_edit}/>
+        <node name='采购单位联系人手机' column='buyer_mobile' class='required' #{buyer_edit}/>
+        <node name='采购单位地址' column='buyer_addr' hint='一般是使用单位。' class='required' #{buyer_edit}/>
         <node column='seller_id' data_type='hidden'/>
-        <node name='供应商名称' column='seller_name' hint='粮机设备必须从入围项目中选择' class='tree_radio required' json_url='/kobe/shared/item_ztree_json' json_params='{"vv_otherchoose":"从非入围供应商采购"}' partner='seller_id'/>
-        <node name='供应商单位联系人' column='seller_man' class='required'/>
-        <node name='供应商单位联系人座机' column='seller_tel' class='required'/>
-        <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
-        <node name='供应商单位地址' column='seller_addr' class='required'/>
+        <node name='供应商名称' column='seller_name' #{dep_s_tmp}/>
+        <node name='供应商单位联系人' column='seller_man' class='required' #{seller_edit}/>
+        <node name='供应商单位联系人座机' column='seller_tel' class='required' #{seller_edit}/>
+        <node name='供应商单位联系人手机' column='seller_mobile' class='required' #{seller_edit}/>
+        <node name='供应商单位地址' column='seller_addr' class='required' #{seller_edit}/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-
         <node name='预算金额（元）' column='budget_money' class='number required' display='readonly'/>
         <node column='budget_id' data_type='hidden'/>
-
-        <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
-        <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
-        <node column='total' data_type='hidden'/>
-        <node column='yw_type' data_type='hidden'/>
-      </root>
-    }
-  end
-
-  def self.agent_xml
-     %Q{
-      <?xml version='1.0' encoding='UTF-8'?>
-      <root>
-        <node name='项目名称' column='name' class='required' display='readonly'/>
-        <node name='采购单位' column='buyer_name' class='required' display='readonly'/>
-        <node name='发票抬头' column='payer' hint='付款单位，默认与采购单位相同。' display='readonly' class='required'/>
-        <node name='采购单位联系人' column='buyer_man' class='required' display='readonly'/>
-        <node name='采购单位联系人座机' column='buyer_tel' class='required' display='readonly'/>
-        <node name='采购单位联系人手机' column='buyer_mobile' class='required' display='readonly'/>
-        <node name='采购单位地址' column='buyer_addr' hint='一般是使用单位。' class='required' display='readonly'/>
-        <node name='供应商名称' column='seller_name' class='required'/>
-        <node name='供应商单位联系人' column='seller_man' class='required'/>
-        <node name='供应商单位联系人座机' column='seller_tel' class='required'/>
-        <node name='供应商单位联系人手机' column='seller_mobile' class='required'/>
-        <node name='供应商单位地址' column='seller_addr' class='required'/>
-        <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-        <node name='预算金额（元）' column='budget_money' class='number' display='readonly'/>
-        <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
-        <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
-        <node column='total' data_type='hidden'/>
-        <node column='yw_type' data_type='hidden'/>
-      </root>
-    }
-  end
-
-  def self.buyer_xml
-     %Q{
-      <?xml version='1.0' encoding='UTF-8'?>
-      <root>
-        <node name='项目名称' column='name' class='required' display='readonly'/>
-        <node name='采购单位' column='buyer_name' class='required' display='readonly'/>
-        <node name='发票抬头' column='payer' hint='付款单位，默认与采购单位相同。' display='readonly' class='required'/>
-        <node name='采购单位联系人' column='buyer_man' class='required' />
-        <node name='采购单位联系人座机' column='buyer_tel' class='required' />
-        <node name='采购单位联系人手机' column='buyer_mobile' class='required' />
-        <node name='采购单位地址' column='buyer_addr' hint='一般是使用单位。' class='required' />
-        <node name='供应商名称' column='seller_name' class='required' display='readonly'/>
-        <node name='供应商单位联系人' column='seller_man' class='required' display='readonly'/>
-        <node name='供应商单位联系人座机' column='seller_tel' class='required' display='readonly'/>
-        <node name='供应商单位联系人手机' column='seller_mobile' class='required' display='readonly'/>
-        <node name='供应商单位地址' column='seller_addr' class='required' display='readonly'/>
-        <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-        <node name='预算金额（元）' column='budget_money' class='number' display='readonly'/>
         <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>

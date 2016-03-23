@@ -1,6 +1,6 @@
 <%= draw_myform(@ms_form) %>
 
-<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @bid_project.try(:budget_id), input_id: "bid_projects_budget_money", budget_id: "bid_projects_budget_id" } %>
+<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @bid_project.try(:budget_id), input_id: "bid_projects_budget_money", budget_id: "bid_projects_budget_id" } if @bid_project.try(:department_id) == current_user.department.id %>
 
 <script type="text/javascript">
   $(document).ready(function(){

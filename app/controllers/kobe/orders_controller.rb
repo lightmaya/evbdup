@@ -25,7 +25,10 @@ class Kobe::OrdersController < KobeController
     #  @order.buyer_mobile = current_user.mobile
     #  @order.buyer_addr = current_user.department.address
     slave_objs = [OrdersItem.new(order_id: @order.id)]
-    @ms_form = MasterSlaveForm.new(Order.xml,OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-pencil-square-o"></i> 下单',action: kobe_orders_path, show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
+      @order,slave_objs, { form_id: 'new_order', upload_files: true, min_number_of_files: 1,
+        title: '<i class="fa fa-pencil-square-o"></i> 下单', action: kobe_orders_path, show_total: true, grid: 4 },
+        { title: '产品明细', grid: 4 })
   end
 
   def show
@@ -36,7 +39,9 @@ class Kobe::OrdersController < KobeController
       buyer_id: current_user.department.id, buyer_code: current_user.real_dep_code,
       name: Order.get_project_name(nil, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type])
     }
-    @order = create_msform_and_write_logs(Order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "下单", :master_title => "基本信息",:slave_title => "产品信息"}, other_attrs)
+    @order = create_msform_and_write_logs(Order, Order.xml(@order, current_user),
+      OrdersItem, OrdersItem.xml(@order, current_user),
+      { :action => "下单", :master_title => "基本信息", :slave_title => "产品信息" }, other_attrs)
     unless @order.id
       redirect_back_or
     else
@@ -50,10 +55,10 @@ class Kobe::OrdersController < KobeController
     # return redirect_to(not_found_path) unless @order
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     slave_objs = @order.items
-    @ms_form = MasterSlaveForm.new(Order.agent_xml, OrdersItem.confirm_xml, @order, slave_objs,
-      {form_id: 'agent_confirm_order', title: "基本信息", action: update_agent_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
-      {title: '产品明细', grid: 4, modify: false}
-    )
+    @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
+      @order, slave_objs, { form_id: 'agent_confirm_order', title: "基本信息",
+        action: update_agent_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4 },
+        { title: '产品明细', grid: 4, modify: false })
   end
 
   # 供应商确认
@@ -62,7 +67,7 @@ class Kobe::OrdersController < KobeController
     # return redirect_to(not_found_path) unless @order
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     # @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
-    update_confirm_and_write_logs(Order.agent_xml, OrdersItem.confirm_xml)
+    update_confirm_and_write_logs(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user))
     redirect_to seller_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
@@ -72,10 +77,10 @@ class Kobe::OrdersController < KobeController
     # return redirect_to(not_found_path) unless @order
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     slave_objs = @order.items
-    @ms_form = MasterSlaveForm.new(Order.buyer_xml, OrdersItem.confirm_xml, @order, slave_objs,
-      {form_id: 'buyer_confirm_order', title: "基本信息", action: update_buyer_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4},
-      {title: '产品明细', grid: 4, modify: false}
-    )
+    @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
+      @order, slave_objs, { form_id: 'buyer_confirm_order', title: "基本信息",
+        action: update_buyer_confirm_kobe_order_path(id: @order.id), show_total: true, grid: 4 },
+      { title: '产品明细', grid: 4, modify: false })
   end
 
   # 采购人确认
@@ -85,7 +90,7 @@ class Kobe::OrdersController < KobeController
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     # @order = create_or_update_msform_and_write_logs(@order, Order.buyer_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     # write_logs(@order, "采购人确认", "")
-    update_confirm_and_write_logs(Order.buyer_xml, OrdersItem.confirm_xml)
+    update_confirm_and_write_logs(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user))
     redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
@@ -123,13 +128,19 @@ class Kobe::OrdersController < KobeController
   end
 
   def update
-    update_msform_and_write_logs(@order, Order.xml, OrdersItem, OrdersItem.xml, {:action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息"}, { name: Order.get_project_name(@order, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) })
+    update_msform_and_write_logs(@order, Order.xml(@order, current_user),
+      OrdersItem, OrdersItem.xml(@order, current_user),
+      { :action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息" },
+      { name: Order.get_project_name(@order, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) })
     redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   def edit
     slave_objs = @order.items.blank? ? [OrdersItem.new(order_id: @order.id)] : @order.items
-    @ms_form = MasterSlaveForm.new(Order.xml, OrdersItem.xml,@order,slave_objs,{form_id: 'new_order', upload_files: true, min_number_of_files: 1, title: '<i class="fa fa-wrench"></i> 修改订单',action: kobe_order_path(@order), method: "patch", show_total: true, grid: 4},{title: '产品明细', grid: 4})
+    @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
+      @order,slave_objs, { form_id: 'new_order', upload_files: true, min_number_of_files: (@order.yw_type == 'ddcg' ? 1 : 0),
+        title: '<i class="fa fa-wrench"></i> 修改订单', action: kobe_order_path(@order), method: "patch", show_total: true, grid: 4 },
+        { title: '产品明细', grid: 4 })
   end
 
   # 提交
@@ -233,14 +244,14 @@ class Kobe::OrdersController < KobeController
 
     # show页面的数组
     def get_show_arr
-      obj_contents = show_obj_info(@order,Order.xml,{title: "基本信息", grid: 3})
+      obj_contents = show_obj_info(@order,Order.xml(@order, current_user), { title: "基本信息", grid: 3 })
       @order.items.each_with_index do |item, index|
-        obj_contents << show_obj_info(item,OrdersItem.xml,{title: "产品明细 ##{index+1}", grid: 4})
+        obj_contents << show_obj_info(item, OrdersItem.xml(@order, current_user), { title: "产品明细 ##{index+1}", grid: 4 })
       end
-      obj_contents << show_obj_info(@order,Order.fee_xml,{title: "附加费用", grid: 3})
+      obj_contents << show_obj_info(@order, Order.fee_xml, { title: "附加费用", grid: 3 })
       obj_contents << show_total_part(@order.total)
       @arr  = []
-      @arr << {title: "详细信息", icon: "fa-info", content: obj_contents}
+      @arr << { title: "详细信息", icon: "fa-info", content: obj_contents }
 
       @arr << get_budget_hash(@order.budget, @order.buyer_id)
       # budget = @order.budget
@@ -250,9 +261,9 @@ class Kobe::OrdersController < KobeController
       #   @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
       # end
 
-      @arr << {title: "附件", icon: "fa-paperclip", content: show_uploads(@order)}
+      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@order) }
       # @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
-      @arr << {title: "历史记录", icon: "fa-clock-o", content: show_logs(@order)}
+      @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@order) }
     end
 
     # 判断是不是同一个模板

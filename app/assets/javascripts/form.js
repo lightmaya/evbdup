@@ -48,9 +48,9 @@ $(function() {
     email: {email: true},
     url: {url: true},
     date: {date: true},
-    dateISO: {dateISO: true}, 
+    dateISO: {dateISO: true},
     number: {number: true},
-    digits: {digits: true},  
+    digits: {digits: true},
     minlength_6: {minlength: 6},
     maxlength_800: {maxlength: 800},
     rangelength_6_20: {rangelength: [6,20]},
@@ -79,10 +79,21 @@ function input_blur(me,master_table_names,slave_table_names){
     if (isEmpty(quantity)){
       var quantity = $("#"+slave_table_names+"_num_" + id).val();
     }
+    // 如果有入围价格 输入的成交价格不能大于入围价格
+    var bid_price = $("#"+slave_table_names+"_bid_price_" + id).val();
+    if (!isEmpty(bid_price) && parseFloat(price) > parseFloat(bid_price)) {
+      $("#"+slave_table_names+"_price_" + id).val(bid_price);
+    }
+
     if ( !isNaN(price) && (price != '') && (quantity != '') && !isNaN(quantity) ) {
         $("#"+slave_table_names+"_total_" + id).val(parseFloat(price) * parseFloat(quantity));
     }
     sum_calc_total(master_table_names,slave_table_names);
+
+    // 提示成交价格不能大于入围价格
+    if (!isEmpty(bid_price) && parseFloat(price) > parseFloat(bid_price)) {
+      flash_dialog("成交价格不能大于入围价格！");
+    }
 }
 //  计算总金额
 function sum_calc_total(master_table_names,slave_table_names) {
@@ -101,7 +112,7 @@ function sum_calc_total(master_table_names,slave_table_names) {
       total += formatFloat(parseFloat(deliver_fee.val()),2);
       $(deliver_fee).val(formatFloat(parseFloat(deliver_fee.val()),2));
     }
-    
+
     if(!isEmpty(other_fee.val())){
       total += formatFloat(parseFloat(other_fee.val()),2);
       $(other_fee).val(formatFloat(parseFloat(other_fee.val()),2));
