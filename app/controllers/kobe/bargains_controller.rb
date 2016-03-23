@@ -23,6 +23,8 @@ class Kobe::BargainsController < KobeController
     @bargain.dep_tel = current_user.tel
     @bargain.dep_mobile = current_user.mobile
     @bargain.dep_addr = current_user.department.address
+    @bargain.department_id = current_user.department.id
+
     slave_objs = [@bargain.products.build]
     @myform = MasterSlaveForm.new(Bargain.xml,BargainProduct.xml(@category),@bargain,slave_objs,{form_id: 'new_bargain', upload_files: true, title: "<i class='fa fa-pencil-square-o'></i> 发起议价--#{@category.name}",action: kobe_bargains_path(c: @category.id, i: @item.id), grid: 3},{title: '产品明细', grid: 3})
   end

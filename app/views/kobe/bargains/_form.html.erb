@@ -1,6 +1,6 @@
 <%= draw_myform(@myform) %>
 
-<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @bargain.try(:budget_id), input_id: "bargains_total", budget_id: "bargains_budget_id" } %>
+<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @bargain.try(:budget_id), input_id: "bargains_total", budget_id: "bargains_budget_id" } if @bargain.try(:department_id) == current_user.department.id %>
 
 <script type="text/javascript">
   $(document).ready(function(){

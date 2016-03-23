@@ -1,6 +1,6 @@
-<%if params[:search_btn].blank?%>
-	<%= render :partial=> 'search' ,:locals=>{url: kobe_tongji_index_path}%>
-<%else%>
-	<%= render :partial=> params[:show_type] %>
-<%end%>
+<% if params[:search_btn].blank? %>
+	<%= render partial: 'search', locals: { url: kobe_tongji_index_path, title: '整体情况统计' } %>
+<% else %>
+	<%= render partial: params[:show_type] %>
+<% end %>
 

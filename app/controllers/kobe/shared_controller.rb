@@ -35,7 +35,13 @@ class Kobe::SharedController < KobeController
   end
 
   def item_ztree_json
-    json = Item.usable.order('id desc').map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}|}
+    name = params[:ajax_key]
+    if name.present?
+      nodes = Item.usable.where(["name like ? ", "%#{name}%"]).order('id desc')
+    else
+      nodes = Item.usable.order('id desc')
+    end
+    json = nodes.map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}|}
     render :json => "[#{json.join(", ")}]"
   end
 
@@ -149,10 +155,10 @@ class Kobe::SharedController < KobeController
   end
 
   # 当前用户的可用的预算审批单的json
-  def get_budgets_json
-    json = current_user.valid_budgets.map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name} [预算金额: <span class='red'>#{n.total}</span>]"}|}
-    render :json => json.blank? ? '' : "[#{json.join(", ")}]"
-  end
+  # def get_budgets_json
+  #   json = current_user.valid_budgets.map{|n|%Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name} [预算金额: <span class='red'>#{n.total}</span>]"}|}
+  #   render :json => json.blank? ? '' : "[#{json.join(", ")}]"
+  # end
 
   # 订单填写预算的表单
   def get_budget_form
@@ -172,6 +178,18 @@ class Kobe::SharedController < KobeController
     upload_ids = params[:uids].split(",")
     BudgetUpload.where(id: upload_ids).update_all(master_id: budget.try(:id))
     render json: { id: budget.id, total: budget.total.to_f }
+  end
+
+  # 生成项目名称和入围单位名称的树形json
+  def item_dep_json
+    name = params[:ajax_key]
+    json = []
+    Item.usable.order('id desc').each do |n|
+      deps = name.present? ? n.item_departments.where(["name like ? ", "%#{name}%"]) : n.item_departments
+      json << %Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}| if deps.present?
+      deps.each { |d| json << %Q|{"id":#{d.department_id}, "pId": #{d.item_id}, "name":"#{d.name}"}| }
+    end
+    render :json => "[#{json.join(", ")}]"
   end
 
 end

@@ -128,9 +128,9 @@ class Kobe::TongjiController < KobeController
   private
 
     def set_default_params
-    	params[:begin] ||= Time.now.beginning_of_month.strftime('%Y-%m-%d')
+    	params[:begin] ||= Time.now.last_year.beginning_of_month.strftime('%Y-%m-%d')
       params[:end] ||=  Time.now.strftime('%Y-%m-%d')
-      params[:show_type] ||= 'shape'
+      params[:show_type] ||= 'table'
     end
 
     def get_category_joins(sql)

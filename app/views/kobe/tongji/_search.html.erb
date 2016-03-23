@@ -1,64 +1,63 @@
 <div class="tab-content">
   <div class="tab-pane fade in active" id="home-1">
-    <%=form_tag  url , method: "get" , id: 'sky-form' , class: "sky-form" do %>
-    <header>统计日期：</header>         
+    <%= form_tag  url , method: "get" , id: 'sky-form' , class: "sky-form" do %>
+    <header><%= title ||= '统计' %></header>
     <fieldset>
-      <label class="label">日期区间</label>  
-      <div class="row">   
-        <section class="col col-3">
-          <label class="input">
-            <i class="icon-append fa fa-calendar"></i>
-            <input type="text" name="begin" class="start_date"  placeholder="开始日期" value="<%=params[:begin] %>">
-          </label>
-        </section>
-        <section class="col col-3">
-          <label class="input">
-            <i class="icon-append fa fa-calendar"></i>
-            <input type="text" name="end" class='finish_date'  placeholder="结束日期" value="<%=params[:end]%>">
-          </label>
-        </section>
-      </div>
       <div class="row">
-        <section class="col col-3">
+        <section class="col col-4">
+          <label class="label">统计开始时间</label>
+          <label class="input">
+            <i class="icon-append fa fa-calendar"></i>
+            <input type="text" name="begin" class="start_date"  placeholder="开始日期" value="<%= params[:begin] %>">
+          </label>
+        </section>
+        <section class="col col-4">
+          <label class="label">统计截止时间</label>
+          <label class="input">
+            <i class="icon-append fa fa-calendar"></i>
+            <input type="text" name="end" class='finish_date'  placeholder="结束日期" value="<%= params[:end] %>">
+          </label>
+        </section>
+        <section class="col col-4">
           <label class="label">品目选择</label>
           <label class="input">
             <i class="icon-append fa fa-chevron-down"></i>
             <input type="text"  name="category_name" id="category_name"  class="tree_radio required" json_url="/kobe/shared/category_ztree_json" partner='category_id'>
           </label>
-        </section> 
-        <section class="col col-3">
+        </section>
+      </div>
+      <div class="row">
+        <section class="col col-4">
           <label class="label">采购单位</label>
           <label class="input">
             <i class="icon-append fa fa-chevron-down"></i>
-            <input type="text"  name="dep_p_name" id="dep_p_name" class="tree_radio required" json_url="/kobe/shared/department_ztree_json" partner='department_id'>                        
+            <input type="text"  name="dep_p_name" id="dep_p_name" class="tree_radio required" json_url="/kobe/shared/department_ztree_json" partner='department_id'>
           </label>
         </section>
-      </div>
-      <div class="row">
-        <section class="col col-3">
+        <section class="col col-4">
           <label class="label">供应商单位</label>
           <label class="input">
             <i class="icon-append fa fa-chevron-down"></i>
-            <input type="text"  name="dep_s_name" id="dep_s_name">                        
+            <input type="text"  name="dep_s_name" id="dep_s_name">
           </label>
         </section>
-      </div>
-      <label class="label">统计方式</label>
-      <div class="row">
-        <section class="col col-3">
-          <label class="radio state-success"><input type="radio" name="show_type" value="table" checked="<%=params[:show_type]=='table'%>"><i class="rounded-x"></i>图表</label>
+        <section class="col col-4">
+          <label class="label">统计方式</label>
+          <div class="row">
+            <section class="col col-6">
+              <label class="radio state-success"><input type="radio" name="show_type" value="table" checked="<%= params[:show_type] == 'table' %>"><i class="rounded-x"></i>图表</label>
+            </section>
+            <section class="col col-6">
+              <label class="radio state-success"><input type="radio" name="show_type" value="shape" checked="<%= params[:show_type] == 'shape' %>"><i class="rounded-x"></i>图形</label>
+            </section>
+          </div>
         </section>
-        <section class="col col-3">
-          <label class="radio state-success"><input type="radio" name="show_type" value="shape" checked="<%=params[:show_type]=='shape'%>"><i class="rounded-x"></i>图形</label> 
-        </section>
-      </div>
       <input type="hidden" name="category_id" id="category_id">
       <input type="hidden" name="department_id" id="department_id">
     </fieldset>
-    <footer>
-      <input type="submit" name="search_btn" class="btn-u btn-u-blue" value="搜索">
-    </footer> 
+    <footer class="tc">
+      <input type="submit" name="search_btn" class="btn-u btn-u-blue" value="统计">
+    </footer>
   </div>
-
-  <%end%>        
+  <%end%>
 </div>
