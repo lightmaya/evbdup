@@ -103,11 +103,13 @@
     $("#bid_form").validate();
     // 放弃报价
     $("#bid_form #give_up_bid").on("click", function() {
-      // 移除默认选中产品
-      $("input:radio:checked").each(function() { $(this).removeAttr('checked') });
-      // 报价总计设为0
-      $("#bid_sum_total").text('0');
-      $("#bid_form").submit();
+      confirm_dialog("确定要放弃本次报价吗？", function () {
+        // 移除默认选中产品
+        $("input:radio:checked").each(function() { $(this).removeAttr('checked') });
+        // 报价总计设为0
+        $("#bid_sum_total").text('0');
+        $("#bid_form").submit();
+      });
     });
 
     // 保存报价 提交表单

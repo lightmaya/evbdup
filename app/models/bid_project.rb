@@ -43,10 +43,6 @@ class BidProject < ActiveRecord::Base
 
   end
 
-  after_save do
-    budget.try(:used!)
-  end
-
   include AboutStatus
 
   # 可投标 可选择中标人的状态
@@ -186,6 +182,7 @@ class BidProject < ActiveRecord::Base
 
   # 插入order表
   def send_to_order
+    return '' unless self.status == 23
     order = Order.new
     order.name = self.name
     order.sn = self.code

@@ -201,7 +201,7 @@ module BaseFunction
       end
       result << "<h5><i class='fa fa-chevron-circle-#{obj.uploads.present? ? "down" : "right"}'></i> #{options[:title]}</h5>"
     end
-    return (result + "<div class='hide'>#{something_not_found(options[:icon_not_found])}</div>").html_safe if obj.uploads.blank?
+    return (result + something_not_found(options[:icon_not_found], options[:title].present?)).html_safe if obj.uploads.blank?
     # 图片类型
     if options[:is_picture]
       tmp = obj.uploads.map do |file|
@@ -238,10 +238,10 @@ module BaseFunction
     return tmp
   end
 
-  def something_not_found(icon=false)
-    return "<div class='padding-left-20'>抱歉，没有找到相关信息。</div>" if icon
+  def something_not_found(icon=false, hide=false)
+    return "<div class='padding-left-20 #{'hide' if hide}'>抱歉，没有找到相关信息。</div>" if icon
     %Q|
-      <div class="content-boxes-v2 space-lg-hor content-sm">
+      <div class="content-boxes-v2 space-lg-hor content-sm #{'hide' if hide}">
         <h2 class="heading-sm">
           <i class="icon-custom icon-sm icon-bg-red fa fa-lightbulb-o"></i>
           <span>抱歉，没有找到相关信息。</span>

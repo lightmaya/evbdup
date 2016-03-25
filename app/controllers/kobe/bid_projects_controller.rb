@@ -39,6 +39,8 @@ class Kobe::BidProjectsController < KobeController
     logs = stateless_logs("选择中标人", remark, false)
     @bid_project.change_status_and_write_logs("选择中标人", logs, @bid_project.commit_params, false)
     @bid_project.reload.create_task_queue
+    # 插入order表
+    @bid_project.send_to_order
     tips_get(remark)
     redirect_to action: :index
     # @bid_project.update(params[:bid_project].permit(:bid_project_bid_id, :reason))
@@ -46,13 +48,8 @@ class Kobe::BidProjectsController < KobeController
 
   def update_audit
     save_audit(@bid_project)
-    # 确定中标人
-    if @bid_project.status == 23
-      # Rufus::Scheduler.new.in "1s" do
-      @bid_project.send_to_order
-      #   ActiveRecord::Base.clear_active_connections!
-      # end
-    end
+    # 插入order表
+    @bid_project.send_to_order
     redirect_to list_kobe_bid_projects_path(r: @bid_project.rule.try(:id))
   end
 

@@ -28,10 +28,6 @@ class Bargain < ActiveRecord::Base
     create_no(rule.code, "sn")
   end
 
-  after_save do
-    budget.try(:used!)
-  end
-
   # 附件的类
   def self.upload_model
     BargainUpload
@@ -165,6 +161,7 @@ class Bargain < ActiveRecord::Base
 
   # 插入order表
   def send_to_order
+    return '' unless Bargain.effective_status.include?(self.status)
     order = Order.new
     order.name = self.name
     order.sn = self.sn

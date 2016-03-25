@@ -81,7 +81,7 @@ class Kobe::BargainsController < KobeController
   def update_audit
     save_audit(@bargain)
     # 插入order表
-    @bargain.send_to_order if Bargain.effective_status.include?(@bargain.status)
+    @bargain.send_to_order
     redirect_to list_kobe_bargains_path
   end
 
@@ -248,10 +248,12 @@ class Kobe::BargainsController < KobeController
       log_name = @bargain.get_last_node_by_logs["操作内容"]
       all_steps = @bargain.get_obj_steps
       i = @bargain.get_step_index(log_name)
-      cs = i > 0 ? all_steps[i-1] : "start"
-      st = cs.is_a?(Hash) ? cs["start_status"].to_i : Bargain.confirm_status
-      rs = cs.is_a?(Hash) ? cs["name"] : cs
-      @bargain.update(status: st,rule_step: rs)
+      if i.present?
+        cs = i > 0 ? all_steps[i-1] : "start"
+        st = cs.is_a?(Hash) ? cs["start_status"].to_i : Bargain.confirm_status
+        rs = cs.is_a?(Hash) ? cs["name"] : cs
+        @bargain.update(status: st,rule_step: rs)
+      end
     end
     bid = @bargain.bids.find_by(id: params[:bargains][:bid_id])
     if bid.present?
@@ -266,11 +268,12 @@ class Kobe::BargainsController < KobeController
       rule_step = ns.is_a?(Hash) ? ns["name"] : ns
       st = @bargain.get_change_status("通过")
       update_and_write_logs(@bargain, Bargain.confirm_xml, { action: info }, { status: st, rule_step: rule_step })
-
       # 插入协议议价审核的待办事项
       @bargain.reload.create_task_queue
       tips_get("#{info}成功！")
     end
+    # 插入order表
+    @bargain.send_to_order
     redirect_to kobe_bargains_path(t: "my")
   end
 

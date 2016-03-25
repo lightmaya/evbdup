@@ -37,10 +37,6 @@ class Order < ActiveRecord::Base
     end
   end
 
-  # after_save do
-  #   budget.try(:used!)
-  # end
-
   before_save do
     self.seller_id = Department.find_by(name: self.seller_name).try(:id) if self.seller_id.blank?
   end
