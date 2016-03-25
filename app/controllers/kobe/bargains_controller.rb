@@ -160,24 +160,45 @@ class Kobe::BargainsController < KobeController
     bid = @bargain.bids.find_by(department_id: params[:department_id])
     cannot_do_tips if bid.blank?
 
-    @bargain.products.each do |product|
-      p_id = params["pid_#{product.id}"]
-      price = params["price_#{product.id}_#{p_id}"]
-      bid_product = bid.products.find_by(bargain_product_id: product.id)
-      if bid_product.present?
-        bid_product.update(product_id: p_id, price: price, total: (product.quantity * price.to_f))
+    bid_total = params[:bargain_bids][:total].to_f
+    if bid_total > @bargain.total
+      flash_get("报价总金额不能超过预算！")
+      redirect_to bid_kobe_bargain_path(@bargain)
+    else
+      # 如果放弃报价 bid_total = -1 不存产品表
+      if bid_total > 0
+        # 保存报价的产品表
+        @bargain.products.each do |product|
+          p_id = params["pid_#{product.id}"]
+          price = params["price_#{product.id}_#{p_id}"]
+          bid_product = bid.products.find_by(bargain_product_id: product.id)
+          if bid_product.present?
+            bid_product.update(product_id: p_id, price: price, total: (product.quantity * price.to_f))
+          else
+            bid.products.create(bargain_product_id: product.id, product_id: p_id, price: price, total: (product.quantity * price.to_f))
+          end
+        end
       else
-        bid.products.create(bargain_product_id: product.id, product_id: p_id, price: price, total: (product.quantity * price.to_f))
+        # 放弃报价删除已报价的产品
+        bid.products.destroy_all if bid.products.present?
       end
+      # 保存报价主表
+      info = bid.has_bid? ? "修改报价" : "报价"
+      tips = info.clone
+      bid_time = bid.has_bid? ? bid.bid_time : Time.now
+      # 放弃报价 将报价总计改成-1 bid_total = -1
+      if bid_total == 0
+        params[:bargain_bids][:total] = -1
+        tips = "放弃报价"
+      end
+      tips << "成功！"
+      update_and_write_logs(bid, BargainBid.xml, {}, { user_id: current_user.id, bid_time: bid_time })
+      write_logs(@bargain, info, "[#{bid.name}]#{tips}")
+      # 删除待办事项
+      TaskQueue.where(class_name: 'Bargain', obj_id: @bargain.id, dep_id: bid.department_id).destroy_all if info == "报价"
+      tips_get(tips)
+      redirect_to bid_list_kobe_bargains_path(flag: 2)
     end
-    info = bid.has_bid? ? "修改报价" : "报价"
-    bid_time = bid.has_bid? ? bid.bid_time : Time.now
-    update_and_write_logs(bid, BargainBid.xml, {}, { user_id: current_user.id, bid_time: bid_time })
-    write_logs(@bargain, info, "[#{bid.name}]#{info}成功！")
-    # 删除待办事项
-    TaskQueue.where(class_name: 'Bargain', obj_id: @bargain.id, dep_id: bid.department_id).destroy_all if info == "报价"
-    tips_get("#{info}成功。")
-    redirect_to bid_list_kobe_bargains_path(flag: 2)
   end
 
   # 报价列表
@@ -195,7 +216,7 @@ class Kobe::BargainsController < KobeController
       @panel_title = "已中标的协议议价项目"
       params[:q][:bids_is_bid_eq] = true
     end
-    params[:q][:bids_department_id_eq] = current_user.department.id
+    params[:q][:bids_department_id_eq] = current_user.real_department.id
     @q = Bargain.ransack(params[:q])
     @bargains = @q.result.includes(:bids).page params[:page]
   end
@@ -204,7 +225,10 @@ class Kobe::BargainsController < KobeController
   def show_bid_details
     @bargain = Bargain.find_by(id: params[:b])
     @dep = Department.find_by(id: params[:d])
-    cannot_do_tips unless @bargain.present? && @dep.present? && current_user.real_department.is_ancestors?(@bargain.department_id)
+    cannot_do_tips unless @bargain.present? && @dep.present? && (
+      current_user.real_department.is_ancestors?(@bargain.department_id) ||
+      (current_user.real_department.is_ancestors?(params[:d]) &&
+        @bargain.bids.map(&:department_id).include?(current_user.real_department.id)))
     @bid = @bargain.bids.find_by(department_id: @dep.id)
     # @products = []
     # @bargain.products.each do |product|
@@ -216,7 +240,7 @@ class Kobe::BargainsController < KobeController
 
   # 确认结果
   def confirm
-    @myform = SingleForm.new(Bargain.confirm_xml, @bargain, { form_id: "confirm_form", upload_files: true, action: update_confirm_kobe_bargain_path(@bargain), title: '选择成交人' })
+    @myform = SingleForm.new(Bargain.confirm_xml, @bargain, { form_id: "confirm_form", action: update_confirm_kobe_bargain_path(@bargain), title: '选择成交人' })
   end
 
   def update_confirm

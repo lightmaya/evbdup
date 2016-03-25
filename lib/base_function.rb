@@ -199,9 +199,9 @@ module BaseFunction
       if options[:title] == true
         options[:title] = "附件信息"
       end
-      result << "<h5><i class='fa fa-chevron-circle-down'></i> #{options[:title]}</h5>"
+      result << "<h5><i class='fa fa-chevron-circle-#{obj.uploads.present? ? "down" : "right"}'></i> #{options[:title]}</h5>"
     end
-    return result + something_not_found(options[:icon_not_found]) if obj.uploads.blank?
+    return (result + "<div class='hide'>#{something_not_found(options[:icon_not_found])}</div>").html_safe if obj.uploads.blank?
     # 图片类型
     if options[:is_picture]
       tmp = obj.uploads.map do |file|

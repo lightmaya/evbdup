@@ -19,7 +19,7 @@
     $('#confirm_form').on('submit',function(){
       var bid = $("input:radio[name='bid_id']:checked");
      if(bid.length == 0){
-      flash_dialog("请选择中标供应商！");
+      flash_dialog("请选择成交供应商！");
       return false;
      }else {
       $("input#bargains_bid_id").val(bid.val());

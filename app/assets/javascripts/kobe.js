@@ -94,7 +94,7 @@ function show_budget_form(budget_id){
     modal_dialog_show(title, url, "#budget_dialog")
 };
 
-// 保存填写的预算并将预算金额、budget_id 的值放在对应的input上
+// 保存填写的预算并给预算金额、budget_id 赋值
 function get_budget(obj_id, input_id, budget_id){
     var upload_ids = $('form#budget_form_fileupload tr.template-download .preview[file_id]').map(function() {
         return $(this).attr('file_id');

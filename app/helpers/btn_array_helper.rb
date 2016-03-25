@@ -388,6 +388,8 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_bargain_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 报价
     arr << [obj.class.icon_action("报价"), bid_kobe_bargain_path(obj)] if can?(:bid, obj) && obj.cando("bid", current_user)
+    # 查看报价
+    arr << [obj.class.icon_action("查看报价"), show_bid_details_kobe_bargains_path(b: obj.id, d: current_user.real_department.id), target: "_blank"] if obj.bids.map(&:department_id).include?(current_user.real_department.id)
     # 确认报价结果
     arr << [obj.class.icon_action("选择成交人"), confirm_kobe_bargain_path(obj)] if can?(:confirm, obj) && obj.cando("confirm", current_user)
 

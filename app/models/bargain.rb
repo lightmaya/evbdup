@@ -76,7 +76,7 @@ class Bargain < ActiveRecord::Base
     when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
     when "bid", "update_bid"
-      self.can_bid? && self.bids.find_by(department_id: current_u.department.id).present?
+      self.can_bid? && self.bids.find_by(department_id: current_u.real_department.id).present?
     when "confirm", "update_confirm"
       Bargain.buyer_edit_status.include?(self.status) && current_u.try(:id) == self.user_id
     else false
@@ -143,9 +143,14 @@ class Bargain < ActiveRecord::Base
     self.bids.find_by(is_bid: true)
   end
 
+  # 有效报价 bid.total != -1
+  def effective_bids
+    self.bids.where("total != -1")
+  end
+
   # 基准价
   def avg_total
-    (self.bids.average(:total) * 0.95).to_f
+    (self.effective_bids.average(:total) * 0.95).to_f
   end
 
   # 按基准价排序的报价
@@ -153,9 +158,9 @@ class Bargain < ActiveRecord::Base
     self.bids.order("abs(total-#{avg_total}), total, bid_time")
   end
 
-  # 超预算
-  def over_budget?
-    self.done_bids.first.total > self.budget.total
+  # 第一候选人的报价总金额
+  def finish_bid_total
+    self.done_bids.first.total
   end
 
   # 插入order表

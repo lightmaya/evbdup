@@ -21,9 +21,9 @@ class BidProjectBid < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node column='bid_project_id' data_type='hidden' />
-        <node name='项目名称' column='name' class='required' delegate='bid_project'  display="readonly" />
         <node name='采购单位' column='buyer_dep_name' class='required' delegate='bid_project'  display="readonly" />
         <node name='发票抬头' column='invoice_title' class='required' delegate='bid_project'  display="readonly" />
+        <node name='预算金额' column='budget_money' class='required' delegate='bid_project'  display="readonly" />
         <node name='供应商单位' column='com_name' class='required' display="readonly" />
         <node name='供应商姓名' column='username' class='required' />
         <node name='供应商电话' column='tel' />

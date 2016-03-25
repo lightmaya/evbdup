@@ -65,10 +65,15 @@ class Kobe::BidProjectsController < KobeController
 
   # 提交
   def commit
-    @bid_project.change_status_and_write_logs("提交", stateless_logs("提交","提交成功！", false), @bid_project.commit_params, false)
-    @bid_project.reload.create_task_queue
-    tips_get("提交成功。")
-    redirect_to action: :index
+    if @bid_project.end_time < Time.now + 6.hours
+      flash_get("报价截止时间不能少于6小时！")
+      redirect_to action: :index
+    else
+      @bid_project.change_status_and_write_logs("提交", stateless_logs("提交","提交成功！", false), @bid_project.commit_params, false)
+      @bid_project.reload.create_task_queue
+      tips_get("提交成功。")
+      redirect_to action: :index
+    end
   end
 
   def new
@@ -85,13 +90,15 @@ class Kobe::BidProjectsController < KobeController
       { form_id: "bid_project_form", action: kobe_bid_projects_path, upload_files: true,
         # upload_files_name: "bid_project",
         title: '<i class="fa fa-pencil-square-o"></i> 新增竞价', grid: 3 },
-        { title: '产品明细', grid: 3 }
-      )
+        { title: '产品明细', grid: 3 })
   end
 
   def edit
     slave_objs = @bid_project.items.blank? ? [@bid_project.items.build] : @bid_project.items
-    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project,slave_objs,{upload_files: true, title: '<i class="fa fa-wrench"></i> 修改竞价',action: kobe_bid_project_path(@bid_project), method: "patch", grid: 3},{title: '产品明细', grid: 3})
+    @ms_form = MasterSlaveForm.new(BidProject.xml, BidItem.xml, @bid_project,slave_objs,
+      { form_id: "bid_project_form", upload_files: true, title: '<i class="fa fa-wrench"></i> 修改竞价',
+        action: kobe_bid_project_path(@bid_project), method: "patch", grid: 3 },
+      { title: '产品明细', grid: 3})
   end
 
   def create
@@ -101,7 +108,8 @@ class Kobe::BidProjectsController < KobeController
   end
 
   def update
-    update_msform_and_write_logs(@bid_project, BidProject.xml, BidItem, BidItem.xml, {:action => "修改竞价", :slave_title => "产品明细"})
+    update_msform_and_write_logs(@bid_project, BidProject.xml, BidItem, BidItem.xml,
+      {:action => "修改竞价", :slave_title => "产品明细"}, { name: get_project_name(@bid_project) })
     redirect_to kobe_bid_projects_path
   end
 
@@ -154,9 +162,15 @@ class Kobe::BidProjectsController < KobeController
     #     :access_permission, :content)
     # end
 
-    def get_project_name
+    def get_project_name(bid_project = nil)
       category_names = params[:bid_items][:category_name].values.uniq.join("、")
-      "#{params[:bid_projects][:buyer_dep_name]}#{category_names}竞价项目"
+      if bid_project.present?
+        project_name = bid_project.name.split(" ")
+        project_name[2] = category_names
+        return project_name.join(" ")
+      else
+        return "#{params[:bid_projects][:buyer_dep_name]} #{Time.new.to_date.to_s} #{category_names} 竞价项目"
+      end
     end
 
     # 只允许自己操作自己的项目

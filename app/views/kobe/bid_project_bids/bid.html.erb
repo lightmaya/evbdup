@@ -1,1 +1,18 @@
 <%= draw_myform(@ms_form) %>
+
+<script type="text/javascript">
+  $(function(){
+    $('#bid_project_bid_form').on('submit',function(){
+      var msg = []
+      // 报价不能超过预算
+      var budget = parseFloat('<%= @bid_project.budget_money %>');
+      var bid_total = parseFloat($("#form_sum_total").text());
+      if(bid_total > budget) { msg.push("报价总金额不能超过预算！"); }
+      // 弹出提示框
+      if (msg.length != 0) {
+         flash_dialog(msg.join("<br/>"));
+         return false;
+       };
+    });
+  });
+</script>

@@ -1,5 +1,7 @@
 <%= show_obj_info(@bargain,Bargain.xml, { title: "采购单位信息" }) %>
 
+<%= show_uploads(@bargain, { title: true, icon_not_found: true }).html_safe %>
+
 <% @bargain.products.each_with_index do |p, index| %>
   <%= show_obj_info(p,BargainProduct.xml(@bargain.category),{title: "产品明细 ##{index+1}", grid: 3}) %>
 

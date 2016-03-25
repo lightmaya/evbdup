@@ -172,7 +172,7 @@ class Department < ActiveRecord::Base
 
   # 本单位是不是某单位ID的上级单位
   def is_ancestors?(dep_id)
-    dep_id.present? ? self.subtree_ids.include?(dep_id) : false
+    dep_id.present? ? self.subtree_ids.include?(dep_id.to_i) : false
   end
 
   # 根据action_name 判断obj有没有操作
@@ -307,7 +307,6 @@ class Department < ActiveRecord::Base
 
   # 采购单位进入后台的统计数据
   def get_dep_main
-
     # 本辖区本年度 采购方式占比
     type_arr = []
     cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.ysd_status.join(', ')})"

@@ -310,6 +310,10 @@ if Menu.first.blank?
   bargain_bidden_list.parent = bargain
   bargain_bidden_list.save
 
+  show_bid = Menu.find_or_initialize_by(name: "查看报价", can_opt_action: "Bargain|show_bid_details", route_path: "/kobe/bargains/show_bid_details", user_type: supplier_user_type)
+  show_bid.parent = bargain_bidden_list
+  show_bid.save
+
   bargain_is_bid_list = Menu.find_or_initialize_by(name: "已中标的议价项目", route_path: "/kobe/bargains/bid_list?flag=3", can_opt_action: "Bargain|bid_list", is_show: true, user_type: supplier_user_type)
   bargain_is_bid_list.parent = bargain
   bargain_is_bid_list.save
@@ -596,10 +600,10 @@ if Menu.first.blank?
 
   [ ["增加下属单位", "Department|create", false, all_ut],
     ["修改单位信息", "Department|update", true, all_ut],
-    ["上传附件", "Department|upload", true, all_ut],
+    ["上传附件", "Department|upload", true, supplier_user_type],
     ["分配人员账号", "Department|add_user", false, all_ut],
-    ["维护开户银行", "Department|bank", true, all_ut],
-    ["提交", "Department|commit", true, all_ut],
+    ["维护开户银行", "Department|bank", true, supplier_user_type],
+    ["提交", "Department|commit", true, supplier_user_type],
     ["删除单位", "Department|update_destroy", false, manage_user_type],
     ["冻结单位", "Department|freeze", false, manage_user_type],
     ["恢复单位", "Department|recover", false, manage_user_type],

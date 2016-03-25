@@ -5,8 +5,8 @@ class Kobe::BidProjectBidsController < KobeController
   def bid
     slave_objs = current_user.bid_item_bids(@bid_project).presence || @bid_project.items.map{|item| BidItemBid.new(bid_item_id: item.id, bid_project_id: @bid_project.id, brand_name: item.brand_name, xh: item.xh, req: item.req, remark: item.remark) }
     @ms_form = MasterSlaveForm.new(BidProjectBid.xml, BidItemBid.xml, @bid_project_bid, slave_objs,
-      {title: "报价", upload_files: true, action: update_bid_kobe_bid_project_bids_path(bid_project_id: @bid_project.id), show_total: true, grid: 4},
-      {title: '产品明细', grid: 4, modify: false}
+      { title: "#{@bid_project.name}-报价", upload_files: true, action: update_bid_kobe_bid_project_bids_path(bid_project_id: @bid_project.id), show_total: true, grid: 4, form_id: "bid_project_bid_form" },
+      { title: '产品明细', grid: 4, modify: false }
       )
   end
 

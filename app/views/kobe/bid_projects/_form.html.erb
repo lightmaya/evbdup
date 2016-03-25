@@ -6,30 +6,34 @@
   $(document).ready(function(){
 
     // 选择预算审批单 给budget_id和budget_money赋值
-    $("body").on("click", ".dialog_box input[name='bid_projects_budget_money'][type='radio']", function(){
-      var budget_money = $(this).nextAll('.red').text();
-      $("#bid_project_form #bid_projects_budget_money").val(budget_money);
-    });
+    // $("body").on("click", ".dialog_box input[name='bid_projects_budget_money'][type='radio']", function(){
+    //   var budget_money = $(this).nextAll('.red').text();
+    //   $("#bid_project_form #bid_projects_budget_money").val(budget_money);
+    // });
 
-  	$('#bid_project_form').on('submit',function(){
-  		var msg = []
-  		// 判断品目模板是否相同
-  		var ca_ids = $("input[name^='bid_items[category_id]']").map(function(){
-  			if ($(this).val() != "") { return $(this).val(); };
-  		}).get().join(",");
-  		$.ajax({
+    $('#bid_project_form').on('submit',function(){
+      var msg = []
+      // 判断品目模板是否相同
+      var ca_ids = $("input[name^='bid_items[category_id]']").map(function(){
+        if ($(this).val() != "") { return $(this).val(); };
+      }).get().join(",");
+      $.ajax({
         type: "post",
         url: '/kobe/orders/same_template',
         async:false,
         data: { category_ids: ca_ids },
         success: function(rs){ if(parseInt(rs) != 1){ msg.push("请选择同一类品目！"); }	}
-    	});
+      });
+      // 报价截止时间不能少于6小时
+      var end_time = $("input#bid_projects_end_time").val();
+      if (end_time < '<%= Time.now + 6.hours %>') {
+        msg.push("报价截止时间不能少于6小时！");
+      };
 
-
-  		if (msg.length != 0) {
-  			flash_dialog(msg.join("<br/>"));
-  			return false;
-  		};
-  	});
+      if (msg.length != 0) {
+       flash_dialog(msg.join("<br/>"));
+       return false;
+     };
+   });
   });
 </script>

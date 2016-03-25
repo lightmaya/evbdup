@@ -216,4 +216,9 @@ module KobeHelper
     }.html_safe
   end
 
+  # 协议议价 报价总计 如果是放弃报价 不显示价格
+  def bargain_bid_total_tag(obj)
+    obj.try(:total).to_f < 0 ? label_tag("放弃报价", "danger") : money(obj.try(:total))
+  end
+
 end

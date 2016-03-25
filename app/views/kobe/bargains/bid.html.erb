@@ -89,7 +89,10 @@
       </h2>
     </div>
 
-    <div><button class="btn-u" id="new_bid_submit" type="submit"><i class="fa fa-floppy-o"></i> 保 存 </button> </div>
+    <div>
+      <button class="btn-u" id="new_bid_submit" type="submit"><i class="fa fa-floppy-o"></i> 保存报价</button>
+      <button class="btn-u btn-u-light-grey" id="give_up_bid" type="button"><i class="fa fa-times"></i> 放弃报价 </button>
+    </div>
   <% end %>
 
   </div>
@@ -98,9 +101,17 @@
 <script type="text/javascript">
   $(function(){
     $("#bid_form").validate();
+    // 放弃报价
+    $("#bid_form #give_up_bid").on("click", function() {
+      // 移除默认选中产品
+      $("input:radio:checked").each(function() { $(this).removeAttr('checked') });
+      // 报价总计设为0
+      $("#bid_sum_total").text('0');
+      $("#bid_form").submit();
+    });
 
+    // 保存报价 提交表单
     $('#bid_form').on('submit',function(){
-
       var msg = []
       // 填写其他费用 没有填写其他费用说明
       var other_fee = $("input#bargain_bids_other_fee").val();
@@ -108,7 +119,6 @@
       if(!isEmpty(other_fee) && isEmpty(bargain_bids_other_fee_desc)){
         msg.push("其他费用说明不能为空！");
       }
-
       // 勾选产品的报价不能高于该产品的中标价
       $("input:radio:checked").each(function() {
         var p_id = $(this).attr("id").split("pid_")[1];
@@ -120,12 +130,16 @@
           msg.push("产品 [" + p_name + "] 的报价不能大于产品的入围价格！");
         }
       });
-
+      // 报价不能超过预算
+      var budget = parseFloat('<%= @bargain.total %>');
+      var bid_total = parseFloat($("#bid_sum_total").text());
+      if(bid_total > budget) { msg.push("报价总金额不能超过预算！"); }
+      // 弹出提示框
       if (msg.length != 0) {
        flash_dialog(msg.join("<br/>"));
        return false;
      };
-
+     // 校验没问题 把报价总计存入隐藏的input
      $("#bargain_bids_total").val($("#bid_sum_total").text());
     });
 

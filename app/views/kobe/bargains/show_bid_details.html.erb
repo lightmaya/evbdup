@@ -10,7 +10,7 @@
 
     <% @bargain.products.each_with_index do |p, index| %>
       <%= show_obj_info(p,BargainProduct.xml(@bargain.category),{title: "产品明细 ##{index+1}", grid: 3}) %>
-
+      <% if @bid.total > 0  %>
       <table class="table table-bordered table-hover margin-top-10 text-border-green">
         <thead>
           <tr>
@@ -32,13 +32,16 @@
           </tr>
         </tbody>
       </table>
+      <% end %>
     <% end %>
 
     <%= show_obj_info(@bid, BargainBid.xml("fee"), { title: "附加费用", grid: 3 }) %>
 
+    <%= show_uploads(@bargain, { title: true, icon_not_found: true }).html_safe %>
+
     <div class="margin-top-20">
       <h2 class="text-red">
-        <strong>总计：<%= money @bid.total %></strong>
+        <strong><%= @bid.total > 0 ? "总计：#{money(@bid.total)}" : (@bid.total == 0 ? "暂无报价" : "供应商已放弃报价") %></strong>
       </h2>
     </div>
 

@@ -30,7 +30,8 @@ class BargainBid < ActiveRecord::Base
 
   # 是否已经报价
   def has_bid?
-    self.total > 0 && self.products.present?
+    # 放弃报价 或者 选择报价产品
+    self.total == -1 || self.total > 0 && self.products.present?
   end
 
   # 更新中标情况

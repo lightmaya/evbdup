@@ -46,7 +46,7 @@
             <td><%= show_index(index) %></td>
             <td><%= bargain.sn %></td>
             <td><%= bargain.name %></td>
-            <td class="money"><%= money bid.try(:total) %></td>
+            <td class="money"><%= bargain_bid_total_tag(bid) %></td>
             <td class="tc"><%= bargain.status_badge %></td>
             <td class="tc"><%= (bid.present? && bid.has_bid?) ? label_tag("已报价") : label_tag("未报价", "warning") %></td>
             <td class="tc"><%= btn_group(bargains_btn(bargain)) %></td>
