@@ -299,7 +299,7 @@ class Order < ActiveRecord::Base
       seller_edit = " display='readonly'" if order.try(:buyer_id) == current_u.real_department.id
     end
 
-    dep_s_tmp = order.try(:yw_type) == 'ddcg' ? %Q{ hint='粮机设备必须从入围供应商处采购' class='tree_radio required' json_url='/kobe/shared/item_dep_json' json_params='{"vv_otherchoose":"从非入围供应商采购"}' partner='seller_id' } : " display='readonly'"
+    dep_s_tmp = order.try(:yw_type) == 'ddcg' ? %Q{ hint='有入围供应商的项目应该从入围供应商处采购' class='tree_radio required' json_url='/kobe/shared/item_dep_json' json_params='{"vv_otherchoose":"从非入围供应商采购","vv_checklevel":-1}' partner='seller_id' } : " display='readonly'"
 
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
