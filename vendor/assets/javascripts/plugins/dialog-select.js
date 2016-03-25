@@ -91,7 +91,7 @@ function showDialog(dom,id,url,dialog_type,chkStyle,params){
     			$("#" + input_id).removeAttr("readonly");
     			$("#" + input_id).removeAttr("disabled");
     			this.close();
-    			return false;
+				return false;
     		}
     	});
     };
@@ -102,7 +102,8 @@ function showDialog(dom,id,url,dialog_type,chkStyle,params){
     		title: '加载中...',
     		follow: dom,
     		quickClose: false,
-    		button: btns.reverse()
+    		button: btns.reverse(),
+			cancel: false
     	});
     }
 	d.show();
@@ -304,6 +305,37 @@ function diaogFilter(dom){
   }
 }
 
+//过滤节点的机制
+function filter(node,level) {  
+	// levle:-1 表示只可以选叶子节点，其他数字表示N层级以上的节点
+	if(level == -1){
+		return !node.isParent;
+	}
+	else{
+		return node.level >= level;
+	}
+}  
+
+///动态设置zTree的所有节点有checkbox  
+function updateNoCheckNodes(treeId,level) {  
+    var zTree = $.fn.zTree.getZTreeObj(treeId);             
+    var nodes = zTree.getNodesByFilter(function(node){  
+		// levle:-1 表示只可以选叶子节点，其他数字表示N层级以上的节点
+		if(level == -1){
+			return node.isParent;
+		}
+		else{
+			return node.isParent && node.level < level;
+		}
+	}); 
+    //遍历每一个节点然后动态更新nocheck属性值  
+    for (var i = 0; i < nodes.length; i++){  
+        var node = nodes[i];  
+        node.nocheck = true; 
+        zTree.updateNode(node);  
+    }
+}
+
 // 初始化树
 function initZtree(d,treeId,url,chkStyle,params,filter){
   $.ajax({
@@ -332,6 +364,10 @@ function initZtree(d,treeId,url,chkStyle,params,filter){
           }
           //默认勾上已选项
           initZtreeCheckStatus(treeObj,vArray);
+          // 设置不可选的节点
+          if(!isEmpty(params) && !isEmpty(params["vv_checklevel"])){
+          	updateNoCheckNodes(treeId,params["vv_checklevel"])
+          }
           // 自动滚动条
           overflow_y_auto(treeId);
           }

@@ -28,7 +28,7 @@ class OrdersItem < ActiveRecord::Base
       category_tmp = can_edit = " display='readonly'"
       num_edit = order.try(:seller_id) == current_u.real_department.id ? " display='readonly'" : ''
     else
-      category_tmp = %Q{ class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}"}' partner='category_id' }
+      category_tmp = %Q{ class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}","vv_checklevel":-1}' partner='category_id' }
       can_edit = num_edit = ''
     end
 
