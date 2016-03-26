@@ -239,7 +239,7 @@ namespace :data do
 
       n.status = case old.status
       when "停止申请"
-        68
+        54
       when "已停止"
         54
       when "已删除"
@@ -253,7 +253,7 @@ namespace :data do
       n.user_id = old.user_id
       n.details = old.detail.to_s.gsub("param", "node")
       n.logs = old.logs.to_s.gsub("param", "node").gsub("&lt;table&gt;", "&lt;table class=&quot;table table-bordered&quot;&gt;")
-      n.logs = replace_status_in_logs(n.logs, [["有效", 65], ["已删除", 404], ["已停止", 54], ["停止申请", 68]])
+      n.logs = replace_status_in_logs(n.logs, [["有效", 65], ["已删除", 404], ["已停止", 54], ["停止申请", 54]])
       n.created_at = old.created_at
       n.updated_at = old.updated_at
 
@@ -270,6 +270,7 @@ namespace :data do
     max = 1000 ; succ = i = 0
     total = Dragon.count
     Dragon.find_each do |old|
+      next unless old.status == "申请审核通过"
       n = ItemDepartment.find_or_initialize_by(id: old.id)
       n.item_id = old.zcl_item_id
       new_dep = Department.find_by(old_id: old.user_dep, old_table: "dep_supplier")
