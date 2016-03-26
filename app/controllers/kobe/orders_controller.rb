@@ -228,6 +228,17 @@ class Kobe::OrdersController < KobeController
      redirect_back_or request.referer
   end
 
+  # 删除
+  def delete
+    render partial: '/shared/dialog/opt_liyou', locals: { form_id: 'delete_order_form', action: kobe_order_path(@order), method: 'delete' }
+  end
+
+  def destroy
+    @order.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
+    tips_get("删除成功。")
+    redirect_back_or request.referer
+  end
+
   private
 
     def get_audit_menu_ids
@@ -260,10 +271,23 @@ class Kobe::OrdersController < KobeController
       #   budget_contents << show_uploads(budget)
       #   @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
       # end
-
-      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@order) }
-      # @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
-      @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@order) }
+      if ["wsjj", "xyyj"].include?(@order.yw_type)
+        url = @order.yw_type == "xyyj" ? "bargains" : "bid_projects"
+        name = @order.yw_type == "xyyj" ? "议价" : "竞价"
+        tmp = %Q{
+          <div class="content-boxes-v2 space-lg-hor content-sm">
+          <h2 class="heading-sm">
+            <i class="icon-custom icon-sm icon-bg-red fa fa-lightbulb-o"></i>
+            <span><a href='/kobe/#{url}/#{@order.mall_id}' target='_blank'>查看#{name}记录</a></span>
+          </h2>
+        </div>
+        }
+        @arr << { title: "历史记录", icon: "fa-clock-o", content: tmp }
+      else
+        @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@order) }
+        # @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
+        @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@order) }
+      end
     end
 
     # 判断是不是同一个模板
