@@ -163,6 +163,7 @@ class Bargain < ActiveRecord::Base
   def send_to_order
     return '' unless Bargain.effective_status.include?(self.status)
     order = Order.new
+    order.mall_id = self.id
     order.name = self.name
     order.sn = self.sn
     order.contract_sn = self.sn.gsub(self.rule.try(:code), 'ZCL')
@@ -198,7 +199,7 @@ class Bargain < ActiveRecord::Base
     order.status = self.status
 
     order.details = self.details
-    order.logs = self.logs.to_s
+    # order.logs = self.logs.to_s
     order.created_at = self.created_at
     order.updated_at = self.updated_at
     order.yw_type = 'xyyj'

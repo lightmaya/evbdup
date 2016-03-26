@@ -61,11 +61,10 @@ class Order < ActiveRecord::Base
     #   ["拒绝撤回", "37", "yellow", 60], ["拒绝作废", "44", "yellow", 60],
     #   ["已拆单", "5", "dark", 100], ["等待收货", "11", "light-green", 50], ["已删除", "404", "dark", 100]
     # ]
-    st = self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成",
+    self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成",
       "等待卖方确认", "等待买方确认", "卖方退回", "买方退回", "已拆单", "等待收货",
-      "撤回等待审核", "作废等待审核", "已作废", "已撤回", "拒绝撤回", "拒绝作废", "已删除"])
+      "撤回等待审核", "作废等待审核", "已作废", "已撤回", "拒绝撤回", "拒绝作废", "已删除", "已成交"])
 
-    return BidProject.status_array | st
 		# [
 	 #    ["未提交",0,"orange",10], ["等待审核",1,"blue",50],
   #     ["审核拒绝",2,"red",0], ["自动生效",5,"yellow",60],
@@ -277,6 +276,8 @@ class Order < ActiveRecord::Base
       self.class.seller_status.include?(self.status) && self.seller_id == current_u.real_department.id
     when "update_buyer_confirm", "buyer_confirm" # 等待卖方确认
       self.class.buyer_status.include?(self.status) && self.user_id == current_u.id
+    when "delete", "destroy"
+      self.can_opt?("删除") && current_u.try(:id) == self.user_id
     else false
     end
   end
