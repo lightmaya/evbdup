@@ -39,6 +39,9 @@
 
 $(function() {
 
+  // 判断浏览器版本
+  checkBrowserVersion();
+
 	// 初始化
 	App.init();
   FancyBox.initFancybox(); // 初始化 图片展示
@@ -122,6 +125,38 @@ $(function() {
   });
 
 });
+
+
+// 判断浏览器版本
+function checkBrowserVersion(){
+  var browser_vesion = "未知浏览器";
+  var visit_permission = false;
+  if($.browser.safari){
+    browser_vesion = "safari浏览器";
+    visit_permission = true;
+  }
+  if($.browser.msie&&$.browser.version>9){
+    browser_vesion = "IE浏览器";
+    visit_permission = true;
+  }
+  if($.browser.msie&&$.browser.version<=9){
+    browser_vesion = "IE浏览器";
+  }
+  if($.browser.mozilla&&$.browser.version>='1.8'){
+    browser_vesion = "火狐浏览器";
+    visit_permission = true;
+  }
+  if($.browser.chrome){
+    browser_vesion = "谷歌浏览器";
+    visit_permission = true;
+  }
+  browser_vesion += "，版本号：" + String($.browser.version);
+  // alert(browser_vesion + "visit_permission" + Boolean(visit_permission));
+  if(!visit_permission && $("#browserInfo").length == 0){
+    location.href = "/errors?no=707";
+  }
+}
+
 
 
 function art_confirm(msg, SuccFn){

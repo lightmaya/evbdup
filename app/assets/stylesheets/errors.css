@@ -1,0 +1,7 @@
+ /*字体*/
+.title{ font-size: 26px; }
+.content{ font-size: 18px; }
+.tips{ font-size: 14px; }
+.red{color:red;}
+.b{font-weight:bold;}
+#container{margin: 36px;}

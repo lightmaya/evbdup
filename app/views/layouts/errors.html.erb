@@ -21,26 +21,34 @@
 
 <body>
   
-<div class="container">
-    <!--Error Block-->
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="error-v2">
-                <%= yield %>
-            </div>
+<div id="container">   
+    <div class="error-v1">
+        <div class="title">提示：
+          <%= yield %> 
         </div>
+        <span id="browserInfo" class="tips"></span>
     </div>
-    <!--End Error Block-->
 </div>
 
 <script type="text/javascript">
-    $.backstretch([
-      "/plugins/images/bg_img/474918.jpg",
-      "/plugins/images/bg_img/447665.jpg"
-      ], {
-        fade: 1000,
-        duration: 7000
-    });
+  $(function(){
+
+    var browser_vesion = "未知";
+    if($.browser.safari){
+      browser_vesion = "safari";
+    }
+    if($.browser.msie&&$.browser.version>9){
+      browser_vesion = "IE";
+    }
+    if($.browser.mozilla&&$.browser.version>='1.8'){
+      browser_vesion = "火狐";
+    }
+    if($.browser.chrome){
+      browser_vesion = "谷歌";
+    }
+
+    $("#browserInfo").html("当前浏览器： " + browser_vesion + "[版本:" + String($.browser.version) + "]");
+  });
 </script>
 </body>
 </html> 
