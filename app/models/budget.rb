@@ -98,7 +98,7 @@ class Budget < ActiveRecord::Base
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='总预算金额（元）' column='total' class='required number'/>
+        <node name='本项目预算金额（元）' column='total' class='required number'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
       </root>
     }

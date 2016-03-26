@@ -162,7 +162,7 @@ class Kobe::SharedController < KobeController
 
   # 订单填写预算的表单
   def get_budget_form
-    title = params[:id].present? ? "<i class='fa fa-pencil-square-o'></i> 修改预算" : "<i class='fa fa-pencil-square-o'></i> 新增预算"
+    title = params[:id].present? ? "<i class='fa fa-pencil-square-o'></i> 修改预算" : "<i class='fa fa-pencil-square-o'></i> 填写预算"
     @budget = params[:id].present? ? Budget.find_by(id: params[:id]) : Budget.new
     @myform = SingleForm.new(nil, @budget, { form_id: "budget_form", button: false, upload_files: true, min_number_of_files: 1, title: false })
   end

@@ -86,12 +86,12 @@ function ajax_submit_or_remove_xml_column (url,data,submit_div) {
 function show_budget_form(budget_id){
     var url = "/kobe/shared/get_budget_form"
     if (isEmpty(budget_id)){
-        var title = "新增预算"
+        var title = "填写预算"
     } else {
         var title = "修改预算"
         url += ("?id=" + budget_id)
     }
-    modal_dialog_show(title, url, "#budget_dialog")
+    modal_dialog_show(title, url, "#budget_dialog", "budget_form_fileupload")
 };
 
 // 保存填写的预算并给预算金额、budget_id 赋值
