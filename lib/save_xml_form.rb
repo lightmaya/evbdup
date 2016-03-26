@@ -262,6 +262,8 @@ private
     spoor = ""
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
+      # 公告不保存textarea类型的日志 隐藏类型的不保存日志
+      next if skip_write_logs(node)
       attr_name = node.attributes.has_key?("name") ? node.attributes["name"] : node.attributes["column"]
       if node.attributes.has_key?("column")
         new_value = all_params[node.attributes["column"].to_str]
@@ -289,13 +291,18 @@ private
     end
   end
 
+  # 公告不保存textarea类型的日志 隐藏类型的不保存日志
+  def skip_write_logs(node, obj = nil)
+     ["textarea","richtext"].include?(node.attributes["data_type"].to_s) && obj.class == "Article" || ["hidden"].include?(node.attributes["data_type"].to_s)
+  end
+
   # 生成日志的table的tr 准备修改纪录时的痕迹纪录
   def get_logs_tr_from_xml_for_edit(obj, xml, all_params={})
     spoor = ""
     doc = Nokogiri::XML(xml)
     doc.xpath("/root/node").each{|node|
-      # 公告不保存textarea类型的日志
-      next if ["textarea","richtext"].include?(node.attributes["data_type"].to_s) && obj.class == "Article"
+      # 公告不保存textarea类型的日志 隐藏类型的不保存日志
+      next if skip_write_logs(node, obj)
       attr_name = node.attributes.has_key?("name") ? node.attributes["name"] : node.attributes["column"]
       if node.attributes.has_key?("column")
         new_value = all_params[node.attributes["column"].to_str]
@@ -304,6 +311,10 @@ private
       end
       new_value = transform_node_value(node,new_value)
       old_value = get_node_value(obj,node)
+      # 数字类型 888.0 == 888
+      if node.attributes["class"].to_s.include?("number")
+        next if old_value.to_s.to_f == new_value.to_s.to_f
+      end
       spoor << "<tr><td>#{attr_name.to_str}</td><td>#{old_value}</td><td>#{new_value}</td></tr>" unless old_value.to_s == new_value.to_s || new_value.nil?
     }
     return spoor
