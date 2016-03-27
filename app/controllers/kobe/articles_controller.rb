@@ -69,7 +69,7 @@ class Kobe::ArticlesController < KobeController
   end
 
   def update
-    update_and_write_logs(@article, Article.xml, { action: '修改公告' }, { status: 0 })
+    update_and_write_logs(@article, Article.xml, { action: '修改公告' })
     redirect_to kobe_articles_path
   end
 

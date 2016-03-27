@@ -65,6 +65,10 @@ class Article < ActiveRecord::Base
     Sunspot.search(Article, &conditions)
   end
 
+  # 附件的类
+  def self.upload_model
+    ArticleUpload
+  end
 
   # status各状态的中文意思 状态值 标签颜色 进度
   def self.status_array
