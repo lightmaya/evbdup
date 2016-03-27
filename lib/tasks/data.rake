@@ -608,6 +608,7 @@ namespace :data do
     total = Dragon.count
     Dragon.find_each do |old|
       next if old.yw_type == '资产消费'
+      next if old.status == "已删除"
       n = Order.find_or_initialize_by(id: old.id)
 
       next if Order.find_by(sn: old.sn).present?
@@ -731,6 +732,10 @@ namespace :data do
       # n.comment_detail = old.comment_detail.to_s.gsub("param", "node")
       n.audit_user_id = get_user_id_in_audit_log(old)
       n.mall_id = old.mall_id
+      if n.yw_type == 'wsjj'
+        wsjj = BidProject.find_by(code: n.sn)
+        n.mall_id = wsjj.try(:id)
+      end
 
       n.ht_template = case old.category_id
       when 154, 155
