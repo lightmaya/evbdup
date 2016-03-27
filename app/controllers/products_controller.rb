@@ -3,7 +3,7 @@ class ProductsController < JamesController
 
   def show
     @product = Product.show.find_by_id(params[:id])
-    redirect_to not_found_path unless @product
+    redirect_to errors_path(no: 404) unless @product
   end
 
   # def get_prices

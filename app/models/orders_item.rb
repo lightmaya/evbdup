@@ -31,7 +31,7 @@ class OrdersItem < ActiveRecord::Base
       category_tmp = %Q{ class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}","vv_checklevel":-1}' partner='category_id' }
       can_edit = num_edit = ''
     end
-
+    bp = ['xygh', 'xyyj'].include?(order.try(:yw_type)) ? "<node name='入围单价（元）' column='bid_price' class='number' #{can_edit}/>" : ""
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
@@ -42,7 +42,7 @@ class OrdersItem < ActiveRecord::Base
         <node name='型号' column='model' class='required' #{can_edit}/>
         <node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。' #{can_edit}/>
         <node name='市场单价（元）' column='market_price' class='required number' #{can_edit}/>
-        <node name='入围单价（元）' column='bid_price' class='number' #{can_edit}/>
+        #{bp}
         <node name='成交单价（元）' column='price' class='required number'/>
         <node name='数量' column='quantity' class='required number' #{num_edit}/>
         <node name='单位' class='zip' column='unit' class='required' #{can_edit}/>

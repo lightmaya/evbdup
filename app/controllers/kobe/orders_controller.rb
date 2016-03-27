@@ -52,7 +52,6 @@ class Kobe::OrdersController < KobeController
   # 供应商确认页面
   def agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
-    # return redirect_to(not_found_path) unless @order
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     slave_objs = @order.items
     @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
@@ -64,7 +63,6 @@ class Kobe::OrdersController < KobeController
   # 供应商确认
   def update_agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
-    # return redirect_to(not_found_path) unless @order
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     # @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     update_confirm_and_write_logs(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user))
@@ -74,7 +72,6 @@ class Kobe::OrdersController < KobeController
   # 采购人确认页面
   def buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
-    # return redirect_to(not_found_path) unless @order
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     slave_objs = @order.items
     @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
@@ -86,7 +83,6 @@ class Kobe::OrdersController < KobeController
   # 采购人确认
   def update_buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
-    # return redirect_to(not_found_path) unless @order
     cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
     # @order = create_or_update_msform_and_write_logs(@order, Order.buyer_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     # write_logs(@order, "采购人确认", "")

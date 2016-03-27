@@ -6,6 +6,7 @@ class Item < ActiveRecord::Base
   has_many :departments, through: :item_departments
   has_many :coordinators
   has_many :agents
+  has_many :products
   # 未注册的入围供应商
   has_many :unregistered_departments, -> { where(department_id: nil) }, class_name: "ItemDepartment", dependent: :destroy
   # 已注册的入围供应商
@@ -15,8 +16,7 @@ class Item < ActiveRecord::Base
   has_many :orders, -> { distinct }, through: :orders_items
   # default_scope -> {order("id desc")}
 
-  scope :usable, -> { where("items.status = #{Item.effective_status.join(', ')} and now() < items.end_time") }
-  scope :can_search, -> { where(status: [65, 68, 54]) }
+  scope :usable, -> { where(status: Item.effective_status) }
 
   default_value_for :status, 0
 

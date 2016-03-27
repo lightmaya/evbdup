@@ -16,7 +16,7 @@ class HomeController < JamesController
     # 网上竞价需求公告
     @wsjj_xq = BidProject.can_bid.order("end_time desc").limit(8)
     # 网上竞价结果公告
-    @wsjj_jg = BidProject.where(status: [23, 33]).order("updated_at desc").limit(8)
+    @wsjj_jg = BidProject.where(status: [23, 33]).order("end_time desc").limit(8)
     # 畅销产品
     # @products = Product.show.order("id desc").limit(8)
     # 入围供应商
@@ -42,7 +42,7 @@ class HomeController < JamesController
       # 网上竞价需求公告
       @rs = BidProject.can_bid.order("end_time desc").page(params[:page]) if params[:type] == 'wsjj_xq'
       # 网上竞价结果公告
-      @rs = BidProject.where(status: [23, 33]).order("updated_at desc").page(params[:page]) if params[:type] == 'wsjj_jg'
+      @rs = BidProject.where(status: [23, 33]).order("end_time desc").page(params[:page]) if params[:type] == 'wsjj_jg'
 
       # 协议转让公告
       @rs = Transfer.xyzr.order("id desc").page(params[:page]) if params[:type] == 'xyzr'
@@ -53,7 +53,7 @@ class HomeController < JamesController
 
   # 入围供应商名单
   def dep_list
-    @q = Item.can_search.ransack(params[:q])
+    @q = Item.usable.ransack(params[:q])
     @rs = @q.result
     @rs = @rs.page(params[:page]) if params[:q][:dep_names_cont].present?
     @dep_rs = @rs.first.item_departments.page(params[:page]) if params[:q][:id_eq].present? && @rs.present?
@@ -125,7 +125,8 @@ class HomeController < JamesController
     money = params[:m].gsub(",", "").to_f
     @order = Order.find_by("(sn = ? or contract_sn = ? ) and total>= ? and total<= ? and status in (?)",sn,sn,money-0.1,money+0.1,Order.ysd_status )
     if @order.blank?
-      render :text => %{<div style="text-align:left;margin:24px;color:#ff0000;">您输入的信息与实际不符，详情请联系服务热线：<br>办公物资：#{Dictionary.service_bg_tel}。<br>粮机物资：#{Dictionary.service_lj_tel}。<br>技术支持：#{Dictionary.technical_support}。</div>}, :layout => false
+      redirect_to errors_path(no: 334)
+      # render :text => %{<div style="text-align:left;margin:24px;color:#ff0000;">您输入的信息与实际不符，详情请联系服务热线：<br>办公物资：#{Dictionary.service_bg_tel}。<br>粮机物资：#{Dictionary.service_lj_tel}。<br>技术支持：#{Dictionary.technical_support}。</div>}, :layout => false
     else
       if @order.sn == sn
         str = "凭证编号：#{sn}"

@@ -59,7 +59,7 @@ class Kobe::BidProjectBidsController < KobeController
 
     def find_bid_project
       @bid_project = BidProject.find_by_id(params[:bid_project_id])
-      return redirect_to not_found_path unless @bid_project
+      return redirect_to errors_path(no: 404) unless @bid_project
       return redirect_to bid_project_path(@bid_project) unless @bid_project.can_bid?
       unless @bid_project.check_user_can_bid?(current_user)
         flash_get("您不是指定的入围供应商，无法参与报价！")

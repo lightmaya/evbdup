@@ -7,7 +7,7 @@ class Product < ActiveRecord::Base
 
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Product") }, foreign_key: :obj_id
-  scope :show, -> {where(status: self.effective_status)}
+  scope :show, -> { joins(:item).where("items.status in ( ? ) and products.status in ( ? )", Item.effective_status, Product.effective_status) }
 
   include AboutStatus
 
@@ -79,7 +79,7 @@ class Product < ActiveRecord::Base
   end
 
   def show
-    self.class.effective_status.include? self.status
+    Product.effective_status.include?(self.status) && Item.effective_status.include?(self.item.status)
   end
 
   # 产品全称 品牌+型号+版本号
@@ -144,18 +144,19 @@ class Product < ActiveRecord::Base
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
+    item_effective = Item.effective_status.include?(self.item.status)
     case act
     when "show"
       # 上级单位或者总公司人
       current_u.real_department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
     when "update", "edit"
-      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id && item_effective
     when "commit"
-      self.can_opt?("提交") && current_u.try(:id) == self.user_id
+      self.can_opt?("提交") && current_u.try(:id) == self.user_id && item_effective
     when "update_audit", "audit"
       self.class.audit_status.include?(self.status)
     when "delete", "destroy"
-      self.can_opt?("删除") && current_u.try(:id) == self.user_id
+      self.can_opt?("删除") && current_u.try(:id) == self.user_id && item_effective
     when "recover", "update_recover"
       self.can_opt?("恢复") && current_u.department.is_zgs?
     when "freeze", "update_freeze"

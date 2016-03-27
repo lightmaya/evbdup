@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class BidProjectsController < JamesController
   def show
-    return redirect_to(not_found_path) unless @bid_project = BidProject.find_by_id(params[:id])
+    return redirect_to(errors_path(no: 404)) unless @bid_project = BidProject.find_by_id(params[:id])
 
     @obj_contents = info_html(@bid_project, BidProject.xml, {title: "基本信息", grid: 3})
     @bid_project.items.each_with_index do |item, index|

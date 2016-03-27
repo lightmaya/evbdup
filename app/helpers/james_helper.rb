@@ -54,9 +54,9 @@ module JamesHelper
   # 网上竞价结果
   def wsjj_jg_li_tag(project, length = 18)
     unless project.status == 33
-      return li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, length)
+      return li_tag_with_date(project.name, bid_project_path(project), project.end_time.to_date, length)
     else
-      return li_tag_with_date(project.name, bid_project_path(project), project.updated_at.to_date, length, true, '废标')
+      return li_tag_with_date(project.name, bid_project_path(project), project.end_time.to_date, length, true, '废标')
     end
   end
 
@@ -138,7 +138,6 @@ module JamesHelper
           </div>
           <div class="margin-top-10 font-size-16">#{link_to_blank(text_truncate(dep.name, 15),department_path(dep))}</div>
           <ul class="list-unstyled">
-            <li><span class="color-green">信用分：</span> #{dep.comment_total}</li>
             <li class="h40"><span class="color-green">入围产品：</span> #{text_truncate(cat, 32)}</li>
           </ul>
         </div>

@@ -18,8 +18,8 @@
           <label class="select">
             <select name="q[id_eq]" id="q_id_eq">
               <option value="">请选择入围项目...</option>
-              <% Item.can_search.order('id desc').each do |i|%>
-                <option value="<%= i.id %>" <%= "selected=''" if params[:q][:id_eq].to_i == i.id %>><%= "#{i.name} [#{i.status_badge}]".html_safe %></option>
+              <% Item.usable.order('id desc').each do |i|%>
+              <%= "<option value='#{i.id}' #{ "selected='' " if params[:q][:id_eq].to_i == i.id }>#{i.name}</option>".html_safe %>
               <% end %>
             </select>
             <i></i>
@@ -42,7 +42,6 @@
       <tr>
         <td>序号</td>
         <td>项目名称</td>
-        <td>项目状态</td>
       </tr>
     </thead>
     <tbody>
@@ -50,7 +49,6 @@
         <tr>
           <td><%= i+1 %></td>
           <td><%= link_to r.name, dep_list_path("q[id_eq]" => r.id) %></td>
-          <td><%= r.status_badge %></td>
         </tr>
       <% end %>
     </tbody>

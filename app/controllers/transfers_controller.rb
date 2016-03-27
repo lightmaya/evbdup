@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class  TransfersController < JamesController
   def show
-    return redirect_to(not_found_path) unless @transfer = Transfer.find_by_id(params[:id])
+    return redirect_to(errors_path(no: 404)) unless @transfer = Transfer.find_by_id(params[:id])
 
     @obj_contents = info_html(@transfer, Transfer.xml, {title: "基本信息", grid: 3})
     @transfer.items.each_with_index do |item, index|

@@ -52,6 +52,8 @@ class Kobe::ItemsController < KobeController
   def destroy
     @item.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除成功。")
+    # 下架产品
+    kill_products(@item.reload)
     redirect_to kobe_items_path
   end
 
@@ -63,6 +65,8 @@ class Kobe::ItemsController < KobeController
   def update_pause
     @item.change_status_and_write_logs("停止",stateless_logs("停止", params[:opt_liyou], false))
     tips_get("停止成功。")
+    # 下架产品
+    kill_products(@item.reload)
     redirect_to kobe_items_path
   end
 
@@ -101,6 +105,17 @@ class Kobe::ItemsController < KobeController
 
     def get_item
       cannot_do_tips unless @item.present? && @item.cando(action_name)
+    end
+
+    # 项目过期后产品下架
+    def kill_products(item)
+      if Item.finish_status.include?(item.status)
+        st = 26
+        update_params = []
+        update_params << "status = #{st}"
+        update_params << "logs = replace(IFNULL(logs,'<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n</root>'),'</root>','  #{stateless_logs('下架', '项目过期，下架产品').gsub('$STATUS$',st.to_s)}\n</root>')"
+        item.products.where(status: Product.effective_status).update_all(update_params.join(", "))
+      end
     end
 
 end
