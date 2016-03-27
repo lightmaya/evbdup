@@ -111,7 +111,7 @@ module JamesHelper
 
   # 首页入围供应商展示
   def show_dep_div(dep)
-    cat = dep.items.where(status: Item.effective_status).map{|e| e.categories.where(ancestry_depth: 2).map(&:name)}.flatten.uniq.join('、')
+    cat = dep.items.usable.where("items.short_name <> '' ").map(&:short_name).compact.uniq.join('、')
     %Q{
       <div class="col-md-3 md-margin-bottom-40">
         <div class="easy-block-v1">

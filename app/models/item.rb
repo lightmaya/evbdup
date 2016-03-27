@@ -132,8 +132,9 @@ class Item < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='项目名称' column='name' class='required'/>
+        <node name='项目简称' column='short_name' class='required' hint='清理设备'/>
         <node name='项目类型' column='item_type' data_type='radio' data='#{Dictionary.item_type}' class='required'/>
-        <node name='品目分配' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
+        <node name='品目' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden'/>
         <node name='有效期开始时间' column='begin_time' class='required datetime_select datetime'/>
         <node name='有效期截止时间' column='end_time' class='required datetime_select datetime'/>
