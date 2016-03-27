@@ -39,8 +39,7 @@ class MallController < ApplicationController
 
   # 获取token
   def get_token(url='')
-    tk = MallToken.login_token
-    tk = tk.first if tk.present?
+    tk = MallToken.login_token.first
     if tk.nil? || tk.due_at< Time.now
       sign = Digest::MD5::hexdigest(Dictionary.DOTA_PASSWORD + Dictionary.DOTA_USERNAME + Dictionary.DOTA_PASSWORD)[5..12].upcase
       url = "#{get_dota_url(url)}/api/get_access_token"
