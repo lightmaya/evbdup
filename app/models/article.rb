@@ -4,7 +4,7 @@ class Article < ActiveRecord::Base
   Mname = "公告"
 
   belongs_to :author, class_name: "User", foreign_key: "user_id"
-  has_many :uploads
+  has_many :uploads, class_name: :ArticleUpload, foreign_key: :master_id
   has_and_belongs_to_many :catalogs, class_name: "ArticleCatalog"
   accepts_nested_attributes_for :catalogs
   has_many :task_queues, -> { where(class_name: "Article") }, foreign_key: :obj_id

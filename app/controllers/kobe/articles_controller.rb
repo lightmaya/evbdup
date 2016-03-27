@@ -56,7 +56,7 @@ class Kobe::ArticlesController < KobeController
     # xml默认调用obj.class.xml
     # title根据obj.new_record?和model中定义的Mname自动生成
     # action根据obj.new_record?自动生成
-    @myform = OneForm.new(@article)
+    # @myform = OneForm.new(@article)
   end
 
   def edit
