@@ -67,7 +67,7 @@ class User < ActiveRecord::Base
 
   def cgr?
     # [1,2].include? self.department.root_id
-    self.department.root_id == Dictionary.dep_purchaser_id
+    self.department.is_dep_purchaser?
   end
 
   # 获取当前人的菜单

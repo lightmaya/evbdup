@@ -230,7 +230,7 @@ private
   end
 
   # 准备日志的内容
-  def prepare_logs_content(obj,action,remark='')
+  def prepare_logs_content(obj,action,remark='', user='')
     if obj.logs.present?
       doc = Nokogiri::XML(obj.logs)
     else
@@ -239,17 +239,18 @@ private
       doc << "<root>"
     end
     status = (!obj.attribute_names.include?("status") || obj.status.nil?) ? "-" : obj.status
-    node = get_logs_node(doc,action,status,remark)
+    node = get_logs_node(doc,action,status,remark,user)
     return doc.to_s
   end
 
   # 日志的节点信息,为了和批量修改状态共用一个方法，stauts设定为传入值。
-  def get_logs_node(doc,action,status,remark)
+  def get_logs_node(doc,action,status,remark,user='')
+    user = user.blank? ? current_user : user
     node = doc.root.add_child("<node>").first
     node["操作时间"] = Time.now.to_s(:db)
-    node["操作人ID"] = current_user.id.to_s
-    node["操作人姓名"] = current_user.name.to_s
-    node["操作人单位"] = current_user.department.nil? ? "暂无" : current_user.department.name.to_s
+    node["操作人ID"] = user.id.to_s
+    node["操作人姓名"] = user.name.to_s
+    node["操作人单位"] = user.department.nil? ? "暂无" : user.department.name.to_s
     node["操作内容"] = action
     node["当前状态"] = status
     node["备注"] = remark

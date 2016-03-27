@@ -161,13 +161,14 @@ class Kobe::BidProjectsController < KobeController
 
     def get_project_name(bid_project = nil)
       category_names = params[:bid_items][:category_name].values.uniq.join("、")
-      if bid_project.present?
-        project_name = bid_project.name.split(" ")
-        project_name[2] = category_names
-        return project_name.join(" ")
-      else
-        return "#{params[:bid_projects][:buyer_dep_name]} #{Time.new.to_date.to_s} #{category_names} 竞价项目"
-      end
+      return Order.get_project_name(bid_project, current_user, category_names, 'wsjj')
+      # if bid_project.present?
+      #   project_name = bid_project.name.split(" ")
+      #   project_name[2] = category_names
+      #   return project_name.join(" ")
+      # else
+      #   return "#{params[:bid_projects][:buyer_dep_name]} #{Time.new.to_date.to_s} #{category_names} 竞价项目"
+      # end
     end
 
     # 只允许自己操作自己的项目

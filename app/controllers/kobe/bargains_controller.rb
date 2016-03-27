@@ -32,7 +32,7 @@ class Kobe::BargainsController < KobeController
   def create
     other_attrs = { category_id: @category.id, category_code: @category.ancestry, item_id: @item.id,
       department_id: current_user.department.id, dep_code: current_user.real_dep_code,
-      name: "#{current_user.real_department.name} #{Time.new.to_date.to_s} #{@category.name} 协议议价项目" }
+      name: Order.get_project_name(nil, current_user, @category.name, 'xyyj') }
     bargain = create_msform_and_write_logs(Bargain, Bargain.xml, BargainProduct, BargainProduct.xml(@category), {:action => "发起议价", :slave_title => "产品信息"}, other_attrs)
     redirect_to choose_kobe_bargain_path(bargain)
   end

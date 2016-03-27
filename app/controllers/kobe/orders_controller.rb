@@ -219,7 +219,7 @@ class Kobe::OrdersController < KobeController
   end
 
   def update_invoice_number
-     @order.update(invoice_number: params[:number] )
+     @order.update(invoice_number: params[:number], effective_time: Time.now)
      write_logs(@order, '填写发票', "发票号：#{params[:number]}")
      redirect_back_or request.referer
   end

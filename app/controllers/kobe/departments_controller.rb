@@ -31,7 +31,7 @@ class Kobe::DepartmentsController < KobeController
     parent_dep = Department.find_by(id: p_id)
     dep = create_and_write_logs(Department, parent_dep.get_xml)
     if dep
-      dep.update(status: 65) if dep.root_id == Dictionary.dep_purchaser_id
+      dep.update(status: 65) if dep.is_dep_purchaser?
       redirect_to kobe_departments_path(id: dep)
     else
       redirect_to root_path

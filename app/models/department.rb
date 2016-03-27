@@ -69,6 +69,13 @@ class Department < ActiveRecord::Base
     return Department.find_by(id: dep_id)
   end
 
+  # 上级单位
+  def top_dep
+    return nil unless is_dep_purchaser?
+    return real_dep if is_fgs? || is_zgs?
+    Department.find_by(id: real_ancestry_id_arr[-2])
+  end
+
   # 独立核算单位下的所有用户
   def real_users
     Department.where(real_ancestry: self.real_ancestry).map(&:users).flatten.uniq
@@ -76,12 +83,22 @@ class Department < ActiveRecord::Base
 
   # 判断单位是不是分公司
   def is_fgs?
-    self.root_id == Dictionary.dep_purchaser_id && self.real_ancestry_id_arr.size == 3
+    self.is_dep_purchaser? && self.real_ancestry_id_arr.size == 3
   end
 
   # 判断单位是不是总公司
   def is_zgs?
-    self.root_id == Dictionary.dep_purchaser_id && self.real_ancestry_id_arr.size == 2
+    self.is_dep_purchaser? && self.real_ancestry_id_arr.size == 2
+  end
+
+  # 判断单位是不是采购单位
+  def is_dep_purchaser?
+    self.root_id == Dictionary.dep_purchaser_id
+  end
+
+  # 判断单位是不是供应商
+  def is_dep_supplier?
+    self.root_id == Dictionary.dep_supplier_id
   end
 
   # 中文意思 状态值 标签颜色 进度
@@ -386,9 +403,9 @@ class Department < ActiveRecord::Base
   # 生产单位采购或销量统计的缓存
   def cache_dep_main(force = false)
     if force
-      Setting.send("dep_main_#{self.id}=", (self.root_id == Dictionary.dep_purchaser_id ? get_dep_main : get_seller_main))
+      Setting.send("dep_main_#{self.id}=", (self.is_dep_purchaser? ? get_dep_main : get_seller_main))
     else
-      Setting.send("dep_main_#{self.id}=", (self.root_id == Dictionary.dep_purchaser_id ? get_dep_main : get_seller_main)) if Setting.send("dep_main_#{self.id}").blank?
+      Setting.send("dep_main_#{self.id}=", (self.is_dep_purchaser? ? get_dep_main : get_seller_main)) if Setting.send("dep_main_#{self.id}").blank?
     end
     Setting.send("dep_main_#{self.id}")
   end

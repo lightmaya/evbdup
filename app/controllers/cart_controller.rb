@@ -50,7 +50,7 @@ class CartController < JamesController
         flash_get '请先登录!'
         redirect_to sign_in_users_path
       else
-        if current_user.department.root_id == Dictionary.dep_supplier_id
+        if current_user.department.is_dep_supplier?
           flash_get '供应商不能下单!'
           redirect_to root_path
         end
