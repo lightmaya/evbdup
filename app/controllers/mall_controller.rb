@@ -3,7 +3,7 @@ class MallController < ApplicationController
   before_action :check_token, :only =>[:create_order, :update_order]
 
   # 登录跳转到电商平台
-  def go_to_mall
+  def index
     if current_user && current_user.cgr?
       redirect_to action: "redirect_to_dota"
     else
