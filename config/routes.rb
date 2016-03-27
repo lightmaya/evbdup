@@ -20,6 +20,7 @@ Evbdup::Application.routes.draw do
   get "search", :to => 'home#search', :as => "search"
   get "more_list" => "home#more_list"
   get "dep_list" => "home#dep_list"
+  get "mall" => "mall#go_to_mall"
 
   get 'show_faqs' => "faqs#show"
 
