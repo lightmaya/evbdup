@@ -49,6 +49,12 @@ Evbdup::Application.routes.draw do
 
   resources :products
 
+  resources :mall do
+    collection do
+      post :redirect_to_dota, :get_token, :get_access_token, :create_order, :update_order
+    end
+  end
+
   resources :home, :only => :index  do
     collection do
       get :form_test, :ajax_test, :test, :json_test
