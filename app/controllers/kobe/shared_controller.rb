@@ -34,6 +34,7 @@ class Kobe::SharedController < KobeController
     render :json => Menu.get_json(nodes)
   end
 
+  # 指定入围供应商项目
   def item_ztree_json
     name = params[:ajax_key]
     if name.present?
@@ -186,7 +187,7 @@ class Kobe::SharedController < KobeController
     json = []
     Item.usable.order('id desc').each do |n|
       deps = name.present? ? n.item_departments.where(["name like ? ", "%#{name}%"]) : n.item_departments
-      json << %Q|{"id":#{n.id}, "pId": 0, "name":"#{n.name}"}| if deps.present?
+      json << %Q|{"id":#{n.id}, "pId": 0, "name":"#{n.short_name}"}| if deps.present?
       deps.each { |d| json << %Q|{"id":#{d.department_id}, "pId": #{d.item_id}, "name":"#{d.name}"}| }
     end
     render :json => "[#{json.join(", ")}]"

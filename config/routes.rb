@@ -20,7 +20,7 @@ Evbdup::Application.routes.draw do
   get "search", :to => 'home#search', :as => "search"
   get "more_list" => "home#more_list"
   get "dep_list" => "home#dep_list"
-  get "mall" => "mall#go_to_mall"
+  get "mall" => "mall#index"
 
   get 'show_faqs' => "faqs#show"
 
@@ -49,9 +49,10 @@ Evbdup::Application.routes.draw do
 
   resources :products
 
-  resources :mall do
+  resources :mall, :only => :index do
     collection do
-      post :redirect_to_dota, :get_token, :get_access_token, :create_order, :update_order
+      get :redirect_to_dota
+      post :get_token, :get_access_token, :create_order, :update_order
     end
   end
 
