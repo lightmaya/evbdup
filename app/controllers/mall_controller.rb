@@ -56,7 +56,7 @@ class MallController < ApplicationController
         return false
       end
     else
-      return tk.token
+      return tk.access_token
     end
   end
 
