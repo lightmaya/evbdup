@@ -51,7 +51,8 @@ Evbdup::Application.routes.draw do
 
   resources :mall, :only => :index do
     collection do
-      post :redirect_to_dota, :get_token, :get_access_token, :create_order, :update_order
+      get :redirect_to_dota
+      post :get_token, :get_access_token, :create_order, :update_order
     end
   end
 
