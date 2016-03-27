@@ -10,7 +10,7 @@
         </div>
         <div class="col-sm-8">
           <ul class="list-inline clear-both">
-            
+
           </ul>
         </div>
       </div>
@@ -18,36 +18,41 @@
 
       <div class="filter-results">
         <div class="row illustration-v2 margin-bottom-30">
-          <% @rs.each_hit_with_result do |hit, product| %>
-            <% name =  hit.highlight(:name) ? hit.highlight(:name).format { |word| "<span class=\"red\">#{word}</span>" } : product.try(:name) %>
-            <% title = name %>
+          <% @rs.each_hit_with_result do |hit, product|%>
+            <%= show_product_div(product, hit) %>
+          <% end %>
+
+          <%# @rs.each_hit_with_result do |hit, product| %>
+            <%# name =  hit.highlight(:name) ? hit.highlight(:name).format { |word| "<span class=\"red\">#{word}</span>" } : product.try(:name) %>
+            <%# title = name %>
             <!-- 产品 -->
+            <!--
             <div class="col-md-3 h412">
                 <div class="product-img product-img-brd">
-                  <%= link_to_blank image_tag(product.cover_url, class: "full-width img-responsive lazy", onerror: "$(this).attr('src', '/assets/no_pic_small.gif')"), product %>
+                  <%#= link_to_blank image_tag(product.cover_url, class: "full-width img-responsive lazy", onerror: "$(this).attr('src', '/assets/no_pic_small.gif')"), product %>
                   <div class="shop-rgba-dark-green rgba-banner">新产品</div>
-                </div> 
+                </div>
                 <div class="product-description product-description-brd margin-bottom-30">
                   <div class="overflow-h margin-bottom-5">
                     <div class="pull-left">
                       <h4 class="title-price">
-                        <%= link_to_blank title.html_safe, product, class: "shop-ui-inner.html" %>
+                        <%#= link_to_blank title.html_safe, product, class: "shop-ui-inner.html" %>
                       </h4>
                       <span class="gender text-uppercase">销售范围：全国(厂商协议供货)</span>
-                      <div class="price_div" id="price_div_<%= product.id %>">
+                      <div class="price_div" id="price_div_<%#= product.id %>">
                         <span class="title-price line-through fl clear">市场价：<b class="b_m hide">请登录查看</b></span>
                         <span class="title-price fl clear">协议价：<b class="b_b hide">请登录查看</b></span>
                       </div>
-                    </div>    
-                  </div> 
+                    </div>
+                  </div>
                 </div>
-            </div>
+            </div> -->
             <!-- 产品END -->
-          <% end -%>
+          <%# end -%>
         </div>
       </div><!--/end filter resilts-->
       <%= paginate @rs.results %>
       <!-- 产品列表END -->
     </div>
   </div><!--/end row-->
-</div><!--/end container-->    
+</div><!--/end container-->

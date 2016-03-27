@@ -78,14 +78,15 @@ module JamesHelper
   end
 
   # 首页 畅销产品展示
-  def show_product_div(product)
+  def show_product_div(product, hit=nil)
+    name = hit && hit.highlight(:name) ? hit.highlight(:name).format { |word| "<span class=\"red\">#{word}</span>" } : product.try(:name)
     img = product.first_img
     link_url = product_path(product)
     %Q{
       <div class="col-md-3 col-sm-6">
         <div class="thumbnails thumbnail-style thumbnail-kenburn">
           <div class="thumbnail-img">
-            <a href="#{link_url}" class="hover-effect" target="_blank" title="#{product.name}">
+            <a href="#{link_url}" class="hover-effect" target="_blank" title="#{name}">
               <div class="overflow-hidden">
                   <img alt="" src="#{img}" class="img-responsive border-1">
               </div>
@@ -96,9 +97,9 @@ module JamesHelper
             <div class="overflow-h margin-bottom-5">
               <div class="pull-left">
                 <h4 class="title-price height-50">
-                  #{link_to_blank truncate(product.name, length: 28), link_url, title: product.name}
+                  #{link_to_blank truncate(name, length: 28), link_url, title: name}
                 </h4>
-                <span class="gender text-uppercase">#{product.item_dep.try(:classify) == 0 ? "&nbsp;" : "供应商级别：#{dep_classify_span(product.item_dep.classify)}" }</span>
+                <span class="gender text-uppercase">#{product.item_dep.try(:classify) == 0 ? "&nbsp;" : "供应商级别：#{dep_classify_span(product.item_dep.try(:classify))}" }</span>
                 #{check_login_and_show_price(product.id)}
               </div>
             </div>

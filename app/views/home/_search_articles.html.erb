@@ -6,7 +6,7 @@
     <!-- Begin Inner Results -->
     <div class="inner-results bb1">
       <h3><%= link_to_blank title.html_safe, article_path(r) %></h3>
-      <p><%= truncate(sanitize(r.content.html_safe), length: 100).html_safe %></p>
+      <p><%#= truncate(sanitize(r.content), length: 100).html_safe %></p>
       <ul class="list-inline down-ul">
           <li>发布时间：<%= r.publish_time %> </li>
           <li>发布人：<%= r.username %></li>
