@@ -49,7 +49,7 @@ class Kobe::ArticlesController < KobeController
   def new
     @article.username = current_user.name
     @myform = SingleForm.new(Article.xml, @article,
-      { form_id: "article_form", action: kobe_articles_path,
+      { form_id: "article_form", action: kobe_articles_path, upload_files: true,
         title: '<i class="fa fa-pencil-square-o"></i> 新增公告', grid: 2
       })
 
@@ -60,7 +60,7 @@ class Kobe::ArticlesController < KobeController
   end
 
   def edit
-    @myform = SingleForm.new(Article.xml, @article, { form_id: "article_form", action: kobe_article_path(@article), method: "patch", grid: 2 })
+    @myform = SingleForm.new(Article.xml, @article, { form_id: "article_form", action: kobe_article_path(@article), upload_files: true, method: "patch", grid: 2 })
   end
 
   def create
