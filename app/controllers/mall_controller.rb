@@ -86,7 +86,7 @@ class MallController < ApplicationController
     return render :json => {"success" => false, "desc" => "ID已存在"} if mall.present?
     user = User.find_by(id: params["user_id"])
     return render :json=> {"success" => false, "desc" => "user有误"} if user.blank?
-    dep_s = Department.find_by(old_id: params["dep_s_id"], class_name: 'dep_supplier')
+    dep_s = Department.find_by(old_id: params["dep_s_id"], old_table: 'dep_supplier')
     return render :json=> {"success" => false, "desc" => "dep_s有误"}if dep_s.blank?
 
     order = Order.new
