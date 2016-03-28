@@ -82,11 +82,11 @@ class MallController < ApplicationController
   end
 
   def create_order
-    mall = Order.find_by(mall_id: params["id"])
+    mall = Order.find_by(mall_id: params["id"], yw_type: 'dscg')
     return render :json => {"success" => false, "desc" => "ID已存在"} if mall.present?
     user = User.find_by(id: params["user_id"])
     return render :json=> {"success" => false, "desc" => "user有误"} if user.blank?
-    dep_s = Department.find_by(id: params["dep_s_id"])
+    dep_s = Department.find_by(old_id: params["dep_s_id"], old_table: 'dep_supplier')
     return render :json=> {"success" => false, "desc" => "dep_s有误"}if dep_s.blank?
 
     order = Order.new
@@ -94,6 +94,8 @@ class MallController < ApplicationController
     order.yw_type = params["budget"].to_f == 0 ? 'grcg' : 'dscg'
     order.total = params["total"]
     order.budget_money = params["budget"]
+    order.sn = "DSCG-#{Time.now.to_s(:number)[0...10]}#{('%04d' % params["id"])[-4...params["id"].size]}"
+    order.contract_sn = order.sn.gsub("DSCG", "ZCL")
 
     order.buyer_name = user.real_department.name
     order.payer = params["fpdw"]
@@ -110,6 +112,11 @@ class MallController < ApplicationController
     order.seller_code = dep_s.try(:real_ancestry)
     order.seller_addr = dep_s.try(:address)
 
+    order.seller_man = "-"
+    order.seller_tel = "-"
+    order.seller_mobile = "-"
+    order.deliver_at = Date.today + 3
+
     order.status = get_status(params["status"])
     order.name = Order.get_project_name(order, user, '办公用品', order.yw_type)
     order.logs = created_logs(order, user, '生成订单', '网上商城自动生成订单。')
@@ -119,15 +126,15 @@ class MallController < ApplicationController
       ca = Category.find_by_id(par["gid"])
       return render :json => {"success" => false, "desc" => "产品品目[#{par["gid"]}]不存在!"} if ca.blank?
       p_name_arr = par["name"].split
-      order.items.build(market_price: par["market_price"].to_f, quantity: par["num"].to_f, price: par["price"].to_f,
+      order.items.create(market_price: par["market_price"].to_f, quantity: par["num"].to_f, price: par["price"].to_f,
         category_id: ca.id, category_code: ca.ancestry, category_name: ca.name,
-        brand: p_name_arr[0], model: p_name_arr[1], version: p_name_arr[2..p_name_arr.size], unit: par["unit"],
+        brand: p_name_arr[0], model: p_name_arr[1], version: p_name_arr[2..p_name_arr.size].join, unit: par["unit"],
         total: par["num"].to_f * par["price"].to_f
         )
     end
 
     update_params = { name: Order.get_project_name(order, user, order.items.map(&:category_name).uniq.join("、"), order.yw_type) }
-    update_params[:total] = total unless order.total.to_f == order.items.sum(:total).to_f
+    update_params[:total] = order.items.sum(:total).to_f unless order.total.to_f == order.items.sum(:total).to_f
 
     return render :json => {"success" => false, "desc" => "更新失败"} unless order.update(update_params)
 
@@ -135,7 +142,7 @@ class MallController < ApplicationController
   end
 
   def update_order
-    order = Order.find_by(mall_id: params["id"])
+    order = Order.find_by(mall_id: params["id"], yw_type: 'dscg')
     if order.blank?
       render :json => {"success" => false, "desc" => "ID不存在"}
     else
@@ -199,7 +206,7 @@ class MallController < ApplicationController
   end
 
   def check_token
-    uk = MallToken.order_token.find_by(access_token: params["token"])
+    uk = MallToken.order_token.find_by(access_token: params["token"], name: 'order')
     return render :json => {"success" => false, "desc" => "token不正确"} unless uk
     return render :json => {"success" => false, "desc" => "token已过期"} if Time.now > uk.due_at
   end
