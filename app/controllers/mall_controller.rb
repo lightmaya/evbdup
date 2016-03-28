@@ -126,7 +126,7 @@ class MallController < ApplicationController
       ca = Category.find_by_id(par["gid"])
       return render :json => {"success" => false, "desc" => "产品品目[#{par["gid"]}]不存在!"} if ca.blank?
       p_name_arr = par["name"].split
-      order.items.build(market_price: par["market_price"].to_f, quantity: par["num"].to_f, price: par["price"].to_f,
+      order.items.create(market_price: par["market_price"].to_f, quantity: par["num"].to_f, price: par["price"].to_f,
         category_id: ca.id, category_code: ca.ancestry, category_name: ca.name,
         brand: p_name_arr[0], model: p_name_arr[1], version: p_name_arr[2..p_name_arr.size], unit: par["unit"],
         total: par["num"].to_f * par["price"].to_f
@@ -134,7 +134,7 @@ class MallController < ApplicationController
     end
 
     update_params = { name: Order.get_project_name(order, user, order.items.map(&:category_name).uniq.join("、"), order.yw_type) }
-    update_params[:total] = total unless order.total.to_f == order.items.sum(:total).to_f
+    update_params[:total] = order.items.sum(:total).to_f unless order.total.to_f == order.items.sum(:total).to_f
 
     return render :json => {"success" => false, "desc" => "更新失败"} unless order.update(update_params)
 
