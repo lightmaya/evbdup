@@ -237,7 +237,7 @@ function tips_dialog (content) {
 	d.show();
 	setTimeout(function () {
 	    d.close().remove();
-	}, 5000);
+	}, 3000);
 };
 
 // 确认弹框
