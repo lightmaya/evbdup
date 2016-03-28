@@ -112,6 +112,11 @@ class MallController < ApplicationController
     order.seller_code = dep_s.try(:real_ancestry)
     order.seller_addr = dep_s.try(:address)
 
+    order.seller_man = "-"
+    order.seller_tel = "-"
+    order.seller_mobile = "-"
+    order.deliver_at = Date.today + 3
+
     order.status = get_status(params["status"])
     order.name = Order.get_project_name(order, user, '办公用品', order.yw_type)
     order.logs = created_logs(order, user, '生成订单', '网上商城自动生成订单。')
