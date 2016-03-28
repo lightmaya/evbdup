@@ -82,11 +82,11 @@ class MallController < ApplicationController
   end
 
   def create_order
-    mall = Order.find_by(mall_id: params["id"])
+    mall = Order.find_by(mall_id: params["id"], yw_type: 'dscg')
     return render :json => {"success" => false, "desc" => "ID已存在"} if mall.present?
     user = User.find_by(id: params["user_id"])
     return render :json=> {"success" => false, "desc" => "user有误"} if user.blank?
-    dep_s = Department.find_by(id: params["dep_s_id"])
+    dep_s = Department.find_by(old_id: params["dep_s_id"], class_name: 'dep_supplier')
     return render :json=> {"success" => false, "desc" => "dep_s有误"}if dep_s.blank?
 
     order = Order.new
@@ -94,6 +94,8 @@ class MallController < ApplicationController
     order.yw_type = params["budget"].to_f == 0 ? 'grcg' : 'dscg'
     order.total = params["total"]
     order.budget_money = params["budget"]
+    order.sn = "DSCG-#{Time.now.to_s(:number)[0...10]}#{('%04d' % params["id"])[-4...params["id"].size]}"
+    order.contract_sn = order.sn.gsub("DSCG", "ZCL")
 
     order.buyer_name = user.real_department.name
     order.payer = params["fpdw"]
@@ -135,7 +137,7 @@ class MallController < ApplicationController
   end
 
   def update_order
-    order = Order.find_by(mall_id: params["id"])
+    order = Order.find_by(mall_id: params["id"], yw_type: 'dscg')
     if order.blank?
       render :json => {"success" => false, "desc" => "ID不存在"}
     else
@@ -199,7 +201,7 @@ class MallController < ApplicationController
   end
 
   def check_token
-    uk = MallToken.order_token.find_by(access_token: params["token"])
+    uk = MallToken.order_token.find_by(access_token: params["token"], name: 'order')
     return render :json => {"success" => false, "desc" => "token不正确"} unless uk
     return render :json => {"success" => false, "desc" => "token已过期"} if Time.now > uk.due_at
   end
