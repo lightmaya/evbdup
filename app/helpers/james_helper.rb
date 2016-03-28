@@ -157,16 +157,40 @@ module JamesHelper
     }
     user = product.cjzx? ? product.department.users.first : product.coordinators.first
     str << %Q{
-      <ul class="list-unstyled specifies-list">
-        <li><i class="fa fa-caret-right"></i>中标单位名称：<span>#{user.department.real_dep.name}</span></li>
-        <li><i class="fa fa-caret-right"></i>#{man}姓名: <span>#{user.try(:name)}</span></li>
-        <li><i class="fa fa-caret-right"></i>#{man}电话：<span>#{user.try(:tel)}</span></li>
-        <li><i class="fa fa-caret-right"></i>#{man}手机: <span>#{user.try(:mobile)}</span></li>
-        <li><i class="fa fa-caret-right"></i>#{man}传真: <span>#{user.try(:fax)}</span></li>
-        <li><i class="fa fa-caret-right"></i>#{man}E-Mail: <span>#{user.try(:email)}</span></li>
-        <li><i class="fa fa-caret-right"></i>备注: <span>#{user.try(:summary)}</span></li>
-      </ul>
-      <hr>
+        <table class="table table-bordered table-striped">
+          <tr>
+            <th class="w160">中标单位名称：</th>
+            <td>#{user.department.real_dep.name}</td>
+          </tr>
+          <tr>
+            <th class="w160">中标单位名称</th>
+            <td>#{user.department.real_dep.name}</td>
+          </tr>
+          <tr>
+            <th class="w160">#{man}姓名</th>
+            <td>#{user.try(:name)}</td>
+          </tr>
+          <tr>
+            <th class="w160">#{man}电话</th>
+            <td>#{user.try(:tel)}</td>
+          </tr>
+          <tr>
+            <th class="w160">#{man}手机</th>
+            <td>#{user.try(:mobile)}</td>
+          </tr>
+          <tr>
+            <th class="w160">#{man}传真</th>
+            <td>#{user.try(:fax)}</td>
+          </tr>
+          <tr>
+            <th class="w160">#{man}E-Mail</th>
+            <td>#{user.try(:email)}</td>
+          </tr>
+          <tr>
+            <th class="w160">备注</th>
+            <td>#{user.try(:summary)}</td>
+          </tr>
+        </table>
     }
     str << "</div>"
     return str.html_safe

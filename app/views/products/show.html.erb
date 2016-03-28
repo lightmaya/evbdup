@@ -80,9 +80,9 @@
           <% log_rs(@product.details).each do |l| %>
           <tr>
             <th class="w160"><%= l.attr("name") %></th>
-            <td class="tc"><%= l.attr("value") %></td>
+            <td><%= l.attr("value") %></td>
           </tr>
-          <% end -%>
+          <% end %>
         </table>
     </div>
     <!-- End Description -->

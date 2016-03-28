@@ -11,6 +11,8 @@ class Kobe::MainController < KobeController
     else
       @orders = current_user.department.buyer_orders.where(status: Order.unfinish_status).limit(5).order('id desc')
     end
+    tips_get("自动关闭自动关闭老无聊无聊无聊")
+    flash_get("手动关闭手动关闭")
   end
 
 end
