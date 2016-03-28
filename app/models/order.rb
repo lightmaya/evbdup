@@ -116,7 +116,7 @@ class Order < ActiveRecord::Base
   # 根据品目创建项目名称
   def self.get_project_name(order, user, category_names, yw_type = 'xygh')
     yw_type = Dictionary.yw_type[yw_type]
-    if order.name.present?
+    if order.present? && order.name.present?
       project_name = order.name.split(" ")
       project_name[2] = category_names
       return project_name.join(" ")
