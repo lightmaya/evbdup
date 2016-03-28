@@ -156,7 +156,7 @@ class Kobe::OrdersController < KobeController
   def list
     @rule = Rule.find_by(id: params[:r]) if params[:r].present?
     arr = @rule.present? ? [["orders.yw_type = ? ", @rule.yw_type]] : []
-    @orders = audit_list(Order, arr)
+    @orders = audit_list(Order, params[:tq].to_i == 13, arr)
   end
 
   # 我的订单
