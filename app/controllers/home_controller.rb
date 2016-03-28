@@ -21,7 +21,7 @@ class HomeController < JamesController
     # @products = Product.show.order("id desc").limit(8)
     # 入围供应商
     # @deps = Department.order("comment_total desc").limit(8)
-    @deps = Department.where(old_id: Dictionary.dep_pic_old_id, old_table: "dep_supplier").order("RAND()").limit(8)
+    @deps = Department.where(id: Dictionary.dep_pic_id).order("RAND()").limit(8)
     # 协议转让公告
     @xyzr = Transfer.xyzr.order("id desc").limit(8)
     # 无偿划转公告

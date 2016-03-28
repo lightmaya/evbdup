@@ -159,10 +159,6 @@ module JamesHelper
     str << %Q{
         <table class="table table-bordered table-striped">
           <tr>
-            <th class="w160">中标单位名称：</th>
-            <td>#{user.department.real_dep.name}</td>
-          </tr>
-          <tr>
             <th class="w160">中标单位名称</th>
             <td>#{user.department.real_dep.name}</td>
           </tr>
