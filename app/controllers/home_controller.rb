@@ -193,7 +193,14 @@ class HomeController < JamesController
 
     def ult(source)
       combo_to_conditions(source)
-      clazz = source.products.show
+      # 如果该品名不是叶子节点 找该品名子孙品目的产品
+      des_ca = source.descendants.usable
+      if des_ca.present?
+        clazz = Product.show.where(category_id: source.subtree.usable.map(&:id))
+        params[:q][:category_id_eq] = ""
+      else
+        clazz = source.products.show
+      end
 
       # 已选条件
       @qs = []
@@ -242,10 +249,19 @@ class HomeController < JamesController
         end
       end
 
+      # 如果该品名不是叶子节点 就把子孙节点当做搜索标签
+      if des_ca.present?
+        # @ca_descendants = []
+        # @key_params
+        # des_ca.each_with_index do | c, i |
+        #   @qs << { title: "子品目：<span>#{c.name}</span>", id: c.id, q: "category_id_eq" }
+        # end
+      end
+
       @q = clazz.where(keys_conditions.join(" and ")).ransack(params[:q])
       @products = @q.result.includes([:category, :uploads]).page(params[:page]).per(20)
       # 推荐产品
-      @rec_products = source.products.show.order("id DESC").limit(3)
+      # @rec_products = source.products.show.order("id DESC").limit(3)
       # 清理params
       params[:q] = nil; params[:page] = nil
     end

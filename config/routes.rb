@@ -132,7 +132,7 @@ namespace :kobe do
       post :same_template, :update_cart_order
     end
     member do
-      get :agent_confirm, :buyer_confirm, :audit, :print, :print_ht, :print_ysd, :invoice_number
+      get :agent_confirm, :buyer_confirm, :audit, :print, :print_ht, :print_ysd, :invoice_number, :delete
       post :commit, :update_audit, :update_agent_confirm, :update_buyer_confirm, :update_invoice_number
     end
   end
