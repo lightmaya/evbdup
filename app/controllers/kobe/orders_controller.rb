@@ -119,7 +119,8 @@ class Kobe::OrdersController < KobeController
   #  下单页面
   def cart_order
     # @budgets = current_user.valid_budgets
-    @order.save
+    # 清理购物车
+    save_cart if @order.save
     redirect_to edit_kobe_order_path(@order)
   end
 
