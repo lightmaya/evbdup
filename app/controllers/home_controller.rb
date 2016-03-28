@@ -194,9 +194,9 @@ class HomeController < JamesController
     def ult(source)
       combo_to_conditions(source)
       # 如果该品名不是叶子节点 找该品名子孙品目的产品
-      des_ca = source.descendants.usable
+      des_ca = source.descendants.zgs_manage
       if des_ca.present?
-        clazz = Product.show.where(category_id: source.subtree.usable.map(&:id))
+        clazz = Product.show.where(category_id: source.subtree.zgs_manage.map(&:id))
         params[:q][:category_id_eq] = ""
       else
         clazz = source.products.show
@@ -234,7 +234,7 @@ class HomeController < JamesController
           if key_index > 0
             key = data[key_index - 1]
             @qs << {title: "#{h["name"]}：<span>#{key}</span>", id: 0, q: h["name"]}
-            keys_conditions << %Q|extractvalue(details, '//node[@name=\"#{h["name"]}\"]/@value') = '#{key}'|
+            keys_conditions << %Q|extractvalue(products.details, '//node[@name=\"#{h["name"]}\"]/@value') = '#{key}'|
           end
 
           # extractvalue(details, "//node[@name='排量（L）']/@value") = '2.11'
@@ -249,17 +249,23 @@ class HomeController < JamesController
         end
       end
 
-      # 如果该品名不是叶子节点 就把子孙节点当做搜索标签
+      # 如果该品名不是叶子节点 就把子孙节点当做筛选条件
       if des_ca.present?
-        # @ca_descendants = []
-        # @key_params
-        # des_ca.each_with_index do | c, i |
-        #   @qs << { title: "子品目：<span>#{c.name}</span>", id: c.id, q: "category_id_eq" }
-        # end
+        q_des_ca_index = @combos[Product::QS.index("ca_descendants")].to_i
+        if q_des_ca_index > 0
+          q_ca = des_ca[q_des_ca_index - 1]
+          params[:q][:category_id_eq] = q_ca.id
+          @qs << { title: "子品目：<span>#{q_ca.name}</span>", id: 0, q: "ca_descendants" }
+        end
+        @ca_descendants = []
+        des_ca.each_with_index do | c, i |
+          @ca_descendants << { title: text_truncate(c.name, 7), id: i+1, q: "ca_descendants"} if q_des_ca_index == 0 || c != des_ca[q_des_ca_index - 1 ]
+        end
       end
 
       @q = clazz.where(keys_conditions.join(" and ")).ransack(params[:q])
       @products = @q.result.includes([:category, :uploads]).page(params[:page]).per(20)
+
       # 推荐产品
       # @rec_products = source.products.show.order("id DESC").limit(3)
       # 清理params

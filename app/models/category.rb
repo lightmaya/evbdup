@@ -11,6 +11,9 @@ class Category < ActiveRecord::Base
 
   scope :usable, -> {where(status: self.effective_status)}
 
+  # 总公司负责的品目
+  scope :zgs_manage, -> { where('categories.status in ( ? ) and categories.audit_type > 0', self.effective_status) }
+
   include AboutStatus
   include AboutAncestry
 

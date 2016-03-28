@@ -13,12 +13,28 @@
         </ul>
       </div>
       <div class="v-option">
-        <%= link_to "全部撤消", channel_path(@category.id) %>   
+        <%= link_to "全部撤消", channel_path(@category.id) %>
       </div>
       <div style="clear:both"></div>
     </div>
   <% end-%>
   <!-- 已选条件END -->
+
+  <!--  如果品目是父节点 显示子品目 -->
+  <% if @ca_descendants.present? %>
+  <div class="filterminlist">
+      <div class="filtername tr" style="border: 0px">品目：</div>
+      <dl>
+        <% @ca_descendants.each do |ca_hash| %>
+          <dd class="w120">
+            <%= link_to_channel ca_hash %>
+          </dd>
+        <% end -%>
+      </dl>
+      <div style="clear:both"></div>
+    </div>
+  <% end %>
+  <!-- 如果品目是父节点 显示子品目 end -->
 
   <!-- 品牌筛选 -->
   <% if @brands.present? %>
@@ -28,7 +44,7 @@
         <% @brands.each do |brand_hash| %>
           <dd class="w120">
             <%= link_to_channel brand_hash %>
-          </dd> 
+          </dd>
         <% end -%>
       </dl>
       <div style="clear:both"></div>
@@ -45,7 +61,7 @@
           <% h["data"].each do |key_hash| %>
             <dd class="w120">
               <%= link_to_channel key_hash %>
-            </dd> 
+            </dd>
           <% end -%>
         </dl>
         <div style="clear:both"></div>
@@ -126,14 +142,14 @@
   float:left;
   padding:0;
   width:50px;
-  margin-top:12px;      
+  margin-top:12px;
 }
 .filter .alling a {
   float:left;
   background-color:#018b3e;
   padding:0 5px;
   color:#ffffff;
-  text-decoration:none;         
+  text-decoration:none;
 }
 .filter dl {
   display:block;
@@ -148,12 +164,12 @@
   width:auto;
   height:40px;
   line-height:40px;
-  width:120px;              
+  width:120px;
 }
 .filter dt {
   height:14px;
   font-weight:bold;
-  color:#333333;          
+  color:#333333;
 }
 .filter dd {
   color:#007b36;
