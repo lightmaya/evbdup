@@ -72,7 +72,7 @@ class Kobe::PlansController < KobeController
   end
 
   def list
-    @plans = audit_list(Plan)
+    @plans = audit_list(Plan, params[:tq].to_i == Dictionary.tq_no)
     # arr = []
     # arr << ["plans.status = ? ", 2]
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
@@ -87,7 +87,7 @@ class Kobe::PlansController < KobeController
 
   def update_audit
     save_audit(@plan)
-    redirect_to list_kobe_plans_path
+    redirect_to list_kobe_plans_path(tq: Dictionary.tq_no)
   end
 
   private

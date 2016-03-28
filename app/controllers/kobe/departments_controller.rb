@@ -160,7 +160,7 @@ class Kobe::DepartmentsController < KobeController
 
   # 审核单位
   def list
-    @deps = audit_list(Department)
+    @deps = audit_list(Department, params[:tq].to_i == Dictionary.tq_no)
     # arr = []
     # arr << ["departments.status = ? ", 2]
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
@@ -180,7 +180,7 @@ class Kobe::DepartmentsController < KobeController
       # 给审核功过的单位用户授权
       @dep.users.map(&:set_auto_menu)
     end
-    redirect_to list_kobe_departments_path
+    redirect_to list_kobe_departments_path(tq: Dictionary.tq_no)
   end
 
   private

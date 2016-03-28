@@ -50,14 +50,14 @@ class Kobe::BidProjectsController < KobeController
     save_audit(@bid_project)
     # 插入order表
     @bid_project.send_to_order
-    redirect_to list_kobe_bid_projects_path(r: @bid_project.rule.try(:id))
+    redirect_to list_kobe_bid_projects_path(r: @bid_project.rule.try(:id), tq: Dictionary.tq_no)
   end
 
   def list
     @rule = Rule.find_by(id: params[:r]) if params[:r].present?
     to_do_list_ids = @rule.create_rule_objs.map{ |e| e.attributes["to_do_id"] }.uniq if @rule.present?
     arr = to_do_list_ids.present? ? [["task_queues.to_do_list_id in (?) ", to_do_list_ids]] : []
-    @bid_projects = audit_list(BidProject, arr)
+    @bid_projects = audit_list(BidProject, params[:tq].to_i == Dictionary.tq_no, arr)
   end
 
   # 提交

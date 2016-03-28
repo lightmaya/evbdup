@@ -71,7 +71,7 @@ class Kobe::BargainsController < KobeController
   end
 
   def list
-    @bargains = audit_list(Bargain)
+    @bargains = audit_list(Bargain, params[:tq].to_i == Dictionary.tq_no)
   end
 
   def audit
@@ -82,7 +82,7 @@ class Kobe::BargainsController < KobeController
     save_audit(@bargain)
     # 插入order表
     @bargain.send_to_order
-    redirect_to list_kobe_bargains_path
+    redirect_to list_kobe_bargains_path(tq: Dictionary.tq_no)
   end
 
   # 发起议价时选择品目

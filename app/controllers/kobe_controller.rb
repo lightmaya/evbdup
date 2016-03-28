@@ -195,10 +195,6 @@ class KobeController < ApplicationController
       arr << ["(task_queues.user_id = ? or (#{tq_cdt} task_queues.menu_id in (#{@menu_ids.join(",") }) ) )", current_user.id]
       arr << ["task_queues.dep_id = ?", current_user.real_department.id]
       @q =  model_name.joins(:task_queues).where(get_conditions(table_name, arr)).ransack(params[:q])
-      p "====================================="
-      p @q.result.to_sql
-      # SELECT `orders`.* FROM `orders` INNER JOIN `task_queues` ON `task_queues`.`obj_id` = `orders`.`id` AND `task_queues`.`class_name` = 'Order' WHERE (orders.yw_type = 'ddcg'  and orders.status in (8,36,43)  and (task_queues.user_id = 136607 or ( task_queues.menu_id in (101,102,100) ) ) and task_queues.dep_id = 5 and orders.status != 404)  ORDER BY `orders`.`id` DESC
-      # SELECT `orders`.* FROM `orders` INNER JOIN `task_queues` ON `task_queues`.`obj_id` = `orders`.`id` AND `task_queues`.`class_name` = 'Order' WHERE (orders.yw_type = 'ddcg'  and orders.status in (8,36,43)  and (task_queues.user_id = 136607 or ( task_queues.user_id is null and  task_queues.menu_id in (101,102,100) ) ) and task_queues.dep_id = 5 and orders.status != 404)  ORDER BY `orders`.`id` DESC
       return @q.result(distinct: true).page params[:page]
     end
 

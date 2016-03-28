@@ -22,11 +22,11 @@ class Kobe::ArticlesController < KobeController
     save_audit(@article)
     # 如果需要审核 更新发布时间
     @article.publish_time!
-    redirect_to list_kobe_articles_path
+    redirect_to list_kobe_articles_path(tq: Dictionary.tq_no)
   end
 
   def list
-    @articles = audit_list(Article)
+    @articles = audit_list(Article, params[:tq].to_i == Dictionary.tq_no)
     # arr = []
     # arr << ["articles.status = ? ", Article.audit_status]
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]

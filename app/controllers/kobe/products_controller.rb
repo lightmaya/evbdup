@@ -11,7 +11,7 @@ class Kobe::ProductsController < KobeController
   # 我的入围产品
   def index
     params[:q][:user_id_eq] = current_user.id if cannot?(:admin, Product)
-    @q = Product.where(get_conditions("products")).ransack(params[:q]) 
+    @q = Product.where(get_conditions("products")).ransack(params[:q])
     @products = @q.result.page params[:page]
   end
 
@@ -19,7 +19,7 @@ class Kobe::ProductsController < KobeController
   def item_list
     params[:q][:user_id_eq] = current_user.id
     params[:q][:item_id_eq] = @item.id
-    @q = Product.where(get_conditions("products")).ransack(params[:q]) 
+    @q = Product.where(get_conditions("products")).ransack(params[:q])
     @products = @q.result.page params[:page]
   end
 
@@ -30,12 +30,12 @@ class Kobe::ProductsController < KobeController
 
   def create
     create_and_write_logs(Product, @category.params_xml, {}, { item_id: @item.id, category_id: @category.id, category_code: @category.ancestry, department_id: current_user.department.id })
-    redirect_to item_list_kobe_products_path(item_id: @item.id) 
+    redirect_to item_list_kobe_products_path(item_id: @item.id)
   end
 
   def update
     update_and_write_logs(@product, @product.category.params_xml, { action: '修改产品' }, { status: 0 })
-    redirect_to item_list_kobe_products_path(item_id: @product.item.id) 
+    redirect_to item_list_kobe_products_path(item_id: @product.item.id)
   end
 
   def edit
@@ -88,7 +88,7 @@ class Kobe::ProductsController < KobeController
   end
 
   def list
-    @products = audit_list(Product)
+    @products = audit_list(Product, params[:tq].to_i == Dictionary.tq_no)
     # arr = []
     # arr << ["products.status = ? ", 2]
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
@@ -103,7 +103,7 @@ class Kobe::ProductsController < KobeController
 
   def update_audit
     save_audit(@product)
-    redirect_to list_kobe_products_path
+    redirect_to list_kobe_products_path(tq: Dictionary.tq_no)
   end
 
   private
