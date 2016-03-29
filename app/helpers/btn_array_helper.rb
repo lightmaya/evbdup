@@ -75,6 +75,8 @@ module BtnArrayHelper
     # 分配人员账号
     title = obj.class.icon_action("增加人员")
     arr << [title, dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{title}", '#{add_user_kobe_department_path(obj)}', '#{dialog}') }] if can?(:add_user, obj) && obj.cando("add_user", current_user)
+    # 删除
+    arr << [obj.class.icon_action("删除"), dialog, "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_department_path(obj)}', '#{dialog}') }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 审核
     audit_opt = [obj.class.icon_action("审核"), "#{audit_kobe_department_path(obj)}"] if can?(:audit, obj) && obj.cando("audit", current_user)
     return [audit_opt] if audit_opt.present? && only_audit
