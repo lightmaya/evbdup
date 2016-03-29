@@ -117,6 +117,9 @@ defaults: &defaults
   # 某品目可以选择业务类别 例如：定点采购的订单只能选择可以被2整除的品目
   category_yw_type: { ddcg: [2, "定点采购"], wsjj: [3, "网上竞价"], all: [6, "既可以定点采购又可以网上竞价"], none: [1, "都不能"] }
 
+  # 待办事项列表传参数 tq = 13
+  tq_no: 13
+  # 网上商城
   DOTA_USERNAME: "zclyggc" # "jacobz@yeah.net"  E32C3D90FFCE2E79
   DOTA_PASSWORD: "yggc0302" # "jacobz@yeah.net"  5B086AB463DCEDE6
   ZCL_USERNAME: "zclwzcgzx"
