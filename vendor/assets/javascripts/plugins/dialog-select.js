@@ -376,7 +376,7 @@ function initZtree(d,treeId,url,chkStyle,params,filter){
       error: function(XMLHttpRequest, textStatus, errorThrown) {
       // alert(textStatus);
       d.title("抱歉，出错了！");
-      d.content("加载失败，请刷新页面重试。");
+      d.content("加载失败，错误代码" + textStatus + "，请刷新页面重试。");
     }
   });
 }
