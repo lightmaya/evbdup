@@ -39,7 +39,7 @@
         ["办公楼外景", "车间外景", "车间内景"].each_with_index do |name, index|
     %>
         <div class="col-md-4">
-          <%= show_picture("/plugins/images/ad/agents/thumb/#{@dep.old_id}_#{index + 1}.jpg", "/plugins/images/ad/agents/big/#{@dep.old_id}_#{index + 1}.jpg", name, 'departments') %>
+          <%= show_picture("/plugins/images/ad/agents/thumb/#{@dep.id}_#{index + 1}.jpg", "/plugins/images/ad/agents/big/#{@dep.id}_#{index + 1}.jpg", name, 'departments') %>
         </div>
       <% end %>
     <% else %>

@@ -58,7 +58,7 @@ class Kobe::DailyCostsController < KobeController
   end
 
   def list
-    @daily_costs = audit_list(DailyCost)
+    @daily_costs = audit_list(DailyCost, params[:tq].to_i == Dictionary.tq_no)
     # arr = []
     # arr << ["daily_costs.status = ? ", 2]
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
@@ -73,7 +73,7 @@ class Kobe::DailyCostsController < KobeController
 
   def update_audit
     save_audit(@daily_cost)
-    redirect_to list_kobe_daily_costs_path
+    redirect_to list_kobe_daily_costs_path(tq: Dictionary.tq_no)
   end
 
   private

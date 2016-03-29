@@ -58,7 +58,7 @@
   # end
 
   # def list
-  #   @budgets = audit_list(Budget)
+  #   @budgets = audit_list(Budget, params[:tq].to_i == Dictionary.tq_no)
   #   # arr = []
   #   # arr << ["budgets.status = ? ", 1]
   #   # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
@@ -73,7 +73,7 @@
 
   # def update_audit
   #   save_audit(@budget)
-  #   redirect_to list_kobe_budgets_path
+  #   redirect_to list_kobe_budgets_path(tq: Dictionary.tq_no)
   # end
 
   # private

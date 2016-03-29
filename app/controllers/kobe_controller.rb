@@ -187,11 +187,12 @@ class KobeController < ApplicationController
       return false
     end
 
-    # 审核列表
-    def audit_list(model_name, arr = [])
+    # 审核列表 from_tq = true 来自待办事项
+    def audit_list(model_name, from_tq = false, arr = [])
       table_name = model_name.to_s.tableize
       arr << ["#{table_name}.status in (#{model_name.audit_status.join(',')}) "]
-      arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
+      tq_cdt = from_tq ? " task_queues.user_id is null and " : ""
+      arr << ["(task_queues.user_id = ? or (#{tq_cdt} task_queues.menu_id in (#{@menu_ids.join(",") }) ) )", current_user.id]
       arr << ["task_queues.dep_id = ?", current_user.real_department.id]
       @q =  model_name.joins(:task_queues).where(get_conditions(table_name, arr)).ransack(params[:q])
       return @q.result(distinct: true).page params[:page]

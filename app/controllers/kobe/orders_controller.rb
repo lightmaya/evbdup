@@ -119,7 +119,8 @@ class Kobe::OrdersController < KobeController
   #  下单页面
   def cart_order
     # @budgets = current_user.valid_budgets
-    @order.save
+    # 清理购物车
+    save_cart if @order.save
     redirect_to edit_kobe_order_path(@order)
   end
 
@@ -155,7 +156,7 @@ class Kobe::OrdersController < KobeController
   def list
     @rule = Rule.find_by(id: params[:r]) if params[:r].present?
     arr = @rule.present? ? [["orders.yw_type = ? ", @rule.yw_type]] : []
-    @orders = audit_list(Order, arr)
+    @orders = audit_list(Order, params[:tq].to_i == Dictionary.tq_no, arr)
   end
 
   # 我的订单
@@ -187,7 +188,7 @@ class Kobe::OrdersController < KobeController
 
   def update_audit
     save_audit(@order)
-    redirect_to list_kobe_orders_path(r: @order.rule.try(:id))
+    redirect_to list_kobe_orders_path(r: @order.rule.try(:id), tq: Dictionary.tq_no)
   end
 
   # 根据category_id判断模版是否相同

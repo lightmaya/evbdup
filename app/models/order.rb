@@ -133,9 +133,9 @@ class Order < ActiveRecord::Base
     order.yw_type = yt
     order.buyer_name = order.payer = user.real_department.name
     order.buyer_man = user.name
-    order.buyer_tel = user.tel
-    order.buyer_mobile = user.mobile
-    order.buyer_addr = user.department.address
+    order.buyer_tel = user.tel.blank? ? '-' : user.tel
+    order.buyer_mobile = user.mobile.blank? ? '-' : user.mobile
+    order.buyer_addr = user.department.address.blank? ? '-' : user.department.address
     order.user_id = user.id
     order.sfz = user.identity_num
     order.buyer_id = user.department.id

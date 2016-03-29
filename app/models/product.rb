@@ -18,7 +18,7 @@ class Product < ActiveRecord::Base
     init_rule
   end
 
-  QS = ["category_id_eq", "brand_eq", "sort", "page"]
+  QS = ["category_id_eq", "brand_eq", "sort", "page", "ca_descendants"]
 
   # 全文检索
   if Rails.env.production?

@@ -59,7 +59,7 @@ class Kobe::AssetProjectsController < KobeController
   end
 
   def list
-    @asset_projects = audit_list(AssetProject)
+    @asset_projects = audit_list(AssetProject, params[:tq].to_i == Dictionary.tq_no)
     # arr = []
     # arr << ["asset_projects.status = ? ", AssetProject.audit_status]
     # arr << ["(task_queues.user_id = ? or task_queues.menu_id in (#{@menu_ids.join(",") }) )", current_user.id]
@@ -74,7 +74,7 @@ class Kobe::AssetProjectsController < KobeController
 
   def update_audit
     save_audit(@asset_project)
-    redirect_to list_kobe_asset_projects_path
+    redirect_to list_kobe_asset_projects_path(tq: Dictionary.tq_no)
   end
   def get_fixed_asset_json
     nodes = FixedAsset.select("id,name").where(['status=? and asset_status=?',0,1]).to_json
