@@ -188,7 +188,7 @@ class Kobe::SharedController < KobeController
     Item.usable.order('id desc').each do |n|
       deps = name.present? ? n.item_departments.where(["name like ? ", "%#{name}%"]) : n.item_departments
       json << %Q|{"id":#{n.id}, "pId": 0, "name":"#{n.short_name}"}| if deps.present?
-      deps.each { |d| json << %Q|{"id":#{d.department_id}, "pId": #{d.item_id}, "name":"#{d.name}"}| }
+      deps.each { |d| json << %Q|{"id":#{d.department_id.present? ? d.department_id : -1}, "pId": #{d.item_id}, "name":"#{d.name}"}| }
     end
     render :json => "[#{json.join(", ")}]"
   end
