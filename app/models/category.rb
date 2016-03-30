@@ -74,7 +74,7 @@ class Category < ActiveRecord::Base
         <node name='是否显示在首页' column='show_mall' class='required' data_type='radio' data='#{Dictionary.yes_or_no}'/>
         <node name='业务类型' column='yw_type' class='required' data_type='select' data='#{Dictionary.category_yw_type.values}'/>
         <node name='排序号' column='sort' class='digits' hint='只能输入数字,数字越小排序越靠前'/>
-        <node name='审核部门' column='audit_type' class='digits' hint='-1：分公司审核，0：分公司和总公司都审核，1：总公司审核'/>
+        <node name='审核部门' column='audit_type' class='number required' hint='-1：分公司审核，0：分公司和总公司都审核，1：总公司审核'/>
       </root>
     }
   end
