@@ -195,7 +195,7 @@ class Kobe::OrdersController < KobeController
 
   def update_audit
     save_audit(@order)
-    redirect_to list_kobe_orders_path(r: @order.rule.try(:id), tq: Dictionary.tq_no)
+    redirect_to list_kobe_orders_path(r: @order.rule.try(:id), tq: Dictionary.tq_no, ot: @order.ot)
   end
 
   # 根据category_id判断模版是否相同
@@ -245,6 +245,7 @@ class Kobe::OrdersController < KobeController
 
   private
 
+    # 订单中心和审核列表分办公、粮机、汽车 增加筛选条件
     def get_order_type_cdt
       if params[:ot].present? || params[:q][:ot].present?
         # order_type: { bg: ["办公类", ["bg", "gz", "ds"]], lj: ["粮机类", ["lj", "bzw", "gc"]], qc: ["汽车类", ["qc"]] }

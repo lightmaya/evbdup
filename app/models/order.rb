@@ -251,6 +251,16 @@ class Order < ActiveRecord::Base
     "/kobe/orders/ht/#{self.ht_template}"
   end
 
+  # 根据合同模板 判断是哪类订单
+  def ot
+    order_type = ""
+    Dictionary.order_type.each do |k, arr|
+      order_type = k
+      break if arr[1].include?(self.ht_template)
+    end
+    return order_type
+  end
+
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
     self.items.map{ |e| e.category.try(:user_ids) }.flatten.uniq

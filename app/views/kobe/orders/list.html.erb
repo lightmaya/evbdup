@@ -1,1 +1,1 @@
-<%= render :partial => 'list',:locals => { :title => "审核#{@rule.present? ? @rule.name : '订单'}", :search_url => list_kobe_orders_path(r: params[:r]) } %>
+<%= render :partial => 'list',:locals => { :title => "审核#{@rule.present? ? @rule.name : '订单'}", :search_url => list_kobe_orders_path(r: params[:r], tq: params[:tq], ot: params[:ot]) } %>
