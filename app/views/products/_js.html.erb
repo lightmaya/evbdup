@@ -27,8 +27,8 @@
     if ($.isBlank(num)){
       num = 1
     }
-    if ((num + 1) > 9999){
-      num = 9999;
+    if ((num + 1) > 999999999){
+      num = 999999999;
     }
 
     var url = "/cart/change/" + $("#product_id").val() + "-Department-" + seller_id + "?num=" + num;

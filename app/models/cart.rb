@@ -110,7 +110,7 @@ class CartItem
   # 增加或减少购买数量
   def cr(n)
     self.num += n
-    self.num = [9999, self.num].min
+    self.num = [999999999, self.num].min
     self.num = 0 if self.num < 1
   end
 

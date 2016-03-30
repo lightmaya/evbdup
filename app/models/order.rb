@@ -333,6 +333,8 @@ class Order < ActiveRecord::Base
     ha = Dictionary.yw_type
     yw_type_ha = (rule.present? &&  ha.key?(rule)) ? { rule: ha[rule] } : ha.except("grcg")
 
+    ht_ha = Dictionary.order_type.map{|k,v| [k, v[0]]}
+
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
@@ -340,6 +342,7 @@ class Order < ActiveRecord::Base
         <node name='采购单位' column='buyer_name_eq' json_url='/kobe/shared/department_ztree_json' class='tree_radio'/>
         <node name='供应商单位' column='seller_name_cont'/>
         <node name='业务类别' column='yw_type_eq' data_type='select' data='#{yw_type_ha}'/>
+        <node name='订单类别' column='ot' data_type='select' data='#{ht_ha}'/>
         <node name='当前状态' column='status_in' data_type='select' data='#{status_ha}'/>
         <node name='开始日期' column='created_at_gt' class='start_date'/>
         <node name='截止日期' column='created_at_lt' class='finish_date'/>

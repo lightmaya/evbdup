@@ -58,5 +58,17 @@ module AdvancedSearchHelper
     return str.html_safe
   end
 
+  # 订单按办公类、粮机类、汽车类筛选 ha={bg: 10,lj:9} ha：订单数量
+  def get_btn_by_order_type(url, ha={})
+    key = [ params[:ot], params[:q][:ot] ].compact.uniq
+    str = ""
+    pre = url.include?('?') ? '&' : '?'
+    # order_type: { bg: ["办公类", ["bg", "gz", "ds"], "blue"], lj: ["粮机类", ["lj", "bzw", "gc"], "orange"], qc: ["汽车类", ["qc"], "brown"] }
+    Dictionary.order_type.each do | k, arr |
+      title =  ha.present? ? "#{arr[0]} ( #{ha[k.to_sym].present? ? ha[k.to_sym] : 0} )" : arr[0]
+      str << link_to(label_tag(title, "#{'warning' if key.include?(k)}"), "#{url}#{pre}ot=#{k}", class: 'margin-right-10')
+    end
+    return content_tag(:div, str.html_safe, class: '').html_safe
+  end
 
 end

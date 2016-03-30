@@ -6,12 +6,14 @@ class Kobe::OrdersController < KobeController
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
   before_action :get_order, :except => [:index, :new, :create, :cart_order, :update_cart_order, :list, :my_list, :grcg_list, :seller_list, :same_template]
+  before_action :get_order_type_cdt, :only => [:index, :list]
 
   skip_authorize_resource :only => [:same_template]
 
   before_filter :order_from_cart, :only => [:cart_order, :update_cart_order]
   # 辖区内采购项目
   def index
+
     @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders")).not_grcg.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
@@ -242,6 +244,15 @@ class Kobe::OrdersController < KobeController
   end
 
   private
+
+    def get_order_type_cdt
+      if params[:ot].present? || params[:q][:ot].present?
+        # order_type: { bg: ["办公类", ["bg", "gz", "ds"]], lj: ["粮机类", ["lj", "bzw", "gc"]], qc: ["汽车类", ["qc"]] }
+        key = params[:ot].present? ? params[:ot] : params[:q][:ot]
+        arr = Dictionary.order_type[key]
+        params[:q][:ht_template_in] = arr[1] if arr.present?
+      end
+    end
 
     def get_audit_menu_ids
       r = params[:r] if params[:r].present?

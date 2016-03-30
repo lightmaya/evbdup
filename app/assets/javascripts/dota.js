@@ -22,8 +22,8 @@ $(function(){
     if ($.isBlank(parseFloat(num))){
       $num.val(1);
     }
-    if ((parseFloat(num) + 1) > 9999){
-      $num.val(9999);
+    if ((parseFloat(num) + 1) > 999999999){
+      $num.val(999999999);
     }else{
       $num.val((parseFloat(num) + 1).toFixed(3));
     }
@@ -166,8 +166,8 @@ $(function(){
       // if (num <= 1){
       //   num = 1;
       // }
-      if (num >= 9999){
-        num = 9999;
+      if (num >= 999999999){
+        num = 999999999;
       }
     }
     $(this).val(num);

@@ -111,6 +111,8 @@ defaults: &defaults
   # 暂无图片url
   no_pic_url: "/plugins/images/404.gif"
   ht_template: [ ["bg", "办公物资"], ["lj", "粮机物资"], ["qc", "汽车采购"], ["bzw", "包装物采购"], ["gc", "建筑工程"], ["gz", "职工工装"], ["ds", "网上商城"]]
+  # 订单类型
+  order_type: { bg: ["办公类", ["bg", "gz", "ds"]], lj: ["粮机类", ["lj", "bzw", "gc"]], qc: ["汽车类", ["qc"]] }
   # 首页更多标签
   more_tag_type: { article_zytz: '重要通知', article_zbgg: '招标公告', article_jggg: '招标结果公告', wsjj_xq: '网上竞价公告', wsjj_jg: '竞价结果公告', xyzr: '协议转让公告', wchz: '无偿划转公告' }
 
