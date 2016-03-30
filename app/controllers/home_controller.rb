@@ -153,7 +153,7 @@ class HomeController < JamesController
       @price_hash = {title: "入围价格", id: 3, q: "sort"}
       # 关键参数
       @all_qs = if source.is_a?(Category)
-          rs = Product::QS
+          rs = Product::QS.clone
           source.get_key_params_nodes.each do |l|
             data = eval l.attr("data")
             next if data.size <= 1
@@ -161,7 +161,7 @@ class HomeController < JamesController
           end
           rs
         else
-          Product::QS
+          Product::QS.clone
         end
       # all_qs = ["brand", "排气量"]
       @all_qs.each_with_index do |q, index|
