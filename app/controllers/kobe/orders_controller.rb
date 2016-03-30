@@ -142,14 +142,19 @@ class Kobe::OrdersController < KobeController
 
   # 提交
   def commit
-    remark = @order.find_step_by_rule.blank? ? "提交成功！项目已生效。" : "提交成功！请等待#{@order.find_step_by_rule["name"]}。"
-    logs = stateless_logs("提交",remark, false)
-    c_arr = @order.commit_params
-    c_arr << "ht_template = '#{@order.get_ht_template}'"
-    @order.change_status_and_write_logs("提交", logs, c_arr, false)
-    @order.reload.create_task_queue
-    tips_get(remark)
-    redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
+    unless @order.items.map(&:category).compact.size == @order.items.size
+      flash_get("订单品目不存在，请修改订单[凭证编号：#{@order.sn}]！")
+      redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
+    else
+      remark = @order.find_step_by_rule.blank? ? "提交成功！项目已生效。" : "提交成功！请等待#{@order.find_step_by_rule["name"]}。"
+      logs = stateless_logs("提交",remark, false)
+      c_arr = @order.commit_params
+      c_arr << "ht_template = '#{@order.get_ht_template}'"
+      @order.change_status_and_write_logs("提交", logs, c_arr, false)
+      @order.reload.create_task_queue
+      tips_get(remark)
+      redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
+    end
   end
 
   # 审核订单

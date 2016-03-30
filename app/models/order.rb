@@ -238,12 +238,12 @@ class Order < ActiveRecord::Base
   # order_items的category的audit_type数组
   # 获取该订单所有品目的审核类型 返回数组中有>=0的表示总公司审核 <=0表示分公司审核
   def audit_type_array
-    self.items.map{ |item| item.category.audit_type }.uniq.compact
+    self.items.map{ |item| item.category.try(:audit_type) }.uniq.compact
   end
 
   # 获取订单的合同模板
   def get_ht_template
-    self.items.map{ |item| item.category.ht_template }.uniq.compact[0]
+    self.items.map{ |item| item.category.try(:ht_template) }.uniq.compact[0]
   end
 
   # 同一个合同模板才可以下单
@@ -253,7 +253,7 @@ class Order < ActiveRecord::Base
 
   # 根据品目判断审核人 插入待办事项用
   def audit_user_ids
-    self.items.map{|e| e.category.user_ids}.flatten.uniq
+    self.items.map{ |e| e.category.try(:user_ids) }.flatten.uniq
   end
 
   # 根据action_name 判断obj有没有操作
