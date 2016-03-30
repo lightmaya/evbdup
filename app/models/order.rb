@@ -273,7 +273,7 @@ class Order < ActiveRecord::Base
     when "show"
       tmp
     when "update", "edit"
-      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+      (self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id) || current_u.is_boss?
     when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id  && self.budget_money != 0
     when "update_audit", "audit"

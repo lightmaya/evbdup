@@ -106,6 +106,7 @@ module SaveXmlForm
 
   #  手动写入日志 确保表里面有logs和status字段才能用这个函数
   def write_logs(obj,action,remark='')
+    return if current_user.is_daboss?
     doc = prepare_logs_content(obj, action, remark)
     obj.update_columns("logs" => doc)
   end

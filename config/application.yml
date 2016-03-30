@@ -119,6 +119,9 @@ defaults: &defaults
   # 某品目可以选择业务类别 例如：定点采购的订单只能选择可以被2整除的品目
   category_yw_type: { ddcg: [2, "定点采购"], wsjj: [3, "网上竞价"], all: [6, "既可以定点采购又可以网上竞价"], none: [1, "都不能"] }
 
+  # 超级用户的login
+  daboss: [ 'zcl001' ]
+  xiaoboss: [ 'zclxuxiyan', 'zclzhangpuzi', 'zclwangsong', 'zclsunwei' ]
   # 待办事项列表传参数 tq = 13
   tq_no: 13
   # 网上商城

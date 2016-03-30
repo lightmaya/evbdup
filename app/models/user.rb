@@ -294,6 +294,18 @@ class User < ActiveRecord::Base
     [self.mobile, self.tel].select{|i| i.present?}.join(" / ")
   end
 
+  def is_daboss?
+    Dictionary.daboss.include? self.login
+  end
+
+  def is_xiaoboss?
+    Dictionary.xiaoboss.include? self.login
+  end
+
+  def is_boss?
+    self.is_daboss? || self.is_xiaoboss?
+  end
+
   private
 
     def create_remember_token

@@ -64,7 +64,7 @@ class Bargain < ActiveRecord::Base
     when "show"
       current_u.real_department.is_ancestors?(self.department_id)
     when "update", "edit", "choose", "update_choose"
-      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+      (self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id) || current_u.is_boss?
     when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id && self.bids.present?  && self.total != 0
     when "update_audit", "audit"
