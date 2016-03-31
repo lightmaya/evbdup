@@ -40,7 +40,7 @@ class MallController < ApplicationController
   # 获取token
   def get_token(url='')
     tk = MallToken.login_token.first
-    if tk.nil? || tk.due_at< Time.now
+    if tk.nil? || tk.due_at.utc < Time.now
       sign = Digest::MD5::hexdigest(Dictionary.DOTA_PASSWORD + Dictionary.DOTA_USERNAME + Dictionary.DOTA_PASSWORD)[5..12].upcase
       url = "#{get_dota_url(url)}/get_access_token"
       params = {"app_key" => Dictionary.DOTA_USERNAME, "app_secret" => Dictionary.DOTA_PASSWORD, "sign" => sign }
@@ -73,9 +73,9 @@ class MallController < ApplicationController
     return render :json => {"success" => false, "desc" => "sign值不正确"} if sign != params["sign"]
     aot =	MallToken.find_or_initialize_by(name: 'order')
     aot.access_token = SecureRandom.hex
-    aot.due_at = Time.now + 26.hours
+    aot.due_at = (Time.now + 26.hours).utc
     if aot.save
-      render :json => {"success" => true, "desc" => "生成token成功", "token" => aot.access_token, "expires_at" => aot.due_at.to_s}
+      render :json => {"success" => true, "desc" => "生成token成功", "token" => aot.access_token, "expires_at" => aot.due_at.utc.to_s}
     else
       render :json => {"success" => false, "desc" => "生成token失败"}
     end
@@ -210,7 +210,7 @@ class MallController < ApplicationController
   def check_token
     uk = MallToken.order_token.find_by(access_token: params["token"], name: 'order')
     return render :json => {"success" => false, "desc" => "token不正确"} unless uk
-    return render :json => {"success" => false, "desc" => "token已过期"} if Time.now > uk.due_at
+    return render :json => {"success" => false, "desc" => "token已过期"} if Time.now > uk.due_at.utc
   end
 
 end
