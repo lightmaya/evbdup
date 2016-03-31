@@ -26,7 +26,7 @@ class UsersController < JamesController
       sign_in_user(user, user_params[:remember_me] == '1')
       if user.department.get_tips.blank?
         # tips_get '登录成功！'
-        redirect_to root_path
+        redirect_to params[:mall_type].present? ? mall_path(mall_type: params[:mall_type]) : root_path
       else
         flash_get user.department.get_tips
         redirect_to kobe_departments_path

@@ -5,7 +5,7 @@
 
         <%= form_for(User.new, url: login_users_path, method: :post, html: { class: "sky-form reg-page", id: "sign_in_form" }) do |u| %>
           <header class='margin-top-10'><span class="icon-user" aria-hidden="true"></span> 用户登录</header>
-
+          <%= hidden_field_tag "mall_type", params[:mall_type] %>
           <fieldset>
             <section>
               <div class="row">

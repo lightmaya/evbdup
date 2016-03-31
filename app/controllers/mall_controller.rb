@@ -5,25 +5,25 @@ class MallController < ApplicationController
   # 登录跳转到电商平台
   def index
     if current_user && current_user.cgr?
-      redirect_to action: "redirect_to_dota"
+      redirect_to redirect_to_dota_mall_index_path(mall_type: params[:mall_type])
     else
-      redirect_to "#{get_dota_url}"
+      redirect_to get_dota_url(params[:mall_type], true)
     end
   end
 
   # 判断是否登录
   def redirect_to_dota
     if current_user && current_user.cgr?
-      url = "#{get_dota_url(params[:back])}/api/get_user_token"
-      user_params = { "token" => get_token(params[:back]), "userid" => current_user.id, "username" => current_user.login,
+      url = "#{get_dota_url(params[:mall_type])}/get_user_token"
+      user_params = { "token" => get_token(params[:mall_type]), "userid" => current_user.id, "username" => current_user.login,
         "realname" => current_user.name, "usertype" => current_user.user_type,
         "topname" => current_user.department.top_dep.try(:name), "depname" => current_user.real_department.name,
         "depcode" => current_user.real_dep_code
       }
       rs = get_api(url,user_params)
       if rs["success"] == true
-        redirect_url = "#{get_dota_url(params[:back])}/api/token_sign_in?auth_token=#{rs['auth_token']}&token=#{get_token(params[:back])}"
-        redirect_url << "&back=#{params[:back]}" unless params[:back].blank?
+        redirect_url = "#{get_dota_url(params[:mall_type])}/token_sign_in?auth_token=#{rs['auth_token']}&token=#{get_token(params[:mall_type])}"
+        # redirect_url << "&back=#{params[:back]}" unless params[:back].blank?
         redirect_to redirect_url
       else
         render :text => rs["desc"]
@@ -42,7 +42,7 @@ class MallController < ApplicationController
     tk = MallToken.login_token.first
     if tk.nil? || tk.due_at< Time.now
       sign = Digest::MD5::hexdigest(Dictionary.DOTA_PASSWORD + Dictionary.DOTA_USERNAME + Dictionary.DOTA_PASSWORD)[5..12].upcase
-      url = "#{get_dota_url(url)}/api/get_access_token"
+      url = "#{get_dota_url(url)}/get_access_token"
       params = {"app_key" => Dictionary.DOTA_USERNAME, "app_secret" => Dictionary.DOTA_PASSWORD, "sign" => sign }
       rs = get_api(url, params)
       if rs["success"] == true
@@ -194,15 +194,17 @@ class MallController < ApplicationController
   end
 
   # 电商平台的URL
-  def get_dota_url(url='')
-  rs = "http://mall.sinograin.com.cn"
-  unless url.blank?
-    ["http://mall.sinograin.com.cn", "http://zcl.sinopr.org", "http://61.135.234.27"].each do |a|
-      next unless url.include? a
-      rs = a
+  def get_dota_url(type='', home_index=false)
+    case type
+    when "mall"
+      tmp = "http://mall.sinograin.com.cn"
+      home_index ? tmp : "#{tmp}/api"
+    when "govbuy"
+      tmp = "http://sinograin.govbuy.cn"
+      home_index ? tmp : "#{tmp}/backend/api/1"
+    else
+      ""
     end
-  end
-  return rs
   end
 
   def check_token
