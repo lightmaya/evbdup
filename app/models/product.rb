@@ -35,7 +35,10 @@ class Product < ActiveRecord::Base
       end
       integer :department_id
       integer :category_id
-      boolean :show
+      integer :status
+      boolean :is_show do
+        self.show
+      end
       time :created_at
       time :updated_at
       integer :id
@@ -48,14 +51,16 @@ class Product < ActiveRecord::Base
       options[:page_num] = Sunspot.search(Product).total
       params[:page] = 1
     end
-    options[:show] ||= 1
+    # options[:show] ||= 1
     conditions = Proc.new{
       fulltext params[:k] do
         highlight :model
         highlight :brand
         highlight :version
       end if params[:k].present?
-      with(:show, options[:show]) if options[:show].present?
+      with(:status, self.effective_status)
+      with(:is_show, true)
+      # with(:show, options[:show]) if options[:show].present?
       order_by :id
       paginate :page => params[:page], :per_page => options[:page_num]
     }

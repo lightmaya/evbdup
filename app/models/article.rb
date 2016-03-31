@@ -50,7 +50,7 @@ class Article < ActiveRecord::Base
   def self.search(params = {}, options = {})
     options[:page_num] ||= 30
     if options[:all]
-      options[:page_num] = Sunspot.search(Product).total
+      options[:page_num] = Sunspot.search(Article).total
       params[:page] = 1
     end
     options[:status]||= self.effective_status
