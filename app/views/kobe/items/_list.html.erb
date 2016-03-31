@@ -38,7 +38,7 @@
                     <td><%= show_index(index) %></td>
                     <td><%= obj.name %></td>
                     <td><%= dict_value (obj.item_type ? 1 : 0), "item_type" %></td>
-                    <td><%= "#{obj.begin_time} 至 #{obj.end_time}" %></td>
+                    <td><%= "#{show_date(obj.begin_time)} 至 #{show_date(obj.end_time)}" %></td>
                     <td><%= obj.status_badge %></td>
                     <td><%= btn_group(items_btn(obj)) %></td>
                 </tr>

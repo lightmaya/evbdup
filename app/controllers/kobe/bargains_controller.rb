@@ -305,7 +305,7 @@ class Kobe::BargainsController < KobeController
       arr = []
       Nokogiri::XML(product.details).css("node").each do |n|
         next if n["value"].blank?
-        arr << %Q|extractvalue(details, '//node[@name=\"#{n["name"]}\"]/@value') = '#{n["value"]}'|
+        arr << %Q|extractvalue(products.details, '//node[@name=\"#{n["name"]}\"]/@value') = '#{n["value"]}'|
       end
       return arr
     end
