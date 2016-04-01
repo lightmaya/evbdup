@@ -195,7 +195,13 @@ module AboutStatus
         ha["不通过"] = { start_status => return_status, 10 =>  return_status, 42 => return_status }
 
         # 网上竞价选择中标人
-        ha["选择中标人"] = { self.class.bid_and_choose_status => start_status } if self.class == BidProject
+        if self.class == BidProject
+          ha["选择中标人"] = Hash.new
+          key_arr = BidProject.buyer_edit_status
+          key_arr << BidProject.bid_and_choose_status
+          key_arr.each{ |a| ha["选择中标人"][a] = start_status }
+          # ha["选择中标人"] = { self.class. => start_status }
+        end
       end
     end
     return ha
