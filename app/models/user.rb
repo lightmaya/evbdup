@@ -252,7 +252,7 @@ class User < ActiveRecord::Base
     when "show", "index", "only_show_info", "only_show_logs"
       true
     when "edit", "update", "reset_password", "update_reset_password"
-      self.class.edit_status.include?(self.status) && self.class.edit_status.include?(self.department.status) && cdt || self.id == current_u.id
+      cdt || self.id == current_u.id
     when "recover", "update_recover"
       self.can_opt?("恢复") && cdt
     when "freeze", "update_freeze"
