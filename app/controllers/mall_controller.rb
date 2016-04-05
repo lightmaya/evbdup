@@ -39,7 +39,8 @@ class MallController < ApplicationController
 
   # 获取token
   def get_token(url='')
-    tk = MallToken.login_token.first
+    mt = url == "mall" ? MallToken.mall : MallToken.govbuy
+    tk = mt.first
     if tk.nil? || tk.due_at.utc < Time.now
       sign = Digest::MD5::hexdigest(Dictionary.DOTA_PASSWORD + Dictionary.DOTA_USERNAME + Dictionary.DOTA_PASSWORD)[5..12].upcase
       url = "#{get_dota_url(url)}/get_access_token"
@@ -47,7 +48,7 @@ class MallController < ApplicationController
       rs = get_api(url, params)
       if rs["success"] == true
         if tk.nil?
-          MallToken.create(name: 'login', access_token: rs["token"], due_at: rs["expires_at"])
+          mt.create(access_token: rs["token"], due_at: rs["expires_at"])
         else
           tk.update(access_token: rs["token"], due_at: rs["expires_at"])
         end
