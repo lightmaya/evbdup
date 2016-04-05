@@ -127,7 +127,7 @@ class MallController < ApplicationController
       return render :json => {"success" => false, "desc" => "产品品目[#{par["gid"]}]不存在!"} if ca.blank?
       p_name_arr = par["name"].split
       order.items.create(market_price: par["market_price"].to_f, quantity: par["num"].to_f, price: par["price"].to_f,
-        category_id: ca.id, category_code: ca.ancestry, category_name: ca.name,
+        category_id: ca.try(:id), category_code: ca.try(:ancestry), category_name: ca.try(:name),
         brand: p_name_arr[0], model: p_name_arr[1], version: p_name_arr[2..p_name_arr.size].join, unit: par["unit"],
         total: par["num"].to_f * par["price"].to_f
         )
