@@ -32,7 +32,7 @@
 
     <p>
       入围企业：
-      <%= @product.item_dep.try(:classify) == 0 ?  @product.item_dep.name : "#{@product.item_dep.name} ( #{dep_classify_span(@product.item_dep.classify)} )".html_safe %>
+      <%= @product.item_dep.try(:classify) == 0 ?  @product.item_dep.try(:name) : "#{@product.item_dep.name} ( #{dep_classify_span(@product.item_dep.classify)} )".html_safe %>
     </p>
 
     <%= check_login_and_show_price(@product.id) %>
