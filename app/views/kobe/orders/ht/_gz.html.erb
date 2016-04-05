@@ -1,0 +1,91 @@
+<div class="certificate">
+<div class="h_content" style="line-height:150%;">
+    <div id="output1" class="erweima"><%=@qr.html_safe%></div>
+    <div class="h1">中国储备粮管理总公司集中采购供货合同</div>
+    <div class="h2">【合同编号：<%=raw @order.contract_sn%>】</div>
+    <div class="fl_2em" style="margin-bottom:8px;">核查合同文本格式条款内容的正确方法：供货商申请签署的每一个合同在系统中都会生成 “ 唯一的 ”电子合同编号，各单位的审计、财务人员可以登陆电子交易系统（http://fwgs.sinograin.com.cn中储粮服务网）输入合同号核查合同文本格式条款内容，若需进一步查询请直接与总公司联系。</div>
+    <div class="h3 float_left">甲方：<%=raw  @order.buyer_name %></div>
+    <div class="h3 float_right">乙方：<%=raw @order.seller_name %></div>
+    <div style="clear:both"></div>
+    <p class="fl_2em">甲乙双方依据中储粮服务公司职工工装采购框架协议签订本合同。甲乙双方经协商一致，就甲方向乙方采购服装产品一事达成以下协议：</p>
+    <p>第一条  标的、规格、单价 </p>
+    <%= render  partial: "/kobe/orders/ht/order_items_content" %>
+    <p>备注：
+      <div style="margin-left:2em;">
+      1、以上项目产品具体技术参数要求详见《中储粮总公司工装工艺标准》。<br/>
+      2、以上单价包括全额乙方应承担的全部税费、运费、装卸费和售后服务费，甲方按上述价格付款后，无需向乙方再支付其他任何费用。<br/>
+      3、本合同经双方签字、盖章确认后生效。<br/>
+      4、乙方每批次供货应严格按照《中储粮总公司工装工艺标准》进行生产。<br/>
+      </div>
+    </p>
+    <p>第二条  质量标准<br/>
+      <div style="margin-left:2em;">
+      （一）乙方必须按照合同以及中储粮总公司工装工艺标准规定进行生产。<br/>
+      （二）乙方对产品的质量保质期为一年。因乙方造成的质量问题或未按照量体尺寸制作的服装由乙方在<span class="underline"> 15 </span>日内负责返修或重新制作。甲方在穿着过程中出现质量问题由乙方负责保修，保修期为<span class="underline"> 1 </span>年。
+      </div>
+    </p>
+    <p>第三条  包装条款<br/>
+      <div style="margin-left:2em;">
+          每件产品具有单独包装，再整体装箱，包装箱外应写清箱内产品种类和数量，并标清收送货单位。产品包装需要可以保证产品在长途运输过程中避免损坏。
+      </div>
+    </p>
+    <p>第四条  交货时间、地点、运输方式<br/>
+      <div style="margin-left:2em;">每批次产品交货期按实际约定时间为准，货物交于甲方指定地点。</div>
+    </p>
+    <p>第五条  验收条款<br/>
+    <div style="margin-left:2em;">
+      自货物交付后，甲方按照《中储粮总公司工装工艺标准》质量标准对标的物进行检验。质量异议期自收到货物之日起7日。
+    </div>
+    </p>
+    <p>第六条  结算方式<br/>
+      <div style="margin-left:2em;">
+        甲乙双方按以下方式进行结算：
+        <div style="margin-left:2em;">
+        双方签订合同起<span class="underline">  5  </span>日内一次性支付合同总价的<span class="underline">  30  </span>%（即<span class="underline">  <%=raw "&nbsp;"*16%></span>元）作为预付款。自甲方验收合格之日起一周内由乙方向甲方开具发票后，甲方再支付合同总价的<span class="underline"> 65 </span>%，余款<span class="underline"> 5 </span>%作为质量保证金，一年后退回。
+        </div>
+      </div>
+    </p>
+    <p>第七条  争议解决<br/>
+      <div style="margin-left:2em;">
+        本合同在履行过程中发生的争议，由双方当事人协商解决，协议不成，任何一方有权向原告方所在地人民法院提起起诉。
+      </div>
+    </p>
+    <p>第八条  不可抗力条款<br/>
+    <div style="margin-left:2em;">
+     任何一方由于不可抗力的原因不能履行合同时，应及时向对方通报不能履行或是不能完全履行的理由，并在<span class="underline"> 7 </span>日内提供相关政府部门或机构出具的不可抗力的证明。双方协商，可允许延期履行、部分履行或者不履行合同，并根据情况可部分或是全部免于承担违约责任。
+    </div>
+    </p>
+    <p>第九条  保密条款<br/>
+    <div style="margin-left:2em;">
+      任何一方均对本合同的全部内容及在合同履行过程中接触到的对方的商业秘密负责保密义务，任何一方发现对方有约行为，有权提出终止合同，并要求违约方承担相应的违约责任。
+    </div>
+    </p>
+    <p>第十条  其他事项<br/>
+    <div style="margin-left:2em;">
+      本合同一式<span class="underline">  2  </span>份，甲方<span class="underline"> 1 </span>份，乙方<span class="underline"> 1 </span>份，自双方盖章之日起生效，本合同有效期自<span class="underline">  <%=raw "&nbsp;"*6%></span>年<span class="underline">  <%=raw "&nbsp;"*6%></span>月<span class="underline">  <%=raw "&nbsp;"*6%></span>日起至<span class="underline">  <%=raw "&nbsp;"*6%></span> 年<span class="underline">  <%=raw "&nbsp;"*6%></span>月<span class="underline">  <%=raw "&nbsp;"*6%></span>日至。
+    </div>
+    </p>
+    <p></p>
+    <div style="clear:both"></div>
+    <div style="clear:both">
+        <div class="float_left">甲方（签章）：<%=raw @order.buyer_name %></div>
+        <div class="float_left">乙方（签章）：<%=raw @order.seller_name %></div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">甲方代表（签字）：</div>
+        <div class="float_left">乙方代表（签字）：</div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">地址：<%=raw @order.buyer_addr%></div>
+        <div class="float_left">地址：<%=raw @order.seller_addr%></div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">电话：<%=raw @order.buyer_tel%></div>
+        <div class="float_left">电话：<%=raw @order.seller_tel%></div>
+    </div>
+    <div style="clear:both">
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
+        <div class="float_left">合同签订日期：<%=raw "&nbsp;"*8%>年<%=raw "&nbsp;"*4%>月<%=raw "&nbsp;"*4%>日</div>
+    </div>
+</div>
+</div>
