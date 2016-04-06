@@ -40,7 +40,7 @@ class Bargain < ActiveRecord::Base
     # ["结果等待审核", 22, "sea", 60], ["废标等待审核", 29, "sea", 60], ["已成交", 23, "u", 100], ["已删除", 404, "dark", 100],
     # ["已作废", 47, "dark", 100], ["等待报价", 17, "brown", 30], ["等待选择成交人", 18, "light-green", 50]
     # ]
-    self.get_status_array(["暂存", "等待报价", "已成交", "等待选择成交人", "已作废", "结果等待审核", "结果审核拒绝", "已删除", "废标等待审核", "废标审核拒绝"])
+    self.get_status_array(["暂存", "等待报价", "选定成交人", "等待选择成交人", "已作废", "结果等待审核", "结果审核拒绝", "已删除", "废标等待审核", "废标审核拒绝"])
   end
 
   # 等待选择成交人的状态
@@ -196,7 +196,7 @@ class Bargain < ActiveRecord::Base
 
     order.summary = self.summary
     order.user_id = self.user_id
-    order.status = self.status
+    order.status = 107
 
     order.details = self.details
     # order.logs = self.logs.to_s

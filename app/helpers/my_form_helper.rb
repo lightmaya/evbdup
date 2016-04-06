@@ -5,8 +5,9 @@ module MyFormHelper
   def draw_myform(myform)
     set_top_part(myform) # 设置FORM头部
     set_input_part(myform) #设置主表input
-    if myform.options.has_key?(:show_total) && myform.options[:show_total] == true
-      set_total_part(myform) # 设置金额
+    if myform.options.has_key?(:show_total)
+      set_total_part(myform) if myform.options[:show_total] == true # 设置主从表金额
+      set_total_by_array(myform) if myform.options[:show_total].is_a?(Array) # 根据数组计算单表的金额
     end
     if myform.options.has_key?(:upload_files) && myform.options[:upload_files] == true
       set_upload_part(myform) # 设置上传附件
@@ -67,7 +68,7 @@ module MyFormHelper
     myform.get_form_button(self_form)
   end
 
-  # 设置金额
+  # 设置主从表金额
   def set_total_part(myform)
     # 附加费用
     if myform.obj.class.respond_to?(:fee_xml)
@@ -93,6 +94,29 @@ module MyFormHelper
       });
       </script>
     |
+  end
+
+  # 根据数组计算单表的金额
+  def set_total_by_array(myform)
+    arr = myform.options[:show_total]
+    if arr.is_a?(Array)
+      myform.html_code << show_total_part
+      tmp = ""
+      arr.each do |a|
+        tmp << %Q{
+          $("input##{myform.table_name}_#{a}").live('change blur',function(){
+            sum_total_by_array("#{myform.table_name}", #{arr});
+          });
+        }
+      end
+      myform.html_code << %Q|
+        <script type="text/javascript">
+        $(function() {
+          #{tmp}
+        });
+        </script>
+      |
+    end
   end
 
 end

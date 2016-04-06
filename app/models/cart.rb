@@ -27,7 +27,7 @@ class Cart
       set ? current_item.num = num : current_item.cr(num)
       destroy(cart_item_id) if current_item.num <= 0
     else
-      current_item = CartItem.new({:market_price => product.market_price, :ready => true,
+      current_item = CartItem.new({:market_price => product.market_price, :ready => true, :summary => product.summary,
       :bid_price => product.bid_price, :price => product.bid_price, :product_id => product.id, :num => num, # [num, 1].max,
       :name => product.name, :seller_id => seller.id, id: cart_item_id, sid: sid,
       :seller_name => seller.name, ht: product.category.ht_template,
@@ -82,7 +82,7 @@ end
 class CartItem
 
   attr_accessor :product_id, :num, :price, :name, :sku, :ready, :id, :ht, :sid,
-    :market_price, :old_price, :bid_price, :seller_id, :seller_name, :big_category_name
+    :market_price, :old_price, :bid_price, :seller_id, :seller_name, :big_category_name, :summary
 
   def initialize(attributes = {})
     self.product_id = attributes[:product_id]
@@ -101,6 +101,7 @@ class CartItem
     self.ready = attributes[:ready]
     self.market_price = attributes[:market_price]
     self.big_category_name = attributes[:big_category_name]
+    self.summary = attributes[:summary]
   end
 
   def product

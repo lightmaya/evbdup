@@ -14,7 +14,7 @@ class HomeController < JamesController
     jggg_articles = get_articles('招标结果公告')
     @jggg = jggg_articles.present? ? jggg_articles.order("id desc").limit(8) : []
     # 网上竞价需求公告
-    @wsjj_xq = BidProject.can_bid.order("end_time desc").limit(8)
+    @wsjj_xq = BidProject.can_bid.order("end_time").limit(8)
     # 网上竞价结果公告
     @wsjj_jg = BidProject.where(status: [23, 33]).order("end_time desc").limit(8)
     # 畅销产品
@@ -40,7 +40,7 @@ class HomeController < JamesController
       end
 
       # 网上竞价需求公告
-      @rs = BidProject.can_bid.order("end_time desc").page(params[:page]) if params[:type] == 'wsjj_xq'
+      @rs = BidProject.can_bid.order("end_time").page(params[:page]) if params[:type] == 'wsjj_xq'
       # 网上竞价结果公告
       @rs = BidProject.where(status: [23, 33]).order("end_time desc").page(params[:page]) if params[:type] == 'wsjj_jg'
 

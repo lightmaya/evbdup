@@ -4,7 +4,7 @@
 	padding: 0;
 	list-style: none;
 	position: relative;
-} 
+}
 
 /* The line */
 .timeline-v2 > li{
@@ -53,13 +53,13 @@
 /* Right content */
 .timeline-v2 > li .cbp_tmlabel {
 	/*color: #fff;*/
-	padding: 10px 20px 20px;
+	padding: 10px 20px;
 	background: #f3f3f3;
 	line-height: 1.4;
 	clear: both;
 	position: relative;
 	border-radius: 5px;
-	margin: 0 0 40px 25%;
+	margin: 0 0 15px 25%;
 }
 
 /*
@@ -79,7 +79,7 @@
 }
 */
 
-.timeline-v2 > li .cbp_tmlabel h2 { 
+.timeline-v2 > li .cbp_tmlabel h2 {
 	margin-top: 0px;
 	font-size: 21px;
 	padding: 0 0 5px;
@@ -161,6 +161,6 @@
 		float: right;
 		position: relative;
 		margin: -55px 5px 0 0px;
-	}	
+	}
 }
 

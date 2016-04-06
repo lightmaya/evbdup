@@ -32,7 +32,7 @@ class Item < ActiveRecord::Base
       ItemDepartment.destroy_all(item_id: self.id, name: (all_names - names))
 
       names.each do |name|
-        dep = Department.find_by(name: name, ancestry: 3)
+        dep = Department.find_by(name: name, ancestry: Dictionary.dep_supplier_id)
         tmp = (dep.present? ? { name: name, department_id: dep.id } : { name: name })
         self.item_departments.find_or_create_by(tmp)
       end

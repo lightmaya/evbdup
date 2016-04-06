@@ -65,7 +65,7 @@ class BidProject < ActiveRecord::Base
     #   ["已废标", "33", "dark", 100],
     #   ["已删除", "404", "dark", 100]
     # ]
-    self.get_status_array(["暂存", "需求等待审核", "需求审核拒绝", "已发布", "结果等待审核", "结果审核拒绝", "已成交", "废标等待审核", "废标审核拒绝", "已废标", "已删除"])
+    self.get_status_array(["暂存", "需求等待审核", "需求审核拒绝", "已发布", "结果等待审核", "结果审核拒绝", "选定成交人", "废标等待审核", "废标审核拒绝", "已废标", "已删除"])
 		# [
 	 #    ["暂存", 0, "orange", 20],
   #     ["需求等待审核", 1, "blue", 40],
@@ -217,7 +217,7 @@ class BidProject < ActiveRecord::Base
 
     order.summary = self.req
     order.user_id = self.user_id
-    order.status = self.status
+    order.status = 107
 
     order.details = self.details
     # order.logs = self.logs.to_s

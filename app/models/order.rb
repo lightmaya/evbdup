@@ -7,6 +7,7 @@ class Order < ActiveRecord::Base
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
   belongs_to :budget
+  belongs_to :rate
 
   scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("orders.buyer_code like '#{dep_real_ancestry}/%' or orders.buyer_code = '#{dep_real_ancestry}'") }
   scope :find_all_by_seller, ->(seller_id, seller_name) { where("orders.seller_id = #{seller_id} or orders.seller_name = '#{seller_name}'") }
@@ -21,6 +22,7 @@ class Order < ActiveRecord::Base
 
   default_value_for :status, 0
   default_value_for :budget_money, 0
+  default_value_for :rate_total, 20
 
   include AboutStatus
 
@@ -38,7 +40,7 @@ class Order < ActiveRecord::Base
   end
 
   before_save do
-    self.seller_id = Department.find_by(name: self.seller_name).try(:id) if self.seller_id.blank?
+    self.seller_id = Department.find_by(name: self.seller_name, ancestry: Dictionary.dep_supplier_id).try(:id) if self.seller_id.blank?
   end
 
   PTypes = {"xygh" => "单位采购", "grcg" => "个人采购"}
@@ -62,7 +64,7 @@ class Order < ActiveRecord::Base
     #   ["已拆单", "5", "dark", 100], ["等待收货", "11", "light-green", 50], ["已删除", "404", "dark", 100]
     # ]
     self.get_status_array(["暂存", "等待审核", "审核拒绝", "自动生效", "审核通过", "已完成",
-      "等待卖方确认", "等待买方确认", "卖方退回", "买方退回", "已拆单", "等待收货",
+      "等待卖方确认", "等待买方确认", "卖方退回", "买方退回", "已拆单", "等待收货", "已开发票",
       "撤回等待审核", "作废等待审核", "已作废", "已撤回", "拒绝撤回", "拒绝作废", "已删除", "已成交", "汇款处理中", "等待汇款"])
 
 		# [
@@ -88,6 +90,11 @@ class Order < ActiveRecord::Base
   # 核对电子凭证真伪的状态
   def self.ysd_status
     [100]
+  end
+
+  # 可以评价或查看评价的状态
+  def self.rate_status
+    [93, 100]
   end
 
   def self.buyer_status
@@ -157,7 +164,7 @@ class Order < ActiveRecord::Base
         category_id: product.category_id, category_code: product.category_code,
         category_name: product.category.name, brand: product.brand, model: product.model,
         version: product.version, unit: product.unit, bid_price: product.bid_price,
-        item_id: product.item_id, total: item.num * item.price, vid: item.id
+        item_id: product.item_id, total: item.num * item.price, vid: item.id, summary: item.summary
         )
       cart.destroy(item.id) # 清空购物车
       category_name_ary << product.category.name
@@ -288,6 +295,8 @@ class Order < ActiveRecord::Base
       self.class.buyer_status.include?(self.status) && self.user_id == current_u.id
     when "delete", "destroy"
       self.can_opt?("删除") && current_u.try(:id) == self.user_id
+    when "rating", "update_rating"
+      self.class.rate_status.include?(self.status) && current_u.try(:id) == self.user_id
     else false
     end
   end

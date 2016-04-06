@@ -227,7 +227,7 @@ class Kobe::OrdersController < KobeController
   end
 
   def update_invoice_number
-     @order.update(invoice_number: params[:number], effective_time: Time.now)
+     @order.update(invoice_number: params[:number], effective_time: Time.now, status: 93)
      write_logs(@order, '填写发票', "发票号：#{params[:number]}")
      redirect_back_or request.referer
   end
@@ -240,6 +240,27 @@ class Kobe::OrdersController < KobeController
   def destroy
     @order.change_status_and_write_logs("删除", stateless_logs("删除",params[:opt_liyou],false))
     tips_get("删除成功。")
+    redirect_back_or request.referer
+  end
+
+  # 评价
+  def rating
+    if @order.rate.present?
+      @show_rate = show_obj_info(@order.rate, Rate.xml, { grid: 1 })
+      @show_rate << show_total_part(@order.rate_total, "总分")
+    else
+      @myform = SingleForm.new(Rate.xml, Rate.new, { form_id: "rate_form", title: false,
+        action: update_rating_kobe_order_path(@order), grid: 3, show_total: ["jhsd", "fwtd", "cpzl", "jjwt", "dqhf", "xcfw", "bpbj"] })
+    end
+    render layout: false
+  end
+
+  def update_rating
+    rate = create_and_write_logs(Rate, Rate.xml)
+    if rate.present?
+      @order.update(rate_id: rate.id, rate_total: rate.total, status: 100)
+      write_logs(@order, '评价', "总分：#{rate.total}")
+    end
     redirect_back_or request.referer
   end
 
@@ -301,6 +322,11 @@ class Kobe::OrdersController < KobeController
         @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@order) }
         # @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
         @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@order) }
+      end
+      if @order.rate.present?
+        rate_cont = show_obj_info(@order.rate, Rate.xml, { grid: 1 })
+        rate_cont << show_total_part(@order.rate_total, "总分")
+        @arr << { title: "评价", icon: "fa-thumbs-o-up", content: rate_cont }
       end
     end
 

@@ -19,11 +19,20 @@
       </li>
       <!-- End 公务用车 -->
 
+      <!-- 网上商城 -->
+      <li class="dropdown">
+        <a data-toggle="dropdown" class="dropdown-toggle" href="javascript:void(0);">网上商城</a>
+        <ul class="dropdown-menu">
+          <li><%= link_to_blank "单位采购商城", mall_path(mall_type: 'mall') %></li>
+          <li><%= link_to_blank "员工团购商城", mall_path(mall_type: 'govbuy') %></li>
+        </ul>
+      </li>
+      <!-- End 网上商城 -->
+
       <!-- 办公用品 -->
       <li class="dropdown">
         <a aria-expanded="false" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">办公用品</a>
         <ul class="dropdown-menu">
-          <li><%= link_to_blank "网上商城", mall_path(mall_type: 'mall') %></li>
           <li class="dropdown-submenu">
             <%= link_to_void "办公设备" %>
             <ul class="dropdown-menu">
@@ -191,7 +200,7 @@
       <!-- End 粮食检化验设备 -->
 
       <li class="dropdown">
-        <a aria-expanded="false" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">化学药品药剂</a>
+        <a aria-expanded="false" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">化学药剂</a>
         <ul class="dropdown-menu">
           <%= li_link_to_tag("磷化铝药剂", 125) %>
           <%= li_no_link_tag("防护剂 *") %>

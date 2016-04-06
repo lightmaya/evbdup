@@ -96,7 +96,7 @@ module BtnArrayHelper
 
   def orders_btn(obj,only_audit=false)
     arr = []
-    name= obj.invoice_number.present? ? "已开发票" : "未开发票"
+    name= obj.invoice_number.present? ? "修改发票号" : "填写发票号"
     # 查看详细
     arr << [obj.class.icon_action("详细"), kobe_order_path(obj), target: "_blank"] if can?(:read, obj) && obj.cando("show",current_user)
     # 修改
@@ -107,8 +107,10 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_order_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
     # 打印
     arr << [obj.class.icon_action("打印"), "#opt_dialog", "data-toggle" => "modal",onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("打印 合同/凭证")}", "#{print_kobe_order_path(obj)}", '#opt_dialog') } ] if can?(:print_order, obj) && obj.cando("print",current_user)
-    #是否开发票
+    # 是否开发票
     arr << [obj.class.icon_action(name), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("发票编号")}" , "#{invoice_number_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:invoice_number, obj) && obj.cando("invoice_number",current_user)
+    # 评价
+    arr << [obj.class.icon_action("评价"), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("评价")}" , "#{rating_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:rating, obj) && obj.cando("rating",current_user)
     # 卖方确认
     arr << [obj.class.icon_action("卖方确认"), agent_confirm_kobe_order_path(obj)] if can?(:agent_confirm, obj) && obj.cando("agent_confirm",current_user)
     # 买方确认

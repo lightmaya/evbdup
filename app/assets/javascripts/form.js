@@ -122,3 +122,20 @@ function sum_calc_total(master_table_names,slave_table_names) {
     $("#"+master_table_names+"_total").val(total);
     $(".show_total #form_sum_total").text(total);
 };
+
+// 根据数组计算单表的金额
+function sum_total_by_array(table_names, arr) {
+  var total = 0;
+  $.each(arr, function(index, value){
+    var me = $("input[name^='" + table_names + "[" + value + "]']")
+    var thisValue = me.val();
+    if ( !isEmpty(thisValue) ) {
+      total += formatFloat(parseFloat(thisValue),2);
+      me.val(formatFloat(parseFloat(thisValue),2));
+    };
+  });
+
+  total = formatFloat(total,2);
+  $("#"+ table_names + "_total").val(total);
+  $(".show_total #form_sum_total").text(total);
+}

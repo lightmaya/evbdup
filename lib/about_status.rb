@@ -165,6 +165,8 @@ module AboutStatus
 
   # 根据不同操作 改变状态
   def change_status_hash
+    # 如果是订单表 并且已经填写发票号 提交和审核通过的状态变成93
+    tmp = self.class == Order && self.invoice_number.present?
     ha = {
       "删除" => { 0 => 404, 65 => 404 },
 
@@ -176,7 +178,7 @@ module AboutStatus
       "回复" => { 58 => 75 }
     }
 
-    auto_status = self.class.auto_effective_status.first
+    auto_status = tmp ? 93 : self.class.auto_effective_status.first
     ha["提交"] = { 0 => auto_status, 7 => auto_status, 14 => 16 } if auto_status.present?
 
     if self.class.attribute_method? "rule"
@@ -190,6 +192,7 @@ module AboutStatus
         # 如果当前状态是修改状态，提交后变成开始某流程步骤的状态 start_status
         ha["提交"] = { self.status => start_status } if self.class.only_edit_status.include? self.status
         # 通过本步骤 状态转向 下一步的开始状态 如果没有下一步则是本部的结束状态
+        finish_status = tmp ? 93 : finish_status
         ha["通过"] = { start_status => finish_status, 10 =>  finish_status, 42 => finish_status }
         # 不通过 状态转向 本步的退回状态
         ha["不通过"] = { start_status => return_status, 10 =>  return_status, 42 => return_status }

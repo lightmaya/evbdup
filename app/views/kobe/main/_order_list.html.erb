@@ -3,28 +3,26 @@
 </div>
 <%= modal_dialog("opt_dialog") %>
 <div class="table-search-v1 margin-bottom-20">
-  <div class="table-responsive">
-    <table class="table table-hover table-bordered table-striped">
-      <thead>
-        <tr>
-          <th>项目编号</th>
-          <th class="hidden-sm">项目名称</th>
-          <th>总金额（元）</th>
-          <th>状态</th>
-          <th class="cando">操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @orders.each do |order| %>
-        <tr>
-          <td><%= order.sn %></td>
-          <td><%= order.name %></td>
-          <td class="money"><%= money order.total %></td>
-          <td><%= order.status_bar %></td>
-          <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
-        </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+  <table class="table table-hover table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>项目编号</th>
+        <th class="hidden-sm">项目名称</th>
+        <th>总金额（元）</th>
+        <th>状态</th>
+        <th class="cando">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+      <tr>
+        <td><%= order.sn %></td>
+        <td><%= order.name %></td>
+        <td class="money"><%= money order.total %></td>
+        <td><%= order.status_bar %></td>
+        <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
