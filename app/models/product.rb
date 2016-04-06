@@ -80,7 +80,7 @@ class Product < ActiveRecord::Base
   # 代理商
   def agents
     # item.try(:agents)
-    Agent.where(department_id: self.department_id, item_id: self.item_id, status: Agent.effective_status).map(&:agent_dep)
+    Agent.where(department_id: self.department_id, item_id: self.item_id, status: Agent.effective_status).order(:name).map(&:agent_dep)
   end
 
   def show
