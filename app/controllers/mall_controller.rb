@@ -83,7 +83,7 @@ class MallController < ApplicationController
   end
 
   def create_order
-    mall = Order.find_by(mall_id: params["id"], yw_type: 'dscg')
+    mall = Order.find_by(mall_id: params["id"], yw_type: ['dscg', 'grcg'])
     return render :json => {"success" => false, "desc" => "ID已存在"} if mall.present?
     user = User.find_by(id: params["user_id"])
     return render :json=> {"success" => false, "desc" => "user有误"} if user.blank?
@@ -143,7 +143,7 @@ class MallController < ApplicationController
   end
 
   def update_order
-    order = Order.find_by(mall_id: params["id"], yw_type: 'dscg')
+    order = Order.find_by(mall_id: params["id"], yw_type: ['dscg', 'grcg'])
     if order.blank?
       render :json => {"success" => false, "desc" => "ID不存在"}
     else
