@@ -186,25 +186,43 @@ module AboutRuleStep
   def get_current_step_in_array(array=[])
     return 0 if array.blank?
     current_index = 0
-    cs = self.get_current_step
-    # 先判断rule_step
-    return array.length - 1 if cs == 'done'
-    if cs.is_a?(Hash)
-      index = array.index(cs["name"])
-      return index if index.present?
-    end
-    # 不在定制的rule里 包括rule_step == "done" 都取最后一条日志的操作内容在数组中的位置+1
-    node = self.get_last_node_by_logs
-    if node.present?
-      opt = node.attributes["操作内容"].to_str
-      index = array.index(opt)
-      if index.present?
-        # 如果是退回发起人 rule_step=null
-        steps = self.get_obj_step_names
-        return (self.rule_step.blank? && steps.index(opt)) ? array.index(steps[0])-1 : index+1
+    steps = self.get_obj_step_names
+    # 如果有流程按流程判断
+    if steps.present?
+      if self.rule_step == "done"
+        index = array.index(steps.last) + 1
+        current_index = index if index.present?
+      end
+      cs = self.get_current_step
+      # 先判断rule_step
+      # return array.length - 1 if cs == 'done'
+      if cs.is_a?(Hash)
+        index = array.index(cs["name"])
+        return index if index.present?
+      end
+      # 不在定制的rule里 包括rule_step == "done" 都取最后一条日志的操作内容在数组中的位置+1
+      node = self.get_last_node_by_logs
+      if node.present?
+        opt = node.attributes["操作内容"].to_str
+        index = array.index(opt)
+        if index.present? && current_index <= index
+          # 如果是退回发起人 rule_step=null
+          current_index = (self.rule_step.blank? && steps.index(opt)) ? array.index(steps[0])-1 : index+1
+        end
+      end
+    else
+      # 如果没有流程按日志判断
+      log_names = Nokogiri::XML(self.logs).css("node").map{|n|n["操作内容"] }
+      tmp_arr = array & log_names
+      if tmp_arr.blank?
+        current_index = log_names.present? ? 1 : 0
+      else
+        tmp_arr.each do |a|
+          current_index = [array.index(a), current_index].max
+        end
       end
     end
-    return current_index
+    return current_index == array.length - 1 ? array.length : current_index
   end
 
   # 获取日志中的最后一条记录 node_attr 可以指定node的attributes自带[] 例如 node_attr="[操作内容='下单']"
