@@ -1,4 +1,5 @@
-<% 
+<%= render partial: "/kobe/shared/logs_table", locals: { obj: obj } %>
+<%
 	# 参数 action、obj 没有默认值
 	form_id ||= "audit_form"
 	method ||= 'post'
@@ -17,10 +18,10 @@
 			<label class="label">审核意见 <span class="color-red">*</span></label>
 			<div class="inline-group">
 				<label class="radio">
-					<input type="radio" name="audit_yijian" value="通过"><i class="rounded-x"></i> 通过 
+					<input type="radio" name="audit_yijian" value="通过"><i class="rounded-x"></i> 通过
 				</label>
 				<label class="radio">
-					<input type="radio" name="audit_yijian" value="不通过"><i class="rounded-x"></i> 不通过 
+					<input type="radio" name="audit_yijian" value="不通过"><i class="rounded-x"></i> 不通过
 				</label>
 			</div>
 		</section>
@@ -74,7 +75,7 @@
 			$('#<%= form_id %> #audit_liyou').text($(this).val());
 			$('#audit_reason_dialog').modal('hide');
 		});
-		
+
 
 		var audit_rules = {
 			"audit_yijian": {required: true},

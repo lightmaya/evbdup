@@ -99,8 +99,9 @@ module MyFormHelper
   # 根据数组计算单表的金额
   def set_total_by_array(myform)
     arr = myform.options[:show_total]
+    myform.options[:total_name] ||= "总计"
     if arr.is_a?(Array)
-      myform.html_code << show_total_part
+      myform.html_code << show_total_part(0, myform.options[:total_name])
       tmp = ""
       arr.each do |a|
         tmp << %Q{

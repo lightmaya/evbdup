@@ -247,9 +247,9 @@ class Kobe::OrdersController < KobeController
   def rating
     if @order.rate.present?
       @show_rate = show_obj_info(@order.rate, Rate.xml, { grid: 1 })
-      @show_rate << show_total_part(@order.rate_total, "总分")
+      @show_rate << show_total_part(@order.rate_total, "总分（满分40分）")
     else
-      @myform = SingleForm.new(Rate.xml, Rate.new, { form_id: "rate_form", title: false,
+      @myform = SingleForm.new(Rate.xml, Rate.new, { form_id: "rate_form", title: false, total_name: '总分（满分40分）',
         action: update_rating_kobe_order_path(@order), grid: 3, show_total: ["jhsd", "fwtd", "cpzl", "jjwt", "dqhf", "xcfw", "bpbj"] })
     end
     render layout: false
@@ -325,7 +325,7 @@ class Kobe::OrdersController < KobeController
       end
       if @order.rate.present?
         rate_cont = show_obj_info(@order.rate, Rate.xml, { grid: 1 })
-        rate_cont << show_total_part(@order.rate_total, "总分")
+        rate_cont << show_total_part(@order.rate_total, "总分（满分40分）")
         @arr << { title: "评价", icon: "fa-thumbs-o-up", content: rate_cont }
       end
     end

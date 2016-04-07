@@ -1,0 +1,33 @@
+<div class="panel panel-grey margin-bottom-20 margin-top-20">
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-globe"></i> 业务流程</h3>
+  </div>
+  <div class="panel-body">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th></th>
+          <th width='15%'>操作时间</th>
+          <th width='15%'>操作人姓名</th>
+          <th width='20%'>操作人单位</th>
+          <th width='10%'>操作内容</th>
+          <th width='10%'>当前状态</th>
+          <th>备注</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Nokogiri::XML(obj.logs).css("node").each_with_index do |node, index| %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= node["操作时间"] %></td>
+          <td><%= "#{node['操作人姓名']} [#{node["操作人ID"]}]" %></td>
+          <td><%= node["操作人单位"] %></td>
+          <td><%= node["操作内容"] %></td>
+          <td><%= node.attributes.has_key?("当前状态") ? obj.status_badge(node["当前状态"].to_i) : "" %></td>
+          <td><%= node["备注"].include?("table") ? "" : node["备注"] %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

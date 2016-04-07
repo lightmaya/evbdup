@@ -163,7 +163,7 @@ class MallController < ApplicationController
     rs = ""
     case status
     when "finished", "half_canceled", "returning"
-      rs = "100"
+      rs = "107"
     when "wait_pay", "paid", "stockout"
       rs = "11"
     when "wait_remit"
