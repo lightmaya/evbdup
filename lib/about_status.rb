@@ -168,7 +168,7 @@ module AboutStatus
     # 如果是订单表 并且已经填写发票号 提交和审核通过的状态变成93
     tmp = self.class == Order && self.invoice_number.present?
     ha = {
-      "删除" => { 0 => 404, 65 => 404 },
+      "删除" => { 65 => 404 },
 
       "下架" => { 65 => 26 },
       "冻结" => { 65 => 12 },
@@ -178,6 +178,10 @@ module AboutStatus
       "回复" => { 58 => 75 }
     }
 
+    # 修改状态都可以删除
+    self.class.edit_status.each{ |s| ha["删除"][s] = 404 }
+
+    # 提交后自动生效
     auto_status = tmp ? 93 : self.class.auto_effective_status.first
     ha["提交"] = { 0 => auto_status, 7 => auto_status, 14 => 16 } if auto_status.present?
 
