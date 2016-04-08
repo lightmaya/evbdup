@@ -24,7 +24,7 @@ class MallController < ApplicationController
       if rs["success"] == true
         redirect_url = "#{get_dota_url(params[:mall_type])}/token_sign_in?auth_token=#{rs['auth_token']}&token=#{get_token(params[:mall_type])}"
         # redirect_url << "&back=#{params[:back]}" unless params[:back].blank?
-        redirect_to redirect_url
+        return redirect_to redirect_url
       else
         render :text => rs["desc"]
       end
@@ -149,7 +149,7 @@ class MallController < ApplicationController
     else
       user = User.find_by(id: order.user_id)
       logs = created_logs(order, user, '更新订单', '网上商城同步更新订单。')
-      if order.update(status: get_status(params["status"]), logs: logs)
+      if order.update(status: get_status(params["status"]), logs: logs, invoice_number: params[""])
         render :json => {"success" => true, "desc" => "更新订单成功"}
       else
         render :json => {"success" => false, "desc" => "更新订单失败"}
