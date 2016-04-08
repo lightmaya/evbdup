@@ -186,7 +186,8 @@ class MallController < ApplicationController
   # POST方法传参
   def get_api(url,params={})
     unless url.blank?
-      x = Net::HTTP.post_form(URI.parse(url), params)
+      x = RestClient.post(url,params)
+      # x = Net::HTTP.post_form(URI.parse(url), params)
       h = ActiveSupport::JSON.decode(x.body)
       return h
     else

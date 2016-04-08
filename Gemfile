@@ -15,6 +15,8 @@ gem 'carrierwave', '0.8.0'
 gem 'rqrcode'
 # gem "ruby-pinyin"
 
+# 数据交互Post提交
+gem 'rest_client', '1.8.2'
 
 gem 'sunspot_rails', github: "betam4x/sunspot" #, '2.1.1'
 gem 'sunspot_solr', github: "betam4x/sunspot" #, '2.1.1'
@@ -97,7 +99,7 @@ gem "ipparse", "~> 0.2.0"
 gem "rails-i18n", "~> 4.0.1"
 
 # Use ActiveModel has_secure_password 密码验证 目前暂时不支持高版本3.1.5
-gem "bcrypt-ruby", "~> 3.1.2" 
+gem "bcrypt-ruby", "~> 3.1.2"
 # gem 'bcrypt', '~> 3.1.7'
 # gem "bcrypt-ruby", "~> 3.1.5"
 
