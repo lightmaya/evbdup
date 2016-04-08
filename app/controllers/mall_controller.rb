@@ -24,7 +24,7 @@ class MallController < ApplicationController
       if rs["success"] == true
         redirect_url = "#{get_dota_url(params[:mall_type])}/token_sign_in?auth_token=#{rs['auth_token']}&token=#{get_token(params[:mall_type])}"
         # redirect_url << "&back=#{params[:back]}" unless params[:back].blank?
-        return  redirect_to redirect_url
+        return redirect_to redirect_url
       else
         render :text => rs["desc"]
       end
