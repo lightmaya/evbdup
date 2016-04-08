@@ -117,6 +117,7 @@ class MallController < ApplicationController
     order.seller_tel = "-"
     order.seller_mobile = "-"
     order.deliver_at = Date.today + 3
+    order.invoice_number = params["invoice_number"]
 
     order.status = get_status(params["status"])
     order.name = Order.get_project_name(order, user, '办公用品', order.yw_type)
@@ -149,7 +150,7 @@ class MallController < ApplicationController
     else
       user = User.find_by(id: order.user_id)
       logs = created_logs(order, user, '更新订单', '网上商城同步更新订单。')
-      if order.update(status: get_status(params["status"]), logs: logs, invoice_number: params[""])
+      if order.update(status: get_status(params["status"]), logs: logs, invoice_number: params["invoice_number"])
         render :json => {"success" => true, "desc" => "更新订单成功"}
       else
         render :json => {"success" => false, "desc" => "更新订单失败"}
