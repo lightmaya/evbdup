@@ -52,7 +52,7 @@ Evbdup::Application.routes.draw do
   resources :mall, :only => :index do
     collection do
       get :redirect_to_dota
-      post :get_token, :get_access_token, :create_order, :update_order
+      post :get_token, :get_access_token, :create_order, :update_order, :send_sn
     end
   end
 
@@ -128,8 +128,8 @@ namespace :kobe do
 
   resources :orders do
     collection do
-      get  :my_list, :seller_list, :list, :grcg_list
-      post :same_template, :update_cart_order
+      get  :my_list, :seller_list, :list, :grcg_list, :batch_audit
+      post :same_template, :update_cart_order, :update_batch_audit
     end
     member do
       get :agent_confirm, :buyer_confirm, :audit, :print, :print_ht, :print_ysd, :invoice_number, :delete, :rating
