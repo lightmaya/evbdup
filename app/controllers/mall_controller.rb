@@ -82,6 +82,21 @@ class MallController < ApplicationController
     end
   end
 
+  def send_sn
+    id ||= params[:id]
+    rs = Hash.new
+    os = if id.present?
+      Order.where(yw_type: ['dscg', 'grcg'], mall_id: id)
+    else
+      Order.where("yw_type in ['dscg', 'grcg'] and mall_id is not null")
+    end
+    json = Hash.new
+    os.each { |o| json[o.mall_id] = o.sn }
+    rs["success"] = json.present?
+    rs["rs"] = json if json.present?
+    render :json => rs
+  end
+
   def create_order
     mall = Order.find_by(mall_id: params["id"], yw_type: ['dscg', 'grcg'])
     return render :json => {"success" => false, "desc" => "ID已存在"} if mall.present?
@@ -95,7 +110,7 @@ class MallController < ApplicationController
     order.yw_type = params["budget"].to_f == 0 ? 'grcg' : 'dscg'
     order.total = params["total"]
     order.budget_money = params["budget"]
-    order.sn = "DSCG-#{Time.now.to_s(:number)[0...10]}#{('%04d' % params["id"])[-4...params["id"].size]}"
+    order.sn = params["zcl_code"]
     order.contract_sn = order.sn.gsub("DSCG", "ZCL")
 
     order.buyer_name = user.real_department.name
