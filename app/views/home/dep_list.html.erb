@@ -67,7 +67,7 @@
       <% @dep_rs.each_with_index do |d, i|%>
         <tr>
           <td><%= i+1 %></td>
-          <td><%= link_to_blank d.name, department_path(d.department.try(:id)) %></td>
+          <td><%= d.department_id.present? ? link_to_blank(d.name, department_path(d.department_id)) : d.name %></td>
           <td><%= dep_classify_tag(d.classify) unless d.classify == 0 %></td>
         </tr>
       <% end %>
