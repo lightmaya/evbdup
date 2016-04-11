@@ -160,7 +160,7 @@ module JamesHelper
         <table class="table table-bordered table-striped">
           <tr>
             <th class="w160">中标单位名称</th>
-            <td>#{user.department.real_dep.name}</td>
+            <td>#{product.department.name}</td>
           </tr>
           <tr>
             <th class="w160">#{man}姓名</th>
