@@ -275,7 +275,7 @@ class Order < ActiveRecord::Base
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u=nil)
-    tmp = current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id
+    tmp = current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id || current_u.real_department.name == self.seller_name
     case act
     when "show"
       tmp
