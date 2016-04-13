@@ -99,7 +99,8 @@ module KobeHelper
       end
     else
       current_user.to_do_all.each_with_index do |obj, index|
-        title = link_to text_truncate(obj.get_belongs_to_obj.try(:name), 20), obj.to_do_list.get_audit_url(obj.obj_id.to_s), title: obj.get_belongs_to_obj.try(:name)
+        t_name = obj.get_belongs_to_obj.class == Article ? obj.get_belongs_to_obj.try(:title) : obj.get_belongs_to_obj.try(:name)
+        title = link_to text_truncate(t_name, 20), obj.to_do_list.get_audit_url(obj.obj_id.to_s), title: t_name
         desc = "来自 #{obj.to_do_list.name} <i class='fa fa-check-circle'></i>"
         str << show_to_do_div(title,desc,index)
         num = index + 1
