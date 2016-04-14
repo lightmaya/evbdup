@@ -40,7 +40,7 @@
       <div class="headline headline-md"><h2> 重要通知</h2><%= more_tag more_list_path(type: 'article_zytz') %></div>
       <ul class="list-unstyled categories">
         <% @zytz.each do |article| %>
-          <%= article_li_tag(article, 13) %>
+          <%= article_li_tag(article, 15) %>
         <% end %>
         <%= (li_blank_tag * (6-@zytz.size)).html_safe if @zytz.size < 6 %>
       </ul>
@@ -179,7 +179,7 @@
           <i class="icon-custom icon-sm rounded-x icon-bg-red icon-book-open"></i>
           <div class="content-boxes-in-v3">
             <h3><%= link_to_blank '政策法规', show_faqs_path(type:'zcfg') %></h3>
-            <p>集中采购相关政策文件</p>
+            <p class="gray">集中采购相关政策文件</p>
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@
           <i class="icon-custom icon-sm rounded-x icon-bg-blue icon-directions"></i>
           <div class="content-boxes-in-v3">
             <h3><%= link_to_blank '业务指南', show_faqs_path(type:'cgzn') %></h3>
-            <p>集中采购的方式及流程</p>
+            <p class="gray">集中采购的方式及流程</p>
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@
           <i class="icon-custom icon-sm rounded-x icon-bg-green icon-cloud-download"></i>
           <div class="content-boxes-in-v3">
             <h3><%= link_to_blank '下载中心', show_faqs_path(type:'xzzx') %></h3>
-            <p>合同模板、系统操作手册...</p>
+            <p class="gray">合同模板、系统操作手册...</p>
           </div>
         </div>
       </div>
@@ -206,7 +206,7 @@
           <i class="icon-custom icon-sm rounded-x icon-bg-aqua icon-earphones-alt"></i>
           <div class="content-boxes-in-v3">
             <h3><%= link_to_blank '常见问题', show_faqs_path(type:'cjwt') %></h3>
-            <p>业务咨询、网上操作帮助...</p>
+            <p class="gray">业务咨询、网上操作帮助...</p>
           </div>
         </div>
       </div>
@@ -215,7 +215,7 @@
           <i class="icon-custom icon-sm rounded-x icon-bg-brown icon-bubbles"></i>
           <div class="content-boxes-in-v3">
             <h3><%= link_to_blank '意见建议', show_faqs_path(type:'yjjy') %></h3>
-            <p>发表您的意见及建议</p>
+            <p class="gray">发表您的意见及建议</p>
           </div>
         </div>
       </div>
