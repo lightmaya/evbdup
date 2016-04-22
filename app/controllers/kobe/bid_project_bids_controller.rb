@@ -44,8 +44,7 @@ class Kobe::BidProjectBidsController < KobeController
       BidProject.can_bid
     when "2" # 已投标
       @panel_title = "已投标的竞价项目"
-      params[:q][:bid_project_bid_user_id_eq] = current_user.id
-      BidProject
+      BidProject.joins(:bid_project_bids).where(bid_project_bids: {user_id: current_user.id})
     when "3" # 已中标
       @panel_title = "已中标的竞价项目"
       params[:q][:bid_project_bid_id_in] = current_user.bid_project_bids.map(&:id)
