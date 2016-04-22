@@ -137,6 +137,7 @@ class MallController < ApplicationController
     order.status = get_status(params["status"])
     order.name = Order.get_project_name(order, user, '办公用品', order.yw_type)
     order.logs = created_logs(order, user, '生成订单', '网上商城自动生成订单。')
+    order.ht_template = 'bg'
 
     return render :json => {"success" => false, "desc" => "保存主表失败!"} unless order.save
     eval(params["products"]).each do |par|
@@ -165,7 +166,9 @@ class MallController < ApplicationController
     else
       user = User.find_by(id: order.user_id)
       logs = created_logs(order, user, '更新订单', '网上商城同步更新订单。')
-      if order.update(status: get_status(params["status"]), logs: logs, invoice_number: params["invoice_number"])
+      ha = { status: get_status(params["status"]), logs: logs, invoice_number: params["invoice_number"] }
+      ha["ht_template"] = 'bg' if order.ht_template.blank?
+      if order.update(ha)
         render :json => {"success" => true, "desc" => "更新订单成功"}
       else
         render :json => {"success" => false, "desc" => "更新订单失败"}
