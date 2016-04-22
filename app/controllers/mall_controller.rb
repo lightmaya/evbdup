@@ -215,8 +215,9 @@ class MallController < ApplicationController
   def get_dota_url(type='', home_index=false)
     case type
     when "mall"
-      tmp = "http://mall.sinograin.com.cn"
-      home_index ? tmp : "#{tmp}/api"
+     # tmp = "http://mall.sinograin.com.cn"
+     home_index ? "http://mall.sinograin.com.cn" : "http://114.247.62.193/api"
+     # home_index ? tmp : "#{tmp}/api"
     when "govbuy"
       tmp = "http://sinograin.govbuy.cn"
       home_index ? tmp : "#{tmp}/backend/api/1"
