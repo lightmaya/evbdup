@@ -5,10 +5,10 @@ class Kobe::OrdersController < KobeController
   before_action :check_same_template, :only => [:create, :update]
   skip_before_action :verify_authenticity_token, :only => [:same_template, :commit]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_action :get_order, :except => [:index, :new, :create, :cart_order, :update_cart_order, :list, :my_list, :grcg_list, :seller_list, :same_template]
+  before_action :get_order, :except => [:index, :new, :create, :cart_order, :update_cart_order, :list, :my_list, :grcg_list, :seller_list, :same_template, :batch_audit, :update_batch_audit]
   before_action :get_order_type_cdt, :only => [:index, :list]
 
-  skip_authorize_resource :only => [:same_template]
+  skip_authorize_resource :only => [:same_template, :batch_audit, :update_batch_audit]
 
   before_filter :order_from_cart, :only => [:cart_order, :update_cart_order]
   # 辖区内采购项目
@@ -54,7 +54,7 @@ class Kobe::OrdersController < KobeController
   # 供应商确认页面
   def agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
-    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+    cannot_do_tips unless @order.present? && @order.cando_hash(current_user)[action_name].present?
     slave_objs = @order.items
     @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
       @order, slave_objs, { form_id: 'agent_confirm_order', title: "基本信息",
@@ -65,7 +65,7 @@ class Kobe::OrdersController < KobeController
   # 供应商确认
   def update_agent_confirm
     @order = Order.by_seller_id(current_user.real_department.id).find_by_id(params[:id])
-    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+    cannot_do_tips unless @order.present? && @order.cando_hash(current_user)[action_name].present?
     # @order = create_or_update_msform_and_write_logs(@order, Order.agent_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     update_confirm_and_write_logs(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user))
     redirect_to seller_list_kobe_orders_path(r: @order.rule.try(:id))
@@ -74,7 +74,7 @@ class Kobe::OrdersController < KobeController
   # 采购人确认页面
   def buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
-    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+    cannot_do_tips unless @order.present? && @order.cando_hash(current_user)[action_name].present?
     slave_objs = @order.items
     @ms_form = MasterSlaveForm.new(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user),
       @order, slave_objs, { form_id: 'buyer_confirm_order', title: "基本信息",
@@ -85,7 +85,7 @@ class Kobe::OrdersController < KobeController
   # 采购人确认
   def update_buyer_confirm
     @order = current_user.orders.find_by_id(params[:id])
-    cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+    cannot_do_tips unless @order.present? && @order.cando_hash(current_user)[action_name].present?
     # @order = create_or_update_msform_and_write_logs(@order, Order.buyer_xml, OrdersItem, OrdersItem.confirm_xml, {:action => "供应商确认", :master_title => "基本信息", :slave_title => "产品信息"})
     # write_logs(@order, "采购人确认", "")
     update_confirm_and_write_logs(Order.xml(@order, current_user), OrdersItem.xml(@order, current_user))
@@ -190,12 +190,27 @@ class Kobe::OrdersController < KobeController
     @orders = @q.result.page params[:page]
   end
 
+  # 审核
   def audit
   end
 
   def update_audit
     save_audit(@order)
     redirect_to list_kobe_orders_path(r: @order.rule.try(:id), tq: Dictionary.tq_no, ot: @order.ot)
+  end
+
+  # 批量审核
+  def batch_audit
+    cannot_do_tips unless current_user.is_boss?
+    ids = params[:id].split(",")
+    order = Order.find_by(id: ids.first)
+    render partial: '/kobe/shared/audit', locals: { action: update_batch_audit_kobe_orders_path, obj: order, is_batch: true, title: "批量审核" }
+  end
+
+  def update_batch_audit
+    cannot_do_tips unless current_user.is_boss?
+    batch_save_audit(Order)
+    redirect_to list_kobe_orders_path(tq: Dictionary.tq_no)
   end
 
   # 根据category_id判断模版是否相同
@@ -283,7 +298,7 @@ class Kobe::OrdersController < KobeController
     end
 
     def get_order
-      cannot_do_tips unless @order.present? && @order.cando(action_name,current_user)
+      cannot_do_tips unless @order.present? && @order.cando_hash(current_user)[action_name].present?
       # menu_ids = Menu.get_menu_ids("Order|audit_#{@order.yw_type}") if @order.present?
       audit_tips  if ['audit', 'update_audit'].include?(action_name) && !can_audit?(@order, @menu_ids)
     end

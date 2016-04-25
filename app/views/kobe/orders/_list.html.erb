@@ -5,6 +5,7 @@
   <div class="panel-body">
     <div class="row">
       <div class="col-md-8 pull-left padding-top-5">
+        <%= link_to(label_tag("批量审核", "primary"), "javascript:void(0)", onClick: %Q{show_batch_audit("#{Order.icon_action('批量审核').html_safe}", '/kobe/orders/batch_audit')}, class: 'margin-right-10') if action_name == "list" && current_user.is_boss? %>
         <%= get_btn_by_order_type(search_url, @count_ha) if ["index", "list"].include?(action_name) %>
         <%= link_to( '<i class="fa fa-plus"></i> 新增'.html_safe, new_kobe_order_path) if params[:r].to_i == Rule.find_by(yw_type: 'ddcg').try(:id) && action_name == "my_list" %>
       </div>
@@ -35,11 +36,7 @@
     <table class="table table-bordered table-hover">
       <thead>
         <tr>
-          <th class="select_all">
-            <label class="">
-              <input type="checkbox" name="check_all" id="check_all" onclick="selectAll();"><i></i>
-            </label>
-          </th>
+          <th><input type="checkbox" name="order_ids" id="all_check_box"><i></i></th>
           <th class="index">序号</th>
           <th><%= sort_link(@q, :sn, '凭证编号', default_order: :desc) %></th>
           <% unless action_name == 'my_list' %>
@@ -56,9 +53,7 @@
         <% @orders.each_with_index do |order,index| %>
         <tr>
           <td>
-            <label class="">
-              <input type="checkbox" name="check[]" value="<%= order.id %>" onclick="setSelectAll();"><i></i>
-            </label>
+            <input type="checkbox" name="order_ids" value="<%= order.id %>" class="check_box_item"><i></i>
           </td>
           <td><%= show_index(index) %></td>
           <td><%= order.sn %></td>

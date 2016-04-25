@@ -20,7 +20,7 @@
         <td><%= order.name %></td>
         <td class="money"><%= money order.total %></td>
         <td><%= order.status_bar %></td>
-        <td><%= btn_group(orders_btn(order, action_name.include?('audit'))) %></td>
+        <td><%= btn_group(orders_btn(order)) %></td>
       </tr>
       <% end %>
     </tbody>

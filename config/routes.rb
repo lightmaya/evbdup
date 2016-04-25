@@ -310,7 +310,8 @@ namespace :kobe do
 
    resources :products do
       collection do
-        get :item_list, :list
+        get :item_list, :list, :batch_audit
+        post :update_batch_audit
       end
       member do
         get :freeze, :delete, :recover, :audit

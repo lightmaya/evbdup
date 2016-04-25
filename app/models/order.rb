@@ -14,6 +14,9 @@ class Order < ActiveRecord::Base
   scope :not_grcg, -> { where("orders.yw_type <> 'grcg'") }
   scope :by_seller_id, ->(seller_id) { where("orders.seller_id = #{seller_id}")}
 
+  has_one :audit, -> { where(class_name: "Order") }, foreign_key: :obj_id, class_name: :BatchAudit
+  scope :batch_audits, -> { joins(:batch_audits).where(class_name: "Order") }
+
   validates_with MyValidator
   # validate :check_budget
   # def check_budget
@@ -98,11 +101,11 @@ class Order < ActiveRecord::Base
   end
 
   def self.buyer_status
-    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 4) } & self.status_array).map{ |e| e[1] }
+    [4]
   end
 
   def self.seller_status
-    (Dictionary.all_status_array.select{ |e| (e[1] % 7 == 3) } & self.status_array).map{ |e| e[1] }
+    [3, 10]
   end
 
   def self.unfinish_status
@@ -274,31 +277,49 @@ class Order < ActiveRecord::Base
   end
 
   # 根据action_name 判断obj有没有操作
-  def cando(act='',current_u=nil)
+  # def cando(act='',current_u=nil)
+    # tmp = current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id || current_u.real_department.name == self.seller_name
+    # case act
+    # when "show"
+    #   tmp
+    # when "update", "edit"
+    #   (self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id) || current_u.is_boss?
+    # when "commit"
+    #   self.can_opt?("提交") && current_u.try(:id) == self.user_id  && self.budget_money != 0
+    # when "update_audit", "audit"
+    #   self.class.audit_status.include?(self.status)
+    # when "invoice_number", "update_invoice_number"
+    #   self.class.effective_status.include?(self.status) && tmp
+    # when "print", "print_ht", "print_ysd"
+    #   self.class.effective_status.include?(self.status) && tmp
+    # when "update_agent_confirm", "agent_confirm" # 等待卖方确认
+    #   self.class.seller_status.include?(self.status) && self.seller_id == current_u.real_department.id
+    # when "update_buyer_confirm", "buyer_confirm" # 等待卖方确认
+    #   self.class.buyer_status.include?(self.status) && self.user_id == current_u.id
+    # when "delete", "destroy"
+    #   self.can_opt?("删除") && current_u.try(:id) == self.user_id
+    # when "rating", "update_rating"
+    #   self.class.rate_status.include?(self.status) && current_u.try(:id) == self.user_id
+    # else false
+    # end
+  # end
+
+  def cando_hash(current_u=nil)
+    ha = Hash.new
     tmp = current_u.real_department.is_ancestors?(self.buyer_id) || current_u.real_department.id == self.seller_id || current_u.real_department.name == self.seller_name
-    case act
-    when "show"
-      tmp
-    when "update", "edit"
-      (self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id) || current_u.is_boss?
-    when "commit"
-      self.can_opt?("提交") && current_u.try(:id) == self.user_id  && self.budget_money != 0
-    when "update_audit", "audit"
-      self.class.audit_status.include?(self.status)
-    when "invoice_number", "update_invoice_number"
-      self.class.effective_status.include?(self.status) && tmp
-    when "print", "print_ht", "print_ysd"
-      self.class.effective_status.include?(self.status) && tmp
-    when "update_agent_confirm", "agent_confirm" # 等待卖方确认
-      self.class.seller_status.include?(self.status) && self.seller_id == current_u.real_department.id
-    when "update_buyer_confirm", "buyer_confirm" # 等待卖方确认
-      self.class.buyer_status.include?(self.status) && self.user_id == current_u.id
-    when "delete", "destroy"
-      self.can_opt?("删除") && current_u.try(:id) == self.user_id
-    when "rating", "update_rating"
-      self.class.rate_status.include?(self.status) && current_u.try(:id) == self.user_id
-    else false
-    end
+    only_self = current_u.try(:id) == self.user_id
+    ha["show"] = tmp
+    ha["update"] = ha["edit"] = (self.class.edit_status.include?(self.status) && only_self) || current_u.is_boss?
+    ha["commit"] = self.can_opt?("提交") && only_self  && self.budget_money != 0
+    ha["update_audit"] = ha["audit"] = self.class.audit_status.include?(self.status)
+    ha["invoice_number"] = ha["update_invoice_number"] = ha["print"] = ha["print_ht"] = ha["print_ysd"] = self.class.effective_status.include?(self.status) && tmp
+    # 等待卖方确认
+    ha["update_agent_confirm"] = ha["agent_confirm"] = self.class.seller_status.include?(self.status) && self.seller_id == current_u.real_department.id
+    # 等待买方确认
+    ha["update_buyer_confirm"] = ha["buyer_confirm"] = self.class.buyer_status.include?(self.status) && only_self
+    ha["delete"] = ha["destroy"] = self.can_opt?("删除") && only_self
+    ha["rating"] = ha["update_rating"] = self.class.rate_status.include?(self.status) && only_self
+    return ha.delete_if{|key,value|value == false}
   end
 
   # 流程图的开始数组

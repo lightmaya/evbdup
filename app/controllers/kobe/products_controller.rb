@@ -5,8 +5,9 @@ class Kobe::ProductsController < KobeController
   before_action :get_category, :only => [:new, :create]
   before_action :get_show_arr, :only => [:audit, :show]
   before_action :get_audit_menu_ids, :only => [:list, :audit, :update_audit]
-  before_action :get_product, :except => [:index, :item_list, :new, :create, :list]
+  before_action :get_product, :except => [:index, :item_list, :new, :create, :list, :batch_audit, :update_batch_audit]
   skip_before_action :verify_authenticity_token, :only => [:commit]
+  skip_authorize_resource :only => [:batch_audit, :update_batch_audit]
 
   # 我的入围产品
   def index
@@ -103,6 +104,20 @@ class Kobe::ProductsController < KobeController
 
   def update_audit
     save_audit(@product)
+    redirect_to list_kobe_products_path(tq: Dictionary.tq_no)
+  end
+
+  # 批量审核
+  def batch_audit
+    cannot_do_tips unless current_user.is_boss?
+    ids = params[:id].split(",")
+    product = Product.find_by(id: ids.first)
+    render partial: '/kobe/shared/audit', locals: { action: update_batch_audit_kobe_products_path, obj: product, is_batch: true, title: "批量审核" }
+  end
+
+  def update_batch_audit
+    cannot_do_tips unless current_user.is_boss?
+    batch_save_audit(Product)
     redirect_to list_kobe_products_path(tq: Dictionary.tq_no)
   end
 

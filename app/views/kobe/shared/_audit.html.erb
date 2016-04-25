@@ -1,19 +1,25 @@
-<%= render partial: "/kobe/shared/logs_table", locals: { obj: obj } %>
 <%
 	# 参数 action、obj 没有默认值
 	form_id ||= "audit_form"
 	method ||= 'post'
 	title ||= "审核"
+	is_batch ||= false # 是否是批量审核 批量审核obj取第一个
 %>
-<%= modal_dialog("audit_reason_dialog",  audit_reason_modal(obj.rule.get_audit_reason_arr), "审核理由") if obj.rule.try(:get_audit_reason_arr).present? %>
+<%= render partial: "/kobe/shared/logs_table", locals: { obj: obj } unless is_batch %>
+
+<%= modal_dialog("audit_reason_dialog",  audit_reason_modal(obj.rule.get_audit_reason_arr), "审核理由") if !is_batch && obj.rule.try(:get_audit_reason_arr).present? %>
+<% unless is_batch %>
 <div class="tag-box tag-box-v1 margin-top-20">
 	<h2><%= title %></h2>
+<% end %>
 	<%= form_tag(action, method: method, class: 'sky-form', id: form_id) do %>
+	<%= hidden_field_tag("batch_ids", params[:id]) if is_batch %>
 	<fieldset>
-		<section>
-			<label class="label">当前状态 <span class="color-red padding-left-5"><%= obj.class.get_status_attributes(obj.status,1)[0] %></span></label>
-		</section>
-
+		<% unless is_batch %>
+			<section>
+				<label class="label">当前状态 <span class="color-red padding-left-5"><%= obj.class.get_status_attributes(obj.status,1)[0] %></span></label>
+			</section>
+		<% end %>
 		<section>
 			<label class="label">审核意见 <span class="color-red">*</span></label>
 			<div class="inline-group">
@@ -36,7 +42,7 @@
 		<section>
 			<label class="label">下一步 <span class="color-red">*</span></label>
 			<div class="col" id="audit_next_step">
-				<%= audit_next_step(obj, "通过") %>
+				<%= audit_next_step(obj, "通过", is_batch) %>
 			</div>
 		</section>
 	</fieldset>
@@ -45,20 +51,24 @@
 		<button class="btn-u btn-u-default" type="reset"><i class="fa fa-repeat"></i> 重 置 </button>
 	</footer>
 	<% end %>
+<% unless is_batch %>
 </div>
-
+<% end %>
 <script type="text/javascript">
 	$(document).ready(function(){
 		// 点审核意见 选择通过不通过
 		$('#<%= form_id %> input[name="audit_yijian"]').on("click", function () {
 			var yijian = $(this).val();
-			var yes_yijian = '<%= audit_next_step(obj, "通过") %>';
-			var no_yijian = '<%= audit_next_step(obj, "不通过") %>';
+			var yes_yijian = '<%= audit_next_step(obj, "通过", is_batch) %>';
+			var no_yijian = '<%= audit_next_step(obj, "不通过", is_batch) %>';
 			if (yijian == "通过") {
 				$("#<%= form_id %> #audit_next_step").html(yes_yijian);
 			}else {
 				$("#<%= form_id %> #audit_next_step").html(no_yijian);
 			};
+			<% if is_batch %>
+			$('#<%= form_id %> input[name="audit_next"]').attr('checked', 'checked');
+			<% end %>
 		});
 
 		// 转向下一个审核人

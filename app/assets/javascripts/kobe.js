@@ -115,3 +115,16 @@ function get_budget(obj_id, input_id, budget_id){
         }
     });
 };
+
+// 显示批量审核弹框
+function show_batch_audit(title, url) {
+    var checked_obj = $(".check_box_item:checkbox:checked");
+    if(checked_obj.length == 0){
+      flash_dialog("请至少选择一项进行批量审核！");
+      return false;
+  } else {
+      var ids = checked_obj.map(function(){ return $(this).val(); }).get().join(", ") ;
+      $("#opt_dialog").modal('show');
+      modal_dialog_show(title, url + '?id=' + ids, "#opt_dialog");
+  }
+};

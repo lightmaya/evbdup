@@ -174,6 +174,25 @@ class KobeController < ApplicationController
       tips_get("审核#{params[:audit_yijian]}，审核理由：#{params[:audit_liyou]}")
     end
 
+    def batch_save_audit(model_name)
+      # 插入 batch_audits 表
+      ids = params[:batch_ids].split(",")
+      arr = []
+      ids.each do | id |
+        arr << {obj_id: id, class_name: model_name.to_s, next: params[:audit_next], yijian: params[:audit_yijian], liyou: params[:audit_liyou]}
+      end
+      BatchAudit.create(arr)
+      # 1s后执行 save_audit, save_audit 成功后删除 batch_audit
+      Rufus::Scheduler.new.in "1s" do
+        ids.each do | id |
+          obj = model_name.find_by(id: id)
+          save_audit(obj) if obj.present?
+          BatchAudit.find_by(class_name: model_name.to_s, obj_id: id).destroy
+        end
+        ActiveRecord::Base.clear_active_connections!
+      end
+    end
+
     # 是否有审核权限
     def can_audit?(obj,menu_ids=[])
       return false unless obj.get_rule_dep.present? && obj.get_rule_dep.id == current_user.real_department.id
@@ -194,6 +213,9 @@ class KobeController < ApplicationController
       tq_cdt = from_tq ? " task_queues.user_id is null and " : ""
       arr << ["(task_queues.user_id = ? or (#{tq_cdt} task_queues.menu_id in (#{@menu_ids.join(",") }) ) )", current_user.id]
       arr << ["task_queues.dep_id = ?", current_user.real_department.id]
+      # 除去等待批量审核的obj
+      not_ids = BatchAudit.where(class_name: model_name.to_s).map(&:obj_id)
+      arr << ["#{table_name}.id not in (#{not_ids.join(',')})"] if not_ids.present?
       @q =  model_name.joins(:task_queues).where(get_conditions(table_name, arr)).ransack(params[:q])
       return @q.result(distinct: true).page params[:page]
     end

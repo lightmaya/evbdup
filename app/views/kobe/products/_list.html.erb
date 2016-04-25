@@ -4,17 +4,26 @@
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-md-8 pull-left padding-top-5">
+            <div class="col-md-6 pull-left padding-top-5">
                 <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增产品的品目', '#{get_item_category_kobe_shared_index_path(item_id: @item.id, url: "new_kobe_product_path", model_name: "Item")}', '#opt_dialog') }) if action_name == 'item_list' %>
+                <%= link_to(label_tag("批量审核", "primary"), "javascript:void(0)", onClick: %Q{show_batch_audit("#{Product.icon_action('批量审核').html_safe}", '/kobe/products/batch_audit')}, class: 'margin-right-10') if action_name == "list" && current_user.is_boss? %>
             </div>
-            <div class="col-md-4 pull-right">
+            <div class="col-md-6 pull-right">
                 <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
-                <div class="margin-bottom-10">
-                    <div class="input-group">
-                        <%= f.search_field :brand_or_model_or_version_cont, class: "form-control input-sm", placeholder: "请输入产品的品牌、型号、版本号..." %>
-                        <span class="input-group-btn">
-                            <button class="btn btn-success btn-sm" type="submit">搜索</button>
-                        </span>
+                <div class="row margin-bottom-10">
+                    <div class="col-md-4">
+                        <%= f.search_field :department_name_cont, class: "form-control input-sm", placeholder: "请输入单位名称..." %>
+                    </div>
+                    <div class="col-md-4">
+                        <%= f.search_field :category_name_cont, class: "form-control input-sm", placeholder: "请输入品目..." %>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <%= f.search_field :brand_or_model_or_version_cont, class: "form-control input-sm", placeholder: "请输入产品的品牌、型号、版本号..." %>
+                            <span class="input-group-btn">
+                                <button class="btn btn-success btn-sm" type="submit">搜索</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <% end %>
@@ -24,6 +33,7 @@
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
+                    <th><input type="checkbox" name="product_ids" id="all_check_box"><i></i></th>
                     <th class="index">序号</th>
                     <% if action_name == "index" %>
                     <th class="hidden-sm">项目名称</th>
@@ -42,6 +52,9 @@
             <tbody>
                 <% @products.each_with_index do |product,index| %>
                 <tr>
+                    <td>
+                    <input type="checkbox" name="product_ids" value="<%= product.id %>" class="check_box_item"><i></i>
+                    </td>
                     <td><%= show_index(index) %></td>
                     <% if action_name == "index" %>
                     <td><%= product.item.name %></td>
@@ -59,6 +72,6 @@
                 <% end %>
             </tbody>
         </table>
-        <%= paginate @products %> 
-    </div>                     
+        <%= paginate @products %>
+    </div>
 </div>

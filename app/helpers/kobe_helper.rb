@@ -56,13 +56,13 @@ module KobeHelper
   end
 
   # 审核下一步
-  def audit_next_step(obj, yijian='通过')
+  def audit_next_step(obj, yijian='通过', is_batch=false)
     # ha = { "next" => (obj.get_next_step.is_a?(Hash) ? "确认并转向上级单位审核" : "确认并结束审核流程"), "return" => "退回发起人", "turn" => "转向本单位下一位审核人" }
     ha = obj.audit_next_hash
     str = ""
     step = yijian == "通过" ? (can?(:last_audit, obj) ? "next" : "") : "return"
     str << audit_next_step_label(step, ha[step]) if step.present?
-    str << content_tag(:div, audit_next_step_label("turn", ha["turn"]).html_safe, :class=>'inline-group')
+    str << content_tag(:div, audit_next_step_label("turn", ha["turn"]).html_safe, :class=>'inline-group') unless is_batch
     return str.html_safe
   end
 

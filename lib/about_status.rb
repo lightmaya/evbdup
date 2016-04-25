@@ -118,8 +118,9 @@ module AboutStatus
   def status_bar(status=self.status)
     arr = self.class.get_status_attributes(status,1)
     return "" if arr.blank?
+    title = self.class.edit_status.include?(self.status) ? %Q{<span data-original-title="请提交订单" data-toggle="tooltip" class="tooltips">#{arr[0]}</span>} : arr[0]
     return %Q|
-    <span class='heading-xs'>#{arr[0]} <span class='pull-right'>#{arr[3]}%</span></span>
+    <span class='heading-xs'>#{title} <span class='pull-right'>#{arr[3]}%</span></span>
     <div class='progress progress-u progress-xs'>
     <div style='width: #{arr[3]}%' aria-valuemax='100' aria-valuemin='0' aria-valuenow='#{arr[3]}' role='progressbar' class='progress-bar progress-bar-#{arr[2]}'></div>
     </div>|.html_safe

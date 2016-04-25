@@ -68,7 +68,7 @@ module AdvancedSearchHelper
       title =  ha.present? ? "#{arr[0]} ( #{ha[k.to_sym].present? ? ha[k.to_sym] : 0} )" : arr[0]
       str << link_to(label_tag(title, "#{'warning' if key.include?(k)}"), "#{url}#{pre}ot=#{k}", class: 'margin-right-10')
     end
-    return content_tag(:div, str.html_safe, class: '').html_safe
+    return str.html_safe
   end
 
 end

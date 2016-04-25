@@ -95,29 +95,31 @@ module BtnArrayHelper
   end
 
   def orders_btn(obj,only_audit=false)
+    ha = obj.cando_hash(current_user)
+    # 审核
+    audit_opt = [obj.class.icon_action("审核"), audit_kobe_order_path(obj)] if can?(:audit, obj) && ha["audit"]
+    return [audit_opt] if audit_opt.present? && only_audit
+
     arr = []
     name= obj.invoice_number.present? ? "修改发票号" : "填写发票号"
     # 查看详细
-    arr << [obj.class.icon_action("详细"), kobe_order_path(obj), target: "_blank"] if can?(:read, obj) && obj.cando("show",current_user)
+    arr << [obj.class.icon_action("详细"), kobe_order_path(obj), target: "_blank"] if can?(:show, obj) && ha["show"]
     # 修改
-    arr << [obj.class.icon_action("修改"), edit_kobe_order_path(obj)] if can?(:update, obj) && obj.cando("edit",current_user)
+    arr << [obj.class.icon_action("修改"), edit_kobe_order_path(obj)] if can?(:update, obj) && ha["edit"]
     # 提交
-    arr << [obj.class.icon_action("提交"), commit_kobe_order_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && obj.cando("commit",current_user)
+    arr << [obj.class.icon_action("提交"), commit_kobe_order_path(obj), method: "post", data: { confirm: "提交后不允许再修改，确定提交吗?" }] if can?(:commit, obj) && ha["commit"]
     # 删除
-    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_order_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && obj.cando("delete", current_user)
+    arr << [obj.class.icon_action("删除"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('删除')}",'#{delete_kobe_order_path(obj)}', "#opt_dialog") }] if can?(:update_destroy, obj) && ha["delete"]
     # 打印
-    arr << [obj.class.icon_action("打印"), "#opt_dialog", "data-toggle" => "modal",onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("打印 合同/凭证")}", "#{print_kobe_order_path(obj)}", '#opt_dialog') } ] if can?(:print_order, obj) && obj.cando("print",current_user)
+    arr << [obj.class.icon_action("打印"), "#opt_dialog", "data-toggle" => "modal",onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("打印 合同/凭证")}", "#{print_kobe_order_path(obj)}", '#opt_dialog') } ] if can?(:print_order, obj) && ha["print"]
     # 是否开发票
-    arr << [obj.class.icon_action(name), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("发票编号")}" , "#{invoice_number_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:invoice_number, obj) && obj.cando("invoice_number",current_user)
+    arr << [obj.class.icon_action(name), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("发票编号")}" , "#{invoice_number_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:invoice_number, obj) && ha["invoice_number"]
     # 评价
-    arr << [obj.class.icon_action("评价"), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("评价")}" , "#{rating_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:rating, obj) && obj.cando("rating",current_user)
+    arr << [obj.class.icon_action("评价"), "#opt_dialog" , "data-toggle" => "modal" , onClick: %Q{ modal_dialog_show("#{obj.class.icon_action("评价")}" , "#{rating_kobe_order_path(obj)}",'#opt_dialog')} ] if can?(:rating, obj) && ha["rating"]
     # 卖方确认
-    arr << [obj.class.icon_action("卖方确认"), agent_confirm_kobe_order_path(obj)] if can?(:agent_confirm, obj) && obj.cando("agent_confirm",current_user)
+    arr << [obj.class.icon_action("卖方确认"), agent_confirm_kobe_order_path(obj)] if can?(:agent_confirm, obj) && ha["agent_confirm"]
     # 买方确认
-    arr << [obj.class.icon_action("买方确认"), buyer_confirm_kobe_order_path(obj)] if can?(:buyer_confirm, obj) && obj.cando("buyer_confirm",current_user)
-    # 审核
-    audit_opt = [obj.class.icon_action("审核"), audit_kobe_order_path(obj)] if can?(:audit, obj) && obj.cando("audit",current_user)
-    return [audit_opt] if audit_opt.present? && only_audit
+    arr << [obj.class.icon_action("买方确认"), buyer_confirm_kobe_order_path(obj)] if can?(:buyer_confirm, obj) && ha["buyer_confirm"]
     return arr
   end
 
