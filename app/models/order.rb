@@ -351,7 +351,7 @@ class Order < ActiveRecord::Base
         <node column='seller_id' data_type='hidden'/>
         <node name='供应商名称' column='seller_name' #{dep_s_tmp}/>
         <node name='供应商单位联系人' column='seller_man' class='required' #{seller_edit}/>
-        <node name='供应商单位联系人座机' column='seller_tel' class='required' #{seller_edit}/>
+        <node name='供应商单位联系人座机' column='seller_tel' #{seller_edit}/>
         <node name='供应商单位联系人手机' column='seller_mobile' class='required' #{seller_edit}/>
         <node name='供应商单位地址' column='seller_addr' class='required' #{seller_edit}/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
