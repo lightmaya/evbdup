@@ -13,7 +13,7 @@
         <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
         <div class="margin-bottom-10">
           <div class="input-group">
-            <%= f.search_field :sn_cont, class: "form-control input-sm", placeholder: "请输入订单号..." %>
+            <%= f.search_field :sn_or_contract_sn_or_name_cont, class: "form-control input-sm", placeholder: "请输入项目名称或项目编号..." %>
             <span class="input-group-btn">
               <button class="btn btn-success btn-sm" type="submit">搜索</button>
             </span>
