@@ -257,6 +257,15 @@ class Kobe::OrdersController < KobeController
     redirect_back_or request.referer
   end
 
+  # 作废
+  def cancel
+
+  end
+
+  def update_cancel
+
+  end
+
   # 评价
   def rating
     if @order.rate.present?

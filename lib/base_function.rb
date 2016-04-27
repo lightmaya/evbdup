@@ -193,25 +193,27 @@ module BaseFunction
   def show_uploads(obj, options = {})
     options[:is_picture] ||= false
     options[:grid] ||= 4
+    options[:other_uploads] ||= false
+    uploads = options[:other_uploads] ? obj.other_uploads : obj.uploads
     result = ""
     # 标题
     if options[:title].present?
       if options[:title] == true
         options[:title] = "附件信息"
       end
-      result << "<h5><i class='fa fa-chevron-circle-#{obj.uploads.present? ? "down" : "right"}'></i> #{options[:title]}</h5>"
+      result << "<h5><i class='fa fa-chevron-circle-#{uploads.present? ? "down" : "right"}'></i> #{options[:title]}</h5>"
     end
-    return (result + something_not_found(options[:icon_not_found], options[:title].present?)).html_safe if obj.uploads.blank?
+    return (result + something_not_found(options[:icon_not_found], options[:title].present?)).html_safe if uploads.blank?
     # 图片类型
     if options[:is_picture]
-      tmp = obj.uploads.map do |file|
+      tmp = uploads.map do |file|
         %Q|<div class="col-md-#{12/options[:grid]}">
           #{show_picture(file.upload.url(:md), file.upload.url(:lg), file.upload_file_name, obj.class.to_s.tableize)}
         </div>|.html_safe
       end
     # 非图片类型
     else
-      tmp = obj.uploads.map do |file|
+      tmp = uploads.map do |file|
         %Q|<div class="col-md-#{12/options[:grid]}">
           <div class="servive-block servive-block-default">
             <a href="#{file.upload.url(:original)}" title="#{file.upload_file_name}" target="_blank">

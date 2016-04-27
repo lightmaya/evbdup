@@ -3,6 +3,7 @@ class BidProject < ActiveRecord::Base
   # has_many :uploads, as: :master
 
   has_many :uploads, class_name: :BidProjectUpload, foreign_key: :master_id
+  has_many :other_uploads, -> { where(yw_type: "choose") }, foreign_key: :master_id
 
   has_many :items, class_name: "BidItem"
   has_many :bid_item_bids

@@ -5,7 +5,7 @@ class UploadsController < ApplicationController
 
   def index
     unless params[:master_id].blank?
-      @uploads = upload_model.where(["master_id = ?", params[:master_id]])
+      @uploads = upload_model == OtherUpload ? upload_model.where(master_id: params[:master_id], yw_type: params[:upload_master_model]) : upload_model.where(["master_id = ?", params[:master_id]])
     else
       @uploads = []
     end
@@ -24,6 +24,8 @@ class UploadsController < ApplicationController
     @upload = upload_model.new(form_params)
     # master_id 默认值为 0
     @upload.master_id = params[:master_id] || 0
+    # 如果是 OtherUpload 保存yw_type
+    @upload.yw_type = params[:upload_master_model] if upload_model == OtherUpload
     respond_to do |format|
       if @upload.save
         write_upload_logs("create")
@@ -62,6 +64,7 @@ class UploadsController < ApplicationController
 
     # 从参数中获得主表的Model
     def master_model
+      return Dictionary.other_upload_type[params[:upload_master_model]].constantize if params[:upload_model] == "OtherUpload"
       params[:upload_model].gsub("Upload","").singularize.constantize
     end
 

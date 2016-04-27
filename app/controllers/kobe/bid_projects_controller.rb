@@ -22,6 +22,7 @@ class Kobe::BidProjectsController < KobeController
   def choose
     # 默认第一中标人
     @bid_project.bid_project_bid_id = @bpbs.first.try(:id)
+    @myform = SingleForm.new(nil, @bid_project, { form_id: "choose_upload", button: false, upload_files: true, upload_model: OtherUpload, upload_master_model: "choose", title: false })
   end
 
   def update_choose
@@ -149,7 +150,8 @@ class Kobe::BidProjectsController < KobeController
       #   budget_contents << show_uploads(budget)
       #   @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
       # end
-      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
+      @arr << { title: "竞价需求附件", icon: "fa-paperclip", content: show_uploads(@bid_project) }
+      @arr << { title: "竞价结果附件", icon: "fa-paperclip", content: show_uploads(@bid_project, other_uploads: true) }
       @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@bid_project, @bid_project.can_bid?) }
 
     end

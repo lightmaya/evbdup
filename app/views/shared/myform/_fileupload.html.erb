@@ -1,6 +1,6 @@
 <%
 form_id = myform.options[:form_id]
-upload_model = myform.obj.class.respond_to?(:upload_model) ? myform.obj.class.upload_model : Upload
+upload_model = myform.options[:upload_model].present? ? myform.options[:upload_model] : myform.obj.class.respond_to?(:upload_model) ? myform.obj.class.upload_model : Upload
 master_id = myform.obj.id
 min_number_of_files = myform.options[:min_number_of_files]
 rules = myform.rules
@@ -8,7 +8,7 @@ messages = myform.messages
 jquery_setting = myform.options[:upload_files_name].present? ? upload_model.send("#{myform.options[:upload_files_name]}_jquery_setting") : upload_model.jquery_setting
 %>
 <div class="headline"><h2><strong><i class="fa fa-paperclip"></i> 上传附件</strong></h2></div>
-<%= form_tag(uploads_path(master_id: master_id, upload_model: upload_model), multipart: true, id: "#{form_id}_fileupload", class: "sky-form fileupload_form no-border" ) %>
+<%= form_tag(uploads_path(master_id: master_id, upload_model: upload_model, upload_master_model: myform.options[:upload_master_model]), multipart: true, id: "#{form_id}_fileupload", class: "sky-form fileupload_form no-border" ) %>
   <div class="fileupload-buttonbar">
     <div class="alert alert-warning  fade in">
       <%= raw myform.options[:upload_files_name].present? ? upload_model.send(myform.options[:upload_files_name] + "_tips") : upload_model.tips.html_safe %>

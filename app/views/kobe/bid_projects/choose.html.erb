@@ -11,6 +11,8 @@
     	<td><%= f.text_area :reason, class: "form-control" %></td>
     </tr>
   </table>
+  <!-- # 设置上传附件  -->
+  <%= draw_myform(@myform) %>
 <% end -%>
 
 <%= link_to_void "选择中标人", onclick: "choose_who(1);", class: "btn-u btn-u-large" if @bpbs.size >= 3 && @bpbs.first.total <= @bid_project.budget_money %>
