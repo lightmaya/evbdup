@@ -439,8 +439,8 @@ class Department < ActiveRecord::Base
     sum = total.present? ? total : 0
     %Q{
       <div class="row margin-bottom-10 margin-left-5">
-        <div class="col-xs-6 service-in">#{name}</div>
-        <div class="col-xs-6 text-right service-in">#{sum}</div>
+        <div class="col-xs-5 service-in">#{name}</div>
+        <div class="col-xs-7 text-right service-in">#{sum}</div>
       </div>
     }
   end
