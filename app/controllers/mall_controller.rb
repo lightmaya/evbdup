@@ -223,7 +223,7 @@ class MallController < ApplicationController
      # home_index ? tmp : "#{tmp}/api"
     when "govbuy"
       tmp = "http://sinograin.govbuy.cn"
-      home_index ? tmp : "#{tmp}/backend/api/1"
+      home_index ? tmp : "#{tmp}/backend/api/55"
     else
       ""
     end
