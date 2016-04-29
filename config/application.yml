@@ -127,7 +127,7 @@ defaults: &defaults
   xiaoboss: [ 'zclxuxiyan', 'zclzhangpuzi', 'zclwangsong', 'zclsunwei', 'zclwxb' ]
 
   # 个人采购总公司文件管理员
-  file_manager: ["zclbgt", "gxjhb", "ccglb", "cwb", "zcglb", "xxb", "rlzyb", "sjjcb", "dqgzb", "zclxsz"]
+  file_manager: ["zclbgt", "gxjhb", "ccglb", "cwb", "zcglb", "xxb", "rlzyb", "sjjcb", "dqgzb", "zclxsz", "fwzc"]
   # 待办事项列表传参数 tq = 13
   tq_no: 13
   # 网上商城
