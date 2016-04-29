@@ -126,7 +126,8 @@ defaults: &defaults
   daboss: [ 'zcl001' ]
   xiaoboss: [ 'zclxuxiyan', 'zclzhangpuzi', 'zclwangsong', 'zclsunwei', 'zclwxb' ]
 
-  ["zclbgt", "gxjhb", "ccglb", "cwb", "zcglb", "xxb", "rlzyb", "sjjcb", "dqgzb", "zclxsz"]
+  # 个人采购总公司文件管理员
+  file_manager: ["zclbgt", "gxjhb", "ccglb", "cwb", "zcglb", "xxb", "rlzyb", "sjjcb", "dqgzb", "zclxsz"]
   # 待办事项列表传参数 tq = 13
   tq_no: 13
   # 网上商城

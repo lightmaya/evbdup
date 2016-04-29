@@ -92,7 +92,7 @@ class Kobe::UsersController < KobeController
       if can? :admin, @user
         @user = User.find_by(id: params[:id]) if params[:id].present?
       else
-        if current_user.is_admin && params[:id].present?
+        if (current_user.is_admin || Dictionary.file_manager.include?(current_user.login)) && params[:id].present?
           current_user.department.subtree.each do |d|
             u = d.users.find_by(id: params[:id])
             @user = u if u.present?
