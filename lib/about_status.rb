@@ -105,7 +105,8 @@ module AboutStatus
 
   # 状态标签
   def status_badge(status=self.status)
-    arr = self.class.get_status_attributes(status,1)
+    # arr = self.class.get_status_attributes(status,1)
+    arr = Dictionary.all_status_array.find{ |e| e[1] == status.to_i }
     if arr.blank?
       str = "<span class='label rounded-2x label-dark'>未知</span>"
     else
@@ -116,7 +117,8 @@ module AboutStatus
 
   # 状态进度条
   def status_bar(status=self.status)
-    arr = self.class.get_status_attributes(status,1)
+    # arr = self.class.get_status_attributes(status,1)
+    arr = Dictionary.all_status_array.find{ |e| e[1] == status.to_i }
     return "" if arr.blank?
     title = self.class.edit_status.include?(self.status) ? %Q{<span data-original-title="请提交订单" data-toggle="tooltip" class="tooltips">#{arr[0]}</span>} : arr[0]
     return %Q|
@@ -167,7 +169,7 @@ module AboutStatus
   # 根据不同操作 改变状态
   def change_status_hash
     # 如果是订单表 并且已经填写发票号 提交和审核通过的状态变成93
-    tmp = self.class == Order && self.invoice_number.present?
+    # tmp = self.class == Order && self.invoice_number.present? && Dictionary.yw_type.include?(self.rule.try(:yw_type))
     ha = {
       "删除" => { 65 => 404 },
 
@@ -183,7 +185,8 @@ module AboutStatus
     self.class.edit_status.each{ |s| ha["删除"][s] = 404 }
 
     # 提交后自动生效
-    auto_status = tmp ? 93 : self.class.auto_effective_status.first
+    # auto_status = tmp ? 93 : self.class.auto_effective_status.first
+    auto_status = self.class.auto_effective_status.first
     ha["提交"] = { 0 => auto_status, 7 => auto_status, 14 => 16 } if auto_status.present?
 
     if self.class.attribute_method? "rule"
@@ -197,10 +200,14 @@ module AboutStatus
         # 如果当前状态是修改状态，提交后变成开始某流程步骤的状态 start_status
         ha["提交"] = { self.status => start_status } if self.class.only_edit_status.include? self.status
         # 通过本步骤 状态转向 下一步的开始状态 如果没有下一步则是本部的结束状态
-        finish_status = tmp ? 93 : finish_status
+        # finish_status = tmp ? 93 : finish_status
         ha["通过"] = { start_status => finish_status, 10 =>  finish_status, 42 => finish_status }
         # 不通过 状态转向 本步的退回状态
         ha["不通过"] = { start_status => return_status, 10 =>  return_status, 42 => return_status }
+
+        # 有效状态都可以作废
+        ha["作废"] = Hash.new
+        self.class.effective_status.each{ |s| ha["作废"][s] = start_status }
 
         # 网上竞价选择中标人
         if self.class == BidProject
@@ -213,26 +220,17 @@ module AboutStatus
       end
     end
     return ha
-    # {
-    #   "提交" => { 0 => [16, 8, 72, 15, 51, 65, 2], 7 => [16, 8, 72, 51, 65, 2],  14 => [15, 16] },
-
-    #   # 审核、买方卖方确认
-    #   "通过" => { 8 => [16, 72, 51, 65, 9], 15 => [16], 22 => [23], 29 => [33], 3 => [4, 8], 4 => [8], 36 => [35], 43 => [47] },
-    #   "不通过" => { 8 => [7], 15 => [14], 22 => [21], 29 => [28], 3 => [42], 4 => [10], 36 => [37], 43 => [44] },
-
-    #   "确定中标人" => { 16 => 22 },
-    #   "废标" => { 16 => 29},
-
-    # "删除" => { 0 => 404, 65 => 404 },
-
-    # "下架" => { 65 => 26 },
-    # "冻结" => { 65 => 12 },
-    # "停止" => { 65 => 68 },
-
-    # "恢复" => { 12 => 65, 26 => 65, 68 => 65 },
-
-    # "回复" => { 58 => 75 }
-    # }
   end
+
+  # 操作理由xml
+  def opt_xml
+    %Q{
+      <?xml version='1.0' encoding='UTF-8'?>
+      <root>
+        <node name='操作理由' column='opt_liyou' class='required' placeholder='请输入操作理由...'/>
+      </root>
+    }
+  end
+
 
 end

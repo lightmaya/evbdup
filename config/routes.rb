@@ -132,8 +132,8 @@ namespace :kobe do
       post :same_template, :update_cart_order, :update_batch_audit
     end
     member do
-      get :agent_confirm, :buyer_confirm, :audit, :print, :print_ht, :print_ysd, :invoice_number, :delete, :rating
-      post :commit, :update_audit, :update_agent_confirm, :update_buyer_confirm, :update_invoice_number, :update_rating
+      get :agent_confirm, :buyer_confirm, :audit, :print, :print_ht, :print_ysd, :invoice_number, :delete, :rating, :cancel
+      post :commit, :update_audit, :update_agent_confirm, :update_buyer_confirm, :update_invoice_number, :update_rating, :update_cancel
     end
   end
   resources :departments do

@@ -3,6 +3,7 @@ class Order < ActiveRecord::Base
   has_many :items, class_name: :OrdersItem
   accepts_nested_attributes_for :items
   has_many :uploads, class_name: :OrdersUpload, foreign_key: :master_id
+  has_many :other_uploads, -> { where(yw_type: "cancel") }, foreign_key: :master_id
   # default_scope -> {order("id desc")}
   belongs_to :rule
   has_many :task_queues, -> { where(class_name: "Order") }, foreign_key: :obj_id
@@ -319,6 +320,7 @@ class Order < ActiveRecord::Base
     ha["update_buyer_confirm"] = ha["buyer_confirm"] = self.class.buyer_status.include?(self.status) && only_self
     ha["delete"] = ha["destroy"] = self.can_opt?("删除") && only_self
     ha["rating"] = ha["update_rating"] = self.class.rate_status.include?(self.status) && only_self
+    ha["cancel"] = ha["update_cancel"] = self.class.effective_status.include?(self.status) && (only_self || current_u.is_boss?)
     return ha.delete_if{|key,value|value == false}
   end
 
@@ -328,6 +330,14 @@ class Order < ActiveRecord::Base
     arr |= self.get_obj_step_names
     arr << "评价"
     return arr
+  end
+
+  # 查看网上竞价、协议议价过程
+  def link_to_road
+    return '' unless ["wsjj", "xyyj"].include?(self.yw_type)
+    url = self.yw_type == "xyyj" ? "bargains" : "bid_projects"
+    name = self.yw_type == "xyyj" ? "议价" : "竞价"
+    "<a href='/kobe/#{url}/#{self.mall_id}' target='_blank'>查看#{name}记录</a>"
   end
 
   def self.xml(order=nil, current_u='', options={})
@@ -357,7 +367,6 @@ class Order < ActiveRecord::Base
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
         <node name='预算金额（元）' column='budget_money' class='number required' display='readonly'/>
         <node column='budget_id' data_type='hidden'/>
-        <node name='发票编号' column='invoice_number' hint='多张发票请用逗号隔开'/>
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>
         <node column='yw_type' data_type='hidden'/>

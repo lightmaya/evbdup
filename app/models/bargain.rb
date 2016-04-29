@@ -199,7 +199,7 @@ class Bargain < ActiveRecord::Base
     order.status = 107
 
     order.details = self.details
-    # order.logs = self.logs.to_s
+    order.logs = self.logs.to_s
     order.created_at = self.created_at
     order.updated_at = self.updated_at
     order.yw_type = 'xyyj'

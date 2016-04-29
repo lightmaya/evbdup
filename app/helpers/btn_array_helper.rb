@@ -120,6 +120,8 @@ module BtnArrayHelper
     arr << [obj.class.icon_action("卖方确认"), agent_confirm_kobe_order_path(obj)] if can?(:agent_confirm, obj) && ha["agent_confirm"]
     # 买方确认
     arr << [obj.class.icon_action("买方确认"), buyer_confirm_kobe_order_path(obj)] if can?(:buyer_confirm, obj) && ha["buyer_confirm"]
+    # 作废
+    arr << [obj.class.icon_action("作废"), "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show("#{obj.class.icon_action('作废')}",'#{cancel_kobe_order_path(obj)}', "#opt_dialog", "cancel_upload_fileupload") }] if can?(:update_cancel, obj) && ha["cancel"]
     return arr
   end
 

@@ -161,7 +161,7 @@ class Kobe::OrdersController < KobeController
   # 审核订单
   def list
     @rule = Rule.find_by(id: params[:r]) if params[:r].present?
-    arr = @rule.present? ? [["orders.yw_type = ? ", @rule.yw_type]] : []
+    arr = @rule.present? && Dictionary.yw_type.include?(@rule.yw_type) ? [["orders.yw_type = ? ", @rule.yw_type]] : []
     @orders = audit_list(Order, params[:tq].to_i == Dictionary.tq_no, arr)
   end
 
@@ -259,11 +259,27 @@ class Kobe::OrdersController < KobeController
 
   # 作废
   def cancel
-
+    @myform = SingleForm.new(@order.opt_xml, @order, { form_id: "cancel_upload", action: update_cancel_kobe_order_path(@order), upload_files: true, upload_model: OtherUpload, upload_master_model: "cancel", title: false, min_number_of_files: current_user.is_boss? ? 0 : 1 })
+    render layout: false
   end
 
   def update_cancel
-
+    rule = Rule.find_by(yw_type: 'cancel')
+    if rule.present?
+      if current_user.is_boss?
+        @order.update(rule_id: rule.id, rule_step: 'done')
+        remark = "作废成功！项目已作废。操作理由：#{params[:orders][:opt_liyou]}"
+        Order.batch_change_status_and_write_logs(@order.id, 47,stateless_logs("作废",remark, false))
+      else
+        @order.update(rule_id: rule.id, rule_step: 'start')
+        remark = @order.find_step_by_rule.blank? ? "作废成功！项目已作废。" : "作废成功！请等待#{@order.find_step_by_rule["name"]}。"
+        remark << "操作理由：#{params[:orders][:opt_liyou]}"
+        @order.change_status_and_write_logs("作废", stateless_logs("作废",remark, false))
+        @order.reload.create_task_queue
+      end
+      tips_get(remark)
+    end
+    redirect_to kobe_orders_path
   end
 
   # 评价
@@ -329,23 +345,24 @@ class Kobe::OrdersController < KobeController
       #   budget_contents << show_uploads(budget)
       #   @arr << { title: "预算审批单", icon: "fa-paperclip", content: budget_contents }
       # end
-      if ["wsjj", "xyyj"].include?(@order.yw_type)
-        url = @order.yw_type == "xyyj" ? "bargains" : "bid_projects"
-        name = @order.yw_type == "xyyj" ? "议价" : "竞价"
-        tmp = %Q{
-          <div class="content-boxes-v2 space-lg-hor content-sm">
-          <h2 class="heading-sm">
-            <i class="icon-custom icon-sm icon-bg-red fa fa-lightbulb-o"></i>
-            <span><a href='/kobe/#{url}/#{@order.mall_id}' target='_blank'>查看#{name}记录</a></span>
-          </h2>
-        </div>
-        }
-        @arr << { title: "历史记录", icon: "fa-clock-o", content: tmp }
-      else
-        @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@order) }
+      # if ["wsjj", "xyyj"].include?(@order.yw_type)
+      #   url = @order.yw_type == "xyyj" ? "bargains" : "bid_projects"
+      #   name = @order.yw_type == "xyyj" ? "议价" : "竞价"
+      #   tmp = %Q{
+      #     <div class="content-boxes-v2 space-lg-hor content-sm">
+      #     <h2 class="heading-sm">
+      #       <i class="icon-custom icon-sm icon-bg-red fa fa-lightbulb-o"></i>
+      #       <span><a href='/kobe/#{url}/#{@order.mall_id}' target='_blank'>查看#{name}记录</a></span>
+      #     </h2>
+      #   </div>
+      #   }
+      #   @arr << { title: "历史记录", icon: "fa-clock-o", content: tmp }
+      # else
+      @arr << { title: "附件", icon: "fa-paperclip", content: show_uploads(@order) } unless ["wsjj", "xyyj"].include?(@order.yw_type)
+      @arr << { title: "作废附件", icon: "fa-paperclip", content: show_uploads(@order, other_uploads: true) }
         # @arr << {title: "评价", icon: "fa-star-half-o", content: show_estimates(@order)}
-        @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@order) }
-      end
+      @arr << { title: "历史记录", icon: "fa-clock-o", content: show_logs(@order) }
+      # end
       if @order.rate.present?
         rate_cont = show_obj_info(@order.rate, Rate.xml, { grid: 1 })
         rate_cont << show_total_part(@order.rate_total, "总分（满分40分）")
