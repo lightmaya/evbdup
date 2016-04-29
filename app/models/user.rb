@@ -104,7 +104,7 @@ class User < ActiveRecord::Base
         }
       end
       tmp << %Q{
-        <node name='权限分配' class='tree_checkbox required' json_url='/kobe/shared/user_ztree_json' partner='menuids' json_params='{"id":"#{obj.id}"}' hint='如果没有可选项，请先查看单位状态和用户状态是否正常！'/>
+        <node name='权限分配' class='tree_checkbox' json_url='/kobe/shared/user_ztree_json' partner='menuids' json_params='{"id":"#{obj.id}"}' hint='如果没有可选项，请先查看单位状态和用户状态是否正常！'/>
         <node column='menuids' data_type='hidden'/>
         <node name='品目分配' class='tree_checkbox' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
         <node column='categoryids' data_type='hidden' hint='如勾选品目，待办事项中只显示勾选的品目的相关信息。'/>
