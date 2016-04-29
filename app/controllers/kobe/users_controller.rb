@@ -35,12 +35,16 @@ class Kobe::UsersController < KobeController
 
   def update
     if update_and_write_logs(@user, User.xml(@user, current_user))
-      if @user.previous_changes["menuids"].present?
-        @user.menu_ids = @user.menuids.split(",")
-        @user.cache_menus(true)
-        @user.cache_option_hash(true)
+      if @user.is_personal
+        @user.set_auto_menu
+      else
+        if @user.previous_changes["menuids"].present?
+          @user.menu_ids = @user.menuids.split(",")
+          @user.cache_menus(true)
+          @user.cache_option_hash(true)
+        end
+        @user.category_ids = @user.categoryids.split(",") if @user.previous_changes["categoryids"].present?
       end
-      @user.category_ids = @user.categoryids.split(",") if @user.previous_changes["categoryids"].present?
       redirect_to kobe_departments_path(id: @user.department.id)
     else
       redirect_back_or

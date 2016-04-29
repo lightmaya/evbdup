@@ -9,7 +9,7 @@ class Kobe::MainController < KobeController
     if current_user.department.is_dep_supplier?
       @orders = current_user.department.seller_orders.where(status: Order.unfinish_status).limit(5).order('id desc')
     else
-      @orders = current_user.department.buyer_orders.where(status: Order.unfinish_status).limit(5).order('id desc')
+      @orders = current_user.is_personal ? [] : current_user.department.buyer_orders.where(status: Order.unfinish_status).limit(5).order('id desc')
     end
   end
 
