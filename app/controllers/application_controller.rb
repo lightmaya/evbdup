@@ -125,7 +125,7 @@ class ApplicationController < ActionController::Base
       else
         nodes = node.subtree.where.not(status: 404)
       end
-      render :json => obj_class.get_json(nodes)
+      render :json => obj_class.get_json(nodes.order("sort"))
     end
 
     # 设置后退页面
