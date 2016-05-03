@@ -5,7 +5,7 @@ class MallController < ApplicationController
   # 登录跳转到电商平台
   def index
     if current_user && current_user.cgr?
-      redirect_to redirect_to_dota_mall_index_path(mall_type: params[:mall_type])
+      redirect_to current_user.is_personal ? redirect_to_dota_mall_index_path(mall_type: 'govbuy') : redirect_to_dota_mall_index_path(mall_type: params[:mall_type])
     else
       redirect_to get_dota_url(params[:mall_type], true)
     end
