@@ -257,7 +257,7 @@ class User < ActiveRecord::Base
     when "show", "index", "only_show_info", "only_show_logs"
       true
     when "edit", "update", "reset_password", "update_reset_password"
-      cdt || self.id == current_u.id || || Dictionary.file_manager.include?(current_u.login)
+      cdt || self.id == current_u.id || Dictionary.file_manager.include?(current_u.login)
     when "recover", "update_recover"
       self.can_opt?("恢复") && cdt
     when "freeze", "update_freeze"
