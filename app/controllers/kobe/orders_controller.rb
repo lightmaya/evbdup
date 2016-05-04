@@ -126,11 +126,10 @@ class Kobe::OrdersController < KobeController
   end
 
   def update
-    update_msform_and_write_logs(@order, Order.xml(@order, current_user),
-      OrdersItem, OrdersItem.xml(@order, current_user),
-      { :action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息" },
-      { name: Order.get_project_name(@order, current_user, params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) })
-    redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
+    edit_hash = @order.yw_type == "jhcg" ? {}  : { name: Order.get_project_name(@order, current_user,  params[:orders_items][:category_name].values.uniq.join("、"), params[:orders][:yw_type]) }
+    update_msform_and_write_logs(@order, Order.xml(@order, current_user), OrdersItem, OrdersItem.xml(@order, current_user),
+      { :action => "修改订单", :master_title => "基本信息",:slave_title => "产品信息" }, edit_hash)
+    redirect_to @order.yw_type == 'jhcg' ? order_list_kobe_plans_path : my_list_kobe_orders_path(r: @order.rule.try(:id))
   end
 
   def edit
@@ -154,7 +153,7 @@ class Kobe::OrdersController < KobeController
       @order.change_status_and_write_logs("提交", logs, c_arr, false)
       @order.reload.create_task_queue
       tips_get(remark)
-      redirect_to my_list_kobe_orders_path(r: @order.rule.try(:id))
+      redirect_to @order.yw_type == 'jhcg' ? order_list_kobe_plans_path : my_list_kobe_orders_path(r: @order.rule.try(:id))
     end
   end
 

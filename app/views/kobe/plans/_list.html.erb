@@ -5,7 +5,7 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-8 pull-left padding-top-5">
-                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增采购计划的品目', '#{get_item_category_kobe_shared_index_path(item_id: @item.id, url: "new_kobe_plan_path", model_name: "PlanItem")}', '#opt_dialog') }) if action_name == 'item_list' %>
+                <%= link_to('<i class="fa fa-plus"></i> 新增'.html_safe, "#opt_dialog", "data-toggle" => "modal", onClick: %Q{ modal_dialog_show('<i class="fa fa-plus"></i> 请选择新增采购计划的品目', '#{show_item_category_kobe_plans_path}', '#opt_dialog') }) if action_name == 'index' %>
             </div>
             <div class="col-md-4 pull-right">
                 <%= search_form_for @q, url: search_url, html: { method: :get } do |f| %>
@@ -55,6 +55,6 @@
                 <% end %>
             </tbody>
         </table>
-        <%= paginate @plans %> 
-    </div>                     
+        <%= paginate @plans %>
+    </div>
 </div>

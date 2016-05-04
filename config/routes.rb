@@ -192,16 +192,18 @@ namespace :kobe do
   end
   resources :plan_items do
     collection do
-      get :list
+      # get :list
+      post :dep_ztree_json
     end
     member do
-      get :delete
-      post :commit
+      get :result_dep
+      post :update_result_dep
     end
   end
   resources :plans do
     collection do
-      get :item_list, :list
+      get :show_item_category, :show_order_item_category, :list, :order_list, :order
+      post :update_order, :bid_dep_ztree_json
     end
     member do
       get :delete, :audit

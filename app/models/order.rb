@@ -347,7 +347,15 @@ class Order < ActiveRecord::Base
       seller_edit = " display='readonly'" if order.try(:buyer_id) == current_u.real_department.id
     end
 
-    dep_s_tmp = order.try(:yw_type) == 'ddcg' ? %Q{ hint='有入围供应商的项目应该从入围供应商处采购' class='tree_radio required' json_url='/kobe/shared/item_dep_json' json_params='{"vv_otherchoose":"从非入围供应商采购","vv_checklevel":-1}' partner='seller_id' } : " display='readonly'"
+    dep_s_tmp = case order.try(:yw_type)
+    when 'ddcg'
+      %Q{ hint='有入围供应商的项目应该从入围供应商处采购' class='tree_radio required' json_url='/kobe/shared/item_dep_json' json_params='{"vv_otherchoose":"从非入围供应商采购","vv_checklevel":-1}' partner='seller_id' }
+    when 'jhcg'
+      oi = order.plan_key.split("_")
+      %Q{ hint='有入围供应商的项目应该从入围供应商处采购' class='box_radio required' json_url='/kobe/plans/bid_dep_ztree_json' json_params='{"item_id": "#{oi[0]}", "category_id": "#{oi[1]}"}' partner='seller_id' }
+    else
+      " display='readonly'"
+    end
 
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
@@ -370,6 +378,7 @@ class Order < ActiveRecord::Base
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>
         <node column='yw_type' data_type='hidden'/>
+        <node column='plan_key' data_type='hidden'/>
       </root>
     }
   end

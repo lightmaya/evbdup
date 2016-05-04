@@ -25,19 +25,24 @@ class OrdersItem < ActiveRecord::Base
   # 从表的XML加ID是为了修改的时候能找到记录
   def self.xml(order=nil, current_u='', options={})
     if order.try(:yw_type) == 'xygh'
-      category_tmp = can_edit = " display='readonly'"
+      can_edit = " display='readonly'"
       num_edit = order.try(:seller_id) == current_u.real_department.id ? " display='readonly'" : ''
     else
-      category_tmp = %Q{ class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}","vv_checklevel":-1}' partner='category_id' }
       can_edit = num_edit = ''
     end
     bp = ['xygh', 'xyyj'].include?(order.try(:yw_type)) ? "<node name='入围单价（元）' column='bid_price' class='number' #{can_edit}/>" : ""
+    category_tmp = case order.try(:yw_type)
+    when 'xygh'
+      " display='readonly'"
+    else
+      %Q{ class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}","vv_checklevel":-1}' partner='category_id' }
+    end
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node column='id' data_type='hidden'/>
         <node column='category_id' data_type='hidden'/>
-        <node name='品目' column='category_name' #{category_tmp}/>
+        #{"<node name='品目' column='category_name' #{category_tmp}/>" unless order.try(:yw_type) == 'jhcg'}
         <node name='品牌' column='brand' class='required' #{can_edit}/>
         <node name='型号' column='model' class='required' #{can_edit}/>
         <node name='版本号' column='version' hint='颜色、规格等有代表性的信息，可以不填。' #{can_edit}/>

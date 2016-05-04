@@ -1,10 +1,9 @@
 # -*- encoding : utf-8 -*-
 class PlanItem < ActiveRecord::Base
 
-  has_many :plan_item_categories, dependent: :destroy
-  has_many :categories, through: :plan_item_categories
-
-  # default_scope -> {order("id desc")}
+  has_many :plan_item_results, dependent: :destroy
+  has_many :categories, through: :plan_item_results
+  has_many :plan_item_categories
 
   before_save do
     self.category_ids = self.categoryids.split(",")
@@ -16,59 +15,46 @@ class PlanItem < ActiveRecord::Base
 
   # 中文意思 状态值 标签颜色 进度
   def self.status_array
-    # [
-    #   ["暂存", "0", "orange", 10],
-    #   ["正常", "65", "yellow", 100],
-    #   ["已过期", "54", "dark", 100],
-    #   ["已删除", "404", "dark", 100]
-    # ]
-    self.get_status_array(["暂存", "正常", "已过期", "已删除"])
-    # [
-    #   ["暂存",0,"orange",10],
-    #   ["有效",1,"blue",100],
-    #   ["已过期",2,"red",50],
-    #   ["已删除",404,"light",0]
-    # ]
+    self.get_status_array(["暂存", "可报需求", "可报结果", "已完成"])
   end
 
-  # 根据不同操作 改变状态
-  # def change_status_hash
-  #   {
-  #     "提交" => { 0 => 1 },
-  #     "停止" => { 1 => 2 },
-  #     "删除" => { 0 => 404 }
-  #   }
-  # end
+  # 可上报需求的状态
+  def self.xq_status
+    [114]
+  end
 
-  # 列表中的状态筛选,current_status当前状态不可以点击
-  # def self.status_filter(action='')
-  #   # 列表中不允许出现的
-  #   limited = [404]
-  #   arr = self.status_array.delete_if{|a|limited.include?(a[1])}.map{|a|[a[0],a[1]]}
-  # end
+  # 可上报结果的状态
+  def self.jg_status
+    [121]
+  end
 
   def cando(act='',current_u=nil)
     case act
-    when "update", "edit"
-      self.class.edit_status.include?(self.status)
-    when "commit"
-      self.can_opt?("提交")
-    when "delete", "destroy"
-      self.can_opt?("删除")
+    when "update", "edit", "result_dep", "update_result_dep"
+      true
+    # when "commit"
+    #   self.can_opt?("提交")
+    # when "delete", "destroy"
+    #   self.can_opt?("删除")
     when "add_plan"
-      self.class.effective_status.include?(self.status) && self.end_time > Time.now
+      self.class.xq_status.include?(self.status) # && self.end_time > Time.now
     else false
     end
   end
 
-  def self.xml(who='',options={})
+  def self.xml(act='',options={})
+    status_arr = []
+    self.status_array.each{ |e| status_arr << [ e[1], e[0] ] }
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
-        <node name='计划名称' column='name' class='required'/>
-        <node name='上报截止时间' column='end_time' class='datetime_select required datetime'/>
-        <node name='品目' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids'/>
+        <node name='计划名称' column='name' class='required' #{"display='disabled'" if act == 'result'}/>
+        <node name='上报截止时间' column='end_time' class='datetime_select required datetime' #{"display='disabled'" if act == 'result'}/>
+        <node name='品目' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json' partner='categoryids' #{"display='disabled'" if act == 'result'}/>
         <node column='categoryids' data_type='hidden'/>
+        <node name='状态' column='status' class='required' data_type='select' data='#{status_arr}' />
+        <node column='item_id' data_type='hidden'/>
+        <node name='指定入围项目' class='box_radio required' json_url='/kobe/shared/item_ztree_json' partner='item_id' #{"display='disabled'" if act == 'result'}/>
       </root>
     }
   end

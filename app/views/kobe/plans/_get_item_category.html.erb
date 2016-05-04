@@ -1,0 +1,8 @@
+<div class="tag-box tag-box-v3">
+  <% @items.each_with_index do |item, index| %>
+    <div class="headline margin-bottom-5 font-size-16">
+      <%= "#{index+1}. #{item.name}" %>
+    </div>
+    <%= item.categories.map{ |ca| link_to("<i class='fa fa-gift '></i> #{ca.name}".html_safe, eval("#{url}(category_id: ca.id, item_id: item.id)"), class: 'margin-10 btn-u pulse-grow', rel:'pulse-grow') }.join(" ").html_safe %>
+  <% end %>
+</div>
