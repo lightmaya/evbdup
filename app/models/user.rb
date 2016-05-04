@@ -62,7 +62,7 @@ class User < ActiveRecord::Base
     # 个人用户
     return Dictionary.personal_user_type if self.is_personal
     # 总公司文件管理员
-    return Dictionary.file_manager_user_type if Dictionary.file_manager.include?(current_user.login)
+    return Dictionary.file_manager_user_type if Dictionary.file_manager.include?(self.login)
     if self.real_department.is_zgs?
       return Dictionary.manage_user_type
     else
