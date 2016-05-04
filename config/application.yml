@@ -104,11 +104,18 @@ defaults: &defaults
   yw_type: { xygh: "协议供货", jhcg: "计划采购", ddcg: "定点采购", wsjj: "网上竞价", dscg: "网上商城", xyyj: "协议议价", grcg: "个人采购" }
   faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
   questions_type: [["1", "政策问题"], ["2", "业务问题"], ["3", "操作问题"]]
+  # 总公司用户
   manage_user_type: 1
+  # 采购单位
   dep_purchaser_id: 2
+  # 供应商
   dep_supplier_id: 3
+  # 总公司和分公司的审核权限菜单
   audit_user_type: 7
+  # 个人用户的权限菜单
   personal_user_type: 9
+  # 总公司文件管理员的权限菜单
+  file_manager_user_type: 8
   # 暂无图片url
   no_pic_url: "/plugins/images/404.gif"
   ht_template: [ ["bg", "办公物资"], ["lj", "粮机物资"], ["qc", "汽车采购"], ["bzw", "包装物采购"], ["gc", "建筑工程"], ["gz", "职工工装"], ["ds", "网上商城"]]

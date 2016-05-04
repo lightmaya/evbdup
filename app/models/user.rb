@@ -61,6 +61,8 @@ class User < ActiveRecord::Base
   def user_type
     # 个人用户
     return Dictionary.personal_user_type if self.is_personal
+    # 总公司文件管理员
+    return Dictionary.file_manager_user_type if Dictionary.file_manager.include?(current_user.login)
     if self.real_department.is_zgs?
       return Dictionary.manage_user_type
     else
@@ -217,8 +219,8 @@ class User < ActiveRecord::Base
     if self.status == 12 || [12, 404].include?(self.department.status)
       return []
     else
-      # 只有总公司或者分公司的人才有审核权限
-      ms = if !self.is_personal && (self.real_department.is_zgs? || self.real_department.is_fgs?)
+      # 只有总公司或者分公司的人才有审核权限 不包括总公司的个人采购账户和文件管理员
+      ms = if !self.is_personal && !Dictionary.file_manager.include?(current_user.login) && (self.real_department.is_zgs? || self.real_department.is_fgs?)
         Menu.status_not_in(404).where("find_in_set('#{self.user_type}', menus.user_type) > 0 or menus.user_type = '#{Dictionary.audit_user_type}'")
       else
         Menu.status_not_in(404).by_user_type(self.user_type)
