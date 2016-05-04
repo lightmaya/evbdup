@@ -220,7 +220,7 @@ class User < ActiveRecord::Base
       return []
     else
       # 只有总公司或者分公司的人才有审核权限 不包括总公司的个人采购账户和文件管理员
-      ms = if !self.is_personal && !Dictionary.file_manager.include?(current_user.login) && (self.real_department.is_zgs? || self.real_department.is_fgs?)
+      ms = if !self.is_personal && !Dictionary.file_manager.include?(self.login) && (self.real_department.is_zgs? || self.real_department.is_fgs?)
         Menu.status_not_in(404).where("find_in_set('#{self.user_type}', menus.user_type) > 0 or menus.user_type = '#{Dictionary.audit_user_type}'")
       else
         Menu.status_not_in(404).by_user_type(self.user_type)
