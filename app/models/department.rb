@@ -196,7 +196,7 @@ class Department < ActiveRecord::Base
 
   # 根据action_name 判断obj有没有操作
   def cando(act='',current_u)
-    cdt = current_u.is_admin || current_u.user_type == Dictionary.manage_user_type
+    cdt = current_u.is_admin || current_u.user_type == Dictionary.manage_user_type || Dictionary.file_manager.include?(current_u.login)
     case act
     when "show", "index"
       true
