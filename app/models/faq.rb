@@ -50,11 +50,11 @@ class Faq < ActiveRecord::Base
     when "show"
       true
     when "update", "edit"
-      self.catalog != 'yjjy' && self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id
+      self.catalog != 'yjjy' && current_u.try(:id) == self.user_id
     when "commit"
       self.catalog != 'yjjy' && self.can_opt?("提交") && current_u.try(:id) == self.user_id
     when "delete", "destroy"
-      self.catalog != 'yjjy' && self.can_opt?("删除") && current_u.try(:id) == self.user_id
+      self.catalog != 'yjjy' && current_u.try(:id) == self.user_id
     when "reply", "update_reply"
       self.catalog == 'yjjy' && self.can_opt?("回复") && current_u.department.is_zgs?
     else false
@@ -72,6 +72,7 @@ class Faq < ActiveRecord::Base
       }
     end
     str = "<node name='问题类别' class='required' data_type='select' data='#{Dictionary.questions_type}' />" if catalog == "cjwt"
+    str = "<node name='采购类别' class='required' data_type='select' data='#{Dictionary.cgzn_type}' />" if catalog == "cgzn"
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>

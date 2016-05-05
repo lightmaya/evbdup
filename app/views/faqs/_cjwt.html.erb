@@ -2,18 +2,18 @@
     <div class="col-md-8 padding-top-10">
         <div class="tab-v1">
             <ul class="nav nav-tabs margin-bottom-20">
-                <% Dictionary.questions_type.each_with_index do |type, index| %>
+                <% type.each_with_index do |type, index| %>
                     <%= "<li #{"class='active'" if index == 0}><a data-toggle='tab' href='#questions_type_#{type[0]}'>#{type[1]}</a></li>".html_safe %>
                 <% end %>
             </ul>
             <div class="tab-content">
                 <!-- Tab Content 1 -->
-                <% Dictionary.questions_type.each_with_index do | type, index | %>
+                <% type.each_with_index do | type, index | %>
                 <div id='<%= "questions_type_#{type[0]}" %>' class="tab-pane fade <%= 'in active' if index == 0 %>">
                     <div id="accordion-v<%= index+1 %>" class="panel-group acc-v1">
                     <% flag = 0 %>
                     <% @faqs.each do | faq | %>
-                        <% next unless get_details_node_value(faq, "问题类别") == type[0] %>
+                        <% next unless get_details_node_value(faq, faq.catalog == 'cjwt' ? "问题类别" : "采购类别") == type[0] %>
                         <% flag += 1 %>
                         <div class="panel panel-default">
                             <div class="panel-heading">

@@ -104,6 +104,7 @@ defaults: &defaults
   yw_type: { xygh: "协议供货", jhcg: "计划采购", ddcg: "定点采购", wsjj: "网上竞价", dscg: "网上商城", xyyj: "协议议价", grcg: "个人采购" }
   faq_catalog: { yjjy: "意见建议" , cjwt: "常见问题" , cgzn: "采购指南" , xzzx: "下载中心" , zcfg: "政策法规"}
   questions_type: [["1", "政策问题"], ["2", "业务问题"], ["3", "操作问题"]]
+  cgzn_type: [["1", "办公类"], ["2", "粮机类"], ["3", "汽车类"]]
   # 总公司用户
   manage_user_type: 1
   # 采购单位

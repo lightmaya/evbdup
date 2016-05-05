@@ -7,7 +7,7 @@
             <td><strong>日期</strong></td>
         </tr>
         <% @faqs.each do |r| %>
-            <%= li_tag_with_date(r.title, '', r.created_at, 0) %>
+            <%= li_tag_with_date(r.title, r.content, r.created_at, 0) %>
         <% end %>
         </tbody>
     </table>

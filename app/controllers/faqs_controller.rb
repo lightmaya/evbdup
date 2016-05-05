@@ -10,7 +10,7 @@ class FaqsController < JamesController
         redirect_to root_path
       end
     end
-    @faqs = Faq.where(status: Faq.effective_status, catalog: params[:type])
+    @faqs = Faq.where(status: Faq.effective_status, catalog: params[:type]).page(params[:page])
   end
 
 end

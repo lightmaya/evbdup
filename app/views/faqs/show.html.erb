@@ -1,1 +1,1 @@
-<%=render  partial: (params[:type] == "cjwt" ? "cjwt" : "list") %>
+<%=render  partial: (["cjwt", "cgzn"].include?(params[:type]) ? "cjwt" : "list"), locals: { type: params[:type] == 'cjwt' ? Dictionary.questions_type : Dictionary.cgzn_type } %>
