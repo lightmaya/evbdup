@@ -13,7 +13,7 @@ class BidProjectBidUpload < ActiveRecord::Base
   def self.tips
     '<ol>
       <li>仅支持jpg、jpeg、png、pdf等格式的文件；</li>
-      <li>单个文件大小不能超过1M；</li>
+      <li>单个文件大小不能超过2M；</li>
       <li>上传文件的数量不超过10个。</li>
     </ol>'
   end
@@ -24,7 +24,7 @@ class BidProjectBidUpload < ActiveRecord::Base
       autoUpload: true,
       acceptFileTypes: /(\.|\/)(jpe?g|png|pdf)$/i,
       maxNumberOfFiles: 10,
-      maxFileSize: 1048576
+      maxFileSize: 2097152
     }'
   end
 
