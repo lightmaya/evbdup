@@ -49,12 +49,10 @@ class Faq < ActiveRecord::Base
     case act
     when "show"
       true
-    when "update", "edit"
-      self.catalog != 'yjjy' && current_u.try(:id) == self.user_id
+    when "update", "edit", "delete", "destroy"
+      current_u.is_boss? || current_u.try(:id) == self.user_id
     when "commit"
       self.catalog != 'yjjy' && self.can_opt?("提交") && current_u.try(:id) == self.user_id
-    when "delete", "destroy"
-      self.catalog != 'yjjy' && current_u.try(:id) == self.user_id
     when "reply", "update_reply"
       self.catalog == 'yjjy' && self.can_opt?("回复") && current_u.department.is_zgs?
     else false

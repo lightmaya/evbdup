@@ -183,7 +183,9 @@ module AboutStatus
 
     # 修改状态都可以删除
     self.class.edit_status.each{ |s| ha["删除"][s] = 404 }
-    ha["删除"][16] = 404  if self.class == Faq
+    if self.class == Faq
+      Faq.status_array.map{|e| e[1]}.each{|s| ha["删除"][s] = 404 }
+    end
 
     # 提交后自动生效
     # auto_status = tmp ? 93 : self.class.auto_effective_status.first
