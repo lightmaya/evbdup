@@ -13,7 +13,9 @@ class Kobe::OrdersController < KobeController
   before_filter :order_from_cart, :only => [:cart_order, :update_cart_order]
   # 辖区内采购项目
   def index
-    @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders")).not_grcg.ransack(params[:q])
+    arr = []
+    arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
+    @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders", arr)).not_grcg.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -165,30 +167,37 @@ class Kobe::OrdersController < KobeController
     #   arr << (Dictionary.yw_type.include?(@rule.yw_type) ?  ["orders.yw_type = ? ", @rule.yw_type] : ["orders.rule_id = ? ", @rule.id])
     # end
     arr << ["orders.rule_id = ? ", @rule.id] if @rule.present?
+    arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
     @orders = audit_list(Order, params[:tq].to_i == Dictionary.tq_no, arr)
   end
 
   # 我的订单
   def my_list
+    arr = []
+    arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
     @rule = Rule.find_by(id: params[:r])
     params[:q][:user_id_eq] = current_user.id
     params[:q][:yw_type_eq] = @rule.try(:yw_type)
-    @q = Order.where(get_conditions("orders")).ransack(params[:q])
+    @q = Order.where(get_conditions("orders", arr)).ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
   # 全部个人采购订单
   def grcg_list
+    arr = []
+    arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
     params[:q][:yw_type_eq] = 'grcg'
-    @q = Order.where(get_conditions("orders")).ransack(params[:q])
+    @q = Order.where(get_conditions("orders", arr)).ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
   # 销售项目列表 供应商的订单中心
   def seller_list
+    arr = []
+    arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
     @rule = Rule.find_by(id: params[:r])
     params[:q][:yw_type_eq] = @rule.try(:yw_type)
-    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders")).ransack(params[:q])
+    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders", arr)).ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -307,6 +316,14 @@ class Kobe::OrdersController < KobeController
   end
 
   private
+    # 高级搜索 选分公司默认把下属单位显示出来
+    def add_condition_by_buyer_name
+      if params[:q][:buyer_name].present?
+        dep_ids = Department.find_by(name: params[:q][:buyer_name]).try(:subtree_ids)
+        return ["orders.buyer_id in ( #{dep_ids.join(',')} )"] if dep_ids.present?
+      end
+      return ""
+    end
 
     # 订单中心和审核列表分办公、粮机、汽车 增加筛选条件
     def get_order_type_cdt

@@ -398,7 +398,7 @@ class Order < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='项目名称' column='sn_or_contract_sn_or_name_cont' placeholder='请输入项目名称或项目编号...'/>
-        <node name='采购单位' column='buyer_name_eq' json_url='/kobe/shared/department_ztree_json' class='tree_radio'/>
+        <node name='采购单位' column='buyer_name' json_url='/kobe/shared/department_ztree_json' class='tree_radio'/>
         <node name='供应商单位' column='seller_name_cont'/>
         <node name='业务类别' column='yw_type_eq' data_type='select' data='#{yw_type_ha}'/>
         <node name='订单类别' column='ot' data_type='select' data='#{ht_ha}'/>
