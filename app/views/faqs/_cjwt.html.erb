@@ -25,7 +25,7 @@
                             </div>
                             <div class="panel-collapse collapse <%= 'in' if flag == 1 %>" id='collapse-v<%= "#{index}-#{flag}" %>'>
                                 <div class="panel-body" style="text-indent:25px">
-                                    <p><%= faq.content.html_safe %></p>
+                                    <%= faq.content.html_safe %>
                                 </div>
                             </div>
                         </div>
