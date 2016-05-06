@@ -161,9 +161,10 @@ class Kobe::OrdersController < KobeController
   def list
     @rule = Rule.find_by(id: params[:r]) if params[:r].present?
     arr = []
-    if @rule.present?
-      arr << (Dictionary.yw_type.include?(@rule.yw_type) ?  ["orders.yw_type = ? ", @rule.yw_type] : ["orders.rule_id = ? ", @rule.id])
-    end
+    # if @rule.present?
+    #   arr << (Dictionary.yw_type.include?(@rule.yw_type) ?  ["orders.yw_type = ? ", @rule.yw_type] : ["orders.rule_id = ? ", @rule.id])
+    # end
+    arr << ["orders.rule_id = ? ", @rule.id] if @rule.present?
     @orders = audit_list(Order, params[:tq].to_i == Dictionary.tq_no, arr)
   end
 
