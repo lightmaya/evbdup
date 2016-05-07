@@ -22,7 +22,7 @@
                     <td align="center"><%= show_index(index) %></td>
                     <td><%= r.seller_name %></td>
                     <td class="money"><%= money r.sum_total %></td>
-                    <td align="center"><%= (@dep_names.include?(r.seller_name) ? "" : "未入围") if @dep_names.present? %></td>
+                    <td align="center"><%= (@dep_names.present? && @dep_names.include?(r.seller_name) ? "" : "未入围") if @dep_names.present? %></td>
                 </tr>
                 <%end%>
             </tbody>
