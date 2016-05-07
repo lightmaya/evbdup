@@ -15,7 +15,7 @@ class Kobe::OrdersController < KobeController
   def index
     arr = []
     arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
-    @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders", arr)).not_grcg.ransack(params[:q])
+    @q = Order.find_all_by_buyer_code(current_user.real_department.id).where(get_conditions("orders", arr)).not_grcg.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 

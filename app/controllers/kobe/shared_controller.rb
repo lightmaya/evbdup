@@ -80,11 +80,12 @@ class Kobe::SharedController < KobeController
   def department_ztree_json
     name = params[:ajax_key]
     status = Department.effective_status
-    dep_p = Department.purchaser
+    # dep_p = Department.purchaser
+    dep_p = current_user.cgr? ? current_user.real_department : Department.purchaser
     if name.blank?
-      nodes = dep_p.descendants.where(status: status, dep_type: false)
+      nodes = dep_p.subtree.where(status: status, dep_type: false)
     else
-      cdt = "and a.status in (#{status.join(', ')}) and b.status in (#{status.join(', ')}) and a.dep_type is false and b.dep_type is false and (b.ancestry like '#{dep_p.id}/%' or  b.ancestry = #{dep_p.id})"
+      cdt = "and a.status in (#{status.join(', ')}) and b.status in (#{status.join(', ')}) and a.dep_type is false and b.dep_type is false and find_in_set(#{dep_p.id}, replace(b.real_ancestry, '/', ',')) > 0"
       sql = ztree_box_sql(Department, cdt)
       # sql = "SELECT DISTINCT a.id,a.name,a.ancestry FROM #{Category.to_s.tableize} a INNER JOIN  #{Category.to_s.tableize} b ON (FIND_IN_SET(a.id,REPLACE(b.ancestry,'/',',')) > 0 OR a.id=b.id OR (LOCATE(CONCAT(b.ancestry,'/',b.id),a.ancestry)>0)) WHERE b.name LIKE ? #{cdt} ORDER BY a.ancestry"
       nodes = Department.find_by_sql([sql,"%#{name}%"])

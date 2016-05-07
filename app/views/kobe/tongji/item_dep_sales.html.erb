@@ -1,5 +1,5 @@
 <%if params[:search_btn].blank?%>
-	<%= render :partial=> 'search_item_dep' ,:locals=>{url: item_dep_sales_kobe_tongji_index_path}%>
+  <%= render partial: 'search', locals: { url: item_dep_sales_kobe_tongji_index_path, title: '入围供应商销量统计', s_type: 'sales' } %>
 <%else%>
-	<%= render :partial=> "dep_supplier_#{params[:show_type]}" %>
+  <%= render partial: "dep_supplier_#{params[:show_type]}" %>
 <%end%>

@@ -60,7 +60,7 @@ class Kobe::PlansController < KobeController
   # 报送结果列表
   def order_list
     params[:q][:yw_type_eq] = 'jhcg'
-    @q = Order.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("orders")).ransack(params[:q])
+    @q = Order.find_all_by_buyer_code(current_user.real_department.id).where(get_conditions("orders")).ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 

@@ -6,7 +6,7 @@ class Kobe::BidProjectsController < KobeController
   before_filter :check_bid_project, :except => [:index, :bid, :new, :create, :list]
 
   def index
-    @q = BidProject.find_all_by_buyer_code(current_user.real_dep_code).where(get_conditions("bid_projects")).ransack(params[:q])
+    @q = BidProject.find_all_by_buyer_code(current_user.real_department.id).where(get_conditions("bid_projects")).ransack(params[:q])
     @bid_projects = @q.result.includes([:bid_project_bids]).page params[:page]
   end
 

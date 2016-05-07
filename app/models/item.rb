@@ -17,6 +17,7 @@ class Item < ActiveRecord::Base
   # default_scope -> {order("id desc")}
 
   scope :usable, -> { where(status: Item.effective_status) }
+  scope :find_by_category_ids, -> (category_ids) { joins(:item_categories).where(items: {status: Item.effective_status}, item_categories: {category_id: category_ids}).distinct }
 
   default_value_for :status, 0
 

@@ -10,7 +10,7 @@ class Order < ActiveRecord::Base
   belongs_to :budget
   belongs_to :rate
 
-  scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("orders.buyer_code like '#{dep_real_ancestry}/%' or orders.buyer_code = '#{dep_real_ancestry}'") }
+  scope :find_all_by_buyer_code, ->(real_dep_id) { where("find_in_set(#{real_dep_id}, replace(orders.buyer_code, '/', ',')) > 0") }
   scope :find_all_by_seller, ->(seller_id, seller_name) { where("orders.seller_id = #{seller_id} or orders.seller_name = '#{seller_name}'") }
   scope :not_grcg, -> { where("orders.yw_type <> 'grcg'") }
   scope :by_seller_id, ->(seller_id) { where("orders.seller_id = #{seller_id}")}

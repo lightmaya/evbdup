@@ -1,30 +1,36 @@
-    <div class="panel panel-sea margin-bottom-40">
-        <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-gear"></i><%= title %></h3>
+<% is_find_name ||= false %>
+<div class="panel panel-sea margin-bottom-40">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-gear"></i><%= title %></h3>
+    </div>
+    <div class="panel-body">
+        <div class="panel-title margin-bottom-10">
+            <%= content_tag(:div, "统计日期：#{params[:begin]} 至 #{params[:end]}") if params[:begin].present? %>
+            <%= content_tag(:div, "采购单位：#{params[:dep_p_name]}") if params[:dep_p_name].present? %>
+            <%= content_tag(:div, "供应商单位：#{params[:dep_s_name]}") if params[:dep_s_name].present? %>
+            <%= content_tag(:div, "统计品目：#{params[:category_name]}") if params[:category_name].present? %>
         </div>
-        <div class="panel-body">
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
                     <th width="10%">序号</th>
                     <th><%= name %></th>
-                    <th>金额</th>
+                    <th width="30%">金额（元）</th>
                 </tr>
             </thead>
             <tbody>
                 <% result.present? && result.each_with_index do |rs,index|%>
                 <tr>
-                    <td align="center"><%=show_index(index)%></td>
-                    <td align="center"><%= rs[0] %></td>
-                    <td class="money"><%=money rs[1]%></td>
+                    <td align="center"><%= show_index(index) %></td>
+                    <td><%= is_find_name ? eval(sth_to_name) : (rs.is_a?(Array) ? rs[0] : rs.name) %></td>
+                    <td class="money"><%= money(rs.is_a?(Array) ? rs[1] : rs.sum_total) %></td>
                 </tr>
                 <%end%>
-
                 <tr>
-                    <td colspan='2' align="center"><%= "#{obj.try(:name)}总采购金额" %></td>
-                    <td class="money"><%= money total %></td>
+                    <td colspan='2' align="center"><%= "总金额" %></td>
+                    <td class="money"><%= money(result.present? ? (result.is_a?(Hash) ? result.values.sum : result.map(&:sum_total).sum) : 0) %></td>
                 </tr>
             </tbody>
         </table>
-    </div>                  
+    </div>
 </div>

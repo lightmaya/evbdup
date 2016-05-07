@@ -1,7 +1,11 @@
+<%
+  title ||= '统计'
+  s_type ||= "all"
+%>
 <div class="tab-content">
   <div class="tab-pane fade in active" id="home-1">
     <%= form_tag  url , method: "get" , id: 'sky-form' , class: "sky-form" do %>
-    <header><%= title ||= '统计' %></header>
+    <header><%= title %></header>
     <fieldset>
       <div class="row">
         <section class="col col-4">
@@ -22,16 +26,17 @@
           <label class="label">品目选择</label>
           <label class="input">
             <i class="icon-append fa fa-chevron-down"></i>
-            <input type="text"  name="category_name" id="category_name"  class="tree_radio required" json_url="/kobe/shared/category_ztree_json" partner='category_id'>
+            <input type="text"  name="category_name" id="category_name"  class="<%= s_type == 'sales' ? "tree_checkbox" : "tree_radio" %> required" json_url="/kobe/shared/category_ztree_json" partner='category_id'>
           </label>
         </section>
       </div>
       <div class="row">
+      <% unless s_type == "sales" %>
         <section class="col col-4">
           <label class="label">采购单位</label>
           <label class="input">
             <i class="icon-append fa fa-chevron-down"></i>
-            <input type="text"  name="dep_p_name" id="dep_p_name" class="tree_radio required" json_url="/kobe/shared/department_ztree_json" partner='department_id'>
+            <input type="text"  name="dep_p_name" id="dep_p_name" class="tree_radio required" json_url="/kobe/shared/department_ztree_json" partner='department_id' value="<%= params[:dep_p_name] %>">
           </label>
         </section>
         <section class="col col-4">
@@ -41,19 +46,20 @@
             <input type="text"  name="dep_s_name" id="dep_s_name">
           </label>
         </section>
-        <section class="col col-4">
+        <% end %>
+        <!-- <section class="col col-4">
           <label class="label">统计方式</label>
           <div class="row">
             <section class="col col-6">
-              <label class="radio state-success"><input type="radio" name="show_type" value="table" checked="<%= params[:show_type] == 'table' %>"><i class="rounded-x"></i>图表</label>
+              <label class="radio state-success"><input type="radio" name="show_type" value="table" <%#= "checked='checked" if params[:show_type] == 'table' %>><i class="rounded-x"></i>图表</label>
             </section>
             <section class="col col-6">
-              <label class="radio state-success"><input type="radio" name="show_type" value="shape" checked="<%= params[:show_type] == 'shape' %>"><i class="rounded-x"></i>图形</label>
+              <label class="radio state-success"><input type="radio" name="show_type" value="shape" <%#= "checked='checked" if params[:show_type] == 'shape' %>><i class="rounded-x"></i>图形</label>
             </section>
           </div>
-        </section>
+        </section> -->
       <input type="hidden" name="category_id" id="category_id">
-      <input type="hidden" name="department_id" id="department_id">
+      <input type="hidden" name="department_id" id="department_id" value="<%= params[:department_id] %>">
     </fieldset>
     <footer class="tc">
       <input type="submit" name="search_btn" class="btn-u btn-u-blue" value="统计">

@@ -23,7 +23,7 @@ class BidProject < ActiveRecord::Base
 
   scope :can_bid, -> { where("bid_projects.status = #{BidProject.bid_and_choose_status} and now() < bid_projects.end_time") }
 
-  scope :find_all_by_buyer_code, ->(dep_real_ancestry) { where("bid_projects.department_code like '#{dep_real_ancestry}/%' or bid_projects.department_code = '#{dep_real_ancestry}'") }
+  scope :find_all_by_buyer_code, ->(real_dep_id) { where("find_in_set(#{real_dep_id}, replace(bid_projects.department_code, '/', ',')) > 0") }
 
   # 模型名称
   Mname = "网上竞价项目"

@@ -6,10 +6,80 @@ class Kobe::TongjiController < KobeController
 
   def index
     if params[:search_btn].present?
-      # 按照品目查询
-      get_categories
-      get_department
-      get_yw_type
+      # 统计条件加上采购单位
+      dep_p = Department.find_by(id: params[:department_id]) if params[:department_id].present?
+      buyer = dep_p.present? ? dep_p : current_user.department
+      base = Order.find_all_by_buyer_code(buyer.real_dep.id)
+      dep_p_group = "concat_ws('/', orders.buyer_code, '')"
+      # 统计条件加上供应商单位
+      base = base.where(["orders.seller_name like ?", "%#{params[:dep_s_name]}%"]) if params[:dep_s_name].present?
+
+      if params[:category_id].present? && params[:category_id].to_i != 0
+        ca = Category.find_by id: params[:category_id]
+        ca_group = "concat_ws('/', orders_items.category_code, orders_items.category_id)"
+        class_name = base.where(@cdt).joins(:items).where(["find_in_set(?, replace(#{ca_group}, '/', ',')) >0", params[:category_id]])
+        # 按品目统计
+        rs = class_name.group(ca_group).select("#{ca_group} as name, #{@sum_total}")
+        ca_ha = Hash.new
+        ca_ha[ca.name] = rs.select{ |r| r.name == "#{ca.ancestry.blank? ? ca.id : ca.ancestry}/" }.map(&:sum_total).sum
+        ca.children.where(status: Category.effective_status).each do |c|
+         ca_ha[c.name] = rs.select{ |r| r.name.include?("#{c.ancestry}/#{c.id}/") }.map(&:sum_total).sum
+       end
+       @categories = ca_ha.sort_by {|key, value| value}.reverse.to_h
+        # 按采购单位统计
+        rs = class_name.group(dep_p_group).select("#{dep_p_group} as name, #{@sum_total}")
+        get_dep_p_rs(rs, buyer)
+        # 按采购方式统计
+        @yw_types = class_name.group("orders.yw_type").select("orders.yw_type as name, #{@sum_total}").order("sum_total desc")
+      else
+        class_name = base.where(@cdt)
+        # 按品目统计
+        rs = class_name.group("orders.ht_template").select("orders.ht_template as name, sum(orders.total) as sum_total")
+        ca_ha = Hash.new
+        Dictionary.order_type.values.each do |arr|
+          ca_ha[arr[0]] = rs.select{ |r| arr[1].include?(r.name) }.map(&:sum_total).sum
+        end
+        @categories = ca_ha.sort_by {|key, value| value}.reverse.to_h
+        # 采购综合情况
+        @total_money = @categories.values.sum
+        budget = class_name.sum(:budget_money)
+        @save_money = budget - @total_money
+        if @total_money == 0
+          @lj = @bg = @qc = @save_per = 0
+        else
+          @save_per = @save_money/@total_money*100
+          @lj = @categories["粮机类"]/@total_money*100
+          @bg = @categories["办公类"]/@total_money*100
+          @qc = @categories["汽车类"]/@total_money*100
+        end
+        last_year_rs = base.where(cdt_by_time(params[:begin].to_date.last_year.to_s, params[:end].to_date.last_year.to_s)).group("orders.ht_template").select("orders.ht_template as name, sum(orders.total) as sum_total")
+        @last_year_ca_ha = Hash.new
+        Dictionary.order_type.values.each do |arr|
+          @last_year_ca_ha[arr[0]] = last_year_rs.select{ |r| arr[1].include?(r.name) }.map(&:sum_total).sum
+        end
+        @last_year_total = @last_year_ca_ha.values.sum
+        @total_per = @last_year_tota == 0 ? 0 : (@total_money-@last_year_total)/@last_year_total*100
+        @lj_per = @last_year_ca_ha["粮机类"] == 0 ? 0 : (@categories["粮机类"] - @last_year_ca_ha["粮机类"])/@last_year_ca_ha["粮机类"]*100
+        @bg_per = @last_year_ca_ha["办公类"] == 0 ? 0 : (@categories["办公类"] - @last_year_ca_ha["办公类"])/@last_year_ca_ha["办公类"]*100
+        @qc_per = @last_year_ca_ha["汽车类"] == 0 ? 0 : (@categories["汽车类"] - @last_year_ca_ha["汽车类"])/@last_year_ca_ha["汽车类"]*100
+
+        @all_year_total =base.where(cdt_by_time(params[:end].to_date.beginning_of_year.to_s, params[:end])).sum(:total)
+        @all_last_year_total =base.where(cdt_by_time(params[:end].to_date.beginning_of_year.last_year.to_s, params[:end].to_date.last_year.to_s)).sum(:total)
+        @all_year_per = @all_last_year_total == 0 ? 0 : (@all_year_total-@all_last_year_total)/@all_last_year_total*100
+        all_year_budget = base.where(cdt_by_time(params[:end].to_date.beginning_of_year.to_s, params[:end])).sum(:budget_money)
+        @all_year_save = all_year_budget - @all_year_total
+        @all_year_save_per = @all_year_total == 0 ? 0 : @all_year_save/@all_year_total*100
+        # 按采购单位统计
+        rs = class_name.group(dep_p_group).select("#{dep_p_group} as name, sum(orders.total) as sum_total")
+        get_dep_p_rs(rs, buyer)
+        # 按采购方式统计
+        @yw_types = class_name.group("orders.yw_type").select("orders.yw_type as name, sum(orders.total) as sum_total").order("sum_total desc")
+        # 按供应商销量统计
+        common = class_name.select("orders.seller_name as name, sum(orders.total) as sum_total").group("orders.seller_name").order("sum_total desc")
+        @lj_rs = common.where(["orders.ht_template in (?)", Dictionary.order_type["lj"].last])
+        @bg_rs = common.where(["orders.ht_template in (?)", Dictionary.order_type["bg"].last])
+        @qc_rs = common.where(["orders.ht_template in (?)", Dictionary.order_type["qc"].last])
+      end
       render layout: (params[:show_type] == 'shape' ? 'tongji' : 'kobe')
     end
   end
@@ -17,158 +87,57 @@ class Kobe::TongjiController < KobeController
   #入围供应商销量统计
   def item_dep_sales
     if params[:search_btn].present?
-      if params[:item_id].blank? && params[:dep_s_name].blank?
-        flash_get('至少选择一种条件')
-        render :item_dep_sales
-      else
-        get_dep_supplier
-        render layout: (params[:show_type] == 'shape' ? 'tongji' : 'kobe')
+      @rs = Order.joins(:items).where(@cdt).group("orders.seller_name").select("orders.seller_name, #{@sum_total}").order("sum_total desc")
+      if params[:category_id].present?
+        ca_ids = params[:category_id].split(",")
+        @rs = @rs.where(["orders_items.category_id in (?)", ca_ids])
+        item = Item.find_by_category_ids(ca_ids)
+        @dep_names = ItemDepartment.where(item_id: item.map(&:id)).map(&:name)
       end
-    end
-  end
-
-  def get_categories
-    # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
-    # 默认没有选品目的话统计第一层 办公类 ，粮机类
-    ca_select = "c.id,c.name,sum(orders_items.total)as total"
-    category_sql = %Q{
-      select id,name,concat_ws('/',ancestry,id,'') as code from categories
-      where status = 65
-    }
-    # 求合计
-    @category_total = Order.joins(:items).where(@cdt).sum("orders_items.total")
-    if params[:category_id].blank?
-      category_sql << " and ancestry_depth = 0"
-      rs = Order.joins(get_category_joins(category_sql)).select(ca_select).where(@cdt).group('c.code')
-      @categories = rs.map{|x| [x.name,x.total.to_f]}
-    else
-      @ca = Category.find_by(id: params[:category_id])
-      if @ca.present?
-        if @ca.has_children?
-          category_sql << " and find_in_set(#{@ca.id},replace(concat_ws('/',ancestry,id),'/',',')) > 0 and ancestry_depth = #{@ca.ancestry_depth+1} "
-          rs = Order.joins(get_category_joins(category_sql)).select(ca_select).where(@cdt).group('c.code')
-          @categories = rs.map{|x| [x.name,x.total.to_f]}
-          (@ca.children.usable.map(&:name)-rs.map(&:name)).each {|x| @categories << [x,0]}
-          category_other = @category_total- rs.map(&:total).sum
-          @categories << ['其他',category_other.to_f]  unless category_other == 0
-        end
-      end
-    end
-  end
-
-  def get_department
-    # 按品目统计 如果是叶子节点（没有孩子）只显示总采购金额 如果是父节点（有孩子的）就按当前品目的下一层分类统计
-    # 默认没有选品目的话统计第一层 中储粮总公司下的各种分公司
-    # 只显示采购单位的条件
-    department_sql = %Q{
-      select id,name,concat_ws('/',real_ancestry,'0') as code from departments
-      where  dep_type=0 and find_in_set(#{Dictionary.dep_purchaser_id},replace(real_ancestry,'/',',')) > 0
-    }
-    # 求合计
-    if params[:category_id].present?
-    @department_total = Order.joins(:items).where(@cdt).sum("orders_items.total")
-    else
-    @department_total = Order.where(@cdt).sum("orders.total")
-    end
-    if params[:department_id].blank?
-      department_sql << " and ancestry_depth <= 2"
-      rs = Order.joins(get_department_joins(department_sql)).select(@select).where(@cdt).group('c.code')
-      @departments = rs.map{|x| [x.name,x.total.to_f]}
-    else
-      @dep = Department.find_by(id: params[:department_id])
-      if @dep.present?
-        if @dep.has_children?
-          department_sql << " and find_in_set(#{@dep.id},replace(real_ancestry,'/',',')) > 0 and ancestry_depth <= #{@dep.ancestry_depth+1} "
-          rs = Order.joins(get_department_joins(department_sql)).select(@select).where(@cdt).group('c.code')
-          @departments = rs.map{|x| [x.name,x.total.to_f]}
-          (@dep.children.find_real_dep.map(&:name)-rs.map(&:name)).each {|x| @departments << [x,0]}
-        end
-      end
-    end
-    dep_other = @department_total- rs.map(&:total).sum
-    @departments << ['其他',dep_other.to_f]  unless dep_other == 0
-  end
-
-  def  get_yw_type
-    if params[:category_id].present?
-      @yw_total = Order.joins(:items).where(@cdt).sum("orders_items.total")
-      rs = Order.joins(:items).select("yw_type,sum(orders_items.total) as total").where(@cdt).group("orders.yw_type")
-    else
-    @yw_total = Order.where(@cdt).sum("orders.total")
-    rs = Order.select("yw_type,sum(orders.total) as total").where(@cdt).group("orders.yw_type")
-    end
-    @yw_types =[]
-    yw = Dictionary.yw_type
-    yw.each {|k,v| @yw_types << [v,rs.find{|w| w.yw_type== k}.try(:total).to_f]}
-  end
-
-  def get_dep_supplier
-    if params[:item_id].present?
-      @common_cdt << "items.id = ?"
-      @common_value << params[:item_id]
-      cdt = [@common_cdt.join(' and ')]+@common_value
-      select = "orders.seller_id,orders.seller_name,sum(orders_items.total) as total"
-      group = params[:dep_s_name].present? ? 'orders.seller_name' : 'orders.seller_id'
-      rs = Order.select(select).joins(items: :product_item).where(cdt).group(group)
-      if params[:dep_s_name].blank?
-        @dep_infos = []
-        item = Item.find_by(id: params[:item_id])
-        item.item_departments.each do |x|
-          @dep_infos << [x.name , rs.find{|a| a.seller_id==x.department_id}.try(:total).to_f]
-        end
-      else
-        @dep_infos = rs.map{|x| [x.seller_name,x.total.to_f]}
-      end
-    else
-      rs = Order.select("seller_name,sum(total) as total").where(@cdt).group('seller_name')
-      @dep_infos = rs.map{|x| [x.seller_name,x.total.to_f]}
+      render layout: (params[:show_type] == 'shape' ? 'tongji' : 'kobe')
     end
   end
 
   private
 
+    # 默认参数
     def set_default_params
     	params[:begin] ||= Time.now.last_year.beginning_of_month.strftime('%Y-%m-%d')
       params[:end] ||=  Time.now.strftime('%Y-%m-%d')
       params[:show_type] ||= 'table'
+      dep = current_user.real_department
+      params[:department_id] ||= dep.id
+      params[:dep_p_name] ||= dep.name
     end
 
-    def get_category_joins(sql)
-       %Q{
-        inner join orders_items on orders.id= orders_items.order_id
-        inner join (#{sql}) c on c.code = left(concat_ws('/',orders_items.category_code,orders_items.category_id,''), length(c.code))
-      }
-    end
-
-    def get_department_joins(sql)
-      %Q{
-        #{'inner join orders_items on orders.id = orders_items.order_id' if params[:category_id].present? }
-        inner join (#{sql}) c on c.code = left(concat_ws('/',orders.buyer_code,'0'), length(c.code))
-      }
-    end
-
+    # 基本的统计条件
     def get_common_cdt
-      @select =  params[:category_id].present? ? "c.id,c.name,sum(orders_items.total)as total" : "c.id,c.name,sum(orders.total)as total"
-      @common_cdt = []
-      @common_value = []
-      @common_cdt << 'orders.status in (?)'
-      @common_value << Order.effective_status
-      @common_cdt << 'orders.created_at between ? and ?'
-      @common_value << params[:begin]
-      @common_value << params[:end]
-      if params[:category_id].present?
-        @common_cdt << "find_in_set(?,replace(concat_ws('/',orders_items.category_code,orders_items.category_id),'/',','))>0"
-        @common_value << params[:category_id]
+      # select 合计金额
+      @cdt = cdt_by_time(params[:begin], params[:end])
+    end
+
+    def cdt_by_time(begin_at, end_at)
+      @sum_total = "sum(orders_items.total + orders_items.total*(orders.deliver_fee + orders.other_fee)/(orders.total - orders.deliver_fee - orders.other_fee)) as sum_total"
+      common_cdt = []
+      common_value = []
+      common_cdt << 'orders.status in (?)'
+      common_value << Order.rate_status
+      common_cdt << 'orders.yw_type <> ?'
+      common_value << 'grcg'
+      common_cdt << 'orders.created_at between ? and ?'
+      common_value << begin_at
+      common_value << end_at
+      return [common_cdt.join(' and ')] + common_value
+    end
+
+    # 根据生成的结果集 组成需要显示的数据
+    def get_dep_p_rs(rs, buyer)
+      ha = Hash.new
+      ha[buyer.name] = rs.select{ |r| r.name == "#{buyer.real_ancestry}/" }.map(&:sum_total).sum
+      buyer.children.where(status: Department.effective_status, dep_type: false).each do |dep|
+        ha[dep.name] = rs.select{ |r| r.name.include?("#{dep.real_ancestry}/") }.map(&:sum_total).sum
       end
-      if params[:department_id].present?
-        @common_cdt << "find_in_set(?,replace(orders.buyer_code,'/',','))>0"
-        @common_value << params[:department_id]
-      end
-      if params[:dep_s_name].present?
-        @common_cdt << " orders.seller_name like ?"
-        @common_value <<  "%#{params[:dep_s_name]}%"
-      end
-      @cdt = [@common_cdt.join(' and ')] + @common_value
+      @departments = ha.sort_by {|key, value| value}.reverse.to_h
     end
 
 end

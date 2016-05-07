@@ -329,15 +329,15 @@ class Department < ActiveRecord::Base
     # 本辖区本年度 采购方式占比
     type_arr = []
     cdt = "year(created_at) = '#{Time.now.year}' and status in (#{Order.rate_status.join(', ')})"
-    total = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).sum(:total)
-    order_count = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).count
+    total = Order.find_all_by_buyer_code(self.real_dep.id).where(cdt).sum(:total)
+    order_count = Order.find_all_by_buyer_code(self.real_dep.id).where(cdt).count
     if total.present?
-      type = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
+      type = Order.find_all_by_buyer_code(self.real_dep.id).where(cdt).group('yw_type').select('yw_type, sum(total) as total')
       type_arr = type.map{ |e| [e.yw_type, e.total.to_f, (e.total*100/total).to_f] }
     end
 
     # 粮机类、汽车、办公类采购统计
-    category = Order.find_all_by_buyer_code(self.real_ancestry).where(cdt).group('ht_template').select('ht_template, sum(total) as total')
+    category = Order.find_all_by_buyer_code(self.real_dep.id).where(cdt).group('ht_template').select('ht_template, sum(total) as total')
     category_ha = {}
     category.map{ |e| category_ha[e.ht_template] = e.total.to_f }
 

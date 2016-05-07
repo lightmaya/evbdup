@@ -1,4 +1,41 @@
-	<%= render :partial=> 'rs_table' ,locals: { title: "品目统计", name: "品目", result: @categories, obj: @ca, total: @category_total } %>
-	<%= render :partial=> 'rs_table' ,locals: { title: "单位明细统计", name: "单位名称", result: @departments, obj: @dep, total: @department_total } %>
-	<%= render :partial=> 'rs_table' ,locals: { title: "采购方式统计", name: "方式", result: @yw_types, obj: @dep, total: @yw_total } %>
+<div class="margin-bottom-20 tc">
+  <h2><%= "#{params[:begin]} 至 #{params[:end]} #{params[:dep_p_name]}网上集中采购情况" %></h2>
+</div>
+<h3>一、采购综合情况</h3>
+<div class="font-size-18 text-indent-25">
+  <%= content_tag(:p, "#{params[:begin]} 至 #{params[:end]}网上采购金额 #{money @total_money/10000}万元，同比（去年同期 #{money @last_year_total/10000}万元）#{@total_per > 0 ? "增加了" : "减少了"} #{number_to_percentage @total_per.abs}，节约资金 #{money @save_money/10000}万元，节约率为 #{number_to_percentage @save_per}。从采购占比来看，粮机物资占到整个采购额的 #{number_to_percentage @lj}，办公物资占 #{number_to_percentage @bg}，汽车采购占 #{number_to_percentage @qc}。").html_safe if params[:category_id].blank? %>
+  <%= content_tag(:p, "全年网上累计采购金额 #{money @all_year_total/10000}万元，同比（去年同期 #{money @all_last_year_total/10000}万元）#{@all_year_per > 0 ? "增加了" : "减少了"} #{number_to_percentage @all_year_per.abs}，节约资金 #{money @all_year_save/10000}万元，节约率 #{number_to_percentage @all_year_save_per}。").html_safe if params[:category_id].blank? %>
+</div>
 
+<%= render :partial=> 'rs_table' ,locals: { title: "按品目统计", name: "品目", result: @categories } %>
+
+<h3>二、分（子）公司集中采购情况</h3>
+<h4>（一）从采购规模看</h4>
+
+<%= render :partial=> 'rs_table' ,locals: { title: "按采购单位统计", name: "采购单位名称", result: @departments } %>
+
+<h4>（二）从采购方式看</h4>
+<div class="font-size-18 text-indent-25">
+  <%= content_tag(:p, @yw_types.map{ |e| "#{Dictionary.yw_type[e.name]}成交量 #{money e.sum_total/10000}万元，占所有采购方式的 #{number_to_percentage e.sum_total/@yw_types.map(&:sum_total).sum*100}" }.join("；")).html_safe %>
+</div>
+
+<%= render :partial=> 'rs_table' ,locals: { title: "按采购方式统计", name: "采购方式", result: @yw_types, is_find_name: true, sth_to_name: "Dictionary.yw_type[rs.name]" } %>
+
+<% if params[:category_id].blank? %>
+<h4>（三）从采购产品品种看</h4>
+<div class="font-size-18 text-indent-25">
+  <%= content_tag(:p, "粮机物资采购金额共 #{money @categories["粮机类"]/10000}万元，同比（去年同期 #{money @last_year_ca_ha["粮机类"]/10000}万元）#{@lj_per > 0 ? "增加了" : "减少了"} #{number_to_percentage @lj_per.abs}。").html_safe %>
+  <%= content_tag(:p, "办公物资采购 #{money @categories["办公类"]/10000}万元，同比（去年同期 #{money @last_year_ca_ha["办公类"]/10000}万元）#{@bg_per > 0 ? "增加了" : "减少了"} #{number_to_percentage @bg_per.abs}，其中通过办公用品网上商城采购 #{money (@yw_types.find{ |e| e.name == 'dscg'}.try(:sum_total) || 0)/10000}万元。").html_safe %>
+  <%= content_tag(:p, "汽车采购量为 #{money @categories["汽车类"]/10000}万元，同比（去年同期 #{money @last_year_ca_ha["汽车类"]/10000}万元）#{@qc_per > 0 ? "增加了" : "减少了"} #{number_to_percentage @qc_per.abs}。").html_safe %>
+</div>
+
+<h3>三、供应商网上采购情况</h3>
+<div class="font-size-18 text-indent-25">
+<%= content_tag(:p, "粮机物资有销量的供应商 #{@lj_rs.length}家，办公物资有销量的供应商 #{@bg_rs.length}家，汽车类有销量的供应商 #{@qc_rs.length}家。").html_safe %>
+</div>
+
+<%= render :partial=> 'rs_table' ,locals: { title: "按粮机类供应商销量统计", name: "供应商单位名称", result: @lj_rs.limit(20) } %>
+<%= render :partial=> 'rs_table' ,locals: { title: "按办公类供应商销量统计", name: "供应商单位名称", result: @bg_rs.limit(20) } %>
+<%= render :partial=> 'rs_table' ,locals: { title: "按汽车类供应商销量统计", name: "供应商单位名称", result: @qc_rs.limit(20) } %>
+
+<% end %>
