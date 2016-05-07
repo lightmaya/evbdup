@@ -34,8 +34,8 @@
 <%= content_tag(:p, "粮机物资有销量的供应商 #{@lj_rs.length}家，办公物资有销量的供应商 #{@bg_rs.length}家，汽车类有销量的供应商 #{@qc_rs.length}家。").html_safe %>
 </div>
 
-<%= render :partial=> 'rs_table' ,locals: { title: "按粮机类供应商销量统计", name: "供应商单位名称", result: @lj_rs.limit(20) } %>
-<%= render :partial=> 'rs_table' ,locals: { title: "按办公类供应商销量统计", name: "供应商单位名称", result: @bg_rs.limit(20) } %>
-<%= render :partial=> 'rs_table' ,locals: { title: "按汽车类供应商销量统计", name: "供应商单位名称", result: @qc_rs.limit(20) } %>
+<%= render :partial=> 'rs_table' ,locals: { title: "按粮机类供应商销量统计", name: "供应商单位名称", result: @lj_rs[0...20] } %>
+<%= render :partial=> 'rs_table' ,locals: { title: "按办公类供应商销量统计", name: "供应商单位名称", result: @bg_rs[0...20] } %>
+<%= render :partial=> 'rs_table' ,locals: { title: "按汽车类供应商销量统计", name: "供应商单位名称", result: @qc_rs[0...20] } %>
 
 <% end %>

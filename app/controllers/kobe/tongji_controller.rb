@@ -1,11 +1,11 @@
 # -*- encoding : utf-8 -*-
 class Kobe::TongjiController < KobeController
   before_action :set_default_params
-  before_action :get_common_cdt, only: [:index,:item_dep_sales]
   skip_load_and_authorize_resource
 
   def index
     if params[:search_btn].present?
+      common_conditions = get_common_cdt(params[:begin], params[:end])
       # 统计条件加上采购单位
       dep_p = Department.find_by(id: params[:department_id]) if params[:department_id].present?
       buyer = dep_p.present? ? dep_p : current_user.department
@@ -17,7 +17,7 @@ class Kobe::TongjiController < KobeController
       if params[:category_id].present? && params[:category_id].to_i != 0
         ca = Category.find_by id: params[:category_id]
         ca_group = "concat_ws('/', orders_items.category_code, orders_items.category_id)"
-        class_name = base.where(@cdt).joins(:items).where(["find_in_set(?, replace(#{ca_group}, '/', ',')) >0", params[:category_id]])
+        class_name = base.where(common_conditions).joins(:items).where(["find_in_set(?, replace(#{ca_group}, '/', ',')) >0", params[:category_id]])
         # 按品目统计
         rs = class_name.group(ca_group).select("#{ca_group} as name, #{@sum_total}")
         ca_ha = Hash.new
@@ -32,7 +32,7 @@ class Kobe::TongjiController < KobeController
         # 按采购方式统计
         @yw_types = class_name.group("orders.yw_type").select("orders.yw_type as name, #{@sum_total}").order("sum_total desc")
       else
-        class_name = base.where(@cdt)
+        class_name = base.where(common_conditions)
         # 按品目统计
         rs = class_name.group("orders.ht_template").select("orders.ht_template as name, sum(orders.total) as sum_total")
         ca_ha = Hash.new
@@ -52,7 +52,7 @@ class Kobe::TongjiController < KobeController
           @bg = @categories["办公类"]/@total_money*100
           @qc = @categories["汽车类"]/@total_money*100
         end
-        last_year_rs = base.where(cdt_by_time(params[:begin].to_date.last_year.to_s, params[:end].to_date.last_year.to_s)).group("orders.ht_template").select("orders.ht_template as name, sum(orders.total) as sum_total")
+        last_year_rs = base.where(get_common_cdt(params[:begin].to_date.last_year.to_s, params[:end].to_date.last_year.to_s)).group("orders.ht_template").select("orders.ht_template as name, sum(orders.total) as sum_total")
         @last_year_ca_ha = Hash.new
         Dictionary.order_type.values.each do |arr|
           @last_year_ca_ha[arr[0]] = last_year_rs.select{ |r| arr[1].include?(r.name) }.map(&:sum_total).sum
@@ -63,10 +63,10 @@ class Kobe::TongjiController < KobeController
         @bg_per = @last_year_ca_ha["办公类"] == 0 ? 0 : (@categories["办公类"] - @last_year_ca_ha["办公类"])/@last_year_ca_ha["办公类"]*100
         @qc_per = @last_year_ca_ha["汽车类"] == 0 ? 0 : (@categories["汽车类"] - @last_year_ca_ha["汽车类"])/@last_year_ca_ha["汽车类"]*100
 
-        @all_year_total =base.where(cdt_by_time(params[:end].to_date.beginning_of_year.to_s, params[:end])).sum(:total)
-        @all_last_year_total =base.where(cdt_by_time(params[:end].to_date.beginning_of_year.last_year.to_s, params[:end].to_date.last_year.to_s)).sum(:total)
+        @all_year_total =base.where(get_common_cdt(params[:end].to_date.beginning_of_year.to_s, params[:end])).sum(:total)
+        @all_last_year_total =base.where(get_common_cdt(params[:end].to_date.beginning_of_year.last_year.to_s, params[:end].to_date.last_year.to_s)).sum(:total)
         @all_year_per = @all_last_year_total == 0 ? 0 : (@all_year_total-@all_last_year_total)/@all_last_year_total*100
-        all_year_budget = base.where(cdt_by_time(params[:end].to_date.beginning_of_year.to_s, params[:end])).sum(:budget_money)
+        all_year_budget = base.where(get_common_cdt(params[:end].to_date.beginning_of_year.to_s, params[:end])).sum(:budget_money)
         @all_year_save = all_year_budget - @all_year_total
         @all_year_save_per = @all_year_total == 0 ? 0 : @all_year_save/@all_year_total*100
         # 按采购单位统计
@@ -87,7 +87,7 @@ class Kobe::TongjiController < KobeController
   #入围供应商销量统计
   def item_dep_sales
     if params[:search_btn].present?
-      @rs = Order.joins(:items).where(@cdt).group("orders.seller_name").select("orders.seller_name, #{@sum_total}").order("sum_total desc")
+      @rs = Order.joins(:items).where(get_common_cdt(params[:begin], params[:end], Order.effective_status)).group("orders.seller_name").select("orders.seller_name, #{@sum_total}").order("sum_total desc")
       if params[:category_id].present?
         ca_ids = params[:category_id].split(",")
         @rs = @rs.where(["orders_items.category_id in (?)", ca_ids])
@@ -102,7 +102,7 @@ class Kobe::TongjiController < KobeController
 
     # 默认参数
     def set_default_params
-    	params[:begin] ||= Time.now.last_year.beginning_of_month.strftime('%Y-%m-%d')
+    	params[:begin] ||= Time.now.beginning_of_month.strftime('%Y-%m-%d')
       params[:end] ||=  Time.now.strftime('%Y-%m-%d')
       params[:show_type] ||= 'table'
       dep = current_user.real_department
@@ -110,18 +110,12 @@ class Kobe::TongjiController < KobeController
       params[:dep_p_name] ||= dep.name
     end
 
-    # 基本的统计条件
-    def get_common_cdt
-      # select 合计金额
-      @cdt = cdt_by_time(params[:begin], params[:end])
-    end
-
-    def cdt_by_time(begin_at, end_at)
+    def get_common_cdt(begin_at, end_at, status = Order.rate_status)
       @sum_total = "sum(orders_items.total + orders_items.total*(orders.deliver_fee + orders.other_fee)/(orders.total - orders.deliver_fee - orders.other_fee)) as sum_total"
       common_cdt = []
       common_value = []
       common_cdt << 'orders.status in (?)'
-      common_value << Order.rate_status
+      common_value << status
       common_cdt << 'orders.yw_type <> ?'
       common_value << 'grcg'
       common_cdt << 'orders.created_at between ? and ?'
