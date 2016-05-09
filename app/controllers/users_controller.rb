@@ -42,7 +42,7 @@ class UsersController < JamesController
     dep = Department.create(name: params[:user][:dep], parent_id: Dictionary.dep_supplier_id, dep_type: false)
     user = User.create(params.require(:user).permit(:login, :email, :password, :password_confirmation))
     if dep.present? && user.present?
-      user.update(department_id: dep.id, is_admin: true)
+      user.update(department_id: dep.id, is_admin: true, is_personal: false)
       sign_in_user user
       write_logs(dep,"注册",'账号创建成功')
       write_logs(user,"注册",'账号创建成功')

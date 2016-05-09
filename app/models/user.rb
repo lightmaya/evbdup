@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
   default_value_for :is_personal, 1
 
   after_save do
-    self.reset_menus_cache if self.menuids.present? && self.previous_changes["menuids"].present?
+    self.reset_menus_cache if self.menuids != "0" && self.changes["menuids"].present? && self.changes["menuids"].last.present?
   end
   # 为了在Model层使用current_user
   # def self.current

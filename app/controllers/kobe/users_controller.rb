@@ -38,12 +38,13 @@ class Kobe::UsersController < KobeController
       if @user.is_personal
         @user.set_auto_menu
       else
-        if @user.previous_changes["menuids"].present?
+        if @user.previous_changes["menuids"].present? && @user.previous_changes["menuids"].last.present? && @user.menuids != "0"
           @user.menu_ids = @user.menuids.split(",")
-          @user.cache_menus(true)
-          @user.cache_option_hash(true)
+          # @user.cache_menus(true)
+          # @user.cache_option_hash(true)
+          @user.reset_menus_cache
         end
-        @user.category_ids = @user.categoryids.split(",") if @user.previous_changes["categoryids"].present?
+        @user.category_ids = @user.categoryids.split(",") if @user.previous_changes["categoryids"].present? && @user.previous_changes["categoryids"].last.present? && @user.categoryids != "0"
       end
       redirect_to kobe_departments_path(id: @user.department.id)
     else
