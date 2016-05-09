@@ -87,7 +87,7 @@ class Kobe::TongjiController < KobeController
   #入围供应商销量统计
   def item_dep_sales
     if params[:search_btn].present?
-      @rs = Order.joins(:items).where(get_common_cdt(params[:begin], params[:end], Order.effective_status)).group("orders.seller_name").select("orders.seller_name, #{@sum_total}").order("sum_total desc")
+      @rs = Order.joins(:items).where(get_common_cdt(params[:begin], params[:end])).group("orders.seller_name").select("orders.seller_name, #{@sum_total}").order("sum_total desc")
       if params[:category_id].present?
         ca_ids = params[:category_id].split(",")
         @rs = @rs.where(["orders_items.category_id in (?)", ca_ids])
@@ -110,12 +110,12 @@ class Kobe::TongjiController < KobeController
       params[:dep_p_name] ||= dep.name
     end
 
-    def get_common_cdt(begin_at, end_at, status = Order.rate_status)
+    def get_common_cdt(begin_at, end_at)
       @sum_total = "sum(orders_items.total + orders_items.total*(orders.deliver_fee + orders.other_fee)/(orders.total - orders.deliver_fee - orders.other_fee)) as sum_total"
       common_cdt = []
       common_value = []
       common_cdt << 'orders.status in (?)'
-      common_value << status
+      common_value << Order.effective_status
       common_cdt << 'orders.yw_type <> ?'
       common_value << 'grcg'
       common_cdt << 'orders.created_at between ? and ?'
