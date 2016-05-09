@@ -20,7 +20,7 @@
                 <% @rs.present? && @rs.each_with_index do |r, index|%>
                 <tr>
                     <td align="center"><%= show_index(index) %></td>
-                    <td><%= r.seller_name %></td>
+                    <td><%= (d = Department.find_by(name: r.seller_name, status: Department.effective_status, ancestry: Dictionary.dep_supplier_id)).present? ? link_to_blank(r.seller_name, kobe_departments_path(id: d.id)) : r.seller_name %></td>
                     <td class="money"><%= money r.sum_total %></td>
                     <td align="center"><%= @dep_names.present? && @dep_names.include?(r.seller_name) ? "" : "未入围" %></td>
                 </tr>
