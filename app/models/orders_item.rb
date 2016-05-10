@@ -52,7 +52,7 @@ class OrdersItem < ActiveRecord::Base
         <node name='数量' column='quantity' class='required number' #{num_edit}/>
         <node name='单位' class='zip' column='unit' class='required' #{can_edit}/>
         <node name='小计（元）' column='total' class='required number' display='readonly'/>
-        <node name='备注' column='summary' data_type='textarea' class='maxlength_800' placeholder='不超过800字'/>
+        <node name='备注' column='summary' data_type='textarea' class='maxlength_1000' placeholder='不超过1000字'/>
       </root>
     }
   end
