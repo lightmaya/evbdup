@@ -118,7 +118,7 @@
       // 填写其他费用 没有填写其他费用说明
       var other_fee = $("input#bargain_bids_other_fee").val();
       var bargain_bids_other_fee_desc = $("#bid_form #bargain_bids_other_fee_desc").val();
-      if(!isEmpty(other_fee) && isEmpty(bargain_bids_other_fee_desc)){
+      if(parseFloat(other_fee) != 0 && isEmpty(bargain_bids_other_fee_desc)){
         msg.push("其他费用说明不能为空！");
       }
       // 勾选产品的报价不能高于该产品的中标价

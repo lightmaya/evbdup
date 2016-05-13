@@ -50,7 +50,7 @@
       // 填写其他费用 没有填写其他费用说明
       var other_fee = $("input#orders_other_fee").val();
       var orders_other_fee_desc = $("input#orders_other_fee_desc").val();
-      if(!isEmpty(other_fee) && isEmpty(orders_other_fee_desc)){
+      if(parseFloat(other_fee) != 0 && isEmpty(orders_other_fee_desc)){
         msg.push("其他费用说明不能为空！");
       }
 
