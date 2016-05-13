@@ -45,7 +45,7 @@
             <td><%= bid_project.end_time %></td>
             <td class="money"><%= money bid_project.budget_money %></td>
             <td><%= bid_project.bid_project_bids.count %></td>
-            <td><%= bid_project.can_choose? ? label_tag('截止投标','info rounded-2x') : bid_project.status_badge %></td>
+            <td><%= (bid_project.status == BidProject.bid_and_choose_status && bid_project.is_end?) ? label_tag('截止投标','info rounded-2x') : bid_project.status_badge %></td>
             <td><%= btn_group(bid_projects_btn(bid_project, action_name == 'list')) %></td>
           </tr>
         <% end %>

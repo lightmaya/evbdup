@@ -48,7 +48,7 @@
             <td><%= bid_project.name %></td>
             <td class="tc"><%= bid_project.dict_value("lod") %></td>
             <td class="tc"><%= bid_project.end_time %></td>
-            <td class="tc"><%= bid_project.can_choose? ? label_tag('截止投标','info rounded-2x') : bid_project.status_badge %></td>
+            <td class="tc"><%= (bid_project.status == BidProject.bid_and_choose_status && bid_project.is_end?) ? label_tag('截止投标','info rounded-2x') : bid_project.status_badge %></td>
             <td class="tc"><%= bid_project.bid_project_bids.map(&:user_id).include?(current_user.id) ? label_tag("已投标") : label_tag("未投标", "warning") %></td>
             <td class="tc"><%= btn_group(bid_project_bids_btn(bid_project)) %></td>
           </tr>
