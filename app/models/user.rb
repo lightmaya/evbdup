@@ -116,6 +116,7 @@ class User < ActiveRecord::Base
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
         <node name='用户名' column='login' class='required' display='readonly'/>
+        <node name='Email' column='email' class='email'/>
         <node name='姓名' column='name' class='required'/>
         <node name='电话' column='tel'/>
         <node name='手机' column='mobile' class='required'/>
