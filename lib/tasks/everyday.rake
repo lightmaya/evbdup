@@ -67,7 +67,7 @@ namespace :everyday do
       doc.encoding = "UTF-8"
       doc << "<root>"
     end
-    node = doc.add_child("<node>").first
+    node = doc.root.add_child("<node>").first
     node["操作时间"] = Time.now.to_s(:db)
     node["操作人ID"] = user.id.to_s
     node["操作人姓名"] = user.name.to_s
