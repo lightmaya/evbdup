@@ -61,6 +61,11 @@ namespace :everyday do
   def save_logs(xml, action, status, remark)
     user = User.find_by(login: 'zcl001')
     doc = Nokogiri::XML(xml).root
+    if doc.blank?
+      doc = Nokogiri::XML::Document.new()
+      doc.encoding = "UTF-8"
+      doc << "<root>"
+    end
     node = doc.add_child("<node>").first
     node["操作时间"] = Time.now.to_s(:db)
     node["操作人ID"] = user.id.to_s
