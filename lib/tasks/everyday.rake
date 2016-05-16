@@ -61,7 +61,7 @@ namespace :everyday do
   def save_logs(xml, action, status, remark)
     user = User.find_by(login: 'zcl001')
     if xml.present?
-      doc = Nokogiri::XML(xml).root
+      doc = Nokogiri::XML(xml)
     else
       doc = Nokogiri::XML::Document.new()
       doc.encoding = "UTF-8"
