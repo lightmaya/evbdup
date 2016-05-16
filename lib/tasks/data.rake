@@ -1420,26 +1420,6 @@ namespace :data do
     p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
   end
 
-  desc '生成采购单位后台main统计数据'
-  task :create_cache_dep_main => :environment do
-    p "#{begin_time = Time.now} in create_cache_dep_main....."
-
-    deps = Department.where(status: Department.effective_status)
-    # deps = Department.purchaser.descendants
-    succ = 0
-    deps.each do |d|
-      if d.cache_dep_main true
-        succ += 1
-        p ".create_cache_dep_main succ: #{succ}/#{deps.size} old: #{d.id}"
-      else
-        log_p "[error]old_id: #{old.id} | #{n.errors.full_messages}" ,"create_cache_dep_main.log"
-      end
-    end
-
-    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
-  end
-
-
   desc '导入日常费用类别'
   task :daily_categories => :environment do
     p "#{begin_time = Time.now} in daily_categories....."
