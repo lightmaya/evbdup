@@ -60,8 +60,9 @@ namespace :everyday do
   # 清除历史遗留数据 插入日志
   def save_logs(xml, action, status, remark)
     user = User.find_by(login: 'zcl001')
-    doc = Nokogiri::XML(xml).root
-    if doc.blank?
+    if xml.present?
+      doc = Nokogiri::XML(xml).root
+    else
       doc = Nokogiri::XML::Document.new()
       doc.encoding = "UTF-8"
       doc << "<root>"
