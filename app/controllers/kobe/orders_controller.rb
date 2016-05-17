@@ -431,7 +431,7 @@ class Kobe::OrdersController < KobeController
         return redirect_to cart_path
       end
 
-      @order = Order.from(@cart, current_user, params)
+      @order = Order.from_cart(@cart, current_user, params)
       # @order = if action_name == "update_cart_order"
       #   Order.from(@cart, current_user, params)
       # else

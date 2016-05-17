@@ -13,6 +13,7 @@
                     <th width="10%">序号</th>
                     <th>供应商名称</th>
                     <th>金额</th>
+                    <th>评价分</th>
                     <th>备注</th>
                 </tr>
             </thead>
@@ -22,7 +23,8 @@
                     <td align="center"><%= show_index(index) %></td>
                     <td><%= (d = Department.find_by(name: r.seller_name, status: Department.effective_status, ancestry: Dictionary.dep_supplier_id)).present? ? link_to_blank(r.seller_name, kobe_departments_path(id: d.id)) : r.seller_name %></td>
                     <td class="money"><%= link_to_blank money(r.sum_total), kobe_orders_path("q[seller_name_cont]" => r.seller_name, "q[created_at_gt]" => params[:begin], "q[created_at_lt]" => params[:end], "q[items_category_name]" => params[:category_name], "q[status_in]" => Order.effective_status) %></td>
-                    <td align="center"><%= @dep_names.present? && @dep_names.include?(r.seller_name) ? "" : "未入围" %></td>
+                    <td class="money"><%= @rates[r.seller_name].to_f.round(2) %></td>
+                    <td class="w120 tc"><%= @dep_names.present? && @dep_names.include?(r.seller_name) ? "" : "未入围" %></td>
                 </tr>
                 <%end%>
             </tbody>

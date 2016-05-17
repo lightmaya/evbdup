@@ -154,7 +154,7 @@ class Order < ActiveRecord::Base
     order
   end
 
-  def self.from(cart, user, params = {})
+  def self.from_cart(cart, user, params = {})
     category_name_ary = []
     order = init_order(user)
     dep = nil

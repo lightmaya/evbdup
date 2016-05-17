@@ -84,22 +84,23 @@ class Kobe::TongjiController < KobeController
     end
   end
 
-  #入围供应商销量统计
+  # 入围供应商销量统计
   def item_dep_sales
     if params[:search_btn].present?
       @rs = Order.joins(:items).where(get_common_cdt(params[:begin], params[:end])).group("orders.seller_name").select("orders.seller_name, #{@sum_total}").order("sum_total desc")
       if params[:category_id].present?
         ca_ids = params[:category_id].split(",")
+        # 入围供应商名单
         @rs = @rs.where(["orders_items.category_id in (?)", ca_ids])
         item = Item.find_by_category_ids(ca_ids)
         @dep_names = ItemDepartment.where(item_id: item.map(&:id)).map(&:name)
+        # 评价分
+        @rates = Order.from(Order.joins(:items).where(get_common_cdt(params[:begin], params[:end], Order.ysd_status)).where(["orders_items.category_id in (?)", ca_ids]).select(:id, :seller_name, :rate_total).distinct, :a).group("a.seller_name").average("a.rate_total")
+      else
+        @rates = Order.where(get_common_cdt(params[:begin], params[:end], Order.ysd_status)).group(:seller_name).average(:rate_total)
       end
       render layout: (params[:show_type] == 'shape' ? 'tongji' : 'kobe')
     end
-  end
-
-  def dep_rate_total
-    a = Order.find_by_sql("select seller_name,avg(rate_total) as sum_total from (SELECT distinct orders.id, orders.seller_name,orders.rate_total as rate_total FROM `orders` INNER JOIN `orders_items` ON `orders_items`.`order_id` = `orders`.`id` WHERE `orders`.`status` IN (100) AND `orders_items`.`category_id` IN (95, 96,705) AND (orders.created_at between '2015-11-01' and '2016-05-17')) a group by a.seller_name order by sum_total desc")
   end
 
   private
@@ -114,12 +115,12 @@ class Kobe::TongjiController < KobeController
       params[:dep_p_name] ||= dep.name
     end
 
-    def get_common_cdt(begin_at, end_at)
+    def get_common_cdt(begin_at, end_at, st=Order.effective_status)
       @sum_total = "sum(orders_items.total + orders_items.total*(orders.deliver_fee + orders.other_fee)/(orders.total - orders.deliver_fee - orders.other_fee)) as sum_total"
       common_cdt = []
       common_value = []
       common_cdt << 'orders.status in (?)'
-      common_value << Order.effective_status
+      common_value << st
       common_cdt << 'orders.yw_type <> ?'
       common_value << 'grcg'
       common_cdt << 'orders.created_at between ? and ?'
