@@ -34,7 +34,7 @@
                     <% items.each do |item| %>
                       <tr class="merchandise <%= 'bg7' unless item.ready.present? %>">
                         <td>
-                          <%= check_box_tag "p-#{sid}", "", item.ready.present?, class: "cart_checkbox", cart_item_id: item.id %>
+                          <%= check_box_tag "p-#{sid}", "", item.ready.present?, class: "cart_checkbox", cart_item_id: item.id, big_category_name: item.big_category_name %>
                         </td>
                         <td class="product-in-table">
                           <%= image_tag item.product.first_img('thumbnail'), class: "img-responsive" %>
@@ -90,6 +90,9 @@
             <li aria-hidden="false" aria-disabled="false">
               <%= link_to '', '', id: "new_order_link" %>
             </li>
+            <li class="disabled" aria-disabled="true" id="grcg_order_link" style="<%= @cart.ready_items.map(&:big_category_name).include?("汽车采购") ? "display: block;" : "display: none;" %>">
+              <%= link_to '个人采购', cart_order_path(yw_type: 'grcg') %>
+            </li>
           </ul>
         </div>
       </div>
@@ -117,7 +120,16 @@
         $("#new_order_link").text("请至少选择一款商品").attr("href", "javascript:void(0);").css("background-color", "#C0C5CA");
         return;
       }
-      $("#new_order_link").text("购买所选产品").attr("href", "<%= cart_order_path %>").css("background-color", "#18ba9b");
+      var name = "购买所选产品";
+      // 汽车采购可选个人采购
+      var big_category_name = $(".cart_checkbox:checked").map(function(){ return $(this).attr('big_category_name'); }).get().join(',');
+      if (big_category_name.indexOf("汽车采购") >= 0) {
+        name = "单位采购";
+        $("#grcg_order_link").css('display', 'block');
+      } else {
+        $("#grcg_order_link").css('display', 'none');
+      }
+      $("#new_order_link").text(name).attr("href", "<%= cart_order_path %>").css("background-color", "#18ba9b");
     }
   })
 </script>

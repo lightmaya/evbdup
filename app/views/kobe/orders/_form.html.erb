@@ -2,7 +2,7 @@
   <%= draw_myform(myform) %>
 </div>
 
-<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @order.try(:budget_id), input_id: "orders_budget_money", budget_id: "orders_budget_id" } if @order.try(:buyer_id) == current_user.department.id %>
+<%= render partial: '/kobe/shared/budget_money', locals: { obj_id: @order.try(:budget_id), input_id: "orders_budget_money", budget_id: "orders_budget_id" } if @order.try(:buyer_id) == current_user.department.id && @order.try(:yw_type) != 'grcg' %>
 
 <script type="text/javascript">
   $(document).ready(function(){
@@ -31,14 +31,16 @@
         success: function(rs){ if(parseInt(rs) != 1){ msg.push("请选择同一大类的品目！"); }	}
       });
 
-	// 判断预算是否大于总金额
-	var total = parseFloat($("input#orders_total").val());
+      // 判断预算是否大于总金额
+      var total = parseFloat($("input#orders_total").val());
+      <% unless @order.try(:yw_type) == 'grcg' %>
 	var budget = parseFloat($("input#orders_budget_money").val());
 	if (budget < total) {
 		// flash_dialog("订单总金额不能超过预算！");
 		msg.push("订单总金额不能超过预算！");
 		// return false;
 	};
+      <% end %>
       if (total <= 0) { msg.push("订单总金额必须大于0！"); }
 
       // 办公用品类定点采购限额（Setting配置额度）

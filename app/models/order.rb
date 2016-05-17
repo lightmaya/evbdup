@@ -182,8 +182,13 @@ class Order < ActiveRecord::Base
     # else
     dep = Department.find(order.seller_id)
     # end
+    if params[:yw_type].present?
+      order.yw_type = params[:yw_type]
+      order.budget_id = nil
+      order.payer = "个人"
+    end
 
-    order.name = Order.get_project_name(nil, user, category_name_ary.uniq.join("、"))
+    order.name = Order.get_project_name(nil, user, category_name_ary.uniq.join("、"), order.yw_type)
     order.seller_name = dep.name
     order.seller_code = dep.real_ancestry
     order.seller_addr = dep.address
@@ -196,23 +201,23 @@ class Order < ActiveRecord::Base
 
     order.deliver_at = Date.today + 3
 
-    if params.present?
-      order.attributes = params[:order].permit!
-      if order.yw_type == "grcg"
-        order.budget_id = nil
-        order.payer = "个人"
-      else
-        order.budget_money = order.budget.try(:total)
-      end
-      order.items.each_with_index do |item, index|
-        if params["item_price_#{item.vid}"].to_f > item.price.to_f
-          order.errors.add(:base, "商品采购人报价只能往下调整")
-          next
-        end
-        item.price = params["item_price_#{item.vid}"].to_f;
-        item.total = item.quantity * item.price
-      end
-    end
+    # if params.present?
+    #   order.attributes = params[:order].permit!
+    #   if order.yw_type == "grcg"
+    #     order.budget_id = nil
+    #     order.payer = "个人"
+    #   else
+    #     order.budget_money = order.budget.try(:total)
+    #   end
+    #   order.items.each_with_index do |item, index|
+    #     if params["item_price_#{item.vid}"].to_f > item.price.to_f
+    #       order.errors.add(:base, "商品采购人报价只能往下调整")
+    #       next
+    #     end
+    #     item.price = params["item_price_#{item.vid}"].to_f;
+    #     item.total = item.quantity * item.price
+    #   end
+    # end
 
     # order.total = order.items.map(&:total).sum
     total = order.items.map(&:total).sum
@@ -311,7 +316,7 @@ class Order < ActiveRecord::Base
     only_self = current_u.try(:id) == self.user_id
     ha["show"] = tmp
     ha["update"] = ha["edit"] = (self.class.edit_status.include?(self.status) && only_self) || current_u.is_boss?
-    ha["commit"] = self.can_opt?("提交") && only_self  && self.budget_money != 0
+    ha["commit"] = self.can_opt?("提交") && only_self  && (self.budget_money != 0 && self.yw_type != 'grcg' || self.yw_type == 'grcg')
     ha["update_audit"] = ha["audit"] = self.class.audit_status.include?(self.status)
     ha["invoice_number"] = ha["update_invoice_number"] = ha["print"] = ha["print_ht"] = ha["print_ysd"] = self.class.effective_status.include?(self.status) && tmp
     # 等待卖方确认
@@ -357,6 +362,17 @@ class Order < ActiveRecord::Base
       " display='readonly'"
     end
 
+    budget = unless order.try(:yw_type) == 'grcg'
+      %Q{
+        <node name='预算金额（元）' column='budget_money' class='number required' display='readonly'/>
+        <node column='budget_id' data_type='hidden'/>
+      }
+    else
+      %Q{
+        <node name='采购人身份证号码' column='sfz' class='required'/>
+      }
+    end
+
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
@@ -373,8 +389,7 @@ class Order < ActiveRecord::Base
         <node name='供应商单位联系人手机' column='seller_mobile' class='required' #{seller_edit}/>
         <node name='供应商单位地址' column='seller_addr' class='required' #{seller_edit}/>
         <node name='交付日期' column='deliver_at' class='date_select required dateISO'/>
-        <node name='预算金额（元）' column='budget_money' class='number required' display='readonly'/>
-        <node column='budget_id' data_type='hidden'/>
+        #{budget}
         <node name='备注' column='summary' data_type='textarea' placeholder='不超过800字'/>
         <node column='total' data_type='hidden'/>
         <node column='yw_type' data_type='hidden'/>
@@ -403,6 +418,7 @@ class Order < ActiveRecord::Base
         <node name='业务类别' column='yw_type_eq' data_type='select' data='#{yw_type_ha}'/>
         <node name='订单类别' column='ot' data_type='select' data='#{ht_ha}'/>
         <node name='当前状态' column='status_in' data_type='select' data='#{status_ha}'/>
+        <node name='品目' column='items_category_name' class='tree_checkbox required' json_url='/kobe/shared/category_ztree_json'/>
         <node name='开始日期' column='created_at_gt' class='start_date'/>
         <node name='截止日期' column='created_at_lt' class='finish_date'/>
       </root>

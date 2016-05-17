@@ -98,6 +98,10 @@ class Kobe::TongjiController < KobeController
     end
   end
 
+  def dep_rate_total
+    a = Order.find_by_sql("select seller_name,avg(rate_total) as sum_total from (SELECT distinct orders.id, orders.seller_name,orders.rate_total as rate_total FROM `orders` INNER JOIN `orders_items` ON `orders_items`.`order_id` = `orders`.`id` WHERE `orders`.`status` IN (100) AND `orders_items`.`category_id` IN (95, 96,705) AND (orders.created_at between '2015-11-01' and '2016-05-17')) a group by a.seller_name order by sum_total desc")
+  end
+
   private
 
     # 默认参数

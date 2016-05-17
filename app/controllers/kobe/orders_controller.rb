@@ -15,7 +15,7 @@ class Kobe::OrdersController < KobeController
   def index
     arr = []
     arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
-    @q = Order.find_all_by_buyer_code(current_user.real_department.id).where(get_conditions("orders", arr)).not_grcg.ransack(params[:q])
+    @q = Order.find_all_by_buyer_code(current_user.real_department.id).where(get_conditions("orders", arr)).not_grcg.distinct.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -178,7 +178,7 @@ class Kobe::OrdersController < KobeController
     @rule = Rule.find_by(id: params[:r])
     params[:q][:user_id_eq] = current_user.id
     params[:q][:yw_type_eq] = @rule.try(:yw_type)
-    @q = Order.where(get_conditions("orders", arr)).ransack(params[:q])
+    @q = Order.where(get_conditions("orders", arr)).distinct.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -187,7 +187,7 @@ class Kobe::OrdersController < KobeController
     arr = []
     arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
     params[:q][:yw_type_eq] = 'grcg'
-    @q = Order.where(get_conditions("orders", arr)).ransack(params[:q])
+    @q = Order.where(get_conditions("orders", arr)).distinct.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -197,7 +197,7 @@ class Kobe::OrdersController < KobeController
     arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
     @rule = Rule.find_by(id: params[:r])
     params[:q][:yw_type_eq] = @rule.try(:yw_type)
-    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders", arr)).ransack(params[:q])
+    @q = Order.find_all_by_seller(current_user.real_department.id, current_user.real_department.name).where(get_conditions("orders", arr)).distinct.ransack(params[:q])
     @orders = @q.result.page params[:page]
   end
 
@@ -318,11 +318,19 @@ class Kobe::OrdersController < KobeController
   private
     # 高级搜索 选分公司默认把下属单位显示出来
     def add_condition_by_buyer_name
+      cdt = ""
       if params[:q][:buyer_name].present?
         dep_ids = Department.find_by(name: params[:q][:buyer_name]).try(:subtree_ids)
-        return ["orders.buyer_id in ( #{dep_ids.join(',')} )"] if dep_ids.present?
+        cdt = ["orders.buyer_id in ( #{dep_ids.join(',')} )"] if dep_ids.present?
       end
-      return ""
+      if params[:q][:items_category_name].present?
+        names = params[:q][:items_category_name].split(",")
+        ca_ids = Category.where(name: names).map(&:id)
+        if ca_ids.present?
+          params[:q][:items_category_id_in] = ca_ids
+        end
+      end
+      return cdt
     end
 
     # 订单中心和审核列表分办公、粮机、汽车 增加筛选条件
@@ -414,11 +422,12 @@ class Kobe::OrdersController < KobeController
         return redirect_to cart_path
       end
 
-      @order = if action_name == "update_cart_order"
-        Order.from(@cart, current_user, params)
-      else
-        Order.from(@cart, current_user)
-      end
+      @order = Order.from(@cart, current_user, params)
+      # @order = if action_name == "update_cart_order"
+      #   Order.from(@cart, current_user, params)
+      # else
+      #   Order.from(@cart, current_user)
+      # end
     end
 
     # 确认订单并写日志
