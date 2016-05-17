@@ -16,7 +16,7 @@ class Kobe::TongjiController < KobeController
 
       if params[:category_id].present? && params[:category_id].to_i != 0
         ca = Category.find_by id: params[:category_id]
-        ca_group = "concat_ws('/', orders_items.category_code, orders_items.category_id)"
+        ca_group = "concat_ws('/', orders_items.category_code, orders_items.category_id, '')"
         class_name = base.where(common_conditions).joins(:items).where(["find_in_set(?, replace(#{ca_group}, '/', ',')) >0", params[:category_id]])
         # 按品目统计
         rs = class_name.group(ca_group).select("#{ca_group} as name, #{@sum_total}")
