@@ -347,7 +347,7 @@ class Order < ActiveRecord::Base
 
   def self.xml(order=nil, current_u='', options={})
     buyer_edit = seller_edit = ''
-    if order.try(:yw_type) == 'xygh'
+    if ['xygh', 'grcg'].include?(order.try(:yw_type))
       buyer_edit = " display='readonly'" if order.try(:seller_id) == current_u.real_department.id
       seller_edit = " display='readonly'" if order.try(:buyer_id) == current_u.real_department.id
     end
@@ -369,7 +369,7 @@ class Order < ActiveRecord::Base
       }
     else
       %Q{
-        <node name='采购人身份证号码' column='sfz' class='required'/>
+        <node name='采购人身份证号码' column='sfz' class='required' #{buyer_edit}/>
       }
     end
 

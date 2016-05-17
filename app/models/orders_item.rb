@@ -24,15 +24,15 @@ class OrdersItem < ActiveRecord::Base
 
   # 从表的XML加ID是为了修改的时候能找到记录
   def self.xml(order=nil, current_u='', options={})
-    if order.try(:yw_type) == 'xygh'
+    if ['xygh', 'grcg'].include?(order.try(:yw_type))
       can_edit = " display='readonly'"
       num_edit = order.try(:seller_id) == current_u.real_department.id ? " display='readonly'" : ''
     else
       can_edit = num_edit = ''
     end
-    bp = ['xygh', 'xyyj'].include?(order.try(:yw_type)) ? "<node name='入围单价（元）' column='bid_price' class='number' #{can_edit}/>" : ""
+    bp = ['xygh', 'xyyj', 'grcg'].include?(order.try(:yw_type)) ? "<node name='入围单价（元）' column='bid_price' class='number' #{can_edit}/>" : ""
     category_tmp = case order.try(:yw_type)
-    when 'xygh'
+    when 'xygh', 'grcg'
       " display='readonly'"
     else
       %Q{ class='tree_radio required' json_url='/kobe/shared/category_ztree_json' json_params='{"yw_type":"#{Dictionary.category_yw_type[:ddcg].first}","vv_checklevel":-1}' partner='category_id' }

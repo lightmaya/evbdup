@@ -15,7 +15,14 @@ class Kobe::OrdersController < KobeController
   def index
     arr = []
     arr << add_condition_by_buyer_name if add_condition_by_buyer_name.present?
-    @q = Order.find_all_by_buyer_code(current_user.real_department.id).where(get_conditions("orders", arr)).not_grcg.distinct.ransack(params[:q])
+    # 个人用户显示自己的订单 单位用户显示辖区内所有订单
+    if current_user.is_personal
+      params[:q][:user_id_eq] = current_user.id
+      params[:q][:yw_type_eq] = 'grcg'
+      @q = Order.where(get_conditions("orders", arr)).ransack(params[:q])
+    else
+      @q = Order.find_all_by_buyer_code(current_user.real_department.id).where(get_conditions("orders", arr)).not_grcg.distinct.ransack(params[:q])
+    end
     @orders = @q.result.page params[:page]
   end
 
@@ -316,13 +323,15 @@ class Kobe::OrdersController < KobeController
   end
 
   private
-    # 高级搜索 选分公司默认把下属单位显示出来
+    # 高级搜索
     def add_condition_by_buyer_name
       cdt = ""
+      # 选分公司默认把下属单位显示出来
       if params[:q][:buyer_name].present?
         dep_ids = Department.find_by(name: params[:q][:buyer_name]).try(:subtree_ids)
         cdt = ["orders.buyer_id in ( #{dep_ids.join(',')} )"] if dep_ids.present?
       end
+      # 按品目搜索
       if params[:q][:items_category_name].present?
         names = params[:q][:items_category_name].split(",")
         ca_ids = Category.where(name: names).map(&:id)
