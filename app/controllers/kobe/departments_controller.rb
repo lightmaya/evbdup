@@ -94,6 +94,7 @@ class Kobe::DepartmentsController < KobeController
     attributes = params.require(:user).permit(:login, :password, :password_confirmation)
     attributes[:department_id] = params[:id]
     user = User.new(attributes)
+    user.is_personal = false if current_user.user_type == Dictionary.dep_supplier_id
     if user.save
       user.set_auto_menu
       write_logs(user,"分配人员账号",'账号创建成功')

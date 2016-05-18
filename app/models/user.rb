@@ -112,6 +112,7 @@ class User < ActiveRecord::Base
         <node column='categoryids' data_type='hidden' hint='如勾选品目，待办事项中只显示勾选的品目的相关信息。'/>
       }
     end
+    personal = current_u.user_type == Dictionary.dep_supplier_id ? "" : %Q{ <node name='用户类型' column='is_personal' data_type='radio' data='[[0,"单位采购"],[1,"个人采购"]]'/> }
     %Q{
       <?xml version='1.0' encoding='UTF-8'?>
       <root>
@@ -122,7 +123,7 @@ class User < ActiveRecord::Base
         <node name='手机' column='mobile' class='required'/>
         <node name='传真' column='fax'/>
         <node name='职务' column='duty'/>
-        <node name='用户类型' column='is_personal' data_type='radio' data='[[0,"单位采购"],[1,"个人采购"]]'/>
+        #{personal}
         #{tmp}
       </root>
     }

@@ -34,7 +34,8 @@ class Kobe::UsersController < KobeController
   end
 
   def update
-    if update_and_write_logs(@user, User.xml(@user, current_user))
+    ha = current_user.user_type == Dictionary.dep_supplier_id ? { is_personal: false} : {}
+    if update_and_write_logs(@user, User.xml(@user, current_user), {}, ha)
       if @user.is_personal
         @user.set_auto_menu
       else
