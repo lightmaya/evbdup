@@ -155,7 +155,8 @@ class Product < ActiveRecord::Base
       # 上级单位或者总公司人
       current_u.real_department.is_ancestors?(self.department_id) || current_u.department.is_zgs?
     when "update", "edit"
-      self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id && item_effective
+      current_u.try(:id) == self.user_id || current_u.is_boss?
+      # self.class.edit_status.include?(self.status) && current_u.try(:id) == self.user_id && item_effective
     when "commit"
       self.can_opt?("提交") && current_u.try(:id) == self.user_id && item_effective
     when "update_audit", "audit"
