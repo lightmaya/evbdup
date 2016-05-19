@@ -242,6 +242,11 @@ class Order < ActiveRecord::Base
     end
   end
 
+  # 显示上级单位
+  def show_top_name
+    self.buyer.try(:top_dep).present? ? "[ #{self.buyer.top_dep.name} ]" : ""
+  end
+
   # 卖方单位
   def seller
     if self.seller_id.present?

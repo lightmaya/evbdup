@@ -1,2 +1,2 @@
 <%= show_step(@order) if ["xygh", "ddcg"].include?(@order.rule.yw_type) %>
-<%= show_tabs_with_name("#{@order.name} #{@order.status_badge} #{@order.link_to_road}", @arr, 'order_tab') %>
+<%= show_tabs_with_name("#{@order.name} #{@order.status_badge} #{@order.show_top_name} #{@order.link_to_road}", @arr, 'order_tab') %>
