@@ -10,13 +10,14 @@ namespace :everyday do
     deps.each do |d|
       if d.cache_dep_main true
         succ += 1
-        p ".create_cache_dep_main succ: #{succ}/#{deps.size} old: #{d.id}"
+        # p ".create_cache_dep_main succ: #{succ}/#{deps.size} old: #{d.id}"
       else
+        p ".create_cache_dep_main_error dep_id: #{d.id}"
         log_p "[error]old_id: #{d.id} | #{d.errors.full_messages}" ,"create_cache_dep_main.log"
       end
     end
 
-    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+    p "#{end_time = Time.now} create_cache_dep_main end... #{(end_time - begin_time)/60} min ---succ: #{succ}/#{deps.size}"
   end
 
   desc "更新评价分"
@@ -36,18 +37,20 @@ namespace :everyday do
           e.status = 100
           e.logs = save_logs(e.logs, "评价", 100, "用户超过45天未评价，按规定一律只得20分（系统自动评价）。")
         else
+          p ".update_order_rate_error [rate create error] order_id: #{e.id}"
           log_p "[error]order_id: #{e.id} | #{e.errors.full_messages}" ,"update_order_rate.log"
         end
       end
       if e.save
         succ += 1
-        p ".update_order_rate succ: #{succ}/#{os.size} order_id: #{e.id}"
+        # p ".update_order_rate succ: #{succ}/#{os.size} order_id: #{e.id}"
       else
+        p ".update_order_rate_error order_id: #{e.id}"
         log_p "[error]order_id: #{e.id} | #{e.errors.full_messages}" ,"update_order_rate.log"
       end
     end
 
-    p "#{end_time = Time.now} end... #{(end_time - begin_time)/60} min "
+    p "#{end_time = Time.now} update_order_rate end... #{(end_time - begin_time)/60} min ---succ: #{succ}/#{os.size}"
 
   end
 

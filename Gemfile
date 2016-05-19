@@ -111,6 +111,7 @@ gem 'ransack', '1.5.1'
 
 # 定时任务
 gem 'rufus-scheduler', '3.0.9'
+gem 'whenever', :require => false
 
 
 # Use unicorn as the app server

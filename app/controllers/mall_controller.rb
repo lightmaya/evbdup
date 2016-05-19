@@ -99,8 +99,8 @@ class MallController < ApplicationController
 
   def create_order
     # 同步订单前 先判断有没有订单总金额是0的 如果有先删除订单总金额是0的订单
-    destroy_ids = Order.where(yw_type: ['dscg','grcg'], total: 0).map(&:mall_id)
-    Order.destroy_all(yw_type: ['dscg','grcg'], total:0, mall_id: destroy_ids) if destroy_ids.present?
+    destroy_ids = Order.where(yw_type: ['dscg', 'grcg'], total: 0).map(&:mall_id)
+    Order.destroy_all(yw_type: ['dscg', 'grcg'], total: 0, mall_id: destroy_ids) if destroy_ids.present?
     mall = Order.find_by(mall_id: params["id"], yw_type: ['dscg', 'grcg'])
     return render :json => {"success" => false, "desc" => "ID已存在"} if mall.present?
     user = User.find_by(id: params["user_id"])
