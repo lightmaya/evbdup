@@ -73,7 +73,7 @@ class Department < ActiveRecord::Base
   def top_dep
     return nil unless is_dep_purchaser?
     return real_dep if is_fgs? || is_zgs?
-    Department.find_by(id: real_ancestry_id_arr[-2])
+    Department.find_by(id: real_ancestry_id_arr[2])
   end
 
   # 独立核算单位下的所有用户
