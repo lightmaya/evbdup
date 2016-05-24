@@ -235,5 +235,39 @@ module AboutStatus
     }
   end
 
+  # 审核的下一步操作 确认并转向上级单位审核、确认并结束审核流程
+  def go_to_audit_next(audit_yijian, logs, audit_next_user_id='')
+    cs = self.get_current_step
+    if cs.is_a?(Hash)
+      ns = self.get_next_step
+      rule_step = ns.is_a?(Hash) ? ns["name"] : ns
+      next_status = self.get_change_status(audit_yijian)
+      if self.status == next_status
+        # 状态相同的 例如分公司转总公司的
+        self.class.batch_change_status_and_write_logs(self.id, self.status, logs, ["rule_step = '#{rule_step}'"], false)
+      else
+        # 状态根据下一步的start_status 或当前步骤的finish_status 转变
+        self.change_status_and_write_logs(audit_yijian, logs, ["rule_step = '#{rule_step}'"], false)
+      end
+    end
+    # 插入待办事项
+    self.reload.create_task_queue
+  end
+
+  # 审核 退回发起人 状态改变 rule_step改变
+  def go_to_audit_return(audit_yijian, logs, audit_next_user_id='')
+    self.change_status_and_write_logs(audit_yijian, logs, ["rule_step = null"], false)
+    # 删除待办事项
+    self.reload.delete_task_queue
+    # 发送站内消息
+
+  end
+
+  # 审核 转向下一人 状态不变 rule_step不变
+  def go_to_audit_turn(audit_yijian, logs, audit_next_user_id='')
+    self.class.batch_change_status_and_write_logs(self.id, self.status, logs, [], false)
+    # 插入待办事项
+    self.reload.create_task_queue(audit_next_user_id.split("_")[1])
+  end
 
 end

@@ -461,7 +461,8 @@ class Kobe::OrdersController < KobeController
         remark << logs_remark if logs_remark.present?
         logs = stateless_logs(act, remark, false)
         if params[:audit_yijian] == "通过"
-          go_to_audit_next(@order, logs)
+          # go_to_audit_next(@order, logs)
+          @order.go_to_audit_next(params[:audit_yijian], logs)
         else
           ps = @order.get_prev_step
           rule_step = ps.is_a?(Hash) ? ps["name"] : ps

@@ -124,53 +124,54 @@ class KobeController < ApplicationController
       return stateless_logs(act,"审核#{params[:audit_yijian]}，#{opt}。审核理由：#{params[:audit_liyou]}", false)
     end
 
-    # 审核的下一步操作 确认并转向上级单位审核、确认并结束审核流程
-    def go_to_audit_next(obj, logs='')
-      logs = create_audit_logs(obj) if logs.blank?
-      cs = obj.get_current_step
-      if cs.is_a?(Hash)
-        ns = obj.get_next_step
-        rule_step = ns.is_a?(Hash) ? ns["name"] : ns
-        next_status = obj.get_change_status(params[:audit_yijian])
-        if obj.status == next_status
-          # 状态相同的 例如分公司转总公司的
-          obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
-        else
-          # 状态根据下一步的start_status 或当前步骤的finish_status 转变
-          obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{rule_step}'"],false)
-        end
-        # if ns.is_a?(Hash) # 确认并转向上级单位审核 状态不变 rule_step改变
-        #   rule_step = ns["name"]
-        #   obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
-        # else # 确认并结束审核流程 状态改变 rule_step改变
-        #   obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{ns}'"],false) if ns == "done"
-        # end
-      end
-      # 插入待办事项
-      obj.reload.create_task_queue
-    end
+    # # 审核的下一步操作 确认并转向上级单位审核、确认并结束审核流程
+    # def go_to_audit_next(obj, logs='')
+    #   logs = create_audit_logs(obj) if logs.blank?
+    #   cs = obj.get_current_step
+    #   if cs.is_a?(Hash)
+    #     ns = obj.get_next_step
+    #     rule_step = ns.is_a?(Hash) ? ns["name"] : ns
+    #     next_status = obj.get_change_status(params[:audit_yijian])
+    #     if obj.status == next_status
+    #       # 状态相同的 例如分公司转总公司的
+    #       obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
+    #     else
+    #       # 状态根据下一步的start_status 或当前步骤的finish_status 转变
+    #       obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{rule_step}'"],false)
+    #     end
+    #     # if ns.is_a?(Hash) # 确认并转向上级单位审核 状态不变 rule_step改变
+    #     #   rule_step = ns["name"]
+    #     #   obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,["rule_step = '#{rule_step}'"],false)
+    #     # else # 确认并结束审核流程 状态改变 rule_step改变
+    #     #   obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = '#{ns}'"],false) if ns == "done"
+    #     # end
+    #   end
+    #   # 插入待办事项
+    #   obj.reload.create_task_queue
+    # end
 
-    # 审核 退回发起人 状态改变 rule_step改变
-    def go_to_audit_return(obj, logs='')
-      logs = create_audit_logs(obj) if logs.blank?
-      obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = null"],false)
-      # 删除待办事项
-      obj.reload.delete_task_queue
-      # 发送站内消息
+    # # 审核 退回发起人 状态改变 rule_step改变
+    # def go_to_audit_return(obj, logs='')
+    #   logs = create_audit_logs(obj) if logs.blank?
+    #   obj.change_status_and_write_logs(params[:audit_yijian],logs,["rule_step = null"],false)
+    #   # 删除待办事项
+    #   obj.reload.delete_task_queue
+    #   # 发送站内消息
 
-    end
+    # end
 
-    # 审核 转向下一人 状态不变 rule_step不变
-    def go_to_audit_turn(obj, logs='')
-      logs = create_audit_logs(obj) if logs.blank?
-      obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,[],false)
-      # 插入待办事项
-      obj.reload.create_task_queue(params[:audit_next_user_id].split("_")[1])
-    end
+    # # 审核 转向下一人 状态不变 rule_step不变
+    # def go_to_audit_turn(obj, logs='')
+    #   logs = create_audit_logs(obj) if logs.blank?
+    #   obj.class.batch_change_status_and_write_logs(obj.id,obj.status,logs,[],false)
+    #   # 插入待办事项
+    #   obj.reload.create_task_queue(params[:audit_next_user_id].split("_")[1])
+    # end
 
     # 审核 1.更新rule_step、status、logs 2.插入待办事项
     def save_audit(obj, logs='')
-      eval("go_to_audit_#{params[:audit_next]}(obj, logs)")
+      logs = create_audit_logs(obj)
+      eval("obj.go_to_audit_#{params[:audit_next]}(params[:audit_yijian], logs, params[:audit_next_user_id])")
       tips_get("审核#{params[:audit_yijian]}，审核理由：#{params[:audit_liyou]}")
     end
 
@@ -179,7 +180,7 @@ class KobeController < ApplicationController
       ids = params[:batch_ids].split(",")
       arr = []
       ids.each do | id |
-        arr << {obj_id: id, class_name: model_name.to_s, next: params[:audit_next], yijian: params[:audit_yijian], liyou: params[:audit_liyou]}
+        arr << { obj_id: id, class_name: model_name.to_s, next: params[:audit_next], yijian: params[:audit_yijian], liyou: params[:audit_liyou], user_id: current_user.id }
       end
       BatchAudit.create(arr)
       # 1s后执行 save_audit, save_audit 成功后删除 batch_audit

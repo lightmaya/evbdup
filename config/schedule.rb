@@ -22,6 +22,11 @@
 RAILS_ROOT = File.dirname(__FILE__) + '/..'
 set :output, "#{RAILS_ROOT}/log/whenever.log"
 
+# 每天晚上11点更新批量审核的订单
+every 1.days, :at => '23:00' do
+  runner "BatchAudit.send_missing_audit"
+end
+
 # 每天 0点 统计评价分 超过45天 自动评价
 every 1.days, :at => '00:00' do
   rake "everyday:update_order_rate"
