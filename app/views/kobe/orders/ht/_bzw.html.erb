@@ -19,8 +19,8 @@
     <td class='title'>地&nbsp;&nbsp;址：</td><td class='content'><%=raw @order.seller_addr %></td>
     </tr>
     <tr>
-    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%=raw @order.buyer.post_code %></td><td></td>
-    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%=raw @order.seller.post_code %></td>
+    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%=raw @order.buyer.try(:post_code) %></td><td></td>
+    <td class='title'>邮&nbsp;&nbsp;编：</td><td class='content'><%=raw @order.seller.try(:post_code) %></td>
     </tr>
     <tr>
     <td class='title'>法定代表人：</td><td class='content'><%=raw @order.buyer.legal_name %></td><td></td>
