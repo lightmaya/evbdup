@@ -1,3 +1,4 @@
+<%= show_tips("error", "定点采购规则：", Order.tips) if @order.try(:yw_type) == 'ddcg' %>
 <div class='col-md-12'>
   <%= draw_myform(myform) %>
 </div>
