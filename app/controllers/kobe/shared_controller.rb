@@ -61,7 +61,8 @@ class Kobe::SharedController < KobeController
 
   # 状态是正常的品目
   def category_ztree_json
-    yw_cdt = params[:yw_type].present? ? "yw_type % #{params[:yw_type].to_i} = 0" : ""
+    # 定点采购、网上竞价的品目如果是boss就不用判断品目的yw_type
+    yw_cdt = (params[:yw_type].present? && !current_user.is_boss?) ? "yw_type % #{params[:yw_type].to_i} = 0" : ""
     name = params[:ajax_key]
     status = Category.effective_status
     if name.blank?
