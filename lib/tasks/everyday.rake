@@ -54,6 +54,11 @@ namespace :everyday do
 
   end
 
+  desc "批量审核"
+  task :batch_audit => :environment do
+    BatchAudit.send_missing_audit
+  end
+
   # 输出日志到文件和控制台
   def self.log_p(msg, log_path = "data.log")
     @logger ||= Logger.new(Rails.root.join('log', log_path))
