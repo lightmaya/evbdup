@@ -26,10 +26,12 @@
         success: function(rs){ if(parseInt(rs) != 1){ msg.push("请选择同一类品目！"); }	}
       });
       // 报价截止时间不能少于6小时
+      <% unless current_user.is_boss? %>
       var end_time = $("input#bid_projects_end_time").val();
       if (end_time < '<%= Time.now + 6.hours %>') {
         msg.push("报价截止时间不能少于6小时！");
       };
+      <% end %>
 
       if (msg.length != 0) {
        flash_dialog(msg.join("<br/>"));
